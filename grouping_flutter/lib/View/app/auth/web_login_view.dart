@@ -142,22 +142,19 @@ class _WebLoginViewState extends State<WebLoginView> {
             color: Colors.blue,
             iconPath: googleIconPath,
             onPressed: () {
-              AuthService authService = AuthService();
-              authService.googleSignIn();
+              loginManager.onThirdPartyLogin('google', context);
             }),
         thirdPartyLoginButton(
             color: Colors.purple,
             iconPath: gitHubIconPath,
             onPressed: () {
-              AuthService authService = AuthService();
-              authService.githubSignIn(context);
+              loginManager.onThirdPartyLogin('github', context);
             }),
         thirdPartyLoginButton(
             color: Colors.green,
             iconPath: lineIconPath,
             onPressed: () {
-              AuthService authService = AuthService();
-              authService.lineSignIn(context);
+              loginManager.onThirdPartyLogin('line', context);
             }),
       ],
     );
