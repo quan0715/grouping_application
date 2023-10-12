@@ -1,5 +1,6 @@
 class Config {
-  static String baseUri = 'http://localhost:8000';
+  static String frontEndUrl = 'http://localhost:5000';
+  static String baseUriWeb = 'http://localhost:8000';
   static String baseUriMobile = 'http://10.0.2.2:8000';
 
   static Uri googleAuthEndpoint =

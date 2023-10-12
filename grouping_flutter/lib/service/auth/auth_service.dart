@@ -14,6 +14,16 @@ import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:grouping_project/service/auth/google_auth.dart';
 
 // flutter run --web-port 5000
+enum AuthProvider {
+  account(string: 'account'),
+  google(string: 'google'),
+  github(string: 'github'),
+  line(string: 'line');
+
+  final String string;
+  const AuthProvider({required this.string});
+}
+
 class AuthService {
   final GoogleAuth _googleAuth = GoogleAuth();
   final GitHubAuth _gitHubAuth = GitHubAuth();
@@ -25,7 +35,7 @@ class AuthService {
       String? username}) async {
     try {
       await PassToBackEnd.toAuthBabkend(
-          provider: 'account',
+          provider: AuthProvider.account,
           account: account,
           password: password,
           username: username,
@@ -41,7 +51,7 @@ class AuthService {
     // await accountAuth.signIn(account: account, password: password);
     try {
       await PassToBackEnd.toAuthBabkend(
-          provider: 'account',
+          provider: AuthProvider.account,
           account: account,
           password: password,
           register: false);
@@ -83,10 +93,10 @@ class AuthService {
       debugPrint(Platform.operatingSystem);
       if (kIsWeb) {
         await _googleAuth.signInWeb();
-        await PassToBackEnd.toAuthBabkend(provider: 'google');
+        await PassToBackEnd.toAuthBabkend(provider: AuthProvider.google);
       } else if (Platform.isAndroid || Platform.isIOS) {
         await _googleAuth.signInMobile();
-        await PassToBackEnd.toAuthBabkend(provider: 'google');
+        await PassToBackEnd.toAuthBabkend(provider: AuthProvider.google);
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -97,15 +107,7 @@ class AuthService {
     try {
       // debugPrint(Platform.operatingSystem);
       await PassToBackEnd.toInformPlatform();
-      if (kIsWeb) {
-        await _gitHubAuth.signInWeb(context);
-        await Future.delayed(Duration(seconds: 3));
-        await PassToBackEnd.toAuthBabkend(provider: 'github');
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        await _gitHubAuth.signInMobile(context);
-      } else {
-        await _gitHubAuth.signInWeb(context);
-      }
+      _gitHubAuth.showLoginWindow(context);
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -118,7 +120,7 @@ class AuthService {
       if (kIsWeb) {
         await _lineAuth.signInWeb(context);
         await Future.delayed(Duration(seconds: 3));
-        await PassToBackEnd.toAuthBabkend(provider: 'github');
+        await PassToBackEnd.toAuthBabkend(provider: AuthProvider.line);
       } else if (Platform.isAndroid || Platform.isIOS) {
         await _lineAuth.signInMobile(context);
       } else {
@@ -134,18 +136,18 @@ class PassToBackEnd {
   static Future toInformPlatform() async {
     String stringUrl;
     if (kIsWeb) {
-      stringUrl = '${Config.baseUri}/auth/platform/';
+      stringUrl = '${Config.baseUriWeb}/auth/platform/';
     } else if (Platform.isAndroid || Platform.isIOS) {
       stringUrl = '${Config.baseUriMobile}/auth/platform/';
     } else {
-      stringUrl = '${Config.baseUri}/auth/platform/';
+      stringUrl = '${Config.baseUriWeb}/auth/platform/';
     }
     http.Response response = await http.post(Uri.parse(stringUrl),
         body: {'platform': kIsWeb ? 'web' : 'mobile'});
   }
 
   static Future toAuthBabkend(
-      {required String provider,
+      {required AuthProvider provider,
       String? account,
       String? password,
       bool register = false,
@@ -155,12 +157,12 @@ class PassToBackEnd {
       Uri url;
       String stringUrl;
       if (kIsWeb) {
-        stringUrl = '${Config.baseUri}/auth/$provider/';
+        stringUrl = '${Config.baseUriWeb}/auth/${provider.string}/';
       } else {
-        stringUrl = '${Config.baseUriMobile}/auth/$provider/';
+        stringUrl = '${Config.baseUriMobile}/auth/${provider.string}/';
       }
 
-      if (provider == 'account') {
+      if (provider == AuthProvider.account) {
         if (account == null) {
           throw Exception('Please enter account');
         }
@@ -194,7 +196,7 @@ class PassToBackEnd {
       } else if (response.statusCode == 200) {
         const storage = FlutterSecureStorage();
 
-        await storage.write(key: 'auth-provider', value: provider);
+        await storage.write(key: 'auth-provider', value: provider.string);
         await storage.write(key: 'auth-token', value: response.body);
 
         storage.readAll().then((value) => debugPrint(value.toString()));

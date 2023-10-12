@@ -28,12 +28,13 @@ class JsonFormatHttpClient extends http.BaseClient {
 class BaseOauth {
   late oauth2.AuthorizationCodeGrant grant;
   late Map<String, String> parameters;
+  final AuthProvider provider;
   final String clientId;
   final Uri authorizationEndpoint;
   final Uri tokenEndpoint;
   final String? clientSecret;
   late final Uri authorizationUrl;
-  Uri redirectedUrl = Uri.parse('${Config.baseUriMobile}/auth/callback/');
+   Uri redirectedUrl = Uri.parse('${Config.baseUriMobile}/auth/callback/');
   final List<String> scopes;
 
   BaseOauth(
@@ -41,7 +42,8 @@ class BaseOauth {
       required this.authorizationEndpoint,
       required this.tokenEndpoint,
       this.clientSecret,
-      required this.scopes}) {
+      required this.scopes,
+      required this.provider}) {
     // clientId = clientId;
     // authorizationEndpoint = authorizationEndpoint;
     // tokenEndpoint = tokenEndpoint;
@@ -50,52 +52,56 @@ class BaseOauth {
     // scopes = scopes;
   }
 
-  oauth2.AuthorizationCodeGrant getSignInGrant() {
-    return grant = oauth2.AuthorizationCodeGrant(
+  _getSignInGrant() {
+    grant = oauth2.AuthorizationCodeGrant(
         clientId, authorizationEndpoint, tokenEndpoint,
         secret: clientSecret, httpClient: JsonFormatHttpClient());
   }
 
-  getSignInWindow(BuildContext context) {
+  _getAuthorizationUrl() {
     authorizationUrl = grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
-
-    try {
-      redirectAndListen(authorizationUrl, context);
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 
-  redirectAndListen(Uri url, BuildContext context) {
-    WebViewController controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onWebResourceError: (WebResourceError error) {
-            // TODO: Do some error handling
-            debugPrint("===============================> onWebResourceError:");
-            debugPrint(error.errorType.toString());
-            debugPrint(error.errorCode.toString());
-            debugPrint(error.description);
-          },
-          onUrlChange: (change) {
-            if (change.url!.contains("8000")) {
-              Navigator.of(context).pop();
-              PassToBackEnd.toAuthBabkend(provider: 'github');
-              grant.close();
-            }
+  showWindowAndListen(BuildContext context) {
+    _getSignInGrant();
+    _getAuthorizationUrl();
+    try {
+      WebViewController controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onWebResourceError: (WebResourceError error) {
+              // TODO: Do some error handling
+              debugPrint(
+                  "===============================> onWebResourceError:");
+              debugPrint(error.errorType.toString());
+              debugPrint(error.errorCode.toString());
+              debugPrint(error.description);
+            },
+            onUrlChange: (change) {
+              if (change.url!.contains("5000")) {
+                Navigator.of(context).pop();
+                // TODO: pass to back end needed to change
+                PassToBackEnd.toAuthBabkend(provider: provider);
+                grant.close();
+              }
+            },
+          ),
+        )
+        ..loadRequest(authorizationUrl);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return WebViewWidget(controller: controller);
           },
         ),
-      )
-      ..loadRequest(authorizationUrl);
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return WebViewWidget(controller: controller);
-        },
-      ),
-    );
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      grant.close();
+    }
   }
 }

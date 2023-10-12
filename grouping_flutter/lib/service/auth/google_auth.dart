@@ -3,6 +3,7 @@ import "dart:io";
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:grouping_project/config/config.dart';
+import 'package:grouping_project/service/auth/auth_service.dart';
 
 import 'oauth2_mobile.dart'
     if (kIsWeb) 'oauth2_web.dart'
@@ -45,6 +46,7 @@ class GoogleAuth {
       scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
       authorizationEndpoint: Config.googleAuthEndpoint,
       tokenEndpoint: Config.googleTokenEndpoint,
+      provider: AuthProvider.google,
     );
     // oauth2.signIn();
   }
@@ -57,6 +59,7 @@ class GoogleAuth {
       scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
       authorizationEndpoint: Config.googleAuthEndpoint,
       tokenEndpoint: Config.googleTokenEndpoint,
+      provider: AuthProvider.google,
     );
     // oauth2.signIn();
   }
