@@ -46,10 +46,11 @@ class LoginModel {
     }
   }
 
-  Future<LoginState> thirdPartyLogin(String name, BuildContext context) async {
+  Future<LoginState> thirdPartyLogin(
+      AuthProvider provider, BuildContext context) async {
     try {
       AuthService authService = AuthService();
-      await authService.thridPartyLogin(name, context);
+      await authService.thridPartyLogin(provider, context);
       // TODO: add email login method
     } catch (e) {
       debugPrint(e.toString());

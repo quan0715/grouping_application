@@ -69,16 +69,16 @@ class AuthService {
     storage.readAll().then((value) => debugPrint(value.toString()));
   }
 
-  Future thridPartyLogin(String name, BuildContext context) async {
+  Future thridPartyLogin(AuthProvider provider, BuildContext context) async {
     try {
-      switch (name) {
-        case 'google':
+      switch (provider) {
+        case AuthProvider.google:
           googleSignIn();
           break;
-        case 'github':
+        case AuthProvider.github:
           githubSignIn(context);
           break;
-        case 'line':
+        case AuthProvider.line:
           lineSignIn(context);
           break;
         default:
