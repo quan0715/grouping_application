@@ -20,10 +20,8 @@ abstract class EditableCardModel extends BaseDataModel<EditableCardModel> {
       super.id = '',
       super.databasePath = '',
       super.storageRequired = false});
-      
-  @override
-  EditableCardModel fromJson({required String id, required Map<String, dynamic> data});
+  
+  // EditableCardModel fromJson({required String id, required Map<String, dynamic> data});
 
-  @override
   Map<String, dynamic> toJson();
 }

@@ -63,8 +63,7 @@ class MissionStateModel extends BaseDataModel<MissionStateModel> {
     'state_name': this.stateName,
   };
 
-  @override
-  MissionStateModel fromJson({required String id, required Map<String, dynamic> data}) => MissionStateModel(
+  factory MissionStateModel.fromJson({required String id, required Map<String, dynamic> data}) => MissionStateModel(
     id: id,
     stage: MissionStage.fromLabel(data['stage']),
     stateName: data['stateName'],

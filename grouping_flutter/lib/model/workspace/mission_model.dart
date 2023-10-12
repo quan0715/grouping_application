@@ -109,9 +109,8 @@ class MissionModel extends EditableCardModel {
     return processList;
   }
 
-  @override
-  MissionModel fromJson({required String id, required Map<String, dynamic> data}) => MissionModel(
-    id: id,
+  factory MissionModel.fromJson({required Map<String, dynamic> data}) => MissionModel(
+    id: data['id'] as String,
     title: data['title'] as String,
     introduction: data['introduction'] as String,
     deadline: data['deadline'] as DateTime,

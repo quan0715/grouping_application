@@ -95,9 +95,8 @@ class EventModel extends EditableCardModel {
     return processList;
   }
 
-  @override
-  EventModel fromJson({required String id, required Map<String, dynamic> data}) => EventModel(
-    id: id,
+  factory EventModel.fromJson({required Map<String, dynamic> data}) => EventModel(
+    id: data['id'] as String,
     title: data['title'] as String,
     introduction: data['introduction'] as String,
     startTime: data['startTime'] as DateTime,
