@@ -11,13 +11,14 @@ const String baseURL =
 
 class DatabaseService {
   final String _uid;
+  final Map<String, String> headers = {"ContentType": "application/json"};
 
   DatabaseService({required String uid}) : _uid = uid;
 
   /// user or group get event
   Future<EventModel> _getEvent(String eventId) async {
-    final response =
-        await http.get(Uri.http("$baseURL/$_uid/activities/$eventId"));
+    final response = await http
+        .get(Uri.http("$baseURL/$_uid/activities/$eventId"), headers: headers);
 
     if (response.statusCode == 200) {
       return EventModel.fromJson(data: jsonDecode(response.body));
@@ -29,8 +30,8 @@ class DatabaseService {
 
   /// user or group create event
   Future<EventModel> _createEvent() async {
-    final response =
-        await http.post(Uri.http("$baseURL/$_uid/activities/events"));
+    final response = await http
+        .post(Uri.http("$baseURL/$_uid/activities/events"), headers: headers);
 
     // successfully set up new data
     if (response.statusCode == 201) {
@@ -43,8 +44,9 @@ class DatabaseService {
 
   /// user or group get mission
   Future<MissionModel> _getMission(String missionId) async {
-    final response =
-        await http.get(Uri.http("$baseURL/$_uid/activities/$missionId"));
+    final response = await http.get(
+        Uri.http("$baseURL/$_uid/activities/$missionId"),
+        headers: headers);
 
     if (response.statusCode == 200) {
       return MissionModel.fromJson(data: jsonDecode(response.body));
@@ -56,8 +58,8 @@ class DatabaseService {
 
   /// user or group create mission
   Future<MissionModel> _createMission() async {
-    final response =
-        await http.post(Uri.http("$baseURL/$_uid/activities/missions"));
+    final response = await http
+        .post(Uri.http("$baseURL/$_uid/activities/missions"), headers: headers);
 
     // successfully set up new data
     if (response.statusCode == 201) {
@@ -69,9 +71,10 @@ class DatabaseService {
   }
 
   /// can only update 'title', 'description', 'startTime', 'endTime', 'deadline'
-  void _updateData(String ActivityId, PatchCategory category) async {
+  void _updateData(String ActivityId, ActivityCategory category) async {
     final response = await http.patch(
         Uri.http("$baseURL/$_uid/activities/$ActivityId"),
+        headers: headers,
         body: {category.name.toString(): category.data});
 
     if (response.statusCode == 200) {
@@ -83,8 +86,9 @@ class DatabaseService {
 
   /// user or group delete actvity
   void _deleteActivity(EditableCardModel activity) async {
-    final response = await http
-        .delete(Uri.parse("$baseURL/$_uid/activities/${activity.id}"));
+    final response = await http.delete(
+        Uri.parse("$baseURL/$_uid/activities/${activity.id}"),
+        headers: headers);
 
     // successfully delete data
     if (response.statusCode == 204) {
@@ -96,30 +100,32 @@ class DatabaseService {
 
   /// append contributor of activity
   void _appendContributor(String newContributorId, String activityId) async {
-    final response = await http.patch(Uri.parse(
-        "$baseURL/$_uid/activities/$activityId/contributors/$newContributorId"),
+    final response = await http.patch(
+        Uri.parse(
+            "$baseURL/$_uid/activities/$activityId/contributors/$newContributorId"),
+        headers: headers,
         body: {"contributors": activityId});
 
     // successfully append a contributor
-    if (response.statusCode == 200){
+    if (response.statusCode == 200) {
       // do nothing
-    }
-    else {
+    } else {
       // TODO: raise Error
     }
   }
 
   /// append child mission of activity
   void _appendChildMission(String childMissionId, String activityId) async {
-    final response = await http.patch(Uri.parse(
-        "$baseURL/$_uid/activities/$activityId/child_mission/$childMissionId"),
+    final response = await http.patch(
+        Uri.parse(
+            "$baseURL/$_uid/activities/$activityId/child_mission/$childMissionId"),
+        headers: headers,
         body: {"child_mission": childMissionId});
 
     // successfully append a contributor
-    if (response.statusCode == 200){
+    if (response.statusCode == 200) {
       // do nothing
-    }
-    else {
+    } else {
       // TODO: raise Error
     }
   }

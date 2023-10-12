@@ -1,6 +1,6 @@
 // the file name is temporary
 
-enum PatchCategory {
+enum ActivityCategory {
   title(data: 'default title'),
   description(data: 'default description'),
   startTime(data: '2000-01-20T00:00:00'),
@@ -8,7 +8,17 @@ enum PatchCategory {
   deadline(data: '2000-01-20T00:00:00');
   
   final String data;
-  const PatchCategory({required this.data});
+  const ActivityCategory({required this.data});
+}
+
+enum UserCategory {
+  realName(data: 'default name'),
+  userName(data: 'default name'),
+  slogan(data: 'default slogan'),
+  introduction(data: 'default introduction');
+
+  final String data;
+  const UserCategory({required this.data});
 }
 
 // enum MissionStage {
