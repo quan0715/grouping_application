@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/View/app/auth/web_login_view.dart';
 import 'package:grouping_project/View/app/auth/web_sign_in_view.dart';
 import 'package:grouping_project/View/theme/theme.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/github_auth.dart';
 
 class AuthView extends StatelessWidget {
   const AuthView({super.key, this.mode = 'login'});
@@ -33,9 +35,14 @@ class AuthView extends StatelessWidget {
               child: Text("Login With google"),
             ),
             ElevatedButton(
-              onPressed: () {
-                AuthService authService = AuthService();
-                authService.githubSignIn(context);
+              onPressed: () async {
+                GitHubAuth gitHubAuthVM = GitHubAuth();
+
+                // TODO: check this for flutter web https://github.com/dart-lang/oauth2/issues/88
+                await gitHubAuthVM.initializeOauthPlatform();
+                await gitHubAuthVM.platformedOauth2
+                    .showWindowAndListen(context);
+                gitHubAuthVM.handleCodeAndGetProfile();
               },
               child: Text("Login With Github"),
             ),

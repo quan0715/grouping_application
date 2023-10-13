@@ -4,14 +4,15 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/config/config.dart';
-import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
-import 'package:grouping_project/service/auth/line_auth.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:grouping_project/service/auth/google_auth.dart';
+import 'package:grouping_project/config/config.dart';
+import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
+import 'package:grouping_project/service/auth/line_auth.dart';
 
 // flutter run --web-port 5000
 enum AuthProvider {
@@ -107,7 +108,6 @@ class AuthService {
     try {
       // debugPrint(Platform.operatingSystem);
       await PassToBackEnd.toInformPlatform();
-      _gitHubAuth.showLoginWindow(context);
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -190,19 +190,27 @@ class PassToBackEnd {
       http.Response response = await http.post(url, body: body);
       // debugPrint(response.body);
       if (response.statusCode == 401) {
+        const storage = FlutterSecureStorage();
+
+        await storage.delete(key: 'auth-provider');
         Map<String, dynamic> body = json.decode(response.body);
         throw AuthServiceException(
             code: body['error-code'], message: body['error']);
       } else if (response.statusCode == 200) {
         const storage = FlutterSecureStorage();
 
-        await storage.write(key: 'auth-provider', value: provider.string);
         await storage.write(key: 'auth-token', value: response.body);
 
         storage.readAll().then((value) => debugPrint(value.toString()));
       } else if (response.statusCode < 600 && response.statusCode > 499) {
+        const storage = FlutterSecureStorage();
+
+        await storage.delete(key: 'auth-provider');
         throw Exception('Server exception: code ${response.statusCode}');
       } else {
+        const storage = FlutterSecureStorage();
+
+        await storage.delete(key: 'auth-provider');
         throw Exception('reponses status: ${response.statusCode}');
       }
     } catch (e) {

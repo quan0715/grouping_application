@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:html' as html;
+
 import 'package:grouping_project/View/app/auth/auth_view.dart';
 import 'package:grouping_project/View/theme/color.dart';
 import 'package:grouping_project/View/theme/padding.dart';
@@ -6,6 +10,7 @@ import 'package:grouping_project/View/theme/text.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:provider/provider.dart';
 
 class WebLoginView extends StatefulWidget {
@@ -147,8 +152,11 @@ class _WebLoginViewState extends State<WebLoginView> {
         thirdPartyLoginButton(
             color: Colors.purple,
             iconPath: gitHubIconPath,
-            onPressed: () {
-              loginManager.onThirdPartyLogin(AuthProvider.github, context);
+            onPressed: () async {
+              GitHubAuth gitHubAuthVM = GitHubAuth();
+              await gitHubAuthVM.initializeOauthPlatform();
+              await gitHubAuthVM.showWindowAndListen(context);
+              gitHubAuthVM.handleCodeAndGetProfile();
             }),
         thirdPartyLoginButton(
             color: Colors.green,
@@ -199,6 +207,15 @@ class _WebLoginViewState extends State<WebLoginView> {
         ],
       ),
     ));
+    if (Uri.base.queryParameters.containsKey('code')) {
+      const storage = FlutterSecureStorage();
+
+      storage
+          .write(
+              key: 'auth-token-to-exchange',
+              value: Uri.base.queryParameters['code'])
+          .whenComplete(() => html.window.close());
+    }
     return ChangeNotifierProvider.value(
       value: loginManager,
       child: Scaffold(

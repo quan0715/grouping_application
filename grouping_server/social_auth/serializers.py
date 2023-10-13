@@ -2,10 +2,12 @@ import requests
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import empty
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 # from grouping_project_backend.models import UserManager, User
 from dotenv import load_dotenv
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from Crypto.Cipher import AES
+import base64
 
 import os
 
@@ -18,7 +20,18 @@ class PlatformSerializer(serializers.Serializer):
     platform = serializers.CharField(max_length=255)
     def validate(self, attrs):
         os.environ['PLATFORM'] = attrs.get('platform')
-        print(os.environ['PLATFORM'])
+
+        os.unsetenv("VERIFIER")
+        os.unsetenv("AUTH_CODE")
+
+        print('PLATFORM: '+os.environ['PLATFORM'])
+        return super().validate(attrs)
+
+class VerifierSerializer(serializers.Serializer):
+    verifier = serializers.CharField(max_length=255)
+    def validate(self, attrs):
+        cipher = AES.new(b'haha8787 I am not sure fjkfjkfjk',AES.MODE_ECB)
+        os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
         return super().validate(attrs)
 
 class LoginSerializer(serializers.Serializer):
@@ -120,20 +133,38 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
             'error' : 'No code in temparary storage, please send the oauth request again'
         }
     else:
-        print(os.environ.get('AUTH_CODE'))
+        print("AUTH_CODE: "+os.environ.get('AUTH_CODE'))
         if os.environ.get('platform') == 'web':
-            body = {
-                'client_id':client_id,
-                'client_secret':client_secret,
-                'code':os.environ.get('AUTH_CODE'),
-                'redirect_uri':'http://localhost:8000/'
+            if 'VERIFIER' in os.environ:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':'http://localhost:8000/',
+                    'code_verifier': os.environ.get('VERIFIER'),
                 }
+            else:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':'http://localhost:8000/'
+                }           
         else:
-            body = {
-                'client_id':client_id,
-                'client_secret':client_secret,
-                'code':os.environ.get('AUTH_CODE'),
-                'redirect_uri':'http://10.0.2.2:8000/'
+            if 'VERIFIER' in os.environ:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':'http://10.0.2.2:8000/',
+                    'code_verifier': os.environ.get('VERIFIER'),
+                }
+            else:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':'http://10.0.2.2:8000/'
                 }
 
         if(grant_type != None):
