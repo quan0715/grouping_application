@@ -19,7 +19,7 @@ class BuildingPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            HeadlineWithContent(headLineText: '測試頁面', content: errorMessage),
+            TitleWithContent(title: '測試頁面', content: errorMessage),
             Image.asset('assets/images/technical_support.png'),
             //MaterialButton(
             //  onPressed: () {

@@ -24,8 +24,8 @@ class NotFoundPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            HeadlineWithContent(
-                headLineText: '似乎出現了一些問題', content: errorMessage),
+            TitleWithContent(
+                title: '似乎出現了一些問題', content: errorMessage),
             Image.asset('assets/images/404_not_found.png'),
             MaterialButton(
               onPressed: () {

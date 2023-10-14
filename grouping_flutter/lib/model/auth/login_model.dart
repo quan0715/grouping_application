@@ -18,14 +18,11 @@ class LoginModel {
   final LineAuth lineAuth = LineAuth();
   // final AuthService authService = AuthService();
 
-  void validateEmail(String value) {
-    // isEmailValid = EmailValidator.validate(value);
-    isEmailValid = value.isNotEmpty;
+  set accountEmail(String value) {
     email = value;
   }
 
-  void validatePassword(String value) {
-    isPasswordValid = value.length >= 6;
+  set accountPassword(String value) {
     password = value;
   }
 

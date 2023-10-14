@@ -3,15 +3,11 @@ from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from rest_framework_simplejwt.tokens import RefreshToken
-# Create your models here.
-
 
 class Image(models.Model):
     data = models.ImageField(upload_to='images/')
     updated_at = models.DateTimeField(auto_now=True)
 
-
-# Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self, account="", user_name = 'unknown', password="", introduction="", slogan=""):
         if account is None:

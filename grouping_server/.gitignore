@@ -2,6 +2,10 @@
 
 # test database
 *.sqlite3
+
+# Local media directories for test database
+media/
+
 # Files and directories created by pub
 .dart_tool/
 .packages
