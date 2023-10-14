@@ -44,6 +44,27 @@ class WorkspaceSerializer(serializers.ModelSerializer):
                     belong_workspace=workspace, **tag_data)
         return workspace
 
+    def update(self, instance, validated_data):
+        photo_data = validated_data.pop('photo', None)
+        tags_data = validated_data.pop('tags', None)
+
+        instance = super().update(instance, validated_data)
+
+        if photo_data:
+            if instance.photo:
+                instance.photo.delete()
+            photo = Image.objects.create(**photo_data)
+            instance.photo = photo
+            instance.save()
+
+        if tags_data:
+            instance.tags.all().delete()
+            for tag_data in tags_data:
+                WorkspaceTag.objects.create(
+                    belong_workspace=instance, **tag_data)
+
+        return instance
+
 
 class UserTagSerializer(serializers.ModelSerializer):
     class Meta:
