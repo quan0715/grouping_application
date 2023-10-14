@@ -1,4 +1,3 @@
-from typing_extensions import Self
 from rest_framework import serializers
 from .models import Image, User, UserTag,  MissionState, Activity, ActivityNotification, Event, Mission, WorkspaceTag,  Workspace
 
