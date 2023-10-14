@@ -199,10 +199,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'account', 'password', 'real_name',
-                  'user_name', 'slogan', 'introduction', 'photo',
-                  'tags', 'joined_workspaces', 'contributing_activities']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction',
+                  'photo', 'tags', 'joined_workspaces', 'contributing_activities']
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', None)
