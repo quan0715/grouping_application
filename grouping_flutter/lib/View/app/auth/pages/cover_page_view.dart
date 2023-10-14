@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/View/app/auth/auth_view.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
+import 'package:grouping_project/config/assets.dart';
 import 'package:provider/provider.dart';
+
+import '../../../theme/theme.dart';
 
 class CoverView extends StatefulWidget {
   const CoverView({Key? key}) : super(key: key);
@@ -18,7 +20,7 @@ class _CoverViewState extends State<CoverView> with TickerProviderStateMixin{
   void initState() {
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
     )..addListener(() {
         setState(() {});
       });
@@ -55,6 +57,27 @@ class _CoverViewState extends State<CoverView> with TickerProviderStateMixin{
           ),
         )
       )
+    );
+  }
+}
+
+class BackGroundContainer extends StatelessWidget {
+  final Widget? child;
+  const BackGroundContainer({super.key, this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        //color: AppColor.surface(context),
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+            colorFilter: ColorFilter.mode(
+                AppColor.surface(context).withOpacity(0.95), BlendMode.screen),
+            image: const AssetImage(Assets.coverImagePath),
+            fit: BoxFit.values[4]),
+      ),
+      child: child ?? const SizedBox.expand(),
     );
   }
 }
