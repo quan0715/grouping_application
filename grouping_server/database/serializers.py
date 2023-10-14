@@ -124,11 +124,19 @@ class ActivitySerializer(serializers.ModelSerializer):
         event_data = validated_data.pop('event', None)
         mission_data = validated_data.pop('mission', None)
         notifications_data = validated_data.pop('notifications', None)
+
+        if event_data and mission_data:
+            raise serializers.ValidationError(
+                "An activity can only be connected to either an Event or a Mission, not both.")
+        elif (not event_data) and (not mission_data):
+            raise serializers.ValidationError(
+                "An activity must connected to either an Event or a Mission.")
+
         activity = Activity.objects.create(**validated_data)
 
         if event_data:
             Event.objects.create(belong_activity=activity, **event_data)
-        if mission_data:
+        elif mission_data:
             Mission.objects.create(belong_activity=activity, **mission_data)
         if notifications_data:
             for notification_data in notifications_data:
