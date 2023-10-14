@@ -4,7 +4,7 @@ import 'package:grouping_project/View/components/app_elevated_button.dart';
 import 'package:grouping_project/View/components/title_with_content.dart';
 import 'package:grouping_project/View/theme/color.dart';
 import 'package:grouping_project/View/theme/padding.dart';
-import 'package:grouping_project/ViewModel/auth/sign_in_view_model.dart';
+import 'package:grouping_project/ViewModel/auth/register_view_model.dart';
 import 'package:grouping_project/config/assets.dart';
 import 'package:provider/provider.dart';
 

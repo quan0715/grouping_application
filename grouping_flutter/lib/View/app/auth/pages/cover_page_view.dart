@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:grouping_project/View/theme/theme.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/config/assets.dart';
 import 'package:provider/provider.dart';
 
-import '../../../theme/theme.dart';
 
 class CoverView extends StatefulWidget {
   const CoverView({Key? key}) : super(key: key);

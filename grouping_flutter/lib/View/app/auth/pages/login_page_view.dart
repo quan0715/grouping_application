@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grouping_project/View/app/auth/components/action_text_button.dart';
 import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
 import 'package:grouping_project/View/app/auth/components/auth_text_form_field.dart';
+import 'package:grouping_project/View/app/auth/components/third_party_login_button.dart';
 import 'package:grouping_project/View/components/app_elevated_button.dart';
 import 'package:grouping_project/View/components/title_with_content.dart';
 import 'package:grouping_project/View/theme/theme.dart';
@@ -12,7 +13,7 @@ import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:grouping_project/service/auth/google_auth.dart';
 import 'package:grouping_project/service/auth/line_auth.dart';
 import 'package:provider/provider.dart';
-import '../components/third_party_login_button.dart';
+
 class WebLoginViewPage extends AuthLayoutInterface{
   WebLoginViewPage({Key? key}) : super(key: key);
 
