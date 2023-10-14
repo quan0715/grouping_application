@@ -7,19 +7,12 @@ import 'package:grouping_project/service/auth/auth_service.dart';
 class LoginModel {
   String email = "";
   String password = "";
-  bool isEmailValid = true;
-  bool isPasswordValid = true;
-  bool get isFormValid => isEmailValid && isPasswordValid;
-  // final AuthService authService = AuthService();
 
-  void validateEmail(String value) {
-    // isEmailValid = EmailValidator.validate(value);
-    isEmailValid = value.isNotEmpty;
+  set accountEmail(String value) {
     email = value;
   }
 
-  void validatePassword(String value) {
-    isPasswordValid = value.length >= 6;
+  set accountPassword(String value) {
     password = value;
   }
 

@@ -104,7 +104,7 @@ flutter:
     - assets/icons/
     - assets/icons/authIcon/
     - assets/icons/appBar/
-    - .env
+    - assets/.env
 
   fonts:
      - family: NotoSansTC

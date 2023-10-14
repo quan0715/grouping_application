@@ -9,29 +9,30 @@ class LoginViewModel extends ChangeNotifier {
 
   String get password => passwordLoginModel.password;
   String get email => passwordLoginModel.email;
-  bool get isEmailValid => passwordLoginModel.isEmailValid;
-  bool get isPasswordValid => passwordLoginModel.isPasswordValid;
-  bool get isFormValid => passwordLoginModel.isFormValid;
+  // bool get isEmailValid => passwordLoginModel.isEmailValid;
+  // bool get isPasswordValid => passwordLoginModel.isPasswordValid;
+  // bool get isFormValid => passwordLoginModel.isFormValid;
+
   bool isLoading = false;
   LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
-    passwordLoginModel.validateEmail(value);
+    passwordLoginModel.accountEmail = value;
     notifyListeners();
   }
 
   void updatePassword(String value) {
-    passwordLoginModel.validatePassword(value);
+    passwordLoginModel.password = value;
     // debugPrint("Password: $value");
     notifyListeners();
   }
 
   String? emailValidator(value) {
-    return isEmailValid ? null : "請輸入正確的信箱";
+    return email.isNotEmpty ? null : "信箱不得為空";
   }
 
   String? passwordValidator(value) {
-    return isPasswordValid ? null : "請輸入正確的密碼";
+    return password.length >= 6 ? null : "密碼過短";
   }
 
   Future<void> onFormPasswordLogin() async {

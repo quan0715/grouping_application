@@ -14,17 +14,24 @@ class ThemeModel{
         ? Icons.nightlight_round
         : Icons.wb_sunny;
     coverLogo = brightness == Brightness.light
-        ? SvgPicture.asset(
-            "assets/images/logo_dark.svg",
-            semanticsLabel: 'Grouping Logo',
-          )
-        : SvgPicture.asset(
-            "assets/images/logo_light.svg",
-            semanticsLabel: 'Grouping Logo',
-          );
+        ? logoDark
+        : logoLight;
     brightness =
         brightness == Brightness.light ? Brightness.dark : Brightness.light;
   }
+
+  Widget logoLight = SvgPicture.asset(
+    "assets/images/logo_light.svg",
+    semanticsLabel: 'Grouping Logo',
+  );
+
+  Widget logoDark = SvgPicture.asset(
+    "assets/images/logo_dark.svg",
+    semanticsLabel: 'Grouping Logo',
+  );
+
+
+
   set m3ColorSchemeSeed(Color color) {
     colorSchemeSeed = color;
   }
