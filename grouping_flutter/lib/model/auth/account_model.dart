@@ -139,7 +139,7 @@ class AccountModel extends BaseDataModel<AccountModel>
   }
 
   /// convert two `List<String>` to `List<AccountTag>`
-  List<AccountTag> _fromBackendTags(
+  static List<AccountTag> _fromBackendTags(
       List<String> tagList, List<String> tagContentList) {
     List<AccountTag> processList = [];
     for (var i = 0; i < tagList.length; i++) {
@@ -166,9 +166,8 @@ class AccountModel extends BaseDataModel<AccountModel>
     'associate_entity_id': this.associateEntityId,
   };
 
-  @override
-  AccountModel fromJson({required String id, required Map<String, dynamic> data}) => AccountModel(
-    accountId: id,
+  factory AccountModel.fromJson({required Map<String, dynamic> data}) => AccountModel(
+    accountId: data['id'] as String,      // TODO: id? userid?
     name: data['name'] as String,
     nickname: data['nickname'] as String,
     email: data['email'] as String,
