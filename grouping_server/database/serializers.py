@@ -73,6 +73,11 @@ class UserTagSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    start_time = serializers.DateTimeField(
+        input_formats=["%Y-%m-%d", "iso-8601"])
+    end_time = serializers.DateTimeField(
+        input_formats=["%Y-%m-%d", "iso-8601"])
+
     class Meta:
         model = Event
         fields = ['start_time', 'end_time']
