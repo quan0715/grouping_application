@@ -17,6 +17,7 @@ class WorkspaceTagSerializer(serializers.ModelSerializer):
 class WorkspaceSerializer(serializers.ModelSerializer):
     tags = WorkspaceTagSerializer(
         many=True, required=False, allow_empty=True)
+    photo = ImageSerializer(required=False)
 
     class Meta:
         model = Workspace
@@ -27,8 +28,16 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        validated_data.pop('members', None)
+        photo_data = validated_data.pop('photo', None)
         tags_data = validated_data.pop('tags', None)
-        workspace = Workspace.objects.create(**validated_data)
+
+        if photo_data:
+            photo = Image.objects.create(**photo_data)
+            workspace = Workspace.objects.create(photo=photo, **validated_data)
+        else:
+            workspace = Workspace.objects.create(**validated_data)
+
         if tags_data:
             for tag_data in tags_data:
                 WorkspaceTag.objects.create(
