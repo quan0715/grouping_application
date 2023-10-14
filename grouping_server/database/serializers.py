@@ -155,45 +155,41 @@ class ActivityPatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ['id', 'title', 'description', 'creator',
-                  'created_at', 'belong_workspace', 'childs',
-                  'parents', 'contributors', 'event', 'mission', 'notifications']
-        extra_kwargs = {'childs': {'many': True},
-                        'contributors': {'many': True}}
+        fields = ['id', 'title', 'description', 'creator', 'created_at', 'belong_workspace',
+                  'childs', 'parents', 'contributors', 'event', 'mission', 'notifications']
+        extra_kwargs = {
+            'childs': {'many': True, 'required': False},
+            'contributors': {'many': True, 'required': False}
+        }
 
     def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
-
-    def update(self, instance, validated_data):
-        instance = super().update(instance, validated_data)
         event_data = validated_data.pop('event', None)
         mission_data = validated_data.pop('mission', None)
         notifications_data = validated_data.pop('notifications', None)
-        activity = Activity.objects.create(**validated_data)
+
+        instance = super().update(instance, validated_data)
 
         if event_data:
             try:
                 event = Event.objects.get(belong_activity=instance)
                 EventSerializer().update(event, event_data)
             except Event.DoesNotExist:
-                EventSerializer().create(belong_activity=instance, **event_data)
-        if mission_data:
+                raise serializers.ValidationError(
+                    'The event field can only be write into an event.')
+        elif mission_data:
             try:
                 mission = Mission.objects.get(belong_activity=instance)
                 MissionSerializer().update(mission, mission_data)
             except Mission.DoesNotExist:
-                mission = MissionSerializer().create(belong_activity=instance, **mission_data)
+                raise serializers.ValidationError(
+                    'The mission field can only be write into an mission.')
         if notifications_data:
+            instance.notifications.all().delete()
             for notification_data in notifications_data:
-                notification_id = notification_data.get('id', None)
-                if notification_id:
-                    notification = ActivityNotification.objects.get(
-                        id=notification_id, belong_activity=instance)
-                    ActivityNotificationSerializer().update(notification, notification_data)
-                else:
-                    ActivityNotificationSerializer().create(
-                        belong_activity=instance, **notification_data)
-        return activity
+                ActivityNotification.objects.create(
+                    belong_activity=instance, **notification_data)
+
+        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
