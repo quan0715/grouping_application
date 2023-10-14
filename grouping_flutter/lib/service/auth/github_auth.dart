@@ -53,7 +53,7 @@ class GitHubAuth {
 
   Future handleCodeAndGetProfile() async {
     try {
-      platformedOauth2.requestProfile();
+      await platformedOauth2.requestProfile();
     } catch (e) {
       debugPrint(e.toString());
     } finally {

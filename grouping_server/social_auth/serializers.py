@@ -108,6 +108,7 @@ class GitHubSocialAuthSerializer(serializers.Serializer):
 
 class CallbackSerializer(serializers.Serializer):
 
+    code = serializers.CharField(max_length=255)
     _dict = {}
 
     def __init__(self, instance=None, data=..., **kwargs):

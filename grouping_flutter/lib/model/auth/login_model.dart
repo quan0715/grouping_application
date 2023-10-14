@@ -3,6 +3,9 @@ import 'package:grouping_project/View/components/state.dart';
 import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 // import 'package:grouping_project/VM/state.dart';
+import 'package:grouping_project/service/auth/github_auth.dart';
+import 'package:grouping_project/service/auth/google_auth.dart';
+import 'package:grouping_project/service/auth/line_auth.dart';
 
 class LoginModel {
   String email = "";
@@ -10,6 +13,9 @@ class LoginModel {
   bool isEmailValid = true;
   bool isPasswordValid = true;
   bool get isFormValid => isEmailValid && isPasswordValid;
+  final GitHubAuth githubAuth = GitHubAuth();
+  final GoogleAuth googleAuth = GoogleAuth();
+  final LineAuth lineAuth = LineAuth();
   // final AuthService authService = AuthService();
 
   void validateEmail(String value) {
@@ -46,11 +52,20 @@ class LoginModel {
     }
   }
 
-  Future<LoginState> thirdPartyLogin(
-      AuthProvider provider, BuildContext context) async {
+  Future<LoginState> thirdPartyLogin(AuthProvider provider) async {
     try {
-      AuthService authService = AuthService();
-      await authService.thridPartyLogin(provider, context);
+      switch (provider) {
+        case AuthProvider.google:
+          await googleAuth.initializeOauthPlatform();
+          break;
+        case AuthProvider.github:
+          await githubAuth.initializeOauthPlatform();
+          break;
+        case AuthProvider.line:
+          await lineAuth.initializeOauthPlatform();
+          break;
+        default:
+      }
       // TODO: add email login method
     } catch (e) {
       debugPrint(e.toString());

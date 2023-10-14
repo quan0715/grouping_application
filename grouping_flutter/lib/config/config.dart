@@ -1,5 +1,6 @@
 class Config {
-  static String frontEndUrl = 'http://localhost:5000';
+  static String frontEndUrlWeb = 'http://localhost:5000';
+  static String frontEndUrlMobile = 'http://10.0.2.2:5000';
   static String baseUriWeb = 'http://localhost:8000';
   static String baseUriMobile = 'http://10.0.2.2:8000';
 

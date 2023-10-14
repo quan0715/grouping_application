@@ -13,6 +13,7 @@ import 'package:grouping_project/service/auth/auth_service.dart';
 import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:grouping_project/service/auth/google_auth.dart';
 import 'package:grouping_project/service/auth/line_auth.dart';
+
 import 'package:provider/provider.dart';
 
 class WebLoginView extends StatefulWidget {

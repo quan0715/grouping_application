@@ -11,6 +11,9 @@ import 'package:grouping_project/service/auth/auth_service.dart';
 
 import 'oauth2_base.dart';
 
+/// 1. [initializeOauthPlatform] is to initialize required parameter
+/// 2. [showWindowAndListen] is to sho the tab/webView
+/// 3. [handleCodeAndGetProfile] is to connect to backend and login
 class LineAuth {
   late final BaseOauth platformedOauth2;
 
@@ -52,7 +55,7 @@ class LineAuth {
 
   Future handleCodeAndGetProfile() async {
     try {
-      platformedOauth2.requestProfile();
+      await platformedOauth2.requestProfile();
     } catch (e) {
       debugPrint(e.toString());
     } finally {

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:js_util';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -33,7 +33,8 @@ class BaseOauth {
   final Uri tokenEndpoint;
   final String? clientSecret;
   late final Uri authorizationUrl;
-  final Uri redirectedUrl = Uri.parse('${Config.baseUriWeb}/auth/callback/');
+  final Uri redirectedUrl = Uri.parse(
+      '${kIsWeb ? Config.frontEndUrlWeb : Config.frontEndUrlMobile}/auth/callback/');
   final List<String> scopes;
   late final bool pkceSupported;
   late final bool stateSupported;
@@ -42,6 +43,9 @@ class BaseOauth {
       32,
       (_) => 'abcdefghijklmnopqrstuvwxyz0123456789'
           .codeUnitAt(Random().nextInt(26))));
+  ValueNotifier<html.WindowBase> authWindowNotifier =
+      ValueNotifier(newObject());
+  ValueNotifier<WebViewWidget> authWidgetNotifier = ValueNotifier(newObject());
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
   /// 2. [showWindowAndListen] is to show new tab, need context as parameter
@@ -132,6 +136,20 @@ class BaseOauth {
         body: {'platform': kIsWeb ? 'web' : 'mobile'});
   }
 
+  Future _informCode() async {
+    String stringUrl;
+    if (kIsWeb) {
+      stringUrl = '${Config.baseUriWeb}/auth/callback/';
+    } else {
+      stringUrl = '${Config.baseUriMobile}/auth/callback/';
+    }
+    FlutterSecureStorage storage = FlutterSecureStorage();
+
+    String? code = await storage.read(key: 'code');
+
+    Response response = await post(Uri.parse(stringUrl), body: {'code': code!});
+  }
+
   Future initialLoginFlow() async {
     _getSignInGrant();
     authorizationUrl = grant.getAuthorizationUrl(redirectedUrl,
@@ -146,7 +164,7 @@ class BaseOauth {
     if (kIsWeb) {
       html.WindowBase window;
       window = html.window.open(authorizationUrl.toString(), "_blank");
-
+      authWindowNotifier.value = window;
       while (window.closed != null && !window.closed!) {
         await Future.delayed(Duration(seconds: 1));
       }
@@ -174,11 +192,12 @@ class BaseOauth {
         )
         ..loadRequest(authorizationUrl);
 
+      authWidgetNotifier.value = WebViewWidget(controller: controller);
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) {
-            return WebViewWidget(controller: controller);
+            return authWidgetNotifier.value;
           },
         ),
       );
@@ -187,6 +206,7 @@ class BaseOauth {
   }
 
   Future requestProfile() async {
+    await _informCode();
     Object body = {};
     try {
       Uri url;

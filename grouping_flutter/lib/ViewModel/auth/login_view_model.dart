@@ -55,14 +55,13 @@ class LoginViewModel extends ChangeNotifier {
     // debugPrint(loginState.toString());
   }
 
-  Future<void> onThirdPartyLogin(
-      AuthProvider provider, BuildContext context) async {
+  Future<void> onThirdPartyLogin(AuthProvider provider) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
     try {
       isLoading = true;
       notifyListeners();
-      var result = await passwordLoginModel.thirdPartyLogin(provider, context);
+      var result = await passwordLoginModel.thirdPartyLogin(provider);
       loginState = result;
       isLoading = false;
       // debugPrint(loginState.toString());
