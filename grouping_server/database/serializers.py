@@ -22,8 +22,9 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         model = Workspace
         fields = ['id', 'theme_color', 'workspace_name',
                   'description', 'is_personal', 'photo', 'members', 'tags']
-        extra_kwargs = {'photo': {'required': False},
-                        'members': {'many': True, 'read_only': True}}
+        extra_kwargs = {
+            'members': {'many': True, 'required': False, 'allow_empty': True}
+        }
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', None)
