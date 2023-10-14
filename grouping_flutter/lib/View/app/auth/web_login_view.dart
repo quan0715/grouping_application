@@ -167,10 +167,10 @@ class _WebLoginViewState extends State<WebLoginView> {
             color: Colors.green,
             iconPath: lineIconPath,
             onPressed: () async {
-              LineAuth googleAuth = LineAuth();
-              await googleAuth.initializeOauthPlatform();
-              await googleAuth.showWindowAndListen(context);
-              googleAuth.handleCodeAndGetProfile();
+              LineAuth lineAuth = LineAuth();
+              await lineAuth.initializeOauthPlatform();
+              await lineAuth.showWindowAndListen(context);
+              lineAuth.handleCodeAndGetProfile();
             }),
       ],
     );

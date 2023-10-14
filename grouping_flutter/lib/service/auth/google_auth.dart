@@ -7,9 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 
-import 'oauth2_web.dart'
-    if (Platform.isAndroid) 'oauth2_mobile.dart'
-    if (Platform.isIOS) 'oauth2_mobile.dart';
+import 'oauth2_base.dart';
 
 class GoogleAuth {
   bool isLoading = false;
@@ -45,13 +43,13 @@ class GoogleAuth {
     await dotenv.load(fileName: ".env");
 
     platformedOauth2 = BaseOauth(
-      clientId: await _getCorrectGoogleClientId(),
-      clientSecret: await _getCorrectGoogleClientSecret(),
-      scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
-      authorizationEndpoint: Config.googleAuthEndpoint,
-      tokenEndpoint: Config.googleTokenEndpoint,
-      provider: AuthProvider.google,
-    );
+        clientId: await _getCorrectGoogleClientId(),
+        clientSecret: await _getCorrectGoogleClientSecret(),
+        scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
+        authorizationEndpoint: Config.googleAuthEndpoint,
+        tokenEndpoint: Config.googleTokenEndpoint,
+        provider: AuthProvider.google,
+        usePkce: true);
     const storage = FlutterSecureStorage();
 
     await storage.write(

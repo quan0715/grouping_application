@@ -9,9 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 
-import 'oauth2_web.dart'
-    if (Platform.isAndroid) 'oauth2_mobile.dart'
-    if (Platform.isIOS) 'oauth2_mobile.dart';
+import 'oauth2_base.dart';
 
 class LineAuth {
   late final BaseOauth platformedOauth2;
@@ -26,6 +24,7 @@ class LineAuth {
         authorizationEndpoint: Config.lineAuthEndPoint,
         tokenEndpoint: Config.lineTokenEndpoint,
         provider: AuthProvider.line,
+        useState: true,
       );
     } else {
       {
@@ -37,6 +36,7 @@ class LineAuth {
           authorizationEndpoint: Config.lineAuthEndPoint,
           tokenEndpoint: Config.lineTokenEndpoint,
           provider: AuthProvider.line,
+          useState: true,
         );
       }
     }

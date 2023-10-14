@@ -11,9 +11,7 @@ import 'package:grouping_project/service/auth/auth_service.dart';
 import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 
-import 'oauth2_web.dart'
-    if (Platform.isAndroid) 'oauth2_mobile.dart'
-    if (Platform.isIOS) 'oauth2_mobile.dart';
+import 'oauth2_base.dart';
 
 /// 1. [initializeOauthPlatform] is to initialize required parameter
 /// 2. [showWindowAndListen] is to sho the tab/webView
@@ -33,7 +31,6 @@ class GitHubAuth {
         provider: AuthProvider.github,
       );
     } else {
-      debugPrint('else');
       platformedOauth2 = BaseOauth(
         clientId: dotenv.env['GITHUB_CLIENT_ID_MOBILE']!,
         clientSecret: dotenv.env['GITHUB_CLIENT_SECRET_MOBILE']!,
