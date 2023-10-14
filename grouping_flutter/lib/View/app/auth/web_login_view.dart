@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:html' as html;
+
 import 'package:grouping_project/View/app/auth/auth_view.dart';
 import 'package:grouping_project/View/theme/color.dart';
 import 'package:grouping_project/View/theme/padding.dart';
@@ -6,6 +10,9 @@ import 'package:grouping_project/View/theme/text.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/github_auth.dart';
+import 'package:grouping_project/service/auth/google_auth.dart';
+import 'package:grouping_project/service/auth/line_auth.dart';
 import 'package:provider/provider.dart';
 
 class WebLoginView extends StatefulWidget {
@@ -85,9 +92,9 @@ class _WebLoginViewState extends State<WebLoginView> {
                       }
                     },
                     style: buttonStyle,
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Expanded(
                             child: Text(
                           "登入",
@@ -141,23 +148,29 @@ class _WebLoginViewState extends State<WebLoginView> {
         thirdPartyLoginButton(
             color: Colors.blue,
             iconPath: googleIconPath,
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.googleSignIn();
+            onPressed: () async {
+              GoogleAuth googleAuth = GoogleAuth();
+              await googleAuth.initializeOauthPlatform();
+              await googleAuth.showWindowAndListen(context);
+              googleAuth.handleCodeAndGetProfile();
             }),
         thirdPartyLoginButton(
             color: Colors.purple,
             iconPath: gitHubIconPath,
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.githubSignIn(context);
+            onPressed: () async {
+              GitHubAuth gitHubAuth = GitHubAuth();
+              await gitHubAuth.initializeOauthPlatform();
+              await gitHubAuth.showWindowAndListen(context);
+              gitHubAuth.handleCodeAndGetProfile();
             }),
         thirdPartyLoginButton(
             color: Colors.green,
             iconPath: lineIconPath,
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.lineSignIn(context);
+            onPressed: () async {
+              LineAuth googleAuth = LineAuth();
+              await googleAuth.initializeOauthPlatform();
+              await googleAuth.showWindowAndListen(context);
+              googleAuth.handleCodeAndGetProfile();
             }),
       ],
     );
@@ -202,6 +215,15 @@ class _WebLoginViewState extends State<WebLoginView> {
         ],
       ),
     ));
+    if (Uri.base.queryParameters.containsKey('code')) {
+      const storage = FlutterSecureStorage();
+
+      storage
+          .write(
+              key: 'auth-token-to-exchange',
+              value: Uri.base.queryParameters['code'])
+          .whenComplete(() => html.window.close());
+    }
     return ChangeNotifierProvider.value(
       value: loginManager,
       child: Scaffold(

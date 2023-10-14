@@ -60,6 +60,10 @@ dependencies:
   flutter_dotenv: ^5.1.0
   # For token storage
   flutter_secure_storage: ^8.0.0
+  # pkce and encrypt
+  pkce: ^1.1.0+1
+  encrypt: ^5.0.3
+
 
 dev_dependencies:
   flutter_test:
@@ -100,6 +104,7 @@ flutter:
     - assets/icons/
     - assets/icons/authIcon/
     - assets/icons/appBar/
+    - .env
 
   fonts:
      - family: NotoSansTC

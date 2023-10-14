@@ -1,15 +1,19 @@
 import "dart:io";
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/config/config.dart';
+import 'package:grouping_project/service/auth/auth_service.dart';
 
-import 'oauth2_mobile.dart'
-    if (kIsWeb) 'oauth2_web.dart'
-    if (Platform.isWindows) 'oauth2_web.dart';
+import 'oauth2_web.dart'
+    if (Platform.isAndroid) 'oauth2_mobile.dart'
+    if (Platform.isIOS) 'oauth2_mobile.dart';
 
 class GoogleAuth {
   bool isLoading = false;
+  late final BaseOauth platformedOauth2;
 
   Future<String> _getCorrectGoogleClientId() async {
     await dotenv.load(fileName: ".env");
@@ -37,27 +41,35 @@ class GoogleAuth {
     }
   }
 
-  Future signInWeb() async {
+  Future initializeOauthPlatform() async {
     await dotenv.load(fileName: ".env");
-    BaseOauth oauth2 = BaseOauth(
+
+    platformedOauth2 = BaseOauth(
       clientId: await _getCorrectGoogleClientId(),
       clientSecret: await _getCorrectGoogleClientSecret(),
       scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
       authorizationEndpoint: Config.googleAuthEndpoint,
       tokenEndpoint: Config.googleTokenEndpoint,
+      provider: AuthProvider.google,
     );
-    // oauth2.signIn();
+    const storage = FlutterSecureStorage();
+
+    await storage.write(
+        key: 'auth-provider', value: AuthProvider.google.string);
+    platformedOauth2.initialLoginFlow();
   }
 
-  Future signInMobile() async {
-    await dotenv.load(fileName: ".env");
-    BaseOauth oauth2 = BaseOauth(
-      clientId: await _getCorrectGoogleClientId(),
-      clientSecret: await _getCorrectGoogleClientSecret(),
-      scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
-      authorizationEndpoint: Config.googleAuthEndpoint,
-      tokenEndpoint: Config.googleTokenEndpoint,
-    );
-    // oauth2.signIn();
+  Future showWindowAndListen(BuildContext context) async {
+    await platformedOauth2.showWindowAndListen(context);
+  }
+
+  Future handleCodeAndGetProfile() async {
+    try {
+      platformedOauth2.requestProfile();
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      platformedOauth2.grant.close();
+    }
   }
 }
