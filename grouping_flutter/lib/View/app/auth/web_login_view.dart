@@ -11,6 +11,8 @@ import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 import 'package:grouping_project/service/auth/github_auth.dart';
+import 'package:grouping_project/service/auth/google_auth.dart';
+import 'package:grouping_project/service/auth/line_auth.dart';
 import 'package:provider/provider.dart';
 
 class WebLoginView extends StatefulWidget {
@@ -90,9 +92,9 @@ class _WebLoginViewState extends State<WebLoginView> {
                       }
                     },
                     style: buttonStyle,
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Expanded(
                             child: Text(
                           "登入",
@@ -146,23 +148,29 @@ class _WebLoginViewState extends State<WebLoginView> {
         thirdPartyLoginButton(
             color: Colors.blue,
             iconPath: googleIconPath,
-            onPressed: () {
-              loginManager.onThirdPartyLogin(AuthProvider.google, context);
+            onPressed: () async {
+              GoogleAuth googleAuth = GoogleAuth();
+              await googleAuth.initializeOauthPlatform();
+              await googleAuth.showWindowAndListen(context);
+              googleAuth.handleCodeAndGetProfile();
             }),
         thirdPartyLoginButton(
             color: Colors.purple,
             iconPath: gitHubIconPath,
             onPressed: () async {
-              GitHubAuth gitHubAuthVM = GitHubAuth();
-              await gitHubAuthVM.initializeOauthPlatform();
-              await gitHubAuthVM.showWindowAndListen(context);
-              gitHubAuthVM.handleCodeAndGetProfile();
+              GitHubAuth gitHubAuth = GitHubAuth();
+              await gitHubAuth.initializeOauthPlatform();
+              await gitHubAuth.showWindowAndListen(context);
+              gitHubAuth.handleCodeAndGetProfile();
             }),
         thirdPartyLoginButton(
             color: Colors.green,
             iconPath: lineIconPath,
-            onPressed: () {
-              loginManager.onThirdPartyLogin(AuthProvider.line, context);
+            onPressed: () async {
+              LineAuth googleAuth = LineAuth();
+              await googleAuth.initializeOauthPlatform();
+              await googleAuth.showWindowAndListen(context);
+              googleAuth.handleCodeAndGetProfile();
             }),
       ],
     );

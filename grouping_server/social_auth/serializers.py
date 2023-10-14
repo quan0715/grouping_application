@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from Crypto.Cipher import AES
 import base64
 
+from google.auth.transport import requests as googleRequest
+from google.oauth2 import id_token
+
 import os
 
 from . import register
@@ -32,6 +35,7 @@ class VerifierSerializer(serializers.Serializer):
     def validate(self, attrs):
         cipher = AES.new(b'haha8787 I am not sure fjkfjkfjk',AES.MODE_ECB)
         os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
+        print("VERIFIER: "+os.environ.get("VERIFIER"))
         return super().validate(attrs)
 
 class LoginSerializer(serializers.Serializer):
@@ -140,7 +144,7 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                     'client_id':client_id,
                     'client_secret':client_secret,
                     'code':os.environ.get('AUTH_CODE'),
-                    'redirect_uri':'http://localhost:8000/',
+                    'redirect_uri':Config.baseUriWeb+"/auth/callback/",
                     'code_verifier': os.environ.get('VERIFIER'),
                 }
             else:
@@ -148,7 +152,7 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                     'client_id':client_id,
                     'client_secret':client_secret,
                     'code':os.environ.get('AUTH_CODE'),
-                    'redirect_uri':'http://localhost:8000/'
+                    'redirect_uri':Config.baseUriWeb+"/auth/callback/"
                 }           
         else:
             if 'VERIFIER' in os.environ:
@@ -156,7 +160,7 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                     'client_id':client_id,
                     'client_secret':client_secret,
                     'code':os.environ.get('AUTH_CODE'),
-                    'redirect_uri':'http://10.0.2.2:8000/',
+                    'redirect_uri':Config.baseUriMobile+"/auth/callback/",
                     'code_verifier': os.environ.get('VERIFIER'),
                 }
             else:
@@ -164,16 +168,37 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                     'client_id':client_id,
                     'client_secret':client_secret,
                     'code':os.environ.get('AUTH_CODE'),
-                    'redirect_uri':'http://10.0.2.2:8000/'
+                    'redirect_uri':Config.baseUriMobile+"/auth/callback/"
                 }
 
         if(grant_type != None):
             body['grant_type'] = grant_type
         result = requests.post(tokenEndpoint,json =  body,headers={'Accept': 'application/json'})
         result = result.json()
+        print("Result: =======================>")
         print(result)
-        if 'access_token' in result:
-            print("Heeeeeeeeeeere it is! "+result['access_token'])
+        if 'id_token' in result:
+            user = id_token.verify_oauth2_token(
+                result['id_token'], googleRequest.Request(),clock_skew_in_seconds = 2)
+            
+            print("User: =======================>")
+            print(user)
+
+            if 'accounts.google.com' in user['iss']:
+                if 'sub' in user:
+                    result = register.login_user(
+                    account = user['sub'])
+                    if 'error' in result:
+                        result = register.register_user(
+                            account = user['sub'],
+                            name = user['name'])
+                return result
+            else:
+                return {
+                'error-code': 'google_id_token_verify_error',
+                'error':'when google id token verify, unexpected error happended'
+            }
+        elif 'access_token' in result:
             user = requests.get(userPorfileEndpoint,
                                 headers={
                                     'Accept': 'application/json',
@@ -181,13 +206,15 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                                     },
                                 )
             user=user.json()
+            print("User: =======================>")
             print(user)
-            result = register.login_user(
-                account = user['id'])
-            if 'error' in result:
-                result = register.register_user(
-                    account = user['id'],
-                    name = user['login'])
+            if 'id' in user:
+                result = register.login_user(
+                    account = user['id'])
+                if 'error' in result:
+                    result = register.register_user(
+                        account = user['id'],
+                        name = user['login'])
             return result
         else:
             return {

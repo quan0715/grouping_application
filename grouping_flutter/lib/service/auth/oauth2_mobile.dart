@@ -40,6 +40,7 @@ class BaseOauth {
   late final Uri authorizationUrl;
   Uri redirectedUrl = Uri.parse('${Config.baseUriMobile}/auth/callback/');
   final List<String> scopes;
+  late final bool pkceSupported;
   final PkcePair _pkcePair = PkcePair.generate(length: 96);
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
@@ -51,34 +52,41 @@ class BaseOauth {
       required this.tokenEndpoint,
       this.clientSecret,
       required this.scopes,
-      required this.provider}) {
-    // clientId = clientId;
-    // authorizationEndpoint = authorizationEndpoint;
-    // tokenEndpoint = tokenEndpoint;
-    // secret = secret;
-    // redirectedUrl = redirectedUrl;
-    // scopes = scopes;
+      required this.provider,
+      usePkce}) {
+    pkceSupported = usePkce ?? true;
   }
-  get pkcePairVerifier => encryptP.Encrypter(encryptP.AES(
+  encryptP.Encrypted get pkcePairVerifier => encryptP.Encrypter(encryptP.AES(
           encryptP.Key.fromUtf8("haha8787 I am not sure fjkfjkfjk"),
+          mode: encryptP.AESMode.ecb,
           padding: null))
-      .encrypt(_pkcePair.codeVerifier);
+      .encrypt(_pkcePair.codeVerifier, iv: encryptP.IV.fromSecureRandom(16));
 
   _getSignInGrant() {
-    grant = oauth2.AuthorizationCodeGrant(
-        clientId, authorizationEndpoint, tokenEndpoint,
-        secret: clientSecret,
-        httpClient: JsonFormatHttpClient(),
-        codeVerifier: _pkcePair.codeVerifier);
+    if (pkceSupported) {
+      grant = oauth2.AuthorizationCodeGrant(
+          clientId, authorizationEndpoint, tokenEndpoint,
+          secret: clientSecret,
+          httpClient: JsonFormatHttpClient(),
+          codeVerifier: _pkcePair.codeVerifier);
+      debugPrint("Pkcepair Verifier: ${_pkcePair.codeVerifier}");
+    } else {
+      grant = oauth2.AuthorizationCodeGrant(
+          clientId, authorizationEndpoint, tokenEndpoint,
+          secret: clientSecret, httpClient: JsonFormatHttpClient());
+    }
   }
 
   Future _informVerifierToBackend() async {
     String stringUrl;
 
-    stringUrl = '${Config.baseUriWeb}/auth/verifier/';
+    stringUrl = '${Config.baseUriMobile}/auth/verifier/';
 
-    Response response =
-        await post(Uri.parse(stringUrl), body: {'verifier': pkcePairVerifier});
+    if (pkceSupported) {
+      debugPrint(pkceSupported.toString());
+      Response response = await post(Uri.parse(stringUrl),
+          body: {'verifier': pkcePairVerifier.base64});
+    }
   }
 
   initialLoginFlow() {
@@ -105,7 +113,6 @@ class BaseOauth {
               if (change.url!.contains("code")) {
                 Navigator.of(context).pop();
                 // TODO: pass to back end needed to change
-                PassToBackEnd.toAuthBabkend(provider: provider);
                 grant.close();
               }
             },
@@ -133,11 +140,7 @@ class BaseOauth {
     try {
       Uri url;
       String stringUrl;
-      if (kIsWeb) {
-        stringUrl = '${Config.baseUriWeb}/auth/${provider.string}/';
-      } else {
-        stringUrl = '${Config.baseUriMobile}/auth/${provider.string}/';
-      }
+      stringUrl = '${Config.baseUriMobile}/auth/${provider.string}/';
 
       url = Uri.parse(stringUrl);
 
@@ -171,5 +174,14 @@ class BaseOauth {
       debugPrint("In func. toAuthBabkend: $e");
       rethrow;
     }
+  }
+
+  Future _informPlatform() async {
+    String stringUrl;
+
+    stringUrl = '${Config.baseUriMobile}/auth/platform/';
+
+    Response response =
+        await post(Uri.parse(stringUrl), body: {'platform': 'mobile'});
   }
 }

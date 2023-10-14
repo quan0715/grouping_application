@@ -92,13 +92,6 @@ class AuthService {
   Future googleSignIn() async {
     try {
       debugPrint(Platform.operatingSystem);
-      if (kIsWeb) {
-        await _googleAuth.signInWeb();
-        await PassToBackEnd.toAuthBabkend(provider: AuthProvider.google);
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        await _googleAuth.signInMobile();
-        await PassToBackEnd.toAuthBabkend(provider: AuthProvider.google);
-      }
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -116,16 +109,6 @@ class AuthService {
   Future lineSignIn(BuildContext context) async {
     try {
       // debugPrint(Platform.operatingSystem);
-      await PassToBackEnd.toInformPlatform();
-      if (kIsWeb) {
-        await _lineAuth.signInWeb(context);
-        await Future.delayed(Duration(seconds: 3));
-        await PassToBackEnd.toAuthBabkend(provider: AuthProvider.line);
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        await _lineAuth.signInMobile(context);
-      } else {
-        await _lineAuth.signInWeb(context);
-      }
     } catch (e) {
       debugPrint(e.toString());
     }

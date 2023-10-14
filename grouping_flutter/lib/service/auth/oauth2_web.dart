@@ -39,26 +39,8 @@ class BaseOauth {
       required this.scopes,
       required this.provider,
       usePkce}) {
-    pkceSupported = usePkce ?? false;
+    pkceSupported = usePkce ?? true;
   }
-
-  // Future signIn() async {
-  //   try {
-  //     grant = oauth2.AuthorizationCodeGrant(
-  //         clientId, authorizationEndpoint, tokenEndpoint,
-  //         secret: clientSecret);
-  //     authorizationUrl =
-  //         grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
-  //     // debugPrint(authorizationUrl.toString());
-
-  //     var window = html.window.open(authorizationUrl.toString(), "_blank");
-  //     await Future.delayed(Duration(seconds: 2));
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //   } finally {
-  //     grant.close();
-  //   }
-  // }
 
   encryptP.Encrypted get pkcePairVerifier => encryptP.Encrypter(encryptP.AES(
           encryptP.Key.fromUtf8("haha8787 I am not sure fjkfjkfjk"),

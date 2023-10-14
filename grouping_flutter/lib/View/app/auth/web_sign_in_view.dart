@@ -106,9 +106,9 @@ class _WebSignInViewState extends State<WebSignInView> {
                       }
                     },
                     style: buttonStyle,
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Expanded(
                             child: Text(
                           "註冊",
