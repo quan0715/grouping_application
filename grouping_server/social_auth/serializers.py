@@ -2,14 +2,41 @@ import requests
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import empty
-from . import register
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
 # from grouping_project_backend.models import UserManager, User
 from dotenv import load_dotenv
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from Crypto.Cipher import AES
+import base64
+
+from google.auth.transport import requests as googleRequest
+from google.oauth2 import id_token
 
 import os
 
+from . import register
+from .config import Config
+
 load_dotenv()
+
+class PlatformSerializer(serializers.Serializer):
+    platform = serializers.CharField(max_length=255)
+    def validate(self, attrs):
+        os.environ['PLATFORM'] = attrs.get('platform')
+
+        os.unsetenv("VERIFIER")
+        os.unsetenv("AUTH_CODE")
+
+        print('PLATFORM: '+os.environ['PLATFORM'])
+        return super().validate(attrs)
+
+class VerifierSerializer(serializers.Serializer):
+    verifier = serializers.CharField(max_length=255)
+    def validate(self, attrs):
+        cipher = AES.new(b'haha8787 I am not sure fjkfjkfjk',AES.MODE_ECB)
+        os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
+        print("VERIFIER: "+os.environ.get("VERIFIER"))
+        return super().validate(attrs)
 
 class LoginSerializer(serializers.Serializer):
     account = serializers.CharField(max_length=255)
@@ -46,18 +73,27 @@ class GoogleSocialAuthSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         return oauth2_token_exchange(client_id=os.environ.get('GOOGLE_CLIENT_ID_WEB'), client_secret=os.environ.get('GOOGLE_CLIENT_SECRET_WEB'), 
-                              tokenEndpoint='https://oauth2.googleapis.com/token',userPorfileEndpoint='https://oauth2.googleapis.com/tokeninfo',grant_type='authorization_code')
+                              tokenEndpoint=Config.googleTokenEndpoint ,userPorfileEndpoint=Config.googleUserProfileEndpoint,grant_type='authorization_code')
 
 
 class LineSocialAuthSerializer(serializers.Serializer):
-    def placeholder():
-        pass
+    def validate(self, attrs):
+        if os.environ.get('PLATFORM') == 'web':
+            return oauth2_token_exchange(client_id=os.environ.get('LINE_CLIENT_ID_WEB'), client_secret=os.environ.get('LINE_CLIENT_SECRET_WEB'), 
+                              tokenEndpoint=Config.lineTokenEndpoint,userPorfileEndpoint=Config.lineUserProfileEndpoint)
+        else:
+            return oauth2_token_exchange(client_id=os.environ.get('LINE_CLIENT_ID_MOBILE'), client_secret=os.environ.get('LINE_CLIENT_SECRET_MOBILE'), 
+                              tokenEndpoint=Config.lineTokenEndpoint,userPorfileEndpoint=Config.lineUserProfileEndpoint)
 
 class GitHubSocialAuthSerializer(serializers.Serializer):
 
     def validate(self, attrs):
-        return oauth2_token_exchange(client_id=os.environ.get('GITHUB_CLIENT_ID'), client_secret=os.environ.get('GITHUB_CLIENT_SECRET'), 
-                              tokenEndpoint='https://github.com/login/oauth/access_token',userPorfileEndpoint='https://api.github.com/user')
+        if os.environ.get('PLATFORM') == 'web':
+            return oauth2_token_exchange(client_id=os.environ.get('GITHUB_CLIENT_ID_WEB'), client_secret=os.environ.get('GITHUB_CLIENT_SECRET_WEB'), 
+                              tokenEndpoint=Config.gitHubTokenEndpoint,userPorfileEndpoint=Config.gitHubUserProfileEndpoint)
+        else:
+            return oauth2_token_exchange(client_id=os.environ.get('GITHUB_CLIENT_ID_MOBILE'), client_secret=os.environ.get('GITHUB_CLIENT_SECRET_MOBILE'), 
+                              tokenEndpoint=Config.gitHubTokenEndpoint,userPorfileEndpoint=Config.gitHubUserProfileEndpoint)
         
 
 class CallbackSerializer(serializers.Serializer):
@@ -101,20 +137,68 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
             'error' : 'No code in temparary storage, please send the oauth request again'
         }
     else:
-        print(os.environ.get('AUTH_CODE'))
-        body = {
-            'client_id':client_id,
-            'client_secret':client_secret,
-            'code':os.environ.get('AUTH_CODE'),
-            'redirect_uri':'http://localhost:8000/',
-        }
+        print("AUTH_CODE: "+os.environ.get('AUTH_CODE'))
+        if os.environ.get('platform') == 'web':
+            if 'VERIFIER' in os.environ:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':Config.baseUriWeb+"/auth/callback/",
+                    'code_verifier': os.environ.get('VERIFIER'),
+                }
+            else:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':Config.baseUriWeb+"/auth/callback/"
+                }           
+        else:
+            if 'VERIFIER' in os.environ:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':Config.baseUriMobile+"/auth/callback/",
+                    'code_verifier': os.environ.get('VERIFIER'),
+                }
+            else:
+                body = {
+                    'client_id':client_id,
+                    'client_secret':client_secret,
+                    'code':os.environ.get('AUTH_CODE'),
+                    'redirect_uri':Config.baseUriMobile+"/auth/callback/"
+                }
+
         if(grant_type != None):
             body['grant_type'] = grant_type
         result = requests.post(tokenEndpoint,json =  body,headers={'Accept': 'application/json'})
         result = result.json()
+        print("Result: =======================>")
         print(result)
-        if 'access_token' in result:
-            print("Heeeeeeeeeeere it is! "+result['access_token'])
+        if 'id_token' in result:
+            user = id_token.verify_oauth2_token(
+                result['id_token'], googleRequest.Request(),clock_skew_in_seconds = 2)
+            
+            print("User: =======================>")
+            print(user)
+
+            if 'accounts.google.com' in user['iss']:
+                if 'sub' in user:
+                    result = register.login_user(
+                    account = user['sub'])
+                    if 'error' in result:
+                        result = register.register_user(
+                            account = user['sub'],
+                            name = user['name'])
+                return result
+            else:
+                return {
+                'error-code': 'google_id_token_verify_error',
+                'error':'when google id token verify, unexpected error happended'
+            }
+        elif 'access_token' in result:
             user = requests.get(userPorfileEndpoint,
                                 headers={
                                     'Accept': 'application/json',
@@ -122,14 +206,15 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                                     },
                                 )
             user=user.json()
+            print("User: =======================>")
             print(user)
-            result = register.login_user(
-                account = user['id'],
-                name = user['login'])
-            if 'error' in result:
-                result = register.register_user(
-                    account = user['id'],
-                    name = user['login'])
+            if 'id' in user:
+                result = register.login_user(
+                    account = user['id'])
+                if 'error' in result:
+                    result = register.register_user(
+                        account = user['id'],
+                        name = user['login'])
             return result
         else:
             return {
