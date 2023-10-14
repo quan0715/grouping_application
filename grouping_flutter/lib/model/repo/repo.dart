@@ -7,18 +7,27 @@ import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
 import 'package:grouping_project/model/repo/patch_enum.dart';
 
 const String baseURL =
-    "http://{ip}"; // TODO: we need to know the django website
+    "http://ip"; // TODO: we need to know the django website
 
 class DatabaseService {
-  final String _uid;
+  final int _workSpaceUid;
   final Map<String, String> headers = {"ContentType": "application/json"};
+  http.Client _client = http.Client();
 
-  DatabaseService({required String uid}) : _uid = uid;
+  DatabaseService({required int workSpaceUid}) : _workSpaceUid = workSpaceUid;
+
+  void setClient(http.Client client){
+    _client = client;
+  }
+
+  http.Client getClient(){
+    return _client;
+  }
 
   /// user or group get event
-  Future<EventModel> _getEvent(String eventId) async {
-    final response = await http
-        .get(Uri.http("$baseURL/$_uid/activities/$eventId"), headers: headers);
+  Future<EventModel> getEvent(int eventId) async {
+    final response = await _client
+        .get(Uri.parse("$baseURL/$_workSpaceUid/activities/$eventId"), headers: headers);
 
     if (response.statusCode == 200) {
       return EventModel.fromJson(data: jsonDecode(response.body));
@@ -29,9 +38,13 @@ class DatabaseService {
   }
 
   /// user or group create event
-  Future<EventModel> _createEvent() async {
-    final response = await http
-        .post(Uri.http("$baseURL/$_uid/activities/events"), headers: headers);
+  Future<EventModel> createEvent(EventModel event) async {
+
+    Map<String, dynamic> eventBody = event.toJson();
+    eventBody.addAll({"belong_workspace": _workSpaceUid.toString()});
+
+    final response = await _client
+        .post(Uri.parse("$baseURL/$_workSpaceUid/activities/events"), headers: headers, body: jsonEncode(eventBody));
 
     // successfully set up new data
     if (response.statusCode == 201) {
@@ -43,9 +56,9 @@ class DatabaseService {
   }
 
   /// user or group get mission
-  Future<MissionModel> _getMission(String missionId) async {
-    final response = await http.get(
-        Uri.http("$baseURL/$_uid/activities/$missionId"),
+  Future<MissionModel> getMission(String missionId) async {
+    final response = await _client.get(
+        Uri.parse("$baseURL/$_workSpaceUid/activities/$missionId"),
         headers: headers);
 
     if (response.statusCode == 200) {
@@ -57,9 +70,13 @@ class DatabaseService {
   }
 
   /// user or group create mission
-  Future<MissionModel> _createMission() async {
-    final response = await http
-        .post(Uri.http("$baseURL/$_uid/activities/missions"), headers: headers);
+  Future<MissionModel> createMission(MissionModel mission) async {
+
+    Map<String, dynamic> missionBody = mission.toJson();
+    missionBody.addAll({"belong_workspace": _workSpaceUid.toString()});
+
+    final response = await _client
+        .post(Uri.parse("$baseURL/$_workSpaceUid/activities/missions"), headers: headers, body: jsonEncode(missionBody));
 
     // successfully set up new data
     if (response.statusCode == 201) {
@@ -72,8 +89,8 @@ class DatabaseService {
 
   /// can only update 'title', 'description', 'startTime', 'endTime', 'deadline'
   void _updateData(String ActivityId, ActivityCategory category) async {
-    final response = await http.patch(
-        Uri.http("$baseURL/$_uid/activities/$ActivityId"),
+    final response = await _client.patch(
+        Uri.parse("$baseURL/$_workSpaceUid/activities/$ActivityId"),
         headers: headers,
         body: {category.name.toString(): category.data});
 
@@ -86,8 +103,8 @@ class DatabaseService {
 
   /// user or group delete actvity
   void _deleteActivity(EditableCardModel activity) async {
-    final response = await http.delete(
-        Uri.parse("$baseURL/$_uid/activities/${activity.id}"),
+    final response = await _client.delete(
+        Uri.parse("$baseURL/$_workSpaceUid/activities/${activity.id}"),
         headers: headers);
 
     // successfully delete data
@@ -100,9 +117,9 @@ class DatabaseService {
 
   /// append contributor of activity
   void _appendContributor(String newContributorId, String activityId) async {
-    final response = await http.patch(
+    final response = await _client.patch(
         Uri.parse(
-            "$baseURL/$_uid/activities/$activityId/contributors/$newContributorId"),
+            "$baseURL/$_workSpaceUid/activities/$activityId/contributors/$newContributorId"),
         headers: headers,
         body: {"contributors": activityId});
 
@@ -116,9 +133,9 @@ class DatabaseService {
 
   /// append child mission of activity
   void _appendChildMission(String childMissionId, String activityId) async {
-    final response = await http.patch(
+    final response = await _client.patch(
         Uri.parse(
-            "$baseURL/$_uid/activities/$activityId/child_mission/$childMissionId"),
+            "$baseURL/$_workSpaceUid/activities/$activityId/child_mission/$childMissionId"),
         headers: headers,
         body: {"child_mission": childMissionId});
 
