@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/View/components/state.dart';
 import 'package:grouping_project/model/auth/auth_model_lib.dart';
+import 'package:grouping_project/service/auth/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();
@@ -55,13 +56,14 @@ class LoginViewModel extends ChangeNotifier {
     // debugPrint(loginState.toString());
   }
 
-  Future<void> onThirdPartyLogin(String name) async {
+  Future<void> onThirdPartyLogin(
+      AuthProvider provider, BuildContext context) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
     try {
       isLoading = true;
       notifyListeners();
-      var result = await passwordLoginModel.thirdPartyLogin(name);
+      var result = await passwordLoginModel.thirdPartyLogin(provider, context);
       loginState = result;
       isLoading = false;
       // debugPrint(loginState.toString());

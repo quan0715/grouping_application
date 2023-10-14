@@ -1,4 +1,8 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:grouping_project/View/app/app_view.dart';
 import 'package:grouping_project/View/app/auth/auth_view.dart';
@@ -14,6 +18,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    storage.deleteAll();
     return MultiProvider(
       providers: [
         // 呼叫 theme_manager.dart
@@ -30,7 +36,9 @@ class MyApp extends StatelessWidget {
             // 呼叫 home_page.dart
             '/': (context) => const AppView(),
             '/login': (context) => const AuthView(),
-            '/signIn': (context) => const AuthView(mode: 'signIn',),
+            '/signIn': (context) => const AuthView(
+                  mode: 'signIn',
+                ),
           },
           initialRoute: '/',
           // 呼叫 home_page.dart

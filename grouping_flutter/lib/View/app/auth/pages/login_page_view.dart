@@ -9,6 +9,9 @@ import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/config/assets.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/github_auth.dart';
+import 'package:grouping_project/service/auth/google_auth.dart';
+import 'package:grouping_project/service/auth/line_auth.dart';
 import 'package:provider/provider.dart';
 import '../components/third_party_login_button.dart';
 class WebLoginViewPage extends AuthLayoutInterface{
@@ -113,23 +116,29 @@ class WebLoginViewPage extends AuthLayoutInterface{
         ThirdPartyLoginButton(
             primaryColor: Colors.blue,
             icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.googleSignIn();
+            onPressed: () async{
+               GoogleAuth googleAuth = GoogleAuth();
+              await googleAuth.initializeOauthPlatform();
+              await googleAuth.showWindowAndListen(context);
+              googleAuth.handleCodeAndGetProfile();
             }),
         ThirdPartyLoginButton(
             primaryColor: Colors.purple,
             icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.githubSignIn(context);
+            onPressed: () async{
+              GitHubAuth gitHubAuth = GitHubAuth();
+              await gitHubAuth.initializeOauthPlatform();
+              await gitHubAuth.showWindowAndListen(context);
+              gitHubAuth.handleCodeAndGetProfile();
             }),
         ThirdPartyLoginButton(
             primaryColor: Colors.green,
             icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.lineSignIn(context);
+            onPressed: () async{
+              LineAuth googleAuth = LineAuth();
+              await googleAuth.initializeOauthPlatform();
+              await googleAuth.showWindowAndListen(context);
+              googleAuth.handleCodeAndGetProfile();
             }),
       ],
     );
