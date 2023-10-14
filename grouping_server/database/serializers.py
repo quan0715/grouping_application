@@ -202,6 +202,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction',
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
 
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags', None)
+
+        instance = super().update(instance, validated_data)
+
+        if tags_data:
+            instance.tags.all().delete()
+            for tag_data in tags_data:
+                UserTag.objects.create(belong_user=instance, **tag_data)
+
+        return instance
+
 
 class MissionStateSerializer(serializers.ModelSerializer):
     class Meta:
