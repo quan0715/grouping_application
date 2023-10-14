@@ -94,6 +94,9 @@ class MissionSerializer(serializers.ModelSerializer):
 
 
 class ActivityNotificationSerializer(serializers.ModelSerializer):
+    notify_time = serializers.DateTimeField(
+        input_formats=["%Y-%m-%d", "iso-8601"])
+
     class Meta:
         model = ActivityNotification
         fields = ['notify_time']
