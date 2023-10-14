@@ -15,7 +15,7 @@ class WelcomeView extends AuthLayoutInterface {
   
   @override
   Widget getBuildLoginFrame(){
-    return Consumer<SignInViewModel>(
+    return Consumer<RegisterViewModel>(
       builder: (context, signInManager, child) => Container(
           color: AppColor.surface(context),
           width: formWidth,
@@ -44,7 +44,7 @@ class WelcomeView extends AuthLayoutInterface {
 
   @override
   Widget getInfoDisplayFrame(){
-    return Consumer<SignInViewModel>(
+    return Consumer<RegisterViewModel>(
       builder: (context, signInManager, child) => Container(
         color: AppColor.surfaceVariant(context),
         child: Column(
@@ -57,7 +57,7 @@ class WelcomeView extends AuthLayoutInterface {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(create: 
-      (context) => SignInViewModel(),
+      (context) => RegisterViewModel(),
       child: super.build(context),
     );
   }

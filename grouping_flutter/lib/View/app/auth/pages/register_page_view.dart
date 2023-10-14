@@ -11,14 +11,13 @@ import 'package:grouping_project/ViewModel/auth/sign_in_view_model.dart';
 import 'package:provider/provider.dart';
 
 
-class WebSignInViewPage extends AuthLayoutInterface{
-  WebSignInViewPage({super.key});
+class RegisterViewPage extends AuthLayoutInterface{
+  RegisterViewPage({super.key});
 
   final textFormKey = GlobalKey<FormState>();
 
   Widget getSignUpAsset(){
-    return Image.asset('assets/images/login.png',
-                            fit: BoxFit.values[4]);
+    return Image.asset('assets/images/login.png', fit: BoxFit.values[4]);
   }
 
   void moveToLogin(BuildContext context) {
@@ -36,7 +35,7 @@ class WebSignInViewPage extends AuthLayoutInterface{
 
 
   Widget _getInputForm(BuildContext context) {
-    return Consumer<SignInViewModel>(
+    return Consumer<RegisterViewModel>(
       builder: (context, signInManager, child) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Form(
@@ -112,7 +111,7 @@ class WebSignInViewPage extends AuthLayoutInterface{
 
   @override
   Widget getBuildLoginFrame(){
-    return Consumer<SignInViewModel>(
+    return Consumer<RegisterViewModel>(
       builder: (context, loginManager,child) => Container(
         color: AppColor.surface(context),
         width: formWidth,
@@ -135,7 +134,7 @@ class WebSignInViewPage extends AuthLayoutInterface{
 
   @override
   Widget getInfoDisplayFrame(){
-    return Consumer<SignInViewModel>(
+    return Consumer<RegisterViewModel>(
       builder: (context, value, child) => Container(
         color: AppColor.surfaceVariant(context),
         child: Column(
@@ -148,8 +147,8 @@ class WebSignInViewPage extends AuthLayoutInterface{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return ChangeNotifierProvider<SignInViewModel>(
-      create: (context) => SignInViewModel(),
+    return ChangeNotifierProvider<RegisterViewModel>(
+      create: (context) => RegisterViewModel(),
       builder: (context, child) => super.build(context),
     ); 
   }

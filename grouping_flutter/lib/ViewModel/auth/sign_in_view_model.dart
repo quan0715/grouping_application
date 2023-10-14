@@ -6,7 +6,7 @@ import 'package:grouping_project/model/auth/auth_model_lib.dart';
 // import 'package:grouping_project/model/model_lib.dart';
 // import 'package:grouping_project/model/register_model.dart';
 
-class SignInViewModel extends ChangeNotifier {
+class RegisterViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();
   RegisterModel passwordRegisterModel = RegisterModel();
 

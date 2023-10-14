@@ -8,7 +8,6 @@ import 'package:grouping_project/View/theme/theme.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/config/assets.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
 import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:grouping_project/service/auth/google_auth.dart';
 import 'package:grouping_project/service/auth/line_auth.dart';
@@ -23,9 +22,9 @@ class WebLoginViewPage extends AuthLayoutInterface{
 
   Widget get groupingIcon => Consumer<ThemeManager>(builder: (context, themeManager, child) =>themeManager.logo);
 
-  void moveToSignUp(BuildContext context) {
+  void moveToRegisterPage(BuildContext context) {
     debugPrint("前往註冊畫面");
-    Navigator.pushNamed(context, '/signIn');
+    Navigator.pushNamed(context, '/register');
   }
 
   void moveToHome(BuildContext context) {
@@ -74,7 +73,7 @@ class WebLoginViewPage extends AuthLayoutInterface{
                 label: '登入',
               ),
               ActionTextButton(
-                onPressed: () => moveToSignUp(context),
+                onPressed: () => moveToRegisterPage(context),
                 questionText: "沒有帳號密碼嗎？",
                 actionText: "點我註冊",
               ),

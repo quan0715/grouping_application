@@ -12,8 +12,8 @@ class AuthView extends StatelessWidget {
     if (kIsWeb) {
       if (mode == 'login') {
         return WebLoginViewPage();
-      } else if (mode == 'signIn') {
-        return WebSignInViewPage();
+      } else if (mode == 'register') {
+        return RegisterViewPage();
       } else {
         return WebLoginViewPage();
       }
