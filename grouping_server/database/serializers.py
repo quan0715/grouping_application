@@ -84,6 +84,8 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class MissionSerializer(serializers.ModelSerializer):
+    deadline = serializers.DateTimeField(
+        input_formats=["%Y-%m-%d", "iso-8601"])
 
     class Meta:
         model = Mission
