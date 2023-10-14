@@ -196,6 +196,7 @@ class UserSerializer(serializers.ModelSerializer):
     joined_workspaces = WorkspaceSerializer(many=True, read_only=True)
     tags = UserTagSerializer(many=True, required=False, allow_empty=True)
     contributing_activities = ActivitySerializer(many=True, read_only=True)
+    photo = ImageSerializer(required=False)
 
     class Meta:
         model = User
@@ -203,9 +204,17 @@ class UserSerializer(serializers.ModelSerializer):
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
 
     def update(self, instance, validated_data):
+        photo_data = validated_data.pop('photo', None)
         tags_data = validated_data.pop('tags', None)
 
         instance = super().update(instance, validated_data)
+
+        if photo_data:
+            if instance.photo:
+                instance.photo.delete()
+            photo = Image.objects.create(**photo_data)
+            instance.photo = photo
+            instance.save()
 
         if tags_data:
             instance.tags.all().delete()
