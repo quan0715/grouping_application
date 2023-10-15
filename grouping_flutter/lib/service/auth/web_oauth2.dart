@@ -169,48 +169,13 @@ class BaseOauth {
 
   // TODO: this is view, no context here
   Future showWindowAndListen(BuildContext context) async {
-    if (kIsWeb) {
-      html.WindowBase window;
-      grant.close();
-      window = html.window.open(authorizationUrl.toString(), "_self");
-      authWindowNotifier.value = window;
-      // while (window.closed != null && !window.closed!) {
-      //   await Future.delayed(Duration(seconds: 1));
-      // }
-    } else {
-      WebViewController controller = WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setNavigationDelegate(
-          NavigationDelegate(
-            onWebResourceError: (WebResourceError error) {
-              // TODO: Do some error handling
-              debugPrint(
-                  "===============================> onWebResourceError:");
-              debugPrint(error.errorType.toString());
-              debugPrint(error.errorCode.toString());
-              debugPrint(error.description);
-            },
-            onUrlChange: (change) {
-              if (change.url!.contains("code")) {
-                Navigator.of(context).pop();
-                // TODO: pass to back end needed to change
-              }
-            },
-          ),
-        )
-        ..loadRequest(authorizationUrl);
-
-      authWidgetNotifier.value = WebViewWidget(controller: controller);
-      grant.close();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return authWidgetNotifier.value;
-          },
-        ),
-      );
-    }
+    html.WindowBase window;
+    grant.close();
+    window = html.window.open(authorizationUrl.toString(), "_self");
+    authWindowNotifier.value = window;
+    // while (window.closed != null && !window.closed!) {
+    //   await Future.delayed(Duration(seconds: 1));
+    // }
   }
 
   Future requestProfile() async {

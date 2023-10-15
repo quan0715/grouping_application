@@ -8,10 +8,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
-import 'package:http/http.dart';
-import 'package:oauth2/oauth2.dart' as oauth2;
 
-import 'oauth2_base.dart';
+import 'mobile_oauth2.dart' if (kIsWeb) 'web_oauth2.dart';
 
 /// 1. [initializeOauthPlatform] is to initialize required parameter
 /// 2. [informParameters] is to set up django's parameters
