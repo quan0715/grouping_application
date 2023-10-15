@@ -108,7 +108,7 @@ class GitHubSocialAuthSerializer(serializers.Serializer):
 
 class CallbackSerializer(serializers.Serializer):
 
-    code = serializers.CharField(max_length=255)
+    # code = serializers.CharField(max_length=255)
     _dict = {}
 
     def __init__(self, instance=None, data=..., **kwargs):
@@ -156,9 +156,9 @@ def oauth2_token_exchange(client_id:str, tokenEndpoint:str, userPorfileEndpoint:
                 }
         print("AUTH_CODE: "+os.environ.get('AUTH_CODE'))
         if os.environ.get('platform') == 'web':
-            body['redirect_uri'] =Config.baseUriWeb+"/auth/callback/"          
+            body['redirect_uri'] =Config.frontEndUrlWeb          
         else:
-            body['redirect_uri'] =Config.baseUriMobile+"/auth/callback/"
+            body['redirect_uri'] =Config.frontEndUrlMobile
         if 'VERIFIER' in os.environ:
                 body['code_verifier']=os.environ.get('VERIFIER')
         if (grant_type != ''):

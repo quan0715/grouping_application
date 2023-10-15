@@ -33,8 +33,8 @@ class BaseOauth {
   final Uri tokenEndpoint;
   final String? clientSecret;
   late final Uri authorizationUrl;
-  final Uri redirectedUrl = Uri.parse(
-      '${kIsWeb ? Config.frontEndUrlWeb : Config.frontEndUrlMobile}/auth/callback/');
+  late final Uri redirectedUrl;
+  // Uri redirectedUrl = Uri.parse('${Config.baseUriMobile}/auth/callback/');
   final List<String> scopes;
   late final bool pkceSupported;
   late final bool stateSupported;
@@ -61,6 +61,8 @@ class BaseOauth {
       bool? useState}) {
     pkceSupported = usePkce ?? true;
     stateSupported = useState ?? false;
+    redirectedUrl =
+        Uri.parse(kIsWeb ? Config.frontEndUrlWeb : Config.frontEndUrlMobile);
   }
 
   encryptP.Encrypted get pkcePairVerifier => encryptP.Encrypter(encryptP.AES(
@@ -146,14 +148,20 @@ class BaseOauth {
     FlutterSecureStorage storage = FlutterSecureStorage();
 
     String? code = await storage.read(key: 'code');
+    debugPrint(code);
 
-    Response response = await post(Uri.parse(stringUrl), body: {'code': code!});
+    await get(Uri.parse(stringUrl).replace(queryParameters: {'code': code!}));
   }
 
   Future initialLoginFlow() async {
     _getSignInGrant();
-    authorizationUrl = grant.getAuthorizationUrl(redirectedUrl,
-        scopes: scopes, state: _stateCode);
+    if (stateSupported) {
+      authorizationUrl = grant.getAuthorizationUrl(redirectedUrl,
+          scopes: scopes, state: _stateCode);
+    } else {
+      authorizationUrl =
+          grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
+    }
     await _informPlatform();
     await _informVerifierToBackend();
     await _informStateToBackend();
@@ -163,11 +171,12 @@ class BaseOauth {
   Future showWindowAndListen(BuildContext context) async {
     if (kIsWeb) {
       html.WindowBase window;
-      window = html.window.open(authorizationUrl.toString(), "_blank");
+      grant.close();
+      window = html.window.open(authorizationUrl.toString(), "_self");
       authWindowNotifier.value = window;
-      while (window.closed != null && !window.closed!) {
-        await Future.delayed(Duration(seconds: 1));
-      }
+      // while (window.closed != null && !window.closed!) {
+      //   await Future.delayed(Duration(seconds: 1));
+      // }
     } else {
       WebViewController controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -185,7 +194,6 @@ class BaseOauth {
               if (change.url!.contains("code")) {
                 Navigator.of(context).pop();
                 // TODO: pass to back end needed to change
-                grant.close();
               }
             },
           ),
@@ -193,6 +201,7 @@ class BaseOauth {
         ..loadRequest(authorizationUrl);
 
       authWidgetNotifier.value = WebViewWidget(controller: controller);
+      grant.close();
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -202,7 +211,6 @@ class BaseOauth {
         ),
       );
     }
-    grant.close();
   }
 
   Future requestProfile() async {
@@ -216,6 +224,8 @@ class BaseOauth {
       } else {
         stringUrl = '${Config.baseUriMobile}/auth/${provider.string}/';
       }
+
+      debugPrint(stringUrl);
 
       url = Uri.parse(stringUrl);
 
@@ -231,6 +241,7 @@ class BaseOauth {
       } else if (response.statusCode == 200) {
         const storage = FlutterSecureStorage();
 
+        await storage.deleteAll();
         await storage.write(key: 'auth-token', value: response.body);
 
         storage.readAll().then((value) => debugPrint(value.toString()));

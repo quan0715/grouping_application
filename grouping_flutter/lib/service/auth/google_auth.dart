@@ -10,8 +10,9 @@ import 'package:grouping_project/service/auth/auth_service.dart';
 import 'oauth2_base.dart';
 
 /// 1. [initializeOauthPlatform] is to initialize required parameter
-/// 2. [showWindowAndListen] is to sho the tab/webView
-/// 3. [handleCodeAndGetProfile] is to connect to backend and login
+/// 2. [informParameters] is to set up django's parameters
+/// 3. [showWindowAndListen] is to sho the tab/webView
+/// 4. [handleCodeAndGetProfile] is to connect to backend and login
 class GoogleAuth {
   bool isLoading = false;
   late final BaseOauth platformedOauth2;
@@ -52,12 +53,15 @@ class GoogleAuth {
         authorizationEndpoint: Config.googleAuthEndpoint,
         tokenEndpoint: Config.googleTokenEndpoint,
         provider: AuthProvider.google,
-        usePkce: true);
+        usePkce: true,
+        useState: false);
     const storage = FlutterSecureStorage();
 
-    await storage.write(
-        key: 'auth-provider', value: AuthProvider.google.string);
-    platformedOauth2.initialLoginFlow();
+    await storage.write(key: 'auth-provider', value: AuthProvider.line.string);
+  }
+
+  Future informParameters() async {
+    await platformedOauth2.initialLoginFlow();
   }
 
   Future showWindowAndListen(BuildContext context) async {

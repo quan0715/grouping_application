@@ -4,6 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/View/app/auth/pages/login_page_view.dart';
 import 'package:grouping_project/View/app/auth/pages/register_page_view.dart';
+import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/github_auth.dart';
+import 'package:grouping_project/service/auth/google_auth.dart';
+import 'package:grouping_project/service/auth/line_auth.dart';
 
 class AuthView extends StatelessWidget {
   const AuthView({super.key, this.mode = 'login'});
@@ -11,13 +15,6 @@ class AuthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Uri.base.queryParametersAll.containsKey('code')) {
-      FlutterSecureStorage storage = FlutterSecureStorage();
-
-      storage
-          .write(key: 'code', value: Uri.base.queryParameters['code'])
-          .whenComplete(() => SystemNavigator.pop());
-    }
     if (kIsWeb) {
       if (mode == 'login') {
         return WebLoginViewPage();

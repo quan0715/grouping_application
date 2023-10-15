@@ -14,8 +14,9 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'oauth2_base.dart';
 
 /// 1. [initializeOauthPlatform] is to initialize required parameter
-/// 2. [showWindowAndListen] is to sho the tab/webView
-/// 3. [handleCodeAndGetProfile] is to connect to backend and login
+/// 2. [informParameters] is to set up django's parameters
+/// 3. [showWindowAndListen] is to sho the tab/webView
+/// 4. [handleCodeAndGetProfile] is to connect to backend and login
 class GitHubAuth {
   late BaseOauth platformedOauth2;
 
@@ -23,28 +24,32 @@ class GitHubAuth {
     await dotenv.load(fileName: ".env");
     if (kIsWeb) {
       platformedOauth2 = BaseOauth(
-        clientId: dotenv.env['GITHUB_CLIENT_ID_WEB']!,
-        clientSecret: dotenv.env['GITHUB_CLIENT_SECRET_WEB']!,
-        scopes: dotenv.env['GITHUB_SCOPES']!.split(','),
-        authorizationEndpoint: Config.gitHubAuthEndpoint,
-        tokenEndpoint: Config.gitHubTokenEndpoint,
-        provider: AuthProvider.github,
-      );
+          clientId: dotenv.env['GITHUB_CLIENT_ID_WEB']!,
+          clientSecret: dotenv.env['GITHUB_CLIENT_SECRET_WEB']!,
+          scopes: dotenv.env['GITHUB_SCOPES']!.split(','),
+          authorizationEndpoint: Config.gitHubAuthEndpoint,
+          tokenEndpoint: Config.gitHubTokenEndpoint,
+          provider: AuthProvider.github,
+          usePkce: false,
+          useState: false);
     } else {
       platformedOauth2 = BaseOauth(
-        clientId: dotenv.env['GITHUB_CLIENT_ID_MOBILE']!,
-        clientSecret: dotenv.env['GITHUB_CLIENT_SECRET_MOBILE']!,
-        scopes: dotenv.env['GITHUB_SCOPES']!.split(','),
-        authorizationEndpoint: Config.gitHubAuthEndpoint,
-        tokenEndpoint: Config.gitHubTokenEndpoint,
-        provider: AuthProvider.github,
-      );
+          clientId: dotenv.env['GITHUB_CLIENT_ID_MOBILE']!,
+          clientSecret: dotenv.env['GITHUB_CLIENT_SECRET_MOBILE']!,
+          scopes: dotenv.env['GITHUB_SCOPES']!.split(','),
+          authorizationEndpoint: Config.gitHubAuthEndpoint,
+          tokenEndpoint: Config.gitHubTokenEndpoint,
+          provider: AuthProvider.github,
+          usePkce: false,
+          useState: false);
     }
     const storage = FlutterSecureStorage();
 
-    await storage.write(
-        key: 'auth-provider', value: AuthProvider.github.string);
-    platformedOauth2.initialLoginFlow();
+    await storage.write(key: 'auth-provider', value: AuthProvider.line.string);
+  }
+
+  Future informParameters() async {
+    await platformedOauth2.initialLoginFlow();
   }
 
   Future showWindowAndListen(BuildContext context) async {

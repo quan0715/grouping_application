@@ -12,8 +12,9 @@ import 'package:grouping_project/service/auth/auth_service.dart';
 import 'oauth2_base.dart';
 
 /// 1. [initializeOauthPlatform] is to initialize required parameter
-/// 2. [showWindowAndListen] is to sho the tab/webView
-/// 3. [handleCodeAndGetProfile] is to connect to backend and login
+/// 2. [informParameters] is to set up django's parameters
+/// 3. [showWindowAndListen] is to sho the tab/webView
+/// 4. [handleCodeAndGetProfile] is to connect to backend and login
 class LineAuth {
   late final BaseOauth platformedOauth2;
 
@@ -21,32 +22,35 @@ class LineAuth {
     await dotenv.load(fileName: ".env");
     if (kIsWeb) {
       platformedOauth2 = BaseOauth(
-        clientId: dotenv.env['LINE_CLIENT_ID_WEB']!,
-        clientSecret: dotenv.env['LINE_CLIENT_SECRET_WEB']!,
-        scopes: dotenv.env['LINE_SCOPES']!.split(','),
-        authorizationEndpoint: Config.lineAuthEndPoint,
-        tokenEndpoint: Config.lineTokenEndpoint,
-        provider: AuthProvider.line,
-        useState: true,
-      );
-    } else {
-      {
-        await dotenv.load(fileName: ".env");
-        platformedOauth2 = BaseOauth(
-          clientId: dotenv.env['LINE_CLIENT_ID_MOBILE']!,
-          clientSecret: dotenv.env['LINE_CLIENT_SECRET_MOBILE']!,
+          clientId: dotenv.env['LINE_CLIENT_ID_WEB']!,
+          clientSecret: dotenv.env['LINE_CLIENT_SECRET_WEB']!,
           scopes: dotenv.env['LINE_SCOPES']!.split(','),
           authorizationEndpoint: Config.lineAuthEndPoint,
           tokenEndpoint: Config.lineTokenEndpoint,
           provider: AuthProvider.line,
           useState: true,
-        );
+          usePkce: true);
+    } else {
+      {
+        await dotenv.load(fileName: ".env");
+        platformedOauth2 = BaseOauth(
+            clientId: dotenv.env['LINE_CLIENT_ID_MOBILE']!,
+            clientSecret: dotenv.env['LINE_CLIENT_SECRET_MOBILE']!,
+            scopes: dotenv.env['LINE_SCOPES']!.split(','),
+            authorizationEndpoint: Config.lineAuthEndPoint,
+            tokenEndpoint: Config.lineTokenEndpoint,
+            provider: AuthProvider.line,
+            useState: true,
+            usePkce: true);
       }
     }
     const storage = FlutterSecureStorage();
 
     await storage.write(key: 'auth-provider', value: AuthProvider.line.string);
-    platformedOauth2.initialLoginFlow();
+  }
+
+  Future informParameters() async {
+    await platformedOauth2.initialLoginFlow();
   }
 
   Future showWindowAndListen(BuildContext context) async {
@@ -55,11 +59,10 @@ class LineAuth {
 
   Future handleCodeAndGetProfile() async {
     try {
+      debugPrint("getting profile");
       await platformedOauth2.requestProfile();
     } catch (e) {
       debugPrint(e.toString());
-    } finally {
-      platformedOauth2.grant.close();
     }
   }
 }
