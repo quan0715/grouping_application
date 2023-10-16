@@ -45,7 +45,6 @@ class BaseOauth {
           .codeUnitAt(Random().nextInt(26))));
   ValueNotifier<html.WindowBase> authWindowNotifier =
       ValueNotifier(newObject());
-  ValueNotifier<WebViewWidget> authWidgetNotifier = ValueNotifier(newObject());
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
   /// 2. [showWindowAndListen] is to show new tab, need context as parameter

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:js_util';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 import 'package:http/http.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'package:pkce/pkce.dart';
 import 'package:encrypt/encrypt.dart' as encryptP;
 
@@ -43,9 +42,7 @@ class BaseOauth {
       32,
       (_) => 'abcdefghijklmnopqrstuvwxyz0123456789'
           .codeUnitAt(Random().nextInt(26))));
-  ValueNotifier<html.WindowBase> authWindowNotifier =
-      ValueNotifier(newObject());
-  ValueNotifier<WebViewWidget> authWidgetNotifier = ValueNotifier(newObject());
+  // ValueNotifier<WebViewWidget> authWidgetNotifier = ValueNotifier(newObject());
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
   /// 2. [showWindowAndListen] is to show new tab, need context as parameter
@@ -190,13 +187,13 @@ class BaseOauth {
       )
       ..loadRequest(authorizationUrl);
 
-    authWidgetNotifier.value = WebViewWidget(controller: controller);
+    // authWidgetNotifier.value = WebViewWidget(controller: controller);
     grant.close();
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return authWidgetNotifier.value;
+          return WebViewWidget(controller: controller);
         },
       ),
     );
