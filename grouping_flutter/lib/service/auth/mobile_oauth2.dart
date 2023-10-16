@@ -162,6 +162,7 @@ class BaseOauth {
     await _informPlatform();
     await _informVerifierToBackend();
     await _informStateToBackend();
+    grant.close();
   }
 
   // TODO: this is view, no context here
