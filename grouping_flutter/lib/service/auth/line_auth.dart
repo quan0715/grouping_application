@@ -7,9 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 
-import 'web_oauth2.dart'
-    if (Platfrom.isAndroid) 'mobile_oauth2.dart'
-    if (Platfrom.isIOS) 'mobile_oauth2.dart';
+import 'web_oauth2.dart' if (dart.library.io) 'mobile_oauth2.dart';
 
 /// 1. [initializeOauthPlatform] is to initialize required parameter
 /// 2. [informParameters] is to set up django's parameters
@@ -60,7 +58,7 @@ class LineAuth {
   Future handleCodeAndGetProfile() async {
     try {
       debugPrint("getting profile");
-      await platformedOauth2.requestProfile();
+      await platformedOauth2.getAccessToken();
     } catch (e) {
       debugPrint(e.toString());
     }

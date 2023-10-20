@@ -8,11 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:grouping_project/service/auth/github_auth.dart';
-import 'package:grouping_project/service/auth/google_auth.dart';
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
-import 'package:grouping_project/service/auth/line_auth.dart';
 
 // flutter run --web-port 5000
 enum AuthProvider {
@@ -26,10 +23,6 @@ enum AuthProvider {
 }
 
 class AuthService {
-  final GoogleAuth _googleAuth = GoogleAuth();
-  final GitHubAuth _gitHubAuth = GitHubAuth();
-  final LineAuth _lineAuth = LineAuth();
-
   Future signUp(
       {required String account,
       required String password,

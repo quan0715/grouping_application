@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/View/app/auth/components/action_text_button.dart';
@@ -122,7 +123,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
               await googleAuth.initializeOauthPlatform();
               await googleAuth.informParameters();
               await googleAuth.showWindowAndListen(context);
-              // googleAuth.handleCodeAndGetProfile();
+              if (!kIsWeb) {
+                googleAuth.handleCodeAndGetProfile();
+              }
             }),
         ThirdPartyLoginButton(
             primaryColor: Colors.purple,
@@ -132,7 +135,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
               await gitHubAuth.initializeOauthPlatform();
               await gitHubAuth.informParameters();
               await gitHubAuth.showWindowAndListen(context);
-              // gitHubAuth.handleCodeAndGetProfile();
+              if (!kIsWeb) {
+                gitHubAuth.handleCodeAndGetProfile();
+              }
             }),
         ThirdPartyLoginButton(
             primaryColor: Colors.green,
@@ -142,7 +147,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
               await lineAuth.initializeOauthPlatform();
               await lineAuth.informParameters();
               await lineAuth.showWindowAndListen(context);
-              // lineAuth.handleCodeAndGetProfile();
+              if (!kIsWeb) {
+                lineAuth.handleCodeAndGetProfile();
+              }
             }),
       ],
     );
