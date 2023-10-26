@@ -1,6 +1,10 @@
 // ignore_for_file: unnecessary_this
-import 'dart:typed_data';
-import '../workspace/data_model.dart';
+// import 'dart:typed_data';
+import 'package:grouping_project/model/photo_model.dart';
+import 'package:grouping_project/model/workspace/editable_card_model.dart';
+import 'package:grouping_project/model/workspace/workspace_model.dart';
+
+// import '../workspace/data_model.dart';
 
 /// ## the type for [AccountModel.tags]
 /// * [tag] : the key for this tag
@@ -19,232 +23,195 @@ class AccountTag {
 /// ## a data model for account, either user or group
 /// * ***DO NOT*** pass or set id for AccountModel
 /// * to upload/download, use `DataController`
-class AccountModel extends BaseDataModel<AccountModel>
-    implements BaseStorageData {
+class AccountModel {
+  final int? id;
+  String account;
   String name;
-  String email;
-  int color;
   String nickname;
   String slogan;
   String introduction;
+  // String photoId;
+  // Uint8List photo;
+  Photo? photo;
   List<AccountTag> tags;
-  String photoId;
-  Uint8List photo;
-  List<String> associateEntityId;
-  List<AccountModel> associateEntityAccount;
+  List<WorkspaceModel> joinedWorkspaces;
+  // List<String> joinedWorkspaceIds;
+  List<EditableCardModel> contributingActivities;
+  // List<String> associateEntityId;
+  // List<AccountModel> associateEntityAccount;
+  // int color;
 
   /// default account that all attribute is set to a default value
   static final AccountModel defaultAccount = AccountModel._default();
 
   /// default constructor, only for default account
   AccountModel._default()
-      : this.name = 'unknown',
-        this.color = 0xFFFCBF49,
-        this.email = 'unknown',
+      : this.id = -1,
+        // this.color = 0xFFFCBF49,
+        this.account = 'unknown',
+        this.name = 'unknown',
         this.nickname = 'unknown',
         this.slogan = 'unknown',
         this.introduction = 'unknown',
         this.tags = [],
-        this.photoId = 'unknown',
-        this.photo = Uint8List(0),
-        this.associateEntityId = [],
-        this.associateEntityAccount = [],
-        super(
-            id: 'default_account',
-            databasePath: 'account',
-            storageRequired: true);
+        // this.photoId = 'unknown',
+        this.photo = null,
+        this.joinedWorkspaces = [],
+        this.contributingActivities = [];
 
   /// ## a data model for account, either user or group
   /// * ***DO NOT*** pass or set id for AccountModel
   /// * to upload/download, use `DataController`
   AccountModel({
-    String? accountId,
+    int? accountId,
+    String? account,
     String? name,
-    String? email,
-    int? color,
     String? nickname,
     String? slogan,
     String? introduction,
+    // String? photoId,
+    Photo? photo,
     List<AccountTag>? tags,
-    String? photoId,
-    Uint8List? photo,
-    List<String>? associateEntityId,
-    List<AccountModel>? associateEntityAccount,
-  })  : this.name = name ?? defaultAccount.name,
-        this.email = email ?? defaultAccount.email,
-        this.color = color ?? defaultAccount.color,
+    List<WorkspaceModel>? joinedWorkspaces,
+    List<EditableCardModel>? contributingActivities,
+    // List<String>? associateEntityId,
+    // List<AccountModel>? associateEntityAccount,
+  })  : this.id = accountId ?? defaultAccount.id,
+        this.account = account ?? defaultAccount.account,
+        this.name = name ?? defaultAccount.name,
+        // this.color = color ?? defaultAccount.color,
         this.nickname = nickname ?? defaultAccount.nickname,
         this.slogan = slogan ?? defaultAccount.slogan,
         this.introduction = introduction ?? defaultAccount.introduction,
-        this.tags = tags ?? List.from(defaultAccount.tags),
-        this.photoId = photoId ?? defaultAccount.photoId,
         this.photo = photo ?? defaultAccount.photo,
-        this.associateEntityId =
-            associateEntityId ?? List.from(defaultAccount.associateEntityId),
-        this.associateEntityAccount =
-            associateEntityAccount ?? List.from(defaultAccount.associateEntityAccount),
-        super(
-          id: accountId,
-          databasePath: defaultAccount.databasePath,
-          storageRequired: defaultAccount.storageRequired,
-          // setOwnerRequired: false
-        );
+        this.tags = tags ?? List.from(defaultAccount.tags),
+        // this.photoId = photoId ?? defaultAccount.photoId,
+        this.joinedWorkspaces =
+            joinedWorkspaces ?? List.from(defaultAccount.joinedWorkspaces),
+        this.contributingActivities = contributingActivities ??
+            List.from(defaultAccount.contributingActivities);
 
   /// ### A method to copy an instance from this instance, and change some data with given.
   AccountModel copyWith({
-    String? accountId,
+    int? accountId,
+    String? account,
     String? name,
-    String? email,
-    int? color,
+    // int? color,
     String? nickname,
     String? slogan,
     String? introduction,
+    Photo? photo,
     List<AccountTag>? tags,
-    String? photoId,
-    Uint8List? photo,
-    List<String>? associateEntityId,
-    List<AccountModel>? associateEntityAccount,
+    // String? photoId,
+    List<WorkspaceModel>? joinedWorkspaces,
+    List<EditableCardModel>? contributingActivities,
+    // List<String>? associateEntityId,
+    // List<AccountModel>? associateEntityAccount,
   }) {
     return AccountModel(
       accountId: accountId ?? this.id,
+      account: account ?? this.account,
       name: name ?? this.name,
-      email: email ?? this.email,
-      color: color ?? this.color,
+      // color: color ?? this.color,
       nickname: nickname ?? this.nickname,
       slogan: slogan ?? this.slogan,
-      introduction: introduction ?? this.introduction,
       tags: tags ?? this.tags,
-      photoId: photoId ?? this.photoId,
+      introduction: introduction ?? this.introduction,
+      // photoId: photoId ?? this.photoId,
       photo: photo ?? this.photo,
-      associateEntityId: associateEntityId ?? this.associateEntityId,
+      joinedWorkspaces: joinedWorkspaces ?? this.joinedWorkspaces,
+      contributingActivities:
+          contributingActivities ?? this.contributingActivities,
+      // associateEntityId: associateEntityId ?? this.associateEntityId,
     );
   }
 
   /// convert `List<AccountTag>` to `List<String>` with `AccountTag.tag`
-  List<String> _toBackendTag(List<AccountTag> accountTagList) {
-    List<String> processList = [];
-    for (AccountTag accountTag in accountTagList) {
-      processList.add(accountTag.tag);
-    }
-    return processList;
-  }
+  // List<String> _toBackendTag(List<AccountTag> accountTagList) {
+  //   List<String> processList = [];
+  //   for (AccountTag accountTag in accountTagList) {
+  //     processList.add(accountTag.tag);
+  //   }
+  //   return processList;
+  // }
 
   /// convert `List<AccountTag>` to `List<String>` with `AccountTag.content`
-  List<String> _toBackendTagContent(List<AccountTag> accountTagList) {
-    List<String> processList = [];
-    for (AccountTag accountTag in accountTagList) {
-      processList.add(accountTag.content);
-    }
-    return processList;
-  }
+  // List<String> _toBackendTagContent(List<AccountTag> accountTagList) {
+  //   List<String> processList = [];
+  //   for (AccountTag accountTag in accountTagList) {
+  //     processList.add(accountTag.content);
+  //   }
+  //   return processList;
+  // }
 
   /// convert two `List<String>` to `List<AccountTag>`
-  static List<AccountTag> _fromBackendTags(
-      List<String> tagList, List<String> tagContentList) {
-    List<AccountTag> processList = [];
-    for (var i = 0; i < tagList.length; i++) {
-      if (i < tagContentList.length) {
-        processList
-            .add(AccountTag(tag: tagList[i], content: tagContentList[i]));
-      }
-    }
-    return processList;
-  }
+  // static List<AccountTag> _fromBackendTags(
+  //     List<String> tagList, List<String> tagContentList) {
+  //   List<AccountTag> processList = [];
+  //   for (var i = 0; i < tagList.length; i++) {
+  //     if (i < tagContentList.length) {
+  //       processList
+  //           .add(AccountTag(tag: tagList[i], content: tagContentList[i]));
+  //     }
+  //   }
+  //   return processList;
+  // }
 
-  @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': this.id,
-    'name': this.name,
-    'nickname': this.nickname,
-    'email': this.email,
-    'color': this.color,
-    'slogan': this.slogan,
-    'introduction': this.introduction,
-    'tags': _toBackendTag(this.tags),
-    'tag_contents': _toBackendTagContent(this.tags),
-    'photo_id': this.photoId,
-    'associate_entity_id': this.associateEntityId,
-  };
+        'id': this.id,
+        'real_name': this.name,
+        'user_name': this.nickname,
+        'account': this.account,
+        // 'color': this.color,
+        'slogan': this.slogan,
+        'introduction': this.introduction,
+        'tags': this.tags,
+        'photo': this.photo?.toJson(),
+        // 'tag_contents': _toBackendTagContent(this.tags),
+        'joined_workspaces': this.joinedWorkspaces,
+        'contributing_activities': this.contributingActivities,
+        // 'photo_id': this.photoId,
+        // 'associate_entity_id': this.associateEntityId,
+      };
 
-  factory AccountModel.fromJson({required Map<String, dynamic> data}) => AccountModel(
-    accountId: data['id'] as String,      // TODO: id? userid?
-    name: data['name'] as String,
-    nickname: data['nickname'] as String,
-    email: data['email'] as String,
-    color: data['color'] as int,
-    slogan: data['slogan'] as String,
-    introduction: data['introduction'] as String,
-    tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
-        ? _fromBackendTags(
-            List.from(data['tags']), List.from(data['tag_contents']))
-        : null,
-    photoId: data['photo_id'],
-    associateEntityId: data['associate_entity_id'] is Iterable
-        ? List.from(data['associate_entity_id'])
-        : null
-  );
-
-  /// ### convert data from this instance to the type accepted for firestore
-  /// * ***DO NOT*** use this method in frontend
-  // @override
-  // Map<String, dynamic> toFirestore() {
-  //   return {
-  //     if (name != defaultAccount.name) 'name': name,
-  //     if (email != defaultAccount.email) 'email': email,
-  //     if (color != defaultAccount.color) 'color': color,
-  //     if (nickname != defaultAccount.nickname) 'nickname': nickname,
-  //     if (slogan != defaultAccount.slogan) 'slogan': slogan,
-  //     if (introduction != defaultAccount.introduction)
-  //       'introduction': introduction,
-  //     if (tags != defaultAccount.tags) 'tags': _toFirestoreTag(tags),
-  //     if (tags != defaultAccount.tags)
-  //       'tag_contents': _toFirestoreTagContent(tags),
-  //     if (photoId != defaultAccount.photoId) 'photo_id': photoId,
-  //     if (associateEntityId != defaultAccount.associateEntityId)
-  //       'associate_entity_id': associateEntityId,
-  //   };
-  // }
-
-  /// ### return an instance with data from firestore
-  /// * also seting attribute about owner if given
-  /// * ***DO NOT*** use this method in frontend
-  /// [id] : the account id of this account
-  // @override
-  // AccountModel fromFirestore(
-  //     {String? uid, required String id, required Map<String, dynamic> data}) {
-  //   AccountModel processData = AccountModel(
-  //       accountId: id,
-  //       name: data['name'],
-  //       email: data['email'],
-  //       color: data['color'],
-  //       nickname: data['nickname'],
-  //       slogan: data['slogan'],
-  //       introduction: data['introduction'],
-  //       tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
-  //           ? _fromFirestoreTags(
-  //               List.from(data['tags']), List.from(data['tag_contents']))
-  //           : null,
-  //       photoId: data['photo_id'],
-  //       associateEntityId: data['associate_entity_id'] is Iterable
-  //           ? List.from(data['associate_entity_id'])
-  //           : null);
-
-  //   return processData;
-  // }
+  factory AccountModel.fromJson({required Map<String, dynamic> data}) =>
+      AccountModel(
+        accountId: data['id'] as int, // TODO: id? userid?
+        account: data['account'] as String,
+        name: data['real_name'] as String,
+        nickname: data['user_name'] as String,
+        introduction: data['introduction'] as String,
+        // color: data['color'] as int,
+        slogan: data['slogan'] as String,
+        photo: data['photo'] != null ? Photo.fromJson(data['photo'] as Map<String, dynamic>) : null,
+        tags: data['tags'].cast<AccountTag>() as List<AccountTag>,
+        // tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
+        //     ? _fromBackendTags(
+        //         List.from(data['tags']), List.from(data['tag_contents']))
+        //     : null,
+        joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
+            as List<WorkspaceModel>,
+        contributingActivities: data['contributing_activities']
+            .cast<EditableCardModel>() as List<EditableCardModel>,
+        // photoId: data['photo_id'],
+        // associateEntityId: data['associate_entity_id'] is Iterable
+        //     ? List.from(data['associate_entity_id'])
+        //     : null
+      );
 
   /// ### collect the data in this instance which need to upload to storage
   /// * ***DO NOT*** use this method in frontend
-  @override
-  Map<String, Uint8List> toStorage() {
-    return {if (photo != defaultAccount.photo) 'photo': photo};
-  }
+  // @override
+  // Map<String, Uint8List> toStorage() {
+  //   return {if (photo != defaultAccount.photo) 'photo': photo};
+  // }
 
-  /// ### set the data in this instance which need to downlaod from storage
-  /// * ***DO NOT*** use this method in frontend
-  @override
-  void setAttributeFromStorage({required Map<String, Uint8List> data}) {
-    photo = data['photo'] ?? defaultAccount.photo;
-  }
+  // /// ### set the data in this instance which need to downlaod from storage
+  // /// * ***DO NOT*** use this method in frontend
+  // @override
+  // void setAttributeFromStorage({required Map<String, Uint8List> data}) {
+  //   photo = data['photo'] ?? defaultAccount.photo;
+  // }
 
   /// ### add an associate entity id to this account
   // void addEntity(String id) {
@@ -259,4 +226,28 @@ class AccountModel extends BaseDataModel<AccountModel>
   //     associateEntityId.remove(id);
   //   }
   // }
+  @override
+  String toString() {
+    return {
+      'id': this.id,
+      'real_name': this.name,
+      'user_name': this.nickname,
+      'account': this.account,
+      // 'color': this.color,
+      'slogan': this.slogan,
+      'introduction': this.introduction,
+      'tags': this.tags,
+      // 'tag_contents': _toBackendTagContent(this.tags),
+      'joined_workspaces': this.joinedWorkspaces,
+      'contributing_activities': this.contributingActivities,
+    }.toString();
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return this.toString() == other.toString();
+  }
+
+  @override
+  int get hashCode => id!;
 }

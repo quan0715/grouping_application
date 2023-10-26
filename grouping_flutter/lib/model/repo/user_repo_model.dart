@@ -5,7 +5,8 @@ import 'dart:convert';
 // import 'package:flutter/material.dart';
 import 'package:grouping_project/model/repo/patch_enum.dart';
 import 'package:http/http.dart' as http;
-import 'package:grouping_project/model/auth/auth_model_lib.dart';
+import 'package:grouping_project/model/auth/account_model.dart';
+// import 'package:grouping_project/model/auth/auth_model_lib.dart';
 
 const String baseURL = "http://ip"; // TODO: we need to know the django website
 
@@ -24,7 +25,7 @@ class UserService {
   // UserService({required String uid}): _uid = uid;
 
   /// get user data
-  Future<AccountModel> getUserData(String uid) async {
+  Future<AccountModel> getUserData(int uid) async {
     final response =
         await _client.get(Uri.parse("$baseURL/users/$uid"), headers: headers);
 
