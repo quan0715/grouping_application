@@ -54,12 +54,12 @@ class WorkspaceModel{
         tags = tags ?? defaultWorkspace.tags;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    // 'id': id,
+    'id': id,
     'theme_color': themeColor,
     'workspace_name': name,
     'description': description,
     'is_personal': isPersonal,
-    'photo': photo,
+    'photo': photo?.toJson(),
     'members': memberIds,
     'tags': tags,
   };
@@ -70,7 +70,7 @@ class WorkspaceModel{
     name: data['workspace_name'],
     description: data['description'],
     isPersonal: data['is_personal'],
-    photo: data['photo'],
+    photo: data['photo'] != null ? Photo.fromJson(data['photo'] as Map<String, dynamic>) : null,
     memberIds: data['members'].cast<String>() as List<String>,
     tags: data['tags'].cast<WorkspaceTag>() as List<WorkspaceTag>,
   );
