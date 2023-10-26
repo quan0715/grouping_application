@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from .serializers import (
-    LoginSerializer, LogoutSerializer, RegisterSerializer,GoogleSocialAuthSerializer,
-    LineSocialAuthSerializer, GitHubSocialAuthSerializer, CallbackSerializer, PlatformSerializer,VerifierSerializer)
+    LoginSerializer, LogoutSerializer, RegisterSerializer,GoogleSocialAuthSerializer, LineSocialAuthSerializer,
+    GitHubSocialAuthSerializer, CallbackSerializer, PlatformSerializer,VerifierSerializer, StateSerializer)
 """
 conda activate django_4_2_2
 python manage.py makemigrations
@@ -29,6 +29,17 @@ class PlatformView(GenericAPIView):
 
 class VerifierView(GenericAPIView):
     serializer_class = VerifierSerializer
+    
+    def post(self, request):
+        load_dotenv()
+
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class StateView(GenericAPIView):
+    serializer_class = StateSerializer
     
     def post(self, request):
         load_dotenv()
@@ -103,9 +114,8 @@ class LineSocialAuthView(GenericAPIView):
 
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            data = (serializer.validated_data)['tokens']['access']
-            return Response(data, status=status.HTTP_200_OK)
+        data = (serializer.validated_data)['tokens']['access']
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class GitHubSocialAuthView(GenericAPIView):

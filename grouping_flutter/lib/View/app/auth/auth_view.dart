@@ -23,4 +23,3 @@ class AuthView extends StatelessWidget {
     }
   }
 }
-

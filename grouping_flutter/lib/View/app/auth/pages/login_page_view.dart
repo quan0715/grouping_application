@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/View/app/auth/components/action_text_button.dart';
 import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
 import 'package:grouping_project/View/app/auth/components/auth_text_form_field.dart';
@@ -14,14 +16,15 @@ import 'package:grouping_project/service/auth/google_auth.dart';
 import 'package:grouping_project/service/auth/line_auth.dart';
 import 'package:provider/provider.dart';
 
-class WebLoginViewPage extends AuthLayoutInterface{
+class WebLoginViewPage extends AuthLayoutInterface {
   WebLoginViewPage({Key? key}) : super(key: key);
 
   final LoginViewModel loginManager = LoginViewModel();
 
   final textFormKey = GlobalKey<FormState>();
 
-  Widget get groupingIcon => Consumer<ThemeManager>(builder: (context, themeManager, child) =>themeManager.logo);
+  Widget get groupingIcon => Consumer<ThemeManager>(
+      builder: (context, themeManager, child) => themeManager.logo);
 
   void moveToRegisterPage(BuildContext context) {
     debugPrint("前往註冊畫面");
@@ -92,18 +95,17 @@ class WebLoginViewPage extends AuthLayoutInterface{
       children: [
         divider,
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              "第三方登入",
-              textAlign: TextAlign.center,
-              style: AppText.labelLarge(context).copyWith(
-                color: AppColor.onSurface(context).withOpacity(0.5),
+            child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            "第三方登入",
+            textAlign: TextAlign.center,
+            style: AppText.labelLarge(context).copyWith(
+              color: AppColor.onSurface(context).withOpacity(0.5),
               // fontWeight: FontWeight.bold
-              ),
             ),
-          )
-        ),
+          ),
+        )),
         divider
       ],
     );
@@ -116,38 +118,47 @@ class WebLoginViewPage extends AuthLayoutInterface{
         ThirdPartyLoginButton(
             primaryColor: Colors.blue,
             icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
-            onPressed: () async{
-               GoogleAuth googleAuth = GoogleAuth();
+            onPressed: () async {
+              GoogleAuth googleAuth = GoogleAuth();
               await googleAuth.initializeOauthPlatform();
+              await googleAuth.informParameters();
               await googleAuth.showWindowAndListen(context);
-              googleAuth.handleCodeAndGetProfile();
+              if (!kIsWeb) {
+                googleAuth.handleCodeAndGetProfile();
+              }
             }),
         ThirdPartyLoginButton(
             primaryColor: Colors.purple,
             icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
-            onPressed: () async{
+            onPressed: () async {
               GitHubAuth gitHubAuth = GitHubAuth();
               await gitHubAuth.initializeOauthPlatform();
+              await gitHubAuth.informParameters();
               await gitHubAuth.showWindowAndListen(context);
-              gitHubAuth.handleCodeAndGetProfile();
+              if (!kIsWeb) {
+                gitHubAuth.handleCodeAndGetProfile();
+              }
             }),
         ThirdPartyLoginButton(
             primaryColor: Colors.green,
             icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
-            onPressed: () async{
-              LineAuth googleAuth = LineAuth();
-              await googleAuth.initializeOauthPlatform();
-              await googleAuth.showWindowAndListen(context);
-              googleAuth.handleCodeAndGetProfile();
+            onPressed: () async {
+              LineAuth lineAuth = LineAuth();
+              await lineAuth.initializeOauthPlatform();
+              await lineAuth.informParameters();
+              await lineAuth.showWindowAndListen(context);
+              if (!kIsWeb) {
+                lineAuth.handleCodeAndGetProfile();
+              }
             }),
       ],
     );
   }
 
   @override
-  Widget getBuildLoginFrame(){
+  Widget getBuildLoginFrame() {
     return Consumer<LoginViewModel>(
-      builder: (context, loginManager,child) => Container(
+      builder: (context, loginManager, child) => Container(
         color: AppColor.surface(context),
         width: formWidth,
         child: Center(
@@ -170,17 +181,40 @@ class WebLoginViewPage extends AuthLayoutInterface{
   }
 
   @override
-  Widget getInfoDisplayFrame(){
+  Widget getInfoDisplayFrame() {
     return Consumer<LoginViewModel>(
       builder: (context, value, child) => Container(
-        color: AppColor.surfaceVariant(context),
-        child: Column(children: [Expanded(child: groupingIcon)],)
-      ),
+          color: AppColor.surfaceVariant(context),
+          child: Column(
+            children: [Expanded(child: groupingIcon)],
+          )),
     );
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (Uri.base.queryParametersAll.containsKey('code')) {
+      FlutterSecureStorage storage = FlutterSecureStorage();
+
+      storage
+          .write(key: 'code', value: Uri.base.queryParameters['code'])
+          .then((value) async {
+        debugPrint((await storage.readAll()).toString());
+        if (Uri.base.queryParametersAll.containsKey('scope')) {
+          GoogleAuth googleAuth = GoogleAuth();
+          await googleAuth.initializeOauthPlatform();
+          await googleAuth.handleCodeAndGetProfile();
+        } else if (Uri.base.queryParametersAll.containsKey('state')) {
+          LineAuth lineAuth = LineAuth();
+          await lineAuth.initializeOauthPlatform();
+          await lineAuth.handleCodeAndGetProfile();
+        } else {
+          GitHubAuth gitHubAuth = GitHubAuth();
+          await gitHubAuth.initializeOauthPlatform();
+          await gitHubAuth.handleCodeAndGetProfile();
+        }
+      });
+    }
     return ChangeNotifierProvider<LoginViewModel>.value(
       value: loginManager,
       child: super.build(context),

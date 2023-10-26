@@ -7,10 +7,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/service/auth/auth_service.dart';
 
-import 'oauth2_web.dart'
-    if (Platform.isAndroid) 'oauth2_mobile.dart'
-    if (Platform.isIOS) 'oauth2_mobile.dart';
+import 'web_oauth2.dart' if (dart.library.io) 'mobile_oauth2.dart';
 
+/// 1. [initializeOauthPlatform] is to initialize required parameter
+/// 2. [informParameters] is to set up django's parameters
+/// 3. [showWindowAndListen] is to sho the tab/webView
+/// 4. [handleCodeAndGetProfile] is to connect to backend and login
 class GoogleAuth {
   bool isLoading = false;
   late final BaseOauth platformedOauth2;
@@ -45,18 +47,21 @@ class GoogleAuth {
     await dotenv.load(fileName: ".env");
 
     platformedOauth2 = BaseOauth(
-      clientId: await _getCorrectGoogleClientId(),
-      clientSecret: await _getCorrectGoogleClientSecret(),
-      scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
-      authorizationEndpoint: Config.googleAuthEndpoint,
-      tokenEndpoint: Config.googleTokenEndpoint,
-      provider: AuthProvider.google,
-    );
+        clientId: await _getCorrectGoogleClientId(),
+        clientSecret: await _getCorrectGoogleClientSecret(),
+        scopes: dotenv.env['GOOGLE_SCOPES']!.split(','),
+        authorizationEndpoint: Config.googleAuthEndpoint,
+        tokenEndpoint: Config.googleTokenEndpoint,
+        provider: AuthProvider.google,
+        usePkce: true,
+        useState: false);
     const storage = FlutterSecureStorage();
 
-    await storage.write(
-        key: 'auth-provider', value: AuthProvider.google.string);
-    platformedOauth2.initialLoginFlow();
+    await storage.write(key: 'auth-provider', value: AuthProvider.line.string);
+  }
+
+  Future informParameters() async {
+    await platformedOauth2.initialLoginFlow();
   }
 
   Future showWindowAndListen(BuildContext context) async {
@@ -65,11 +70,9 @@ class GoogleAuth {
 
   Future handleCodeAndGetProfile() async {
     try {
-      platformedOauth2.requestProfile();
+      await platformedOauth2.getAccessToken();
     } catch (e) {
       debugPrint(e.toString());
-    } finally {
-      platformedOauth2.grant.close();
     }
   }
 }
