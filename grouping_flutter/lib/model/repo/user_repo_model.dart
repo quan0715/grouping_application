@@ -11,8 +11,17 @@ import 'package:grouping_project/model/auth/account_model.dart';
 const String baseURL = "http://ip"; // TODO: we need to know the django website
 
 class UserService {
-  final Map<String, String> headers = {"ContentType": "application/json"};
+  late final String _token;
+  late final Map<String, String> headers;
   http.Client _client = http.Client();
+
+  UserService({required String token}) {
+    _token = token;
+    headers = {
+      "ContentType": "application/json",
+      "Authorization":"Bearer $_token",
+    };
+  }
 
   void setClient(http.Client client) {
     _client = client;

@@ -35,7 +35,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 200));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -61,7 +61,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 200));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -89,7 +89,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 201));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -116,7 +116,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 201));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -133,7 +133,6 @@ void main() {
     });
     tearDown(() => null);
 
-    
     test("藉由 get 獲得預設的 mission (default)", () async {
       // Arrange
       final client = MockClient();
@@ -149,7 +148,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseMission, 200));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -175,7 +174,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseMission, 200));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -204,7 +203,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 201));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -231,7 +230,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 201));
 
-      final database = DatabaseService(workSpaceUid: 0);
+      final database = DatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act

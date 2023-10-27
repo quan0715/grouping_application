@@ -10,11 +10,19 @@ import 'package:grouping_project/model/repo/patch_enum.dart';
 const String baseURL = "http://ip"; // TODO: we need to know the django website
 
 class DatabaseService {
-  final int _workSpaceUid;
-  final Map<String, String> headers = {"ContentType": "application/json"};
+  late final int _workSpaceUid;
+  late final String _token;
+  late final Map<String, String> headers;
   http.Client _client = http.Client();
 
-  DatabaseService({required int workSpaceUid}) : _workSpaceUid = workSpaceUid;
+  DatabaseService({required int workSpaceUid, required String token}) {
+    _workSpaceUid = workSpaceUid;
+    _token = token;
+    headers = {
+      "ContentType": "application/json",
+      "Authorization": "Bearer $_token",
+    };
+  }
 
   void setClient(http.Client client) {
     _client = client;
@@ -57,7 +65,7 @@ class DatabaseService {
     }
   }
 
-    Future<EventModel> updataEvent(EventModel event) async {
+  Future<EventModel> updataEvent(EventModel event) async {
     Map<String, dynamic> eventBody = event.toJson();
     eventBody.addAll({"belong_workspace": _workSpaceUid.toString()});
 

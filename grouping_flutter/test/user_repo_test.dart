@@ -10,8 +10,8 @@ class MockClient extends Mock implements http.Client {}
 
 class FakeUri extends Mock implements Uri {}
 
-void main(){
-  group('user repo 功能測試:', () { 
+void main() {
+  group('user repo 功能測試:', () {
     setUp(() {
       registerFallbackValue(FakeUri());
     });
@@ -28,7 +28,7 @@ void main(){
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService();
+      final UserService userService = UserService(token: "test");
       userService.setClient(client);
 
       // Act
@@ -41,7 +41,11 @@ void main(){
     test("藉由 get 獲得任意的 account", () async {
       // Arrange
       final client = MockClient();
-      AccountModel account = AccountModel(name: 'test name', slogan: 'test slogan', photo: Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+      AccountModel account = AccountModel(
+          name: 'test name',
+          slogan: 'test slogan',
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);
@@ -49,7 +53,7 @@ void main(){
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService();
+      final UserService userService = UserService(token: "test");
       userService.setClient(client);
 
       // Act
@@ -58,6 +62,5 @@ void main(){
       // Assert
       expect(result, account);
     });
-
   });
 }
