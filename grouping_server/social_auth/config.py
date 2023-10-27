@@ -1,6 +1,7 @@
 class Config:
 
-  frontEndUrl = 'http://localhost:5000'
+  frontEndUrlWeb = 'http://localhost:5000'
+  frontEndUrlMobile = 'http://10.0.2.2:5000'
   baseUriWeb = 'http://localhost:8000'
   baseUriMobile = 'http://10.0.2.2:8000'
 
