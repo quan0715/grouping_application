@@ -20,33 +20,22 @@ from .github_and_line import GitHubAndLineToken
 
 load_dotenv()
 
-class PlatformSerializer(serializers.Serializer):
+class TokenExchangeParamSerializer(serializers.Serializer):
     platform = serializers.CharField(max_length=255)
+    verifier = serializers.CharField(max_length=255, allow_blank=True)
+    state = serializers.CharField(max_length=255, allow_blank=True)
+    
     def validate(self, attrs):
+        print(attrs)
         os.environ['PLATFORM'] = attrs.get('platform')
 
-        os.unsetenv("VERIFIER")
-        os.unsetenv("AUTH_CODE")
-        os.unsetenv('STATE')
-
-        print('PLATFORM: '+os.environ['PLATFORM'])
-        return super().validate(attrs)
-
-class VerifierSerializer(serializers.Serializer):
-    verifier = serializers.CharField(max_length=255)
-    def validate(self, attrs):
         cipher = AES.new(bytes(os.environ['ENCRYPT_KEY32'], 'utf-8'),AES.MODE_ECB)
-        os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
-        # print("VERIFIER: "+os.environ.get("VERIFIER"))
+        if attrs.get("verifier") != '':
+            os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
+        if attrs.get('state') != '':
+            os.environ['STATE'] = cipher.decrypt(base64.b64decode(attrs.get("state"))).decode('utf-8')
         return super().validate(attrs)
-    
-class StateSerializer(serializers.Serializer):
-    state = serializers.CharField(max_length=255)
-    def validate(self, attrs):
-        cipher = AES.new(bytes(os.environ['ENCRYPT_KEY32'], 'utf-8'),AES.MODE_ECB)
-        os.environ['STATE'] = cipher.decrypt(base64.b64decode(attrs.get("state"))).decode('utf-8')
-        # print("STATE: "+os.environ.get("STATE"))
-        return super().validate(attrs)
+
 
 class LoginSerializer(serializers.Serializer):
     account = serializers.CharField(max_length=255)
@@ -83,7 +72,7 @@ class GoogleSocialAuthSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         return oauth2_token_exchange(clientId=os.environ.get('GOOGLE_CLIENT_ID_WEB'), clientSecret=os.environ.get('GOOGLE_CLIENT_SECRET_WEB'), 
-                              provider=UrlGetter.Provider.GOOGLE,grant_type='authorization_code')
+                          provider=UrlGetter.Provider.GOOGLE,grant_type='authorization_code')
 
 
 class LineSocialAuthSerializer(serializers.Serializer):
