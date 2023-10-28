@@ -74,4 +74,27 @@ class WorkspaceModel{
     memberIds: data['members'].cast<String>() as List<String>,
     tags: data['tags'].cast<WorkspaceTag>() as List<WorkspaceTag>,
   );
+
+  @override
+  String toString() {
+    return {
+      "id": id,
+      "themeColor": themeColor,
+      "name": name,
+      "description": description,
+      "isPersonal": isPersonal,
+      "photo": photo,
+      "memberIds": memberIds,
+      "tags": tags,
+    }.toString();
+  }
+  
+  @override
+  bool operator ==(Object other) {
+    return this.toString() == other.toString();
+  }
+  
+  @override
+  // TODO: implement hashCode
+  int get hashCode => id!;
 }
