@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:encrypt/encrypt.dart' as encrypt_package;
 
 import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
-import '../../config/config.dart';
+import 'package:grouping_project/config/config.dart';
 
 class StringECBEncryptor {
   static Future<encrypt_package.Encrypted> encryptCode(
