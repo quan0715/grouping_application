@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:grouping_project/model/workspace/editable_card_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
-import 'package:grouping_project/model/repo/patch_enum.dart';
 
 const String baseURL = "http://ip"; // TODO: we need to know the django website
 
@@ -154,20 +153,6 @@ class DatabaseService {
     }
   }
 
-  /// can only update 'title', 'description', 'startTime', 'endTime', 'deadline'
-  // void _updateData(int ActivityId, ActivityCategory category) async {
-  //   final response = await _client.patch(
-  //       Uri.parse("$baseURL/$_workSpaceUid/activities/$ActivityId"),
-  //       headers: headers,
-  //       body: {category.name.toString(): category.data});
-
-  //   if (response.statusCode == 200) {
-  //     // do nothing
-  //   } else {
-  //     // TODO: raise Error
-  //   }
-  // }
-
   /// user or group delete actvity
   Future<void> deleteActivity(int activityId) async {
     final response = await _client.delete(
@@ -183,39 +168,6 @@ class DatabaseService {
       throw Exception("The requesting data was not found");
     } else {
       throw Exception("Unknown error");
-      // TODO: raise Error
     }
   }
-
-  /// append contributor of activity
-  // void _appendContributor(String newContributorId, String activityId) async {
-  //   final response = await _client.patch(
-  //       Uri.parse(
-  //           "$baseURL/$_workSpaceUid/activities/$activityId/contributors/$newContributorId"),
-  //       headers: headers,
-  //       body: {"contributors": activityId});
-
-  //   // successfully append a contributor
-  //   if (response.statusCode == 200) {
-  //     // do nothing
-  //   } else {
-  //     // TODO: raise Error
-  //   }
-  // }
-
-  /// append child mission of activity
-  // void _appendChildMission(String childMissionId, String activityId) async {
-  //   final response = await _client.patch(
-  //       Uri.parse(
-  //           "$baseURL/$_workSpaceUid/activities/$activityId/child_mission/$childMissionId"),
-  //       headers: headers,
-  //       body: {"child_mission": childMissionId});
-
-  //   // successfully append a contributor
-  //   if (response.statusCode == 200) {
-  //     // do nothing
-  //   } else {
-  //     // TODO: raise Error
-  //   }
-  // }
 }

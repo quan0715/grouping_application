@@ -3,7 +3,6 @@ import 'dart:convert';
 // TODO: user token?
 
 // import 'package:flutter/material.dart';
-import 'package:grouping_project/model/repo/patch_enum.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouping_project/model/auth/account_model.dart';
 // import 'package:grouping_project/model/auth/auth_model_lib.dart';
