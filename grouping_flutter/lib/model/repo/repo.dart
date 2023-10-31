@@ -40,6 +40,10 @@ class DatabaseService {
 
     if (response.statusCode == 200) {
       return EventModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return EventModel.defaultEvent;
@@ -59,6 +63,8 @@ class DatabaseService {
     // successfully set up new data
     if (response.statusCode == 201) {
       return EventModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
     } else {
       // TODO: raise Error
       return EventModel.defaultEvent;
@@ -77,6 +83,10 @@ class DatabaseService {
     // successfully set up new data
     if (response.statusCode == 200) {
       return EventModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return EventModel.defaultEvent;
@@ -84,13 +94,17 @@ class DatabaseService {
   }
 
   /// user or group get mission
-  Future<MissionModel> getMission(String missionId) async {
+  Future<MissionModel> getMission(int missionId) async {
     final response = await _client.get(
         Uri.parse("$baseURL/$_workSpaceUid/activities/$missionId"),
         headers: headers);
 
     if (response.statusCode == 200) {
       return MissionModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return MissionModel.defaultMission;
@@ -110,6 +124,8 @@ class DatabaseService {
     // successfully set up new data
     if (response.statusCode == 201) {
       return MissionModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
     } else {
       // TODO: raise Error
       return MissionModel.defaultMission;
@@ -128,6 +144,10 @@ class DatabaseService {
     // successfully set up new data
     if (response.statusCode == 200) {
       return MissionModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return MissionModel.defaultMission;
@@ -149,7 +169,7 @@ class DatabaseService {
   // }
 
   /// user or group delete actvity
-  void deleteActivity(int activityId) async {
+  Future<void> deleteActivity(int activityId) async {
     final response = await _client.delete(
         Uri.parse("$baseURL/$_workSpaceUid/activities/$activityId"),
         headers: headers);
@@ -157,7 +177,12 @@ class DatabaseService {
     // successfully delete data
     if (response.statusCode == 200) {
       // do nothing
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
+      throw Exception("Unknown error");
       // TODO: raise Error
     }
   }

@@ -61,7 +61,7 @@ class UserService {
 
   /// can only update real_name, user_name, slogan, introduction
   Future<AccountModel> updateUserData(String uid, AccountModel account) async {
-    final response = await http.patch(Uri.parse("$baseURL/users/$uid"),
+    final response = await _client.patch(Uri.parse("$baseURL/users/$uid"),
         headers: headers, body: jsonEncode(account));
 
     if (response.statusCode == 200) {
