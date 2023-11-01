@@ -623,7 +623,7 @@ void main() {
       expect(() async => await database.deleteActivity(0), isA<void>());
     });
 
-    test("delete event 的 id 不符合要求 (回傳 exception)", () async {
+    test("delete event 的 id 不符合格式 (回傳 exception)", () async {
       // Arrange
       final client = MockClient();
 

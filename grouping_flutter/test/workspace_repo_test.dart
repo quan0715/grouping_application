@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grouping_project/model/workspace/workspace_model.dart';
 import 'package:grouping_project/model/photo_model.dart';
@@ -63,6 +64,60 @@ void main() {
       expect(result, workspace);
     });
 
+    test("get workspace 的 id 不符合要求 (回傳 Exception)", () async {
+      // Arrange
+      final client = MockClient();
+      WorkspaceModel workspace = WorkspaceModel(
+          name: 'test name',
+          themeColor: 0x7f2473,
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+
+      Map<String, dynamic> object = workspace.toJson();
+      final responseWorkspace = jsonEncode(object);
+
+      when(() => client.get(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response(responseWorkspace, 400));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(
+          () async => await workspaceService.getWorkspace(-1),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: Invalid Syntax")));
+    });
+
+    test("get workspace 的 workspace 不存在 (回傳 Exception)", () async {
+      // Arrange
+      final client = MockClient();
+      WorkspaceModel workspace = WorkspaceModel(
+          name: 'test name',
+          themeColor: 0x7f2473,
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+
+      Map<String, dynamic> object = workspace.toJson();
+      final responseWorkspace = jsonEncode(object);
+
+      when(() => client.get(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response(responseWorkspace, 404));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(
+          () async => await workspaceService.getWorkspace(-1),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: The requesting data was not found")));
+    });
+
     test("藉由 create 獲得預設的 workspace (default)", () async {
       // Arrange
       final client = MockClient();
@@ -109,30 +164,164 @@ void main() {
       expect(result, workspace);
     });
 
-    // test("呼叫 deleteWorkspace 來刪除", () async {
-    //   // Arrange
-    //   final client = MockClient();
-    //   // WorkspaceModel workspace = WorkspaceModel(
-    //   //     name: 'test name',
-    //   //     themeColor: 0x7f2473,
-    //   //     photo:
-    //   //         Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+    test("create workspace 的 workspace 不符合要求 (回傳 Exception)", () async {
+      // Arrange
+      final client = MockClient();
+      WorkspaceModel workspace = WorkspaceModel(
+          name: 'test name',
+          themeColor: 0x7f2473,
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
 
-    //   // Map<String, dynamic> object = workspace.toJson();
-    //   // final responseAccount = jsonEncode(object);
+      Map<String, dynamic> object = workspace.toJson();
+      final responseWorkspace = jsonEncode(object);
 
-    //   when(() => client.delete(any(), headers:  any(named: 'headers'))).thenAnswer((_) async => http.Response('', 200));
-    //   // when(() => client.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
-    //   //     .thenAnswer((_) async => http.Response(responseAccount, 200));
+      when(() => client.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+          .thenAnswer((_) async => http.Response(responseWorkspace, 400));
 
-    //   final WorkspaceService workspaceService = WorkspaceService(token: "test");
-    //   workspaceService.setClient(client);
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
 
-    //   // Act
-    //   fn() => workspaceService.deleteWorkspace(-1);
+      // Act
 
-    //   // Assert
-    //   // expect(result, workspace);
-    // });
+      // Assert
+      expect(
+          () async => await workspaceService.createWorkspace(workspace),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: Invalid Syntax")));
+    });
+
+    test("藉由 update 獲得更新後的 workspace", () async {
+      // Arrange
+      final client = MockClient();
+      WorkspaceModel workspace = WorkspaceModel(
+          name: 'test name',
+          themeColor: 0x7f2473,
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+
+      Map<String, dynamic> object = workspace.toJson();
+      final responseAccount = jsonEncode(object);
+
+      when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+          .thenAnswer((_) async => http.Response(responseAccount, 200));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+      final result = await workspaceService.updataWorkspace(workspace);
+
+      // Assert
+      expect(result, workspace);
+    });
+
+    test("update workspace 的 workspace 不符合要求 (回傳 Exception)", () async {
+      // Arrange
+      final client = MockClient();
+      WorkspaceModel workspace = WorkspaceModel(
+          name: 'test name',
+          themeColor: 0x7f2473,
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+
+      Map<String, dynamic> object = workspace.toJson();
+      final responseWorkspace = jsonEncode(object);
+
+      when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+          .thenAnswer((_) async => http.Response(responseWorkspace, 400));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(
+          () async => await workspaceService.updataWorkspace(workspace),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: Invalid Syntax")));
+    });
+
+    test("update workspace 的 workspace 不存在 (回傳 Exception)", () async {
+      // Arrange
+      final client = MockClient();
+      WorkspaceModel workspace = WorkspaceModel(
+          name: 'test name',
+          themeColor: 0x7f2473,
+          photo:
+              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+
+      Map<String, dynamic> object = workspace.toJson();
+      final responseWorkspace = jsonEncode(object);
+
+      when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+          .thenAnswer((_) async => http.Response(responseWorkspace, 404));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(
+          () async => await workspaceService.updataWorkspace(workspace),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: The requesting data was not found")));
+    });
+
+    test("delete workspace 是否正確", () async {
+      // Arrange
+      final client = MockClient();
+
+      when(() => client.delete(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('', 200));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(() async => await workspaceService.deleteWorkspace(-1), isA<void>());
+    });
+
+    test("delete workspace 的 id 不符合格式 (回傳 exception)", () async {
+      // Arrange
+      final client = MockClient();
+
+      when(() => client.delete(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('', 400));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(
+          () async => await workspaceService.deleteWorkspace(-1),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: Invalid Syntax")));
+    });
+
+    test("delete workspace 的 id 不存在 (回傳 exception)", () async {
+      // Arrange
+      final client = MockClient();
+
+      when(() => client.delete(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('', 404));
+
+      final WorkspaceService workspaceService = WorkspaceService(token: "test");
+      workspaceService.setClient(client);
+
+      // Act
+
+      // Assert
+      expect(
+          () async => await workspaceService.deleteWorkspace(-1),
+          throwsA(predicate((e) =>
+              e is Exception && e.toString() == "Exception: The requesting data was not found")));
+    });
   });
 }

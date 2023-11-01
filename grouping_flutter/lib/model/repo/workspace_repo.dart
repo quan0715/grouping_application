@@ -32,6 +32,10 @@ class WorkspaceService{
 
     if (response.statusCode == 200) {
       return WorkspaceModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return WorkspaceModel.defaultWorkspace;
@@ -49,13 +53,15 @@ class WorkspaceService{
     // successfully set up new data
     if (response.statusCode == 201) {
       return WorkspaceModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
     } else {
       // TODO: raise Error
       return WorkspaceModel.defaultWorkspace;
     }
   }
 
-  Future<WorkspaceModel> updataEvent(WorkspaceModel workspace) async {
+  Future<WorkspaceModel> updataWorkspace(WorkspaceModel workspace) async {
     Map<String, dynamic> eventBody = workspace.toJson();
 
     final response = await _client.patch(
@@ -66,13 +72,17 @@ class WorkspaceService{
     // successfully set up new data
     if (response.statusCode == 200) {
       return WorkspaceModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return WorkspaceModel.defaultWorkspace;
     }
   }
 
-  void deleteWorkspace(int workspaceId) async {
+  Future<void> deleteWorkspace(int workspaceId) async {
     final response = await _client.delete(
         Uri.parse("$baseURL/workspaces/$workspaceId"),
         headers: headers);
@@ -80,6 +90,10 @@ class WorkspaceService{
     // successfully delete data
     if (response.statusCode == 200) {
       // do nothing
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
     }
