@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-// TODO: user token?
-
 // import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouping_project/model/auth/account_model.dart';
@@ -39,39 +37,30 @@ class UserService {
 
     if (response.statusCode == 200) {
       return AccountModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return AccountModel.defaultAccount;
     }
   }
 
-  /// create a new user
-  // Future<AccountModel> _createUser() async {
-  //   final response =
-  //       await http.post(Uri.parse("$baseURL/users"), headers: headers);
-
-  //   if (response.statusCode == 201) {
-  //     return AccountModel.fromJson(data: jsonDecode(response.body));
-  //   } else {
-  //     // TODO: raise Error
-  //     return AccountModel.defaultAccount;
-  //   }
-  // }
-
   /// can only update real_name, user_name, slogan, introduction
-  Future<AccountModel> updateUserData(String uid, AccountModel account) async {
+  Future<AccountModel> updateUserData(int uid, AccountModel account) async {
     final response = await _client.patch(Uri.parse("$baseURL/users/$uid"),
         headers: headers, body: jsonEncode(account));
 
     if (response.statusCode == 200) {
       return AccountModel.fromJson(data: jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      throw Exception("Invalid Syntax");
+    } else if (response.statusCode == 404) {
+      throw Exception("The requesting data was not found");
     } else {
       // TODO: raise Error
       return AccountModel.defaultAccount;
     }
   }
-
-  // void _updateTags(String uid) async {
-  //   final response = await http.patch(Uri.parse("$baseURL/users/$uid"), headers: headers);
-  // }
 }
