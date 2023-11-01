@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grouping_project/model/repo/repo.dart';
-import 'package:grouping_project/model/workspace/event_model.dart';
+// import 'package:grouping_project/model/workspace/event_model.dart';
 import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;

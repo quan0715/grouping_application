@@ -1,8 +1,6 @@
 import 'dart:convert';
-// TODO: user token?
 
 // import 'package:flutter/material.dart';
-import 'package:grouping_project/model/workspace/editable_card_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
 
