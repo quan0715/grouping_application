@@ -144,7 +144,7 @@ class WorkspaceService{
   /// 
   /// ### Example
   /// ```dart
-  /// WorkspaceModel workspace = await WorkspaceService.deleteWorkspace(workspaceId: -1);
+  /// await WorkspaceService.deleteWorkspace(workspaceId: -1);
   /// ```
   /// 
   Future<void> deleteWorkspace({required int workspaceId}) async {

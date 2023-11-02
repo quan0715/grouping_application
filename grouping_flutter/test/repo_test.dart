@@ -39,7 +39,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.getEvent(0);
+      final result = await database.getEvent(eventId: -1);
 
       // Assert
       expect(result, event);
@@ -65,7 +65,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.getEvent(0);
+      final result = await database.getEvent(eventId: -1);
 
       // Assert
       expect(result, event);
@@ -98,7 +98,7 @@ void main() {
       // expect(result, event);
       // expect(() async => await database.getEvent(0), throwsA(isA<Exception>()));
       expect(
-          () async => await database.getEvent(0),
+          () async => await database.getEvent(eventId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -130,7 +130,7 @@ void main() {
       // expect(result, event);
       // expect(() async => await database.getEvent(0), throwsA(isA<Exception>()));
       expect(
-          () async => await database.getEvent(0),
+          () async => await database.getEvent(eventId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
@@ -157,7 +157,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.createEvent(event);
+      final result = await database.createEvent(event: event);
 
       // Assert
       expect(result, event);
@@ -184,7 +184,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.createEvent(event);
+      final result = await database.createEvent(event: event);
 
       // Assert
       expect(result, event);
@@ -215,7 +215,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.createEvent(event),
+          () async => await database.createEvent(event: event),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -241,7 +241,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.updataEvent(event);
+      final result = await database.updataEvent(event: event);
 
       // Assert
       expect(result, event);
@@ -272,7 +272,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.updataEvent(event),
+          () async => await database.updataEvent(event: event),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -302,7 +302,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.updataEvent(event),
+          () async => await database.updataEvent(event: event),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
@@ -333,7 +333,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.getMission(0);
+      final result = await database.getMission(missionId: -1);
 
       // Assert
       expect(result, mission);
@@ -359,7 +359,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.getMission(0);
+      final result = await database.getMission(missionId: -1);
 
       // Assert
       expect(result, mission);
@@ -390,7 +390,7 @@ void main() {
       // Assert
       // expect(result, mission);
       expect(
-          () async => await database.getMission(0),
+          () async => await database.getMission(missionId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -420,7 +420,7 @@ void main() {
       // Assert
       // expect(result, mission);
       expect(
-          () async => await database.getMission(0),
+          () async => await database.getMission(missionId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
@@ -448,7 +448,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.createMission(mission);
+      final result = await database.createMission(mission: mission);
 
       // Assert
       expect(result, mission);
@@ -475,7 +475,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.createMission(mission);
+      final result = await database.createMission(mission: mission);
 
       // Assert
       expect(result, mission);
@@ -506,7 +506,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.createMission(mission),
+          () async => await database.createMission(mission: mission),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -532,7 +532,7 @@ void main() {
       database.setClient(client);
 
       // Act
-      final result = await database.updataMission(mission);
+      final result = await database.updataMission(mission: mission);
 
       // Assert
       expect(result, mission);
@@ -563,7 +563,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.updataMission(mission),
+          () async => await database.updataMission(mission: mission),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -593,19 +593,19 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.updataMission(mission),
+          () async => await database.updataMission(mission: mission),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
   });
 
-  group("repo delete 測試:", () {
+  group("repo activity delete 測試:", () {
     setUp(() {
       registerFallbackValue(FakeUri());
     });
     tearDown(() => null);
 
-    test("delete event 是否正確", () async {
+    test("delete activity 是否正確", () async {
       // Arrange
       final client = MockClient();
 
@@ -620,10 +620,10 @@ void main() {
       // final result = await database.deleteActivity(0);
 
       // Assert
-      expect(() async => await database.deleteActivity(0), isA<void>());
+      expect(() async => await database.deleteActivity(activityId: -1), isA<void>());
     });
 
-    test("delete event 的 id 不符合格式 (回傳 exception)", () async {
+    test("delete activity 的 id 不符合格式 (回傳 exception)", () async {
       // Arrange
       final client = MockClient();
 
@@ -639,12 +639,12 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.deleteActivity(0),
+          () async => await database.deleteActivity(activityId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
 
-    test("delete event 的 id 不存在 (回傳 exception)", () async {
+    test("delete activity 的 id 不存在 (回傳 exception)", () async {
       // Arrange
       final client = MockClient();
 
@@ -660,7 +660,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await database.deleteActivity(0),
+          () async => await database.deleteActivity(activityId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
