@@ -3,13 +3,26 @@ import 'dart:convert';
 import 'package:grouping_project/model/workspace/workspace_model.dart';
 import 'package:http/http.dart' as http;
 
+/// The server backend IP of the database
 const String baseURL = "http://ip"; // TODO: we need to know the django website
 
+/// ## 這個 WorkspaceService 主要是負責處理 workspace 的功能操作
+/// 
+/// 此 service 可以 get, create, update, delete workspace
+/// 
+/// * [token] : 使用者的認證碼
+///
 class WorkspaceService{
   late final String _token;
   late final Map<String, String> headers;
   http.Client _client = http.Client();
 
+  /// ## 這個 WorkspaceService 主要是負責處理 workspace 的功能操作
+  /// 
+  /// 此 service 可以 get, create, update, delete workspace
+  /// 
+  /// * [token] : 使用者的認證碼
+  ///
   WorkspaceService({required String token}) {
     _token = token;
     headers = {
@@ -18,15 +31,29 @@ class WorkspaceService{
     };
   }
 
+  /// 設定當前 WorkspaceService 要對後端傳遞的**客戶(client)** 
   void setClient(http.Client client) {
     _client = client;
   }
 
+  /// 獲取當前 WorkspaceService 要對後端傳遞的**客戶(client)**
   http.Client getClient() {
     return _client;
   }
 
-  Future<WorkspaceModel> getWorkspace(int workspaceId) async {
+  /// ## 獲取想要的 workspace 的資訊
+  /// 
+  /// 傳入 [workspaceId] 來獲取 [WorkspaceModel]\
+  /// 若未出錯則回傳 [WorkspaceModel]\
+  /// 若 [workspaceId] 有格式錯誤則會丟出 [Exception]\
+  /// 若 [workspaceId] 所對應的 [WorkspaceModel] 不存在則會丟出 [Exception]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// WorkspaceModel workspace = await WorkspaceService.getWorkspace(workspaceId: -1);
+  /// ```
+  /// 
+  Future<WorkspaceModel> getWorkspace({required int workspaceId}) async {
     final response =
         await _client.get(Uri.parse("$baseURL/workspaces/$workspaceId"), headers: headers);
 
@@ -42,7 +69,18 @@ class WorkspaceService{
     }
   }
 
-  Future<WorkspaceModel> createWorkspace(WorkspaceModel workspace) async {
+  /// ## 創立一個 workspace
+  /// 
+  /// 傳入 [WorkspaceModel] 來建立一個 [WorkspaceModel]\
+  /// 若未出錯則回傳 [WorkspaceModel]\
+  /// 若 [workspace] 有格式錯誤則會丟出 [Exception]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// WorkspaceModel workspace = await WorkspaceService.createWorkspace(workspace: createDataofWorkspace);
+  /// ```
+  /// 
+  Future<WorkspaceModel> createWorkspace({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
 
     final response = await _client.post(
@@ -61,7 +99,19 @@ class WorkspaceService{
     }
   }
 
-  Future<WorkspaceModel> updataWorkspace(WorkspaceModel workspace) async {
+  /// ## 更新 workspace 的資訊
+  /// 
+  /// 傳入 [WorkspaceModel] 來更新資料\
+  /// 若未出錯則回傳更新後的 [WorkspaceModel]\
+  /// 若 [workspace] 有格式錯誤則會丟出 [Exception]\
+  /// 若 [workspace] 所對應的 [WorkspaceModel] 不存在則會丟出 [Exception]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// WorkspaceModel workspace = await WorkspaceService.updateWorkspace(workspace: updateModelofWorkspace);
+  /// ```
+  /// 
+  Future<WorkspaceModel> updataWorkspace({required WorkspaceModel workspace}) async {
     Map<String, dynamic> eventBody = workspace.toJson();
 
     final response = await _client.patch(
@@ -82,7 +132,19 @@ class WorkspaceService{
     }
   }
 
-  Future<void> deleteWorkspace(int workspaceId) async {
+  /// ## 刪除 workspace
+  /// 
+  /// 傳入 [workspaceId] 來刪除所對應的 [WorkspaceModel]\
+  /// 若未出錯則不回傳\
+  /// 若 [workspaceId] 有格式錯誤則會丟出 [Exception]\
+  /// 若 [workspaceId] 所對應的 [WorkspaceModel] 不存在則會丟出 [Exception]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// WorkspaceModel workspace = await WorkspaceService.deleteWorkspace(workspaceId: -1);
+  /// ```
+  /// 
+  Future<void> deleteWorkspace({required int workspaceId}) async {
     final response = await _client.delete(
         Uri.parse("$baseURL/workspaces/$workspaceId"),
         headers: headers);

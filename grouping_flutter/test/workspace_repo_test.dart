@@ -12,7 +12,7 @@ class MockClient extends Mock implements http.Client {}
 class FakeUri extends Mock implements Uri {}
 
 void main() {
-  group('user repo 功能測試:', () {
+  group('workspace repo 功能測試:', () {
     setUp(() {
       registerFallbackValue(FakeUri());
     });
@@ -33,7 +33,7 @@ void main() {
       workspaceService.setClient(client);
 
       // Act
-      final result = await workspaceService.getWorkspace(-1);
+      final result = await workspaceService.getWorkspace(workspaceId: -1);
 
       // Assert
       expect(result, workspace);
@@ -58,7 +58,7 @@ void main() {
       workspaceService.setClient(client);
 
       // Act
-      final result = await workspaceService.getWorkspace(-1);
+      final result = await workspaceService.getWorkspace(workspaceId: -1);
 
       // Assert
       expect(result, workspace);
@@ -86,7 +86,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.getWorkspace(-1),
+          () async => await workspaceService.getWorkspace(workspaceId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -113,7 +113,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.getWorkspace(-1),
+          () async => await workspaceService.getWorkspace(workspaceId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
@@ -133,7 +133,7 @@ void main() {
       workspaceService.setClient(client);
 
       // Act
-      final result = await workspaceService.createWorkspace(workspace);
+      final result = await workspaceService.createWorkspace(workspace: workspace);
 
       // Assert
       expect(result, workspace);
@@ -158,7 +158,7 @@ void main() {
       workspaceService.setClient(client);
 
       // Act
-      final result = await workspaceService.createWorkspace(workspace);
+      final result = await workspaceService.createWorkspace(workspace: workspace);
 
       // Assert
       expect(result, workspace);
@@ -186,7 +186,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.createWorkspace(workspace),
+          () async => await workspaceService.createWorkspace(workspace: workspace),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -210,7 +210,7 @@ void main() {
       workspaceService.setClient(client);
 
       // Act
-      final result = await workspaceService.updataWorkspace(workspace);
+      final result = await workspaceService.updataWorkspace(workspace: workspace);
 
       // Assert
       expect(result, workspace);
@@ -238,7 +238,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.updataWorkspace(workspace),
+          () async => await workspaceService.updataWorkspace(workspace: workspace),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -265,7 +265,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.updataWorkspace(workspace),
+          () async => await workspaceService.updataWorkspace(workspace: workspace),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
@@ -283,7 +283,7 @@ void main() {
       // Act
 
       // Assert
-      expect(() async => await workspaceService.deleteWorkspace(-1), isA<void>());
+      expect(() async => await workspaceService.deleteWorkspace(workspaceId: -1), isA<void>());
     });
 
     test("delete workspace 的 id 不符合格式 (回傳 exception)", () async {
@@ -300,7 +300,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.deleteWorkspace(-1),
+          () async => await workspaceService.deleteWorkspace(workspaceId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -319,7 +319,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.deleteWorkspace(-1),
+          () async => await workspaceService.deleteWorkspace(workspaceId: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
