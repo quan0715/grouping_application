@@ -9,8 +9,6 @@ const String baseURL = "http://ip"; // TODO: we need to know the django website
 /// ## 這個 WorkspaceService 主要是負責處理 workspace 的功能操作
 /// 
 /// 此 service 可以 get, create, update, delete workspace
-/// 
-/// * [token] : 使用者的認證碼
 ///
 class WorkspaceService{
   late final String _token;
@@ -22,6 +20,11 @@ class WorkspaceService{
   /// 此 service 可以 get, create, update, delete workspace
   /// 
   /// * [token] : 使用者的認證碼
+  /// 
+  /// ### Example
+  /// ```dart
+  /// WorkspaceService service = WorkspaceService(token: userToken);
+  /// ```
   ///
   WorkspaceService({required String token}) {
     _token = token;
