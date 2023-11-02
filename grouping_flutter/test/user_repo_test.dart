@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grouping_project/model/auth/account_model.dart';
 import 'package:grouping_project/model/photo_model.dart';
-import 'package:grouping_project/model/repo/user_repo_model.dart';
+import 'package:grouping_project/model/repo/user_repo.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,11 +28,11 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
-      final result = await userService.getUserData(-1);
+      final result = await userService.getUserData(uid: -1);
 
       // Assert
       expect(result, account);
@@ -53,11 +53,11 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
-      final result = await userService.getUserData(-1);
+      final result = await userService.getUserData(uid: -1);
 
       // Assert
       expect(result, account);
@@ -78,7 +78,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 400));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
@@ -86,7 +86,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await userService.getUserData(-1),
+          () async => await userService.getUserData(uid: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -106,7 +106,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 404));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
@@ -114,7 +114,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await userService.getUserData(-1),
+          () async => await userService.getUserData(uid: -1),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
@@ -130,11 +130,11 @@ void main() {
       when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
-      final result = await userService.updateUserData(-1, account);
+      final result = await userService.updateUserData(account: account);
 
       // Assert
       expect(result, account);
@@ -151,7 +151,7 @@ void main() {
       when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseAccount, 400));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
@@ -159,7 +159,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await userService.updateUserData(-1, account),
+          () async => await userService.updateUserData(account: account),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -175,7 +175,7 @@ void main() {
       when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseAccount, 404));
 
-      final UserService userService = UserService(token: "test");
+      final UserService userService = UserService(token: -1);
       userService.setClient(client);
 
       // Act
@@ -183,7 +183,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await userService.updateUserData(-1, account),
+          () async => await userService.updateUserData(account: account),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
