@@ -25,12 +25,14 @@ class RegisterViewPage extends AuthLayoutInterface{
     Navigator.pushNamed(context, '/login');
   }
 
-  void moveToWelcomePage(BuildContext context) {
+  void moveToWelcomePage(BuildContext context, RegisterViewModel signInManager) {
     debugPrint("前往歡迎頁面");
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => const WelcomeView()));
+          builder: (context) => ChangeNotifierProvider<RegisterViewModel>.value(
+            value: signInManager,
+            child: const WelcomeView())));
   }
 
 
@@ -91,7 +93,7 @@ class RegisterViewPage extends AuthLayoutInterface{
                     await signInManager.register();
                     debugPrint("註冊成功");
                     if(context.mounted){
-                      moveToWelcomePage(context);
+                      moveToWelcomePage(context, signInManager);
                     }
                     // TODO: fix register flow 
                   }

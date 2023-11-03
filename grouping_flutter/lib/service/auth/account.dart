@@ -29,6 +29,7 @@ class AccountAuth {
 
       await ResponseHandling.authHandling(response);
     } catch (e) {
+      debugPrint("sign UP error");
       debugPrint(e.toString());
       rethrow;
     }
