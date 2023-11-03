@@ -16,7 +16,9 @@ class SocialLogin:
                     'client_secret':cilentSecret,
                     'code':os.environ.get('AUTH_CODE'),
                 }
+        
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
+        print(body['redirect_uri'])
         if 'VERIFIER' in os.environ:
                 body['code_verifier']=os.environ.get('VERIFIER')
         if (grant_type != ''):
@@ -76,7 +78,8 @@ class UrlGetter:
                     return Config.lineUserProfileEndpoint
     
     def getFrontEndUrl():
-        if os.environ.get('platform') == 'web':
+        print("plateform", os.environ.get('platform'))
+        if os.environ.get('PLATFORM') == 'web':
             return Config.frontEndUrlWeb
         else:
             return Config.frontEndUrlMobile
