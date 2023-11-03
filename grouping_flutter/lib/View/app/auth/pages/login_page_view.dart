@@ -6,6 +6,7 @@ import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
 import 'package:grouping_project/View/app/auth/components/auth_text_form_field.dart';
 import 'package:grouping_project/View/app/auth/components/third_party_login_button.dart';
 import 'package:grouping_project/View/components/app_elevated_button.dart';
+import 'package:grouping_project/View/components/state.dart';
 import 'package:grouping_project/View/components/title_with_content.dart';
 import 'package:grouping_project/View/theme/theme.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
@@ -33,7 +34,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
 
   void moveToHome(BuildContext context) {
     debugPrint("前往主畫面");
-    Navigator.pushNamed(context, '/');
+    Navigator.pushNamed(context, '/workspace');
   }
 
   Widget _getInputForm() {
@@ -68,10 +69,12 @@ class WebLoginViewPage extends AuthLayoutInterface {
               ),
               AppButton(
                 buttonType: AppButtonType.hightLight,
-                onPressed: () {
+                onPressed: () async {
                   if (textFormKey.currentState!.validate()) {
-                    loginManager.onFormPasswordLogin();
-                    moveToHome(context);
+                    await loginManager.onFormPasswordLogin();
+                    if(context.mounted && loginManager.loginState == LoginState.loginSuccess){
+                      moveToHome(context);
+                    }
                   }
                 },
                 label: '登入',
@@ -169,7 +172,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
         color: AppColor.surface(context),
         width: formWidth,
         child: Center(
-            child: AppPadding.large(
+            child: AppPadding.medium(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +205,6 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget build(BuildContext context) {
     if (Uri.base.queryParametersAll.containsKey('code')) {
       FlutterSecureStorage storage = const FlutterSecureStorage();
-
       storage
           .write(key: 'code', value: Uri.base.queryParameters['code'])
           .then((value) async {

@@ -101,6 +101,7 @@ class AppButton extends StatelessWidget{
 
   Widget _getBody(BuildContext context){
     return Card(
+      elevation: 0,
       child: _getButton(context),
     );
   }

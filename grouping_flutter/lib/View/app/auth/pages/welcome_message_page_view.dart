@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 class WelcomeView extends AuthLayoutInterface {
   const WelcomeView({Key? key}) : super(key: key);
   Widget getWelcomeAsset() => Image.asset(Assets.welcomeImagePath ,fit: BoxFit.values[4]);
-  void goToLoginPage(BuildContext context) => Navigator.pushNamed(context, '/login');
+  void goToLoginPage(BuildContext context) => Navigator.pushNamed(context, '/workspace');
   
   @override
   Widget getBuildLoginFrame(){
@@ -20,13 +20,13 @@ class WelcomeView extends AuthLayoutInterface {
           color: AppColor.surface(context),
           width: formWidth,
           child: Center(
-              child: AppPadding.large(
+              child: AppPadding.medium(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TitleWithContent(
-                    title: "張百寬, 您好\n歡迎加入 GROUPING！", 
+                TitleWithContent(
+                    title: "${signInManager.userName}, 您好\n歡迎加入 GROUPING！", 
                     content: "趕快加入或創立新的工作小組吧。"
                 ),
                 const Divider(thickness: 2),
@@ -54,12 +54,12 @@ class WelcomeView extends AuthLayoutInterface {
     );
   }  
 
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(create: 
-      (context) => RegisterViewModel(),
-      child: super.build(context),
-    );
-  }
+  // @override
+  // Widget build(BuildContext context) {
+  //   return ChangeNotifierProvider(create: 
+  //     (context) => RegisterViewModel(),
+  //     child: super.build(context),
+  //   );
+  // }
 
 }
