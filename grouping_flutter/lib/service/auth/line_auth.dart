@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:grouping_project/config/config.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/auth_helpers.dart';
 
 import 'web_oauth2.dart' if (dart.library.io) 'mobile_oauth2.dart';
 
