@@ -6,7 +6,7 @@ import 'package:grouping_project/model/workspace/editable_card_model.dart';
 import 'mission_state_model.dart';
 // import 'package:grouping_project/exception.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
+// import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
 
 /// ## a data model for misison
 /// * to upload/download, use `DataController`
@@ -95,22 +95,22 @@ class MissionModel extends EditableCardModel {
         );
 
   /// convert `List<DateTime>` to `List<Timestamp>`
-  List<Timestamp> _toFirestoreTimeList(List<DateTime> dateTimeList) {
-    List<Timestamp> processList = [];
-    for (DateTime dateTime in dateTimeList) {
-      processList.add(Timestamp.fromDate(dateTime));
-    }
-    return processList;
-  }
+  // List<Timestamp> _toFirestoreTimeList(List<DateTime> dateTimeList) {
+  //   List<Timestamp> processList = [];
+  //   for (DateTime dateTime in dateTimeList) {
+  //     processList.add(Timestamp.fromDate(dateTime));
+  //   }
+  //   return processList;
+  // }
 
-  /// convert `List<Timestamp>` to `List<DateTime>`
-  List<DateTime> _fromFirestoreTimeList(List<Timestamp> timestampList) {
-    List<DateTime> processList = [];
-    for (Timestamp timestamp in timestampList) {
-      processList.add(timestamp.toDate());
-    }
-    return processList;
-  }
+  // /// convert `List<Timestamp>` to `List<DateTime>`
+  // List<DateTime> _fromFirestoreTimeList(List<Timestamp> timestampList) {
+  //   List<DateTime> processList = [];
+  //   for (Timestamp timestamp in timestampList) {
+  //     processList.add(timestamp.toDate());
+  //   }
+  //   return processList;
+  // }
 
   factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
       MissionModel(

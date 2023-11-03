@@ -83,7 +83,7 @@ class UserService {
   /// 
   /// ### Example
   /// ```dart
-  /// AccountModel account = await UserService.updateUserData(account: updateModelofAccount);
+  /// AccountModel account = await UserService.updateUserData(account: updateModelOfAccount);
   /// ```
   /// 
   Future<AccountModel> updateUserData({required AccountModel account}) async {

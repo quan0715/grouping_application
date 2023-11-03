@@ -91,7 +91,7 @@ class WorkspaceModel{
   
   @override
   bool operator ==(Object other) {
-    return this.toString() == other.toString();
+    return toString() == other.toString();
   }
   
   @override

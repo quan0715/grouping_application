@@ -25,12 +25,14 @@ class RegisterViewPage extends AuthLayoutInterface{
     Navigator.pushNamed(context, '/login');
   }
 
-  void moveToWelcomePage(BuildContext context) {
+  void moveToWelcomePage(BuildContext context, RegisterViewModel signInManager) {
     debugPrint("前往歡迎頁面");
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => const WelcomeView()));
+          builder: (context) => ChangeNotifierProvider<RegisterViewModel>.value(
+            value: signInManager,
+            child: const WelcomeView())));
   }
 
 
@@ -86,11 +88,13 @@ class RegisterViewPage extends AuthLayoutInterface{
               ),
               AppButton(
                 buttonType: AppButtonType.hightLight,
-                onPressed: () {
+                onPressed: () async {
                   if (textFormKey.currentState!.validate()) {
-                    signInManager.register();
+                    await signInManager.register();
                     debugPrint("註冊成功");
-                    moveToWelcomePage(context);
+                    if(context.mounted){
+                      moveToWelcomePage(context, signInManager);
+                    }
                     // TODO: fix register flow 
                   }
                 },
@@ -116,7 +120,7 @@ class RegisterViewPage extends AuthLayoutInterface{
         color: AppColor.surface(context),
         width: formWidth,
         child: Center(
-            child: AppPadding.large(
+            child: AppPadding.medium(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,

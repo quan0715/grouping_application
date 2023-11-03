@@ -21,7 +21,7 @@ class BaseOauth {
   late final bool pkceSupported;
   late final bool stateSupported;
   final PkcePair _pkcePair = PkcePair.generate(length: 96);
-  final String _stateCode = StateGenerater.generateLength32State();
+  final String _stateCode = StateGenerator.generateLength32State();
   // ValueNotifier<WebViewWidget> authWidgetNotifier = ValueNotifier(newObject());
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
@@ -88,7 +88,7 @@ class BaseOauth {
   }
 
   Future _informParams() async {
-    String stringUrl = EndPointGetter.getAuthBackendEndpoint('exhange_params');
+    String stringUrl = EndPointGetter.getAuthBackendEndpoint('exchange_params');
 
     Map<String, String> body = {};
 
@@ -108,7 +108,7 @@ class BaseOauth {
     }
 
     body['platform'] = 'web';
-    Response response = await post(Uri.parse(stringUrl), body: body);
+    await post(Uri.parse(stringUrl), body: body);
   }
 
   // TODO: this is view, no context here

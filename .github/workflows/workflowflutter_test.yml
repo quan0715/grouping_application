@@ -43,3 +43,7 @@ jobs:
       - name: flutter tests
         run: flutter test
         working-directory: grouping_flutter
+      
+      - name: Analyze project source
+        run: flutter analyze
+        working-directory: grouping_flutter

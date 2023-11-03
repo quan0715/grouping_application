@@ -65,6 +65,7 @@ dependencies:
   # pkce and encrypt
   pkce: ^1.1.0+1
   encrypt: ^5.0.3
+  universal_html: ^2.2.4
 
 
 dev_dependencies:
