@@ -4,9 +4,6 @@ from enum import Enum
 from .config import Config
 
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class SocialLogin:
     def getBody(provider:Enum, clientId, cilentSecret, grant_type = ''):

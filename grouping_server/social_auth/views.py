@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -19,7 +18,6 @@ class TokenExchangeParamView(GenericAPIView):
     serializer_class = TokenExchangeParamSerializer
 
     def post(self, request):
-        load_dotenv()
         print(request.data)
 
         serializer = self.serializer_class(data=request.data)
@@ -33,7 +31,6 @@ class CallbackView(GenericAPIView):
     serializer_class = CallbackSerializer
     
     def get(self, request):
-        load_dotenv()
 
         serializer = self.serializer_class(data=request.data,code=self.request.GET.get('code',''))
         serializer.is_valid(raise_exception=True)

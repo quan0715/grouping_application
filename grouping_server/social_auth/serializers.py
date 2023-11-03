@@ -5,7 +5,6 @@ from rest_framework.fields import empty
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 # from grouping_project_backend.models import UserManager, User
-from dotenv import load_dotenv
 from Crypto.Cipher import AES
 from enum import Enum
 import urllib.parse
@@ -17,8 +16,6 @@ from . import register
 from .helper_methods import TokenExchangeError, UrlGetter, SocialLogin
 from .google import GoogleTokenExchange
 from .github_and_line import GitHubAndLineToken
-
-load_dotenv()
 
 class TokenExchangeParamSerializer(serializers.Serializer):
     platform = serializers.CharField(max_length=255)

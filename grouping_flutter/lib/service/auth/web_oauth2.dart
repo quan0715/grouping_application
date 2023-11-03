@@ -1,7 +1,5 @@
-import 'dart:js_util';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/service/auth/auth_helpers.dart';
-import 'package:grouping_project/service/auth/account.dart';
 import 'package:http/http.dart';
 import 'dart:html' as html;
 import 'package:pkce/pkce.dart';
@@ -23,8 +21,8 @@ class BaseOauth {
   late final bool stateSupported;
   final PkcePair _pkcePair = PkcePair.generate(length: 96);
   final String _stateCode = StateGenerater.generateLength32State();
-  ValueNotifier<html.WindowBase> authWindowNotifier =
-      ValueNotifier(newObject());
+  // ValueNotifier<html.WindowBase> authWindowNotifier =
+  //     ValueNotifier(newObject());
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
   /// 2. [showWindowAndListen] is to show new tab, need context as parameter
@@ -118,7 +116,7 @@ class BaseOauth {
     html.WindowBase window;
     grant.close();
     window = html.window.open(authorizationUrl.toString(), "_self");
-    authWindowNotifier.value = window;
+    // authWindowNotifier.value = window;
     // while (window.closed != null && !window.closed!) {
     //   await Future.delayed(Duration(seconds: 1));
     // }
