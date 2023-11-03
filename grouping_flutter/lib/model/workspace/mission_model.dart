@@ -25,8 +25,9 @@ class MissionModel extends EditableCardModel {
 
   static final MissionModel defaultMission = MissionModel._default();
 
-  MissionModel._default():
-      // : this.title = 'unknown',
+  MissionModel._default()
+      :
+        // : this.title = 'unknown',
         this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
         // this.contributorIds = [],
         // this.introduction = 'unknown',
@@ -39,14 +40,15 @@ class MissionModel extends EditableCardModel {
         // this.ownerAccount = AccountModel.defaultAccount,
         super(
           title: 'unknown',
-          contributorIds: [],
+          contributors: [],
           introduction: 'unknown',
-          tags: [],
+          // tags: [],
           notifications: [],
-          ownerAccount: AccountModel.defaultAccount,
-            id: 'default_mission',
-            databasePath: 'mission',
-            storageRequired: false);
+          creatorAccount: AccountModel.defaultAccount,
+          id: 0,
+          // databasePath: 'mission',
+          // storageRequired: false,
+        );
 
   /// ## a data model for mission
   /// * to upload/download, use `DataController`
@@ -58,7 +60,7 @@ class MissionModel extends EditableCardModel {
     super.id,
     String? title,
     DateTime? deadline,
-    List<String>? contributorIds,
+    List<String>? contributors,
     String? introduction,
     String? stateId,
     MissionStateModel? state,
@@ -81,13 +83,14 @@ class MissionModel extends EditableCardModel {
         // this.ownerAccount = defaultMission.ownerAccount,
         super(
           title: title ?? defaultMission.title,
-          contributorIds: contributorIds ?? List.from(defaultMission.contributorIds),
+          contributors: contributors ?? List.from(defaultMission.contributors),
           introduction: introduction ?? defaultMission.introduction,
-          tags: tags ?? List.from(defaultMission.tags),
-          notifications: notifications ?? List.from(defaultMission.notifications),
-          ownerAccount: defaultMission.ownerAccount,
-          databasePath: defaultMission.databasePath,
-          storageRequired: defaultMission.storageRequired,
+          // tags: tags ?? List.from(defaultMission.tags),
+          notifications:
+              notifications ?? List.from(defaultMission.notifications),
+          creatorAccount: defaultMission.creatorAccount,
+          // databasePath: defaultMission.databasePath,
+          // storageRequired: defaultMission.storageRequired,
           // setOwnerRequired: true
         );
 
@@ -109,93 +112,58 @@ class MissionModel extends EditableCardModel {
     return processList;
   }
 
-  @override
-  MissionModel fromJson({required String id, required Map<String, dynamic> data}) => MissionModel(
-    id: id,
-    title: data['title'] as String,
-    introduction: data['introduction'] as String,
-    deadline: data['deadline'] as DateTime,
-    state: data['state'] as MissionStateModel,
-    stateId: data['stateId'] as String,
-    contributorIds: data['contributorIds'] as List<String>,
-    tags: data['tags'] as List<String>,
-    parentMissionIds: data['parentMissionIds'] as List<String>,
-    childMissionIds: data['childMissionIds'] as List<String>,
-    notifications: data['notifications'] as List<DateTime>);
+  factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
+      MissionModel(
+          id: data['id'] as int,
+          title: data['title'] as String,
+          introduction: data['description'] as String,
+          deadline: DateTime.parse(data['mission']['deadline']),
+          // state: MissionStateModel.fromJson(data: data['state']),
+          stateId: data['mission']['state'].toString(),
+          contributors: data['contributors'].cast<String>() as List<String>,
+          // tags: data['tags'].cast<String>() as List<String>,
+          parentMissionIds: data['parents'].cast<String>() as List<String>,
+          childMissionIds: data['childs'].cast<String>() as List<String>,
+          notifications: _notificationFromJson(
+              data['notifications'].cast<Map<String, String>>()));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': this.id,
-    'title': this.title,
-    'introduction': this.introduction,
-    'deadline': this.deadline,
-    'state': this.state,
-    'stateId': this.stateId,
-    'contributorIds': this.contributorIds,
-    'tags': this.tags,
-    'parentMissionIds': this.parentMissionIds,
-    'childMissionIds': this.childMissionIds,
-    'notifications': this.notifications
-  };
+        'id': this.id,
+        'title': this.title,
+        'description': this.introduction,
+        'mission': {
+          "deadline": this.deadline.toIso8601String(),
+          "state": this.state.id,
+        },
+        // 'stateId': this.stateId,
+        'contributors': this.contributors,
+        // 'tags': this.tags,
+        'parents': this.parentMissionIds,
+        'childs': this.childMissionIds,
+        'notifications': _notificationsToJson(),
+      };
 
-  /// ### convert data from this instance to the type accepted for firestore
-  /// * ***DO NOT*** use this method in frontend
-  // @override
-  // Map<String, dynamic> toFirestore() {
-  //   return {
-  //     if (title != defaultMission.title) 'title': title,
-  //     if (deadline != defaultMission.deadline)
-  //       'deadline': Timestamp.fromDate(deadline),
-  //     if (contributorIds != defaultMission.contributorIds)
-  //       'contributor_ids': contributorIds,
-  //     if (introduction != defaultMission.introduction)
-  //       'introduction': introduction,
-  //     if (stateId != defaultMission.stateId) 'state_model_id': stateId,
-  //     if (tags != defaultMission.tags) 'tags': tags,
-  //     if (parentMissionIds != defaultMission.parentMissionIds)
-  //       'parent_mission_ids': parentMissionIds,
-  //     if (childMissionIds != defaultMission.childMissionIds)
-  //       'child_mission_ids': childMissionIds,
-  //     if (notifications != defaultMission.notifications)
-  //       'notifications': _toFirestoreTimeList(notifications),
-  //   };
-  // }
+  List<Map<String, String>> _notificationsToJson() {
+    List<Map<String, String>> notiMap = [];
+    for (DateTime noti in this.notifications) {
+      notiMap.add({"notify_time": noti.toIso8601String()});
+    }
+    return notiMap;
+  }
 
-  /// ### return an instance with data from firestore
-  /// * also seting attribute about owner if given
-  /// * ***DO NOT*** use this method in frontend
-  // @override
-  // MissionModel fromFirestore(
-  //     {required String id, required Map<String, dynamic> data}) {
-  //   MissionModel processData = MissionModel(
-  //     id: id,
-  //     title: data['title'],
-  //     deadline: data['deadline'] != null
-  //         ? (data['deadline'] as Timestamp).toDate()
-  //         : null,
-  //     contributorIds: data['contributor_ids'] is Iterable
-  //         ? List.from(data['contributor_ids'])
-  //         : null,
-  //     introduction: data['introduction'],
-  //     stateId: data['state_model_id'],
-  //     tags: data['tags'] is Iterable ? List.from(data['tags']) : null,
-  //     parentMissionIds: data['parent_mission_ids'] is Iterable
-  //         ? List.from(data['parent_mission_ids'])
-  //         : null,
-  //     childMissionIds: data['child_mission_ids'] is Iterable
-  //         ? List.from(data['child_mission_ids'])
-  //         : null,
-  //     notifications: data['notifications'] is Iterable
-  //         ? _fromFirestoreTimeList(List.from(data['notifications']))
-  //         : null,
-  //   );
-  //   return processData;
-  // }
+  static List<DateTime> _notificationFromJson(List<Map<String, String>> data) {
+    List<DateTime> noti = [];
+    for (Map<String, String> object in data) {
+      noti.add(DateTime.parse(object.values.elementAt(0)));
+    }
+    return noti;
+  }
 
   // /// set the data about owner for this instance
-  void setOwner({required AccountModel ownerAccount}) {
-    this.ownerAccount = ownerAccount;
-  }
+  // void setOwner({required AccountModel ownerAccount}) {
+  //   this.ownerAccount = ownerAccount;
+  // }
 
   /// ### This is the perfered method to change state of mission
   /// - please make sure the [stateModel] is a correct model in database
@@ -210,4 +178,30 @@ class MissionModel extends EditableCardModel {
           stackTrace: StackTrace.current);
     }
   }
+
+  @override
+  String toString() {
+    return {
+      "id": this.id,
+      "title": this.title,
+      "introduction": this.introduction,
+      "deadline": this.deadline,
+      "contributors": this.contributors,
+      "notifications": this.notifications,
+      "parentMissionIds": this.parentMissionIds,
+      "childMissionIds": this.childMissionIds,
+      // "tags": this.tags,
+      'state': this.state,
+      'stateId': this.stateId
+    }.toString();
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return this.toString() == other.toString();
+  }
+  
+  @override
+  // TODO: implement hashCode
+  int get hashCode => id!;
 }

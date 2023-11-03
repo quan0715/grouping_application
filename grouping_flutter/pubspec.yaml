@@ -60,6 +60,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   # For token storage
   flutter_secure_storage: ^8.0.0
+  # For unit test
+  mocktail: ^1.0.1
   # pkce and encrypt
   pkce: ^1.1.0+1
   encrypt: ^5.0.3

@@ -31,6 +31,9 @@ ALLOWED_HOSTS = [
     # '192.168.0.102',
     # 'localhost',
     # '127.0.0.1'
+    
+    # the test domain own by Bryant
+    # 'amazed-privately-goshawk.ngrok-free.app'
 ]
 
 

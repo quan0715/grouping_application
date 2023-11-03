@@ -29,7 +29,7 @@ abstract class BaseDataModel<T extends BaseDataModel<T>> {
 
   /// return a 'T<T extends DataModel>' data in order to download from django backend
   /// * every subclass should override this method
-  T fromJson({required String id, required Map<String, dynamic> data});
+  // T fromJson({required String id, required Map<String, dynamic> data});
 
   /// return a `map` data in order to upload to firestore
   /// * every subclass should override this method

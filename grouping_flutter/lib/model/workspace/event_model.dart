@@ -31,15 +31,16 @@ class EventModel extends EditableCardModel {
         // this.notifications = [],
         // this.ownerAccount = AccountModel.defaultAccount,
         super(
-            title: 'unknown',
-            contributorIds: [],
-            introduction: 'unknown',
-            tags: [],
-            notifications: [],
-            ownerAccount: AccountModel.defaultAccount,
-            id: 'default_event',
-            databasePath: 'event',
-            storageRequired: false);
+          title: 'unknown',
+          contributors: [],
+          introduction: 'unknown',
+          // tags: [],
+          notifications: [],
+          creatorAccount: AccountModel.defaultAccount,
+          id: 0,
+          // databasePath: 'event',
+          // storageRequired: false,
+        );
 
   /// ## a data model for event
   /// * to upload/download, use `DataController`
@@ -48,9 +49,10 @@ class EventModel extends EditableCardModel {
       String? title,
       DateTime? startTime,
       DateTime? endTime,
-      List<String>? contributorIds,
+      List<String>? contributors,
       String? introduction,
-      List<String>? tags,
+      // List<String>? tags,
+      AccountModel? creatorAccount,
       List<String>? relatedMissionIds,
       List<DateTime>? notifications})
       : this.startTime = startTime ?? defaultEvent.startTime,
@@ -66,14 +68,14 @@ class EventModel extends EditableCardModel {
         // this.ownerAccount = defaultEvent.ownerAccount,
         super(
           title: title ?? defaultEvent.title,
-          contributorIds:
-              contributorIds ?? List.from(defaultEvent.contributorIds),
+          contributors:
+              contributors ?? List.from(defaultEvent.contributors),
           introduction: introduction ?? defaultEvent.introduction,
-          tags: tags ?? List.from(defaultEvent.tags),
+          // tags: tags ?? List.from(defaultEvent.tags),
           notifications: notifications ?? List.from(defaultEvent.notifications),
-          ownerAccount: defaultEvent.ownerAccount,
-          databasePath: defaultEvent.databasePath,
-          storageRequired: defaultEvent.storageRequired,
+          creatorAccount: creatorAccount ?? defaultEvent.creatorAccount,
+          // databasePath: defaultEvent.databasePath,
+          // storageRequired: defaultEvent.storageRequired,
           // setOwnerRequired: true
         );
 
@@ -95,86 +97,79 @@ class EventModel extends EditableCardModel {
     return processList;
   }
 
-  @override
-  EventModel fromJson({required String id, required Map<String, dynamic> data}) => EventModel(
-    id: id,
-    title: data['title'] as String,
-    introduction: data['introduction'] as String,
-    startTime: data['startTime'] as DateTime,
-    endTime: data['endTime'] as DateTime,
-    contributorIds: data['contributorIds'] as List<String>,
-    tags: data['tags'] as List<String>,
-    relatedMissionIds: data['relatedMissionIds'] as List<String>,
-    notifications: data['notifications'] as List<DateTime>);
+  factory EventModel.fromJson({required Map<String, dynamic> data}) =>
+      EventModel(
+          id: data['id'] as int,
+          title: data['title'] as String,
+          introduction: data['description'] as String,
+          startTime: DateTime.parse(data['event']['start_time']),
+          endTime: DateTime.parse(data['event']['end_time']),
+          contributors: data['contributors'].cast<String>() as List<String>,
+          // tags: data['tags'].cast<String>() as List<String>,
+          relatedMissionIds:
+              data['childs'].cast<String>() as List<String>,
+          notifications:
+              _notificationFromJson(data['notifications'].cast<Map<String, String>>()));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': this.id,
-    'title': this.title,
-    'introduction': this.introduction,
-    'startTime': this.startTime,
-    'endTime': this.endTime,
-    'contributorIds': this.contributorIds,
-    'tags': this.tags,
-    'relatedMissionIds': this.relatedMissionIds,
-    'notifications': this.notifications
-  };
+        'id': this.id,
+        'title': this.title,
+        'description': this.introduction,
+        'creator': this.creatorAccount.id,
+        'event': {
+          'start_time': this.startTime.toIso8601String(),
+          'end_time': this.endTime.toIso8601String(),
+        },
+        'contributors': this.contributors,
+        // 'tags': this.tags,
+        'childs': this.relatedMissionIds,
+        'notifications': _notificationsToJson()
+      };
 
-  /// ### convert data from this instance to the type accepted for firestore
-  /// * ***DO NOT*** use this method in frontend
-  // @override
-  // Map<String, dynamic> toFirestore() {
-  //   return {
-  //     if (title != defaultEvent.title) 'title': title,
-  //     if (startTime != defaultEvent.startTime)
-  //       'start_time': Timestamp.fromDate(startTime),
-  //     if (endTime != defaultEvent.endTime)
-  //       'end_time': Timestamp.fromDate(endTime),
-  //     if (contributorIds != defaultEvent.contributorIds)
-  //       'contributor_ids': contributorIds,
-  //     if (introduction != defaultEvent.introduction)
-  //       'introduction': introduction,
-  //     if (tags != defaultEvent.tags) 'tags': tags,
-  //     if (relatedMissionIds != defaultEvent.relatedMissionIds)
-  //       'related_mission_ids': relatedMissionIds,
-  //     if (notifications != defaultEvent.notifications)
-  //       'notifications': _toFirestoreTimeList(notifications),
-  //   };
-  // }
+  List<Map<String, String>> _notificationsToJson(){
+    List<Map<String, String>> notiMap = [];
+    for(DateTime noti in this.notifications){
+      notiMap.add({"notify_time": noti.toIso8601String()});
+    }
+    return notiMap;
+  }
 
-  /// ### return an instance with data from firestore
-  /// * also seting attribute about owner if given
-  /// * ***DO NOT*** use this method in frontend
-  // @override
-  // EventModel fromFirestore(
-  //     {required String id, required Map<String, dynamic> data}) {
-  //   EventModel processData = EventModel(
-  //     id: id,
-  //     title: data['title'],
-  //     startTime: data['start_time'] != null
-  //         ? (data['start_time'] as Timestamp).toDate()
-  //         : null,
-  //     endTime: data['end_time'] != null
-  //         ? (data['end_time'] as Timestamp).toDate()
-  //         : null,
-  //     contributorIds: data['contributor_ids'] is Iterable
-  //         ? List.from(data['contributor_ids'])
-  //         : null,
-  //     introduction: data['introduction'],
-  //     tags: data['tags'] is Iterable ? List.from(data['tags']) : null,
-  //     relatedMissionIds: data['related_mission_ids'] is Iterable
-  //         ? List.from(data['related_mission_ids'])
-  //         : null,
-  //     notifications: data['notifications'] is Iterable
-  //         ? _fromFirestoreTimeList(List.from(data['notifications']))
-  //         : null,
-  //   );
-
-  //   return processData;
-  // }
+  static List<DateTime> _notificationFromJson(List<Map<String, String>> data){
+    List<DateTime> noti = [];
+    for(Map<String, String> object in data){
+      noti.add(DateTime.parse(object.values.elementAt(0)));
+    }
+    return noti;
+  }
 
   /// TODO: set the data about owner for this instance
-  void setOwner({required AccountModel ownerAccount}) {
-    this.ownerAccount = ownerAccount;
+  // void setOwner({required AccountModel ownerAccount}) {
+  //   this.ownerAccount = ownerAccount;
+  // }
+
+  @override
+  String toString() {
+    return {
+      "id": this.id,
+      "title": this.title,
+      "introduction": this.introduction,
+      "startTime": this.startTime,
+      "endTime": this.endTime,
+      "contributors": this.contributors,
+      "notifications": this.notifications,
+      "relatedMissionIds": this.relatedMissionIds,
+      // "tags": this.tags
+    }.toString();
   }
+
+  @override
+  bool operator ==(Object other) {
+    return this.toString() == other.toString();
+  }
+  
+  @override
+  // TODO: implement hashCode
+  int get hashCode => id!;
+  
 }
