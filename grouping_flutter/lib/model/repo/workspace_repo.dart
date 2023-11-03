@@ -80,7 +80,7 @@ class WorkspaceService{
   /// 
   /// ### Example
   /// ```dart
-  /// WorkspaceModel workspace = await WorkspaceService.createWorkspace(workspace: createDataofWorkspace);
+  /// WorkspaceModel workspace = await WorkspaceService.createWorkspace(workspace: createDataOfWorkspace);
   /// ```
   /// 
   Future<WorkspaceModel> createWorkspace({required WorkspaceModel workspace}) async {
@@ -114,7 +114,7 @@ class WorkspaceService{
   /// WorkspaceModel workspace = await WorkspaceService.updateWorkspace(workspace: updateModelofWorkspace);
   /// ```
   /// 
-  Future<WorkspaceModel> updataWorkspace({required WorkspaceModel workspace}) async {
+  Future<WorkspaceModel> updateWorkspace({required WorkspaceModel workspace}) async {
     Map<String, dynamic> eventBody = workspace.toJson();
 
     final response = await _client.patch(

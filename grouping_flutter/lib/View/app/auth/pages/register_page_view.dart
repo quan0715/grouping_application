@@ -91,7 +91,7 @@ class RegisterViewPage extends AuthLayoutInterface{
                     signInManager.register();
                     debugPrint("註冊成功");
                     moveToWelcomePage(context);
-                    // TODO: fix registwer flow 
+                    // TODO: fix register flow 
                   }
                 },
                 label: '註冊',
