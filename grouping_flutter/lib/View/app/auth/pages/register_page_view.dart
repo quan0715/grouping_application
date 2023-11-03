@@ -86,11 +86,13 @@ class RegisterViewPage extends AuthLayoutInterface{
               ),
               AppButton(
                 buttonType: AppButtonType.hightLight,
-                onPressed: () {
+                onPressed: () async {
                   if (textFormKey.currentState!.validate()) {
-                    signInManager.register();
+                    await signInManager.register();
                     debugPrint("註冊成功");
-                    moveToWelcomePage(context);
+                    if(context.mounted){
+                      moveToWelcomePage(context);
+                    }
                     // TODO: fix register flow 
                   }
                 },
