@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/service/auth/auth_helpers.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
 import 'package:http/http.dart';
 // import 'dart:html' as html;
 import 'package:pkce/pkce.dart';
@@ -65,7 +64,6 @@ class BaseOauth {
     }
   }
 
-
   Future _informCode() async {
     String stringUrl = EndPointGetter.getAuthBackendEndpoint('callback');
 
@@ -84,7 +82,7 @@ class BaseOauth {
       authorizationUrl =
           grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
     }
-    
+
     await _informParams();
     grant.close();
   }

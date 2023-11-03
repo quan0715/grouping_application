@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/View/components/state.dart';
 import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/account.dart';
+import 'package:grouping_project/service/auth/auth_helpers.dart';
 // import 'package:grouping_project/VM/state.dart';
 import 'package:grouping_project/service/auth/github_auth.dart';
 import 'package:grouping_project/service/auth/google_auth.dart';
@@ -29,8 +30,8 @@ class LoginModel {
   Future<LoginState> passwordLogin(String email, String password) async {
     try {
       // TODO: add email login method
-      AuthService authService = AuthService();
-      await authService.signIn(account: email, password: password);
+      AccountAuth accountAuth = AccountAuth();
+      await accountAuth.signIn(account: email, password: password);
 
       return LoginState.loginSuccess;
     } catch (error) {

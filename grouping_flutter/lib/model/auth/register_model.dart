@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/View/components/state.dart';
 import 'package:grouping_project/model/auth/auth_model_lib.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/account.dart';
 
 class RegisterModel {
   String password = "";
@@ -47,8 +47,8 @@ class RegisterModel {
       // final userId = await db.createUserAccount();
       // debugPrint(userId);
       // await db.setAccount(account: tempProfile.copyWith(accountId: userId));
-      AuthService authService = AuthService();
-      await authService.signUp(
+      AccountAuth accountAuth = AccountAuth();
+      await accountAuth.signUp(
           account: email, password: password, username: userName);
       debugPrint('upload successfully');
       return RegisterState.success;

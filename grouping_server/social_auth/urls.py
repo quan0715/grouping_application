@@ -8,8 +8,8 @@ router = DefaultRouter()
 # router.register(r'google', GoogleOauthViewSet, basename='google')
 urlpatterns = [
     path('', include(router.urls)),
-    path("account/signin/", LoginView.as_view()),
-    path("account/register/", RegisterView.as_view()),
+    path("signin/", LoginView.as_view()),
+    path("register/", RegisterView.as_view()),
     path("google/", GoogleSocialAuthView.as_view()),
     path("line/", LineSocialAuthView.as_view()),
     path("github/", GitHubSocialAuthView.as_view()),

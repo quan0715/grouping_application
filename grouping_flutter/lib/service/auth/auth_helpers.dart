@@ -10,6 +10,16 @@ import 'package:encrypt/encrypt.dart' as encrypt_package;
 import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
 import 'package:grouping_project/config/config.dart';
 
+enum AuthProvider {
+  account(string: 'account'),
+  google(string: 'google'),
+  github(string: 'github'),
+  line(string: 'line');
+
+  final String string;
+  const AuthProvider({required this.string});
+}
+
 class StringECBEncryptor {
   static Future<encrypt_package.Encrypted> encryptCode(
       String toBeEncrypted) async {

@@ -122,4 +122,4 @@ class LogoutView(GenericAPIView):
         if 'error-code' in serializer.validated_data:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(status=status.HTTP_205_NO_CONTENT)
+            return Response(status=status.HTTP_200_OK)
