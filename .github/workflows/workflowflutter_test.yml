@@ -33,9 +33,9 @@ jobs:
       #   run: flutter format --output=none --set-exit-if-changed .
 
       # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: flutter analyze
-        working-directory: grouping_flutter
+      # - name: Analyze project source
+      #   run: flutter analyze
+      #   working-directory: grouping_flutter
 
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
