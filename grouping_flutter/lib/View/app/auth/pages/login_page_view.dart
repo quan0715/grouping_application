@@ -169,7 +169,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
         color: AppColor.surface(context),
         width: formWidth,
         child: Center(
-            child: AppPadding.large(
+            child: AppPadding.medium(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,6 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget build(BuildContext context) {
     if (Uri.base.queryParametersAll.containsKey('code')) {
       FlutterSecureStorage storage = const FlutterSecureStorage();
-
       storage
           .write(key: 'code', value: Uri.base.queryParameters['code'])
           .then((value) async {

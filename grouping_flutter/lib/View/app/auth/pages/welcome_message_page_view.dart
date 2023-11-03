@@ -20,7 +20,7 @@ class WelcomeView extends AuthLayoutInterface {
           color: AppColor.surface(context),
           width: formWidth,
           child: Center(
-              child: AppPadding.large(
+              child: AppPadding.medium(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,

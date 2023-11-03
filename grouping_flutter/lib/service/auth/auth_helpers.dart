@@ -32,7 +32,7 @@ class StringECBEncryptor {
   }
 }
 
-class StateGenerater {
+class StateGenerator {
   static String generateLength32State() {
     return String.fromCharCodes(Iterable.generate(
         32,
