@@ -1,18 +1,12 @@
-import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
 
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   // group('account login check', () {
   //   WidgetsFlutterBinding.ensureInitialized();
   //   AuthService authService = AuthService();
   //   FlutterSecureStorage storage = FlutterSecureStorage();
-  //   test('signup', () async {
+  //   test('signUp', () async {
   //     authService
   //         .signUp(account: 'test', password: 'testtest')
   //         .whenComplete(() {
