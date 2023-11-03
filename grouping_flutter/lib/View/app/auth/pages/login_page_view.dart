@@ -122,7 +122,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
               GoogleAuth googleAuth = GoogleAuth();
               await googleAuth.initializeOauthPlatform();
               await googleAuth.informParameters();
-              await googleAuth.showWindowAndListen(context);
+              if(context.mounted){
+                await googleAuth.showWindowAndListen(context);
+              }
               if (!kIsWeb) {
                 googleAuth.handleCodeAndGetProfile();
               }
@@ -134,7 +136,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
               GitHubAuth gitHubAuth = GitHubAuth();
               await gitHubAuth.initializeOauthPlatform();
               await gitHubAuth.informParameters();
-              await gitHubAuth.showWindowAndListen(context);
+              if(context.mounted){
+                await gitHubAuth.showWindowAndListen(context);
+              }
               if (!kIsWeb) {
                 gitHubAuth.handleCodeAndGetProfile();
               }
@@ -146,7 +150,10 @@ class WebLoginViewPage extends AuthLayoutInterface {
               LineAuth lineAuth = LineAuth();
               await lineAuth.initializeOauthPlatform();
               await lineAuth.informParameters();
-              await lineAuth.showWindowAndListen(context);
+              if(context.mounted){
+                await lineAuth.showWindowAndListen(context);
+              }
+              
               if (!kIsWeb) {
                 lineAuth.handleCodeAndGetProfile();
               }
@@ -194,7 +201,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
   @override
   Widget build(BuildContext context) {
     if (Uri.base.queryParametersAll.containsKey('code')) {
-      FlutterSecureStorage storage = FlutterSecureStorage();
+      FlutterSecureStorage storage = const FlutterSecureStorage();
 
       storage
           .write(key: 'code', value: Uri.base.queryParameters['code'])

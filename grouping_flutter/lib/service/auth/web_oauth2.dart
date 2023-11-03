@@ -1,7 +1,7 @@
 import 'dart:js_util';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/service/auth/auth_helpers.dart';
-import 'package:grouping_project/service/auth/auth_service.dart';
+import 'package:grouping_project/service/auth/account.dart';
 import 'package:http/http.dart';
 import 'dart:html' as html;
 import 'package:pkce/pkce.dart';
@@ -66,37 +66,6 @@ class BaseOauth {
     }
   }
 
-  Future _informVerifierToBackend() async {
-    String stringUrl = EndPointGetter.getAuthBackendEndpoint('verifier');
-
-    if (pkceSupported) {
-      // debugPrint(pkceSupported.toString());
-      await post(Uri.parse(stringUrl), body: {
-        'verifier':
-            (await StringECBEncryptor.encryptCode(_pkcePair.codeVerifier))
-                .base64
-      });
-    }
-  }
-
-  Future _informStateToBackend() async {
-    String stringUrl = EndPointGetter.getAuthBackendEndpoint('state');
-
-    if (stateSupported) {
-      // debugPrint(stateSupported.toString());
-      debugPrint("stateCode: $_stateCode");
-      await post(Uri.parse(stringUrl), body: {
-        'state': (await StringECBEncryptor.encryptCode(_stateCode)).base64
-      });
-    }
-  }
-
-  Future _informPlatform() async {
-    String stringUrl = EndPointGetter.getAuthBackendEndpoint('platform');
-
-    await post(Uri.parse(stringUrl), body: {'platform': 'web'});
-  }
-
   Future _informCode() async {
     String stringUrl = EndPointGetter.getAuthBackendEndpoint('callback');
 
@@ -115,10 +84,33 @@ class BaseOauth {
       authorizationUrl =
           grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
     }
-    await _informPlatform();
-    await _informVerifierToBackend();
-    await _informStateToBackend();
+
+    await _informParams();
     grant.close();
+  }
+
+  Future _informParams() async {
+    String stringUrl = EndPointGetter.getAuthBackendEndpoint('exhange_params');
+
+    Map<String, String> body = {};
+
+    if (stateSupported) {
+      // debugPrint(stateSupported.toString());
+      debugPrint("stateCode: $_stateCode");
+
+      body['state'] = (await StringECBEncryptor.encryptCode(_stateCode)).base64;
+    } else {
+      body['state'] = '';
+    }
+    if (pkceSupported) {
+      body['verifier'] =
+          (await StringECBEncryptor.encryptCode(_pkcePair.codeVerifier)).base64;
+    } else {
+      body['verifier'] = '';
+    }
+
+    body['platform'] = 'web';
+    Response response = await post(Uri.parse(stringUrl), body: body);
   }
 
   // TODO: this is view, no context here

@@ -30,7 +30,7 @@ class RegisterViewPage extends AuthLayoutInterface{
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => WelcomeView()));
+          builder: (context) => const WelcomeView()));
   }
 
 
@@ -91,7 +91,7 @@ class RegisterViewPage extends AuthLayoutInterface{
                     signInManager.register();
                     debugPrint("註冊成功");
                     moveToWelcomePage(context);
-                    // TODO: fix registwer flow 
+                    // TODO: fix register flow 
                   }
                 },
                 label: '註冊',

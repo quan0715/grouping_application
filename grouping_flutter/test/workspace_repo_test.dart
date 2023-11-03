@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grouping_project/model/workspace/workspace_model.dart';
 import 'package:grouping_project/model/photo_model.dart';
@@ -210,7 +209,7 @@ void main() {
       workspaceService.setClient(client);
 
       // Act
-      final result = await workspaceService.updataWorkspace(workspace: workspace);
+      final result = await workspaceService.updateWorkspace(workspace: workspace);
 
       // Assert
       expect(result, workspace);
@@ -238,7 +237,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.updataWorkspace(workspace: workspace),
+          () async => await workspaceService.updateWorkspace(workspace: workspace),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: Invalid Syntax")));
     });
@@ -265,7 +264,7 @@ void main() {
 
       // Assert
       expect(
-          () async => await workspaceService.updataWorkspace(workspace: workspace),
+          () async => await workspaceService.updateWorkspace(workspace: workspace),
           throwsA(predicate((e) =>
               e is Exception && e.toString() == "Exception: The requesting data was not found")));
     });
