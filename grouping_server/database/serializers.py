@@ -107,7 +107,7 @@ class ActivitySerializer(serializers.ModelSerializer):
                                                  read_only=True)
     event = EventSerializer(required=False)
     mission = MissionSerializer(required=False)
-    childs = serializers.PrimaryKeyRelatedField(many=True,
+    children = serializers.PrimaryKeyRelatedField(many=True,
                                                 read_only=True)
     contributors = serializers.PrimaryKeyRelatedField(many=True,
                                                       read_only=True)
@@ -117,7 +117,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ['id', 'title', 'description', 'creator',
-                  'created_at', 'belong_workspace', 'childs',
+                  'created_at', 'belong_workspace', 'children',
                   'parents', 'contributors', 'event', 'mission', 'notifications']
 
     def create(self, validated_data):
@@ -156,9 +156,9 @@ class ActivityPatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ['id', 'title', 'description', 'creator', 'created_at', 'belong_workspace',
-                  'childs', 'parents', 'contributors', 'event', 'mission', 'notifications']
+                  'children', 'parents', 'contributors', 'event', 'mission', 'notifications']
         extra_kwargs = {
-            'childs': {'many': True, 'required': False},
+            'children': {'many': True, 'required': False},
             'contributors': {'many': True, 'required': False}
         }
 
