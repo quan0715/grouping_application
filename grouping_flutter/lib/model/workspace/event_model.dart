@@ -167,4 +167,9 @@ class EventModel extends EditableCardModel {
   bool operator ==(Object other) {
     return this.toString() == other.toString();
   }
+  
+  @override
+  // TODO: implement hashCode
+  int get hashCode => id!;
+  
 }

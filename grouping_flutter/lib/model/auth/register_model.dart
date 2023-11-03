@@ -13,7 +13,7 @@ class RegisterModel {
   bool isUserNameValid = false;
   AccountModel get tempProfile => AccountModel(
         nickname: userName,
-        email: email,
+        account: email,
       );
   void updateEmail(String value) {
     email = value;
