@@ -30,7 +30,7 @@ class RegisterViewPage extends AuthLayoutInterface{
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => WelcomeView()));
+          builder: (context) => const WelcomeView()));
   }
 
 

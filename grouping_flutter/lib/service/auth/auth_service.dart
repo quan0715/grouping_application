@@ -118,8 +118,6 @@ class PassToBackEnd {
     } else {
       stringUrl = '${Config.baseUriWeb}/auth/platform/';
     }
-    http.Response response = await http.post(Uri.parse(stringUrl),
-        body: {'platform': kIsWeb ? 'web' : 'mobile'});
   }
 
   static Future toAuthBabkend(
