@@ -29,9 +29,6 @@ void main() {
       });
       final responseEvent = jsonEncode(object);
 
-      // final expectAnswer = jsonDecode(responseEvent);
-      // debugPrint(expectAnswer['event'][]);
-
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 200));
 
