@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColor{
   static Color correct = const Color(0xFF4CAF50);
   static Color incorrect = Colors.red.shade400;
-  // static Color colorSeed = const Ibm.blue().color;
+  
   static Color primary(BuildContext context) => Theme.of(context).colorScheme.primary; 
   static Color secondary(BuildContext context) => Theme.of(context).colorScheme.secondary;
   static Color tertiary(BuildContext context) => Theme.of(context).colorScheme.tertiary;
@@ -27,4 +27,10 @@ class AppColor{
   static Color brightness(BuildContext context) => Theme.of(context).colorScheme.brightness == Brightness.dark ? Colors.white : Colors.black;
   static ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
   
+  // log color
+  static Color logSuccess = Colors.green;
+  static Color logError = Colors.red;
+  static Color logWarning = Colors.orange;
+  static Color logInfo = Colors.blue;
+  static Color logOthers = Colors.grey;
 }

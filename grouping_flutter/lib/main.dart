@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const AuthView(),
             '/register': (context) => const AuthView(mode: 'register'),
             '/workspace': (context) => const WorkspaceView(),
+            '/test' :(context) => const WorkspaceView()
           },
           initialRoute: '/',
           // 呼叫 home_page.dart
