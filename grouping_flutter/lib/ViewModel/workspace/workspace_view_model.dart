@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:grouping_project/View/components/workspace_chip.dart';
 import 'package:grouping_project/ViewModel/message_service.dart';
 import 'package:grouping_project/model/workspace/message_model.dart';
-import 'package:flutter/material.dart';
 import 'package:grouping_project/model/auth/account_model.dart';
 import 'package:grouping_project/model/repo/activity_repo.dart';
 import 'package:grouping_project/model/repo/user_repo.dart';
@@ -33,21 +32,23 @@ class WorkspaceViewModel extends ChangeNotifier {
   //   _databaseService = ActivityDatabaseService(workSpaceUid: _workspace.id!, token: 'token');
   // }
 
-  List<EventModel> get events {
-    List<EventModel> tmp = [];
-    for(var activity in _user.contributingActivities){
-      if(activity is EventModel) tmp.add(activity);
-    }
-    return tmp;
-  }
+  List<EventModel> get events => _user.joinedWorkspaces.whereType<EventModel>().toList();
+  // List<EventModel> get events {
+  //   List<EventModel> tmp = [];
+  //   for(var activity in _user.contributingActivities){
+  //     if(activity is EventModel) tmp.add(activity);
+  //   }
+  //   return tmp;
+  // }
 
-  List<MissionModel> get missions {
-    List<MissionModel> tmp = [];
-    for(var activity in _user.contributingActivities){
-      if(activity is MissionModel) tmp.add(activity);
-    }
-    return tmp;
-  }
+  List<MissionModel> get missions => _user.joinedWorkspaces.whereType<MissionModel>().toList();
+  // List<MissionModel> get missions {
+  //   List<MissionModel> tmp = [];
+  //   for(var activity in _user.contributingActivities){
+  //     if(activity is MissionModel) tmp.add(activity);
+  //   }
+  //   return tmp;
+  // }
 
   List<WorkspaceChip> get workspaces {
     List<WorkspaceChip> tmp = [];
@@ -58,7 +59,10 @@ class WorkspaceViewModel extends ChangeNotifier {
     return tmp;
   }
   
+  int get currentWorkspaceColor => _workspace.themeColor;
   int get workspaceNumber => _user.joinedWorkspaces.length;
+  int get eventNumber => _user.contributingActivities.whereType<EventModel>().length;
+  int get missionNumber => _user.contributingActivities.whereType<MissionModel>().length;
 
   void setPage(int newPage){
     _pages = newPage;

@@ -14,7 +14,7 @@ class _SettingViewState extends State<SettingView>{
 
   @override
   Widget build(BuildContext context){
-    WorkspaceViewModel viewModel = widget.viewModel;
+    // WorkspaceViewModel viewModel = widget.viewModel;
     return const Center(child: Text('building setting page...'),);
   }
 }

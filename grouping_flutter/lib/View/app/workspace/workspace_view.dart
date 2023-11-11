@@ -1,13 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grouping_project/View/app/workspace/activity_view.dart';
 import 'package:grouping_project/View/app/workspace/dashboard_view.dart';
 import 'package:grouping_project/View/app/workspace/message.view.dart';
 import 'package:grouping_project/View/app/workspace/setting_view.dart';
-import 'package:grouping_project/View/components/components.dart';
 import 'package:grouping_project/ViewModel/workspace/workspace_view_model.dart';
 import 'package:grouping_project/model/auth/account_model.dart';
+import 'package:grouping_project/model/workspace/event_model.dart';
+import 'package:grouping_project/model/workspace/mission_model.dart';
 import 'package:grouping_project/model/workspace/workspace_model.dart';
 import 'package:provider/provider.dart';
 
@@ -21,13 +20,20 @@ class WorkspaceView extends StatefulWidget {
 class _WorkspaceViewState extends State<WorkspaceView> {
   @override
   Widget build(BuildContext context) {
-    // this is test use workspace model
+    // this is test-use data
+    WorkspaceModel current = WorkspaceModel(name: '張', themeColor: 0xFFFFC107);
+
     WorkspaceModel workspace =
         WorkspaceModel(name: 'test workspace', themeColor: 0xFF7D5800);
+    EventModel event = EventModel(title: 'test event');
+    MissionModel mission = MissionModel(title: 'test mission');
+    AccountModel account = AccountModel(
+        joinedWorkspaces: [workspace],
+        contributingActivities: [event, mission]);
+    // end of test
 
     return ChangeNotifierProvider<WorkspaceViewModel>(
-      create: (context) => WorkspaceViewModel(
-          WorkspaceModel(), AccountModel(joinedWorkspaces: [workspace])),
+      create: (context) => WorkspaceViewModel(current, account),
       child: Consumer<WorkspaceViewModel>(
         builder: (context, viewModel, child) {
           List<Widget> pages = [

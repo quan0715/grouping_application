@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/View/components/app_log_message_card.dart';
+import 'package:grouping_project/View/components/components.dart';
 import 'package:grouping_project/ViewModel/workspace/workspace_view_model.dart';
 
 class DashboardView extends StatefulWidget{
