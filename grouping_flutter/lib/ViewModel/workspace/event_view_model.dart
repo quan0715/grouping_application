@@ -5,7 +5,6 @@ import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
 // import 'package:grouping_project/model/model_lib.dart';
 // import 'package:grouping_project/service/service_lib.dart';
 import 'package:intl/intl.dart';
-import 'package:grouping_project/ViewModel/workspace/editable_card_view_model.dart';
 
 class EventSettingViewModel extends ChangeNotifier{
   // The event model

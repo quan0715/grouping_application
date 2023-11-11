@@ -2,7 +2,6 @@
 /// it will be deleted after testing repo and new view has been designed
 
 import 'package:flutter/material.dart';
-import 'package:grouping_project/View/components/activity_components/cards_components.dart';
 import 'package:grouping_project/View/components/color_tag_chip.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/workspace/event_view_model.dart';
