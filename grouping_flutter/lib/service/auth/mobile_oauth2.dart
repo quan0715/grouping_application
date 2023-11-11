@@ -56,7 +56,6 @@ class BaseOauth {
           secret: clientSecret,
           httpClient: JsonFormatHttpClient(),
           codeVerifier: _pkcePair.codeVerifier);
-      // debugPrint("Pkcepair Verifier: ${_pkcePair.codeVerifier}");
     } else {
       grant = oauth2.AuthorizationCodeGrant(
           clientId, authorizationEndpoint, tokenEndpoint,
@@ -68,7 +67,6 @@ class BaseOauth {
     String stringUrl = EndPointGetter.getAuthBackendEndpoint('callback');
 
     String? code = await StorageMethods.read(key: 'code');
-    // debugPrint(code);
 
     await get(Uri.parse(stringUrl).replace(queryParameters: {'code': code!}));
   }
@@ -93,9 +91,6 @@ class BaseOauth {
     Map<String, String> body = {};
 
     if (stateSupported) {
-      // debugPrint(stateSupported.toString());
-      // debugPrint("stateCode: $_stateCode");
-
       body['state'] = (await StringECBEncryptor.encryptCode(_stateCode)).base64;
     } else {
       body['state'] = '';
@@ -153,12 +148,9 @@ class BaseOauth {
       Uri url;
       String stringUrl = EndPointGetter.getAuthBackendEndpoint(provider.string);
 
-      // debugPrint(stringUrl);
-
       url = Uri.parse(stringUrl);
 
       Response response = await post(url, body: body);
-      // debugPrint(response.body);
       await ResponseHandling.authHandling(response);
     } catch (e) {
       debugPrint("In oauth2_web: $e");

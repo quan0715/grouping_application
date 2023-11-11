@@ -97,8 +97,6 @@ class ResponseHandling {
     } else if (response.statusCode == 200) {
       await StorageMethods.deleteAll();
       await StorageMethods.write(key: 'auth-token', value: response.body);
-
-      // StorageMethods.readAll().then((value) => debugPrint(value.toString()));
     } else {
       StorageMethods.delete(key: 'auth-provider');
       throw Exception('reponses status: ${response.statusCode}');

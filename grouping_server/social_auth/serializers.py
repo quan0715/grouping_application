@@ -23,7 +23,6 @@ class TokenExchangeParamSerializer(serializers.Serializer):
     state = serializers.CharField(max_length=255, allow_blank=True)
     
     def validate(self, attrs):
-        # print(attrs)
         os.environ['PLATFORM'] = attrs.get('platform')
 
         cipher = AES.new(bytes(os.environ['ENCRYPT_KEY32'], 'utf-8'),AES.MODE_ECB)
@@ -38,8 +37,6 @@ class LoginSerializer(serializers.Serializer):
     account = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=255)
     def validate(self, attrs):
-        # print("LoginSerializer.validate() called")
-        # print(attrs)
         self.account = attrs.get('account')
         self.password = attrs.get('password')
         return register.login_user(
@@ -52,7 +49,6 @@ class RegisterSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255)
     username = serializers.CharField(max_length=255,allow_blank = True)
     def validate(self, attrs):
-        # print("LoginSerializer.validate() called")
         self.account = attrs.get('account')
         self.password = attrs.get('password')
         if "username" in attrs:
@@ -95,7 +91,6 @@ class GitHubSocialAuthSerializer(serializers.Serializer):
 
 class CallbackSerializer(serializers.Serializer):
 
-    # code = serializers.CharField(max_length=255)
     _dict = {}
 
     def __init__(self, instance=None, data=..., **kwargs):
@@ -103,12 +98,10 @@ class CallbackSerializer(serializers.Serializer):
         super().__init__(instance, data)
 
     def validate(self, attrs):
-        # print(attrs)
         if 'code' not in self._dict:
             raise AuthenticationFailed('Auth consent denied')
         else:
             os.environ['AUTH_CODE'] = self._dict.get('code')
-            # print(self._dict.get('code'))
             return os.environ.get('AUTH_CODE')
 
 class LogoutSerializer(serializers.Serializer):
@@ -130,7 +123,6 @@ class LogoutSerializer(serializers.Serializer):
 def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecret:str = '',grant_type = ''):
 
     if not os.environ.get('AUTH_CODE'):
-        print('No code yet')
         return TokenExchangeError.errorFormatter(
             TokenExchangeError.NO_CODE_IN_STORAGE_ERROR
         )
@@ -138,8 +130,6 @@ def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecre
         try:
             body = SocialLogin.getBody(provider, clientId, clientSecret, grant_type)
             header = {'Accept': 'application/json'}
-            # print('token exchanged with body')
-            # print(body)
             result = requests.post(UrlGetter.Provider.getTokenEndpoint(provider),data=body,headers=header)
             result = result.json()
         except:
@@ -148,11 +138,8 @@ def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecre
             )
         try:
             if 'access_token' in result and provider != UrlGetter.Provider.GOOGLE:
-                print("Not google")
                 return GitHubAndLineToken.requestProfile(UrlGetter.Provider.getProfileEndpoint(provider),result['access_token'])
             elif provider == UrlGetter.Provider.GOOGLE:
-                print("It's google")
-                print(result)
                 return GoogleTokenExchange.requestProfile(result['id_token'])
         except:
             return TokenExchangeError.errorFormatter(

@@ -20,12 +20,10 @@ class TokenExchangeParamView(GenericAPIView):
     authentication_classes= []
 
     def post(self, request):
-        # print(request.data)
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             return Response(status=status.HTTP_204_NO_CONTENT)
-        # print(serializer.errors)
 
 class CallbackView(GenericAPIView):
 
@@ -49,10 +47,8 @@ class LoginView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # print(serializer.validated_data)
 
         if 'error' in serializer.validated_data:
-            print(serializer.validated_data)
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         
         data = (serializer.validated_data)['tokens']['access']
@@ -67,7 +63,6 @@ class RegisterView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # print(serializer.validated_data)
 
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
@@ -84,13 +79,11 @@ class GoogleSocialAuthView(GenericAPIView):
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # print(serializer.validated_data)
 
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         data = (serializer.validated_data)['tokens']['access']
         return Response(data, status=status.HTTP_200_OK)
-        # return Response(status=status.HTTP_200_OK)
 
 class LineSocialAuthView(GenericAPIView):
     serializer_class = LineSocialAuthSerializer
@@ -100,7 +93,6 @@ class LineSocialAuthView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # print(serializer.validated_data)
 
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
@@ -115,7 +107,6 @@ class GitHubSocialAuthView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # print(serializer.validated_data)
 
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)

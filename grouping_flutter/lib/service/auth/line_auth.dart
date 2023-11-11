@@ -55,7 +55,6 @@ class LineAuth {
 
   Future handleCodeAndGetProfile() async {
     try {
-      // debugPrint("getting profile");
       await platformedOauth2.getAccessToken();
     } catch (e) {
       debugPrint(e.toString());

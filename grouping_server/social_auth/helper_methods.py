@@ -15,16 +15,12 @@ class SocialLogin:
                 }
         
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
-        print(body['redirect_uri'])
         if 'VERIFIER' in os.environ:
                 body['code_verifier']=os.environ.get('VERIFIER')
         if (grant_type != ''):
             body['grant_type'] = grant_type
-            # print('grant_type: '+body['grant_type'])
         if 'STATE' in os.environ:
             body['state'] = os.environ.get("STATE")
-            # header = {'Accept': 'application/x-www-form-urlencoded'}
-            # body
 
         return body
         
