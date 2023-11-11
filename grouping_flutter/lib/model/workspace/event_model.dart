@@ -4,8 +4,6 @@ import 'package:grouping_project/model/workspace/editable_card_model.dart';
 
 // import 'account_model.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
-
 /// ## a data model for event
 /// * to upload/download, use `DataController`
 class EventModel extends EditableCardModel {
@@ -78,24 +76,6 @@ class EventModel extends EditableCardModel {
           // storageRequired: defaultEvent.storageRequired,
           // setOwnerRequired: true
         );
-
-  /// convert `List<DateTime>` to `List<Timestamp>`
-  List<Timestamp> _toFirestoreTimeList(List<DateTime> dateTimeList) {
-    List<Timestamp> processList = [];
-    for (DateTime dateTime in dateTimeList) {
-      processList.add(Timestamp.fromDate(dateTime));
-    }
-    return processList;
-  }
-
-  /// convert `List<Timestamp>` to `List<DateTime>`
-  List<DateTime> _fromBackendTimeList(List<Timestamp> timestampList) {
-    List<DateTime> processList = [];
-    for (Timestamp timestamp in timestampList) {
-      processList.add(timestamp.toDate());
-    }
-    return processList;
-  }
 
   factory EventModel.fromJson({required Map<String, dynamic> data}) =>
       EventModel(

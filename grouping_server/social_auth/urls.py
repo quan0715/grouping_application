@@ -15,6 +15,6 @@ urlpatterns = [
     path("github/", GitHubSocialAuthView.as_view()),
     path("logout/", LogoutView.as_view()),
     path("callback/",CallbackView.as_view()),
-    path("exhange_params/",TokenExchangeParamView.as_view()),
+    path("exchange_params/",TokenExchangeParamView.as_view()),
 ]
 

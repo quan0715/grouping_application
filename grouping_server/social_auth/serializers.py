@@ -154,6 +154,7 @@ def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecre
                 return GitHubAndLineToken.requestProfile(UrlGetter.Provider.getProfileEndpoint(provider),result['access_token'])
             elif provider == UrlGetter.Provider.GOOGLE:
                 print("It's google")
+                print(result)
                 return GoogleTokenExchange.requestProfile(result['id_token'])
         except:
             return TokenExchangeError.errorFormatter(

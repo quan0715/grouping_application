@@ -15,6 +15,7 @@ class AccountAuth {
     try {
       String stringUrl;
       stringUrl = EndPointGetter.getAuthBackendEndpoint('register');
+      // debugPrint(stringUrl);
 
       Map<String, String> body = {
         'account': account,
@@ -28,6 +29,7 @@ class AccountAuth {
 
       await ResponseHandling.authHandling(response);
     } catch (e) {
+      debugPrint("sign UP error");
       debugPrint(e.toString());
       rethrow;
     }

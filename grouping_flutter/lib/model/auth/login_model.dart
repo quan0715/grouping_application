@@ -29,7 +29,6 @@ class LoginModel {
 
   Future<LoginState> passwordLogin(String email, String password) async {
     try {
-      // TODO: add email login method
       AccountAuth accountAuth = AccountAuth();
       await accountAuth.signIn(account: email, password: password);
 
@@ -64,7 +63,6 @@ class LoginModel {
           break;
         default:
       }
-      // TODO: add email login method
     } catch (e) {
       debugPrint(e.toString());
       return LoginState.loginFail;

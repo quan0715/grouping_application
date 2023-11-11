@@ -1,8 +1,7 @@
-import 'dart:js_util';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/service/auth/auth_helpers.dart';
-import 'package:grouping_project/service/auth/account.dart';
 import 'package:http/http.dart';
+// import 'package:universal_html/html.dart' as html;
 import 'dart:html' as html;
 import 'package:pkce/pkce.dart';
 
@@ -22,9 +21,8 @@ class BaseOauth {
   late final bool pkceSupported;
   late final bool stateSupported;
   final PkcePair _pkcePair = PkcePair.generate(length: 96);
-  final String _stateCode = StateGenerater.generateLength32State();
-  ValueNotifier<html.WindowBase> authWindowNotifier =
-      ValueNotifier(newObject());
+  final String _stateCode = StateGenerator.generateLength32State();
+  // ValueNotifier<html.WindowBase> authWindowNotifier = ValueNotifier(newObject());
 
   /// 1. [initialLoginFlow] is to acquire url for authentication page and inform pkce verifier to DRF server
   /// 2. [showWindowAndListen] is to show new tab, need context as parameter
@@ -77,9 +75,11 @@ class BaseOauth {
 
   Future initialLoginFlow() async {
     _getSignInGrant();
+    debugPrint(redirectedUrl.toString());
     if (stateSupported) {
       authorizationUrl = grant.getAuthorizationUrl(redirectedUrl,
           scopes: scopes, state: _stateCode);
+      
     } else {
       authorizationUrl =
           grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
@@ -90,7 +90,7 @@ class BaseOauth {
   }
 
   Future _informParams() async {
-    String stringUrl = EndPointGetter.getAuthBackendEndpoint('exhange_params');
+    String stringUrl = EndPointGetter.getAuthBackendEndpoint('exchange_params');
 
     Map<String, String> body = {};
 
@@ -110,15 +110,15 @@ class BaseOauth {
     }
 
     body['platform'] = 'web';
-    Response response = await post(Uri.parse(stringUrl), body: body);
+    await post(Uri.parse(stringUrl), body: body);
   }
 
   // TODO: this is view, no context here
   Future showWindowAndListen(BuildContext context) async {
-    html.WindowBase window;
+    // html.WindowBase window;
     grant.close();
-    window = html.window.open(authorizationUrl.toString(), "_self");
-    authWindowNotifier.value = window;
+    html.window.open(authorizationUrl.toString(), "_self");
+    // authWindowNotifier.value = window;
     // while (window.closed != null && !window.closed!) {
     //   await Future.delayed(Duration(seconds: 1));
     // }
@@ -136,6 +136,7 @@ class BaseOauth {
       url = Uri.parse(stringUrl);
 
       Response response = await post(url, body: body);
+      // debugPrint(response.body);
       // debugPrint(response.body);
       await ResponseHandling.authHandling(response);
     } catch (e) {
