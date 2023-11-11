@@ -11,8 +11,8 @@ def login_user(account, password = ""):
     try:
         user = User.objects.get(account=account)
         user = authenticate(account=account,password=password)
-        update_last_login(None, user)
-        print("User is logged:", user!=None)
+        # update_last_login(None, user)
+        # print("User is logged:", user!=None)
         
         return {
             # 'user': user,
@@ -25,6 +25,7 @@ def login_user(account, password = ""):
             }
     except:
         user = User.objects.get(account=account)
+        print(user)
         if(user!=None):
             return {
                 'error-code': "wrong_password",
@@ -42,10 +43,10 @@ def register_user(account, name, password = ""):
         user = User.objects.create_user(account=account, user_name=name,password=password)
         user = authenticate(account=account, password=password)
         update_last_login(None, user)
-        print("User is logged:", user!=None)
+        # print("User is logged:", user!=None)
 
         token = user.tokens()
-        print(token)
+        # print(token)
 
         return {
             # 'user': user,

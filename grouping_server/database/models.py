@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from rest_framework_simplejwt.tokens import RefreshToken
+import base64
 
 class Image(models.Model):
     data = models.ImageField(upload_to='images/')
@@ -11,7 +12,7 @@ class Image(models.Model):
 class UserManager(BaseUserManager):
     def create_user(self, account="", user_name = 'unknown', password="", introduction="", slogan=""):
         if account is None:
-            raise TypeError('Users must have an id.')
+            raise TypeError('Users must have an account input.')
 
         user = self.model(account=account)
         user.set_password(password)
@@ -19,7 +20,7 @@ class UserManager(BaseUserManager):
         user.real_name = ''
         user.introduction = introduction
         user.slogan = slogan
-        user.photo_id = None
+        user.photo_id = user.id
         user.save()
 
         return user
@@ -66,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         refresh = RefreshToken.for_user(self)
         return {
             'refresh': str(refresh),
-            'access': str(refresh.access_token)}
+            'access': str(base64.b64encode(refresh.access_token))}
 
 
 class UserTag(models.Model):

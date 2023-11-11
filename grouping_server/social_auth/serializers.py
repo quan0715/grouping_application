@@ -23,7 +23,7 @@ class TokenExchangeParamSerializer(serializers.Serializer):
     state = serializers.CharField(max_length=255, allow_blank=True)
     
     def validate(self, attrs):
-        print(attrs)
+        # print(attrs)
         os.environ['PLATFORM'] = attrs.get('platform')
 
         cipher = AES.new(bytes(os.environ['ENCRYPT_KEY32'], 'utf-8'),AES.MODE_ECB)
@@ -38,7 +38,8 @@ class LoginSerializer(serializers.Serializer):
     account = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=255)
     def validate(self, attrs):
-        print("LoginSerializer.validate() called")
+        # print("LoginSerializer.validate() called")
+        print(attrs)
         self.account = attrs.get('account')
         self.password = attrs.get('password')
         return register.login_user(
@@ -51,7 +52,7 @@ class RegisterSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255)
     username = serializers.CharField(max_length=255,allow_blank = True)
     def validate(self, attrs):
-        print("LoginSerializer.validate() called")
+        # print("LoginSerializer.validate() called")
         self.account = attrs.get('account')
         self.password = attrs.get('password')
         if "username" in attrs:
@@ -107,7 +108,7 @@ class CallbackSerializer(serializers.Serializer):
             raise AuthenticationFailed('Auth consent denied')
         else:
             os.environ['AUTH_CODE'] = self._dict.get('code')
-            print(self._dict.get('code'))
+            # print(self._dict.get('code'))
             return os.environ.get('AUTH_CODE')
 
 class LogoutSerializer(serializers.Serializer):

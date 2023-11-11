@@ -72,7 +72,8 @@ class WebLoginViewPage extends AuthLayoutInterface {
                 onPressed: () async {
                   if (textFormKey.currentState!.validate()) {
                     await loginManager.onFormPasswordLogin();
-                    if(context.mounted && loginManager.loginState == LoginState.loginSuccess){
+                    if (context.mounted &&
+                        loginManager.loginState == LoginState.loginSuccess) {
                       moveToHome(context);
                     }
                   }
@@ -125,7 +126,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
               GoogleAuth googleAuth = GoogleAuth();
               await googleAuth.initializeOauthPlatform();
               await googleAuth.informParameters();
-              if(context.mounted){
+              if (context.mounted) {
                 await googleAuth.showWindowAndListen(context);
               }
               if (!kIsWeb) {
@@ -139,7 +140,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
               GitHubAuth gitHubAuth = GitHubAuth();
               await gitHubAuth.initializeOauthPlatform();
               await gitHubAuth.informParameters();
-              if(context.mounted){
+              if (context.mounted) {
                 await gitHubAuth.showWindowAndListen(context);
               }
               if (!kIsWeb) {
@@ -153,10 +154,10 @@ class WebLoginViewPage extends AuthLayoutInterface {
               LineAuth lineAuth = LineAuth();
               await lineAuth.initializeOauthPlatform();
               await lineAuth.informParameters();
-              if(context.mounted){
+              if (context.mounted) {
                 await lineAuth.showWindowAndListen(context);
               }
-              
+
               if (!kIsWeb) {
                 lineAuth.handleCodeAndGetProfile();
               }

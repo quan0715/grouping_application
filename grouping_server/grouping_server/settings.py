@@ -29,14 +29,15 @@ SECRET_KEY = 'django-insecure-s9thampkfo-g-r$@ue%1iwl3#bn_--vft)aljwt-%c@xsc%b&7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    # '192.168.0.102',
-    # 'localhost',
-    # '127.0.0.1'
+# ALLOWED_HOSTS = [
+#     '*'
+#     # '192.168.0.102',
+#     # 'localhost',
+#     # '127.0.0.1'
     
-    # the test domain own by Bryant
-    # 'amazed-privately-goshawk.ngrok-free.app'
-]
+#     # the test domain own by Bryant
+#     # 'amazed-privately-goshawk.ngrok-free.app'
+# ]
 
 
 # Application definition
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     "social_auth",
     # Bearer Token Authentication
     "rest_framework_simplejwt.token_blacklist",
+    # 'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -120,8 +122,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # )
 }
 
 AUTHENTICATION_BACKENDS = (

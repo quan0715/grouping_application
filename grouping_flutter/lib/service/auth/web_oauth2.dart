@@ -68,7 +68,7 @@ class BaseOauth {
     String stringUrl = EndPointGetter.getAuthBackendEndpoint('callback');
 
     String? code = await StorageMethods.read(key: 'code');
-    debugPrint(code);
+    // debugPrint(code);
 
     await get(Uri.parse(stringUrl).replace(queryParameters: {'code': code!}));
   }
@@ -94,7 +94,7 @@ class BaseOauth {
 
     if (stateSupported) {
       // debugPrint(stateSupported.toString());
-      debugPrint("stateCode: $_stateCode");
+      // debugPrint("stateCode: $_stateCode");
 
       body['state'] = (await StringECBEncryptor.encryptCode(_stateCode)).base64;
     } else {

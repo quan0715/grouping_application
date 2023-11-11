@@ -73,7 +73,7 @@ class UrlGetter:
                     return Config.lineUserProfileEndpoint
     
     def getFrontEndUrl():
-        if os.environ.get('platform') == 'web':
+        if os.environ.get('PLATFORM') == 'web':
             return Config.frontEndUrlWeb
         else:
             return Config.frontEndUrlMobile

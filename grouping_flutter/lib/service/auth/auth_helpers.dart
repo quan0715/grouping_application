@@ -23,7 +23,6 @@ enum AuthProvider {
 class StringECBEncryptor {
   static Future<encrypt_package.Encrypted> encryptCode(
       String toBeEncrypted) async {
-    await dotenv.load(fileName: ".env");
     return encrypt_package.Encrypter(encrypt_package.AES(
             encrypt_package.Key.fromUtf8(dotenv.get('ENCRYPT_KEY32')),
             mode: encrypt_package.AESMode.ecb,
@@ -99,7 +98,7 @@ class ResponseHandling {
       await StorageMethods.deleteAll();
       await StorageMethods.write(key: 'auth-token', value: response.body);
 
-      StorageMethods.readAll().then((value) => debugPrint(value.toString()));
+      // StorageMethods.readAll().then((value) => debugPrint(value.toString()));
     } else {
       StorageMethods.delete(key: 'auth-provider');
       throw Exception('reponses status: ${response.statusCode}');

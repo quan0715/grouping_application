@@ -52,6 +52,7 @@ class AccountAuth {
       http.Response response = await http.post(url, body: body);
 
       await ResponseHandling.authHandling(response);
+      // debugPrint(await StorageMethods.read(key: 'auth-token'));
     } catch (e) {
       debugPrint(e.toString());
       rethrow;
@@ -63,6 +64,6 @@ class AccountAuth {
 
     await storage.delete(key: 'auth-provider');
     await storage.delete(key: 'auth-token');
-    storage.readAll().then((value) => debugPrint(value.toString()));
+    // storage.readAll().then((value) => debugPrint(value.toString()));
   }
 }
