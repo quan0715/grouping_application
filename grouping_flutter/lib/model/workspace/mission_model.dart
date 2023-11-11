@@ -60,7 +60,7 @@ class MissionModel extends EditableCardModel {
     super.id,
     String? title,
     DateTime? deadline,
-    List<String>? contributors,
+    List<int>? contributors,
     String? introduction,
     String? stateId,
     MissionStateModel? state,
@@ -120,10 +120,10 @@ class MissionModel extends EditableCardModel {
           deadline: DateTime.parse(data['mission']['deadline']),
           // state: MissionStateModel.fromJson(data: data['state']),
           stateId: data['mission']['state'].toString(),
-          contributors: data['contributors'].cast<String>() as List<String>,
+          contributors: data['contributors'].cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
           parentMissionIds: data['parents'].cast<String>() as List<String>,
-          childMissionIds: data['childs'].cast<String>() as List<String>,
+          childMissionIds: data['children'].cast<String>() as List<String>,
           notifications: _notificationFromJson(
               data['notifications'].cast<Map<String, String>>()));
 
@@ -140,7 +140,7 @@ class MissionModel extends EditableCardModel {
         'contributors': this.contributors,
         // 'tags': this.tags,
         'parents': this.parentMissionIds,
-        'childs': this.childMissionIds,
+        'children': this.childMissionIds,
         'notifications': _notificationsToJson(),
       };
 

@@ -5,7 +5,7 @@ import 'package:grouping_project/model/auth/account_model.dart';
 abstract class EditableCardModel {
   final int? id;
   String title;
-  List<String> contributors;
+  List<int> contributors;
   String introduction;
   // List<String> tags;
   List<DateTime> notifications;

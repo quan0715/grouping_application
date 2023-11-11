@@ -49,7 +49,7 @@ class EventModel extends EditableCardModel {
       String? title,
       DateTime? startTime,
       DateTime? endTime,
-      List<String>? contributors,
+      List<int>? contributors,
       String? introduction,
       // List<String>? tags,
       AccountModel? creatorAccount,
@@ -104,10 +104,10 @@ class EventModel extends EditableCardModel {
           introduction: data['description'] as String,
           startTime: DateTime.parse(data['event']['start_time']),
           endTime: DateTime.parse(data['event']['end_time']),
-          contributors: data['contributors'].cast<String>() as List<String>,
+          contributors: data['contributors'].cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
           relatedMissionIds:
-              data['childs'].cast<String>() as List<String>,
+              data['children'].cast<String>() as List<String>,
           notifications:
               _notificationFromJson(data['notifications'].cast<Map<String, String>>()));
 
@@ -123,7 +123,7 @@ class EventModel extends EditableCardModel {
         },
         'contributors': this.contributors,
         // 'tags': this.tags,
-        'childs': this.relatedMissionIds,
+        'children': this.relatedMissionIds,
         'notifications': _notificationsToJson()
       };
 
