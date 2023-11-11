@@ -67,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         refresh = RefreshToken.for_user(self)
         return {
             'refresh': str(refresh),
-            'access': str(base64.b64encode(refresh.access_token))}
+            'access': str(refresh.access_token)}
 
 
 class UserTag(models.Model):

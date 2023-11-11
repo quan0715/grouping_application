@@ -39,7 +39,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255)
     def validate(self, attrs):
         # print("LoginSerializer.validate() called")
-        print(attrs)
+        # print(attrs)
         self.account = attrs.get('account')
         self.password = attrs.get('password')
         return register.login_user(

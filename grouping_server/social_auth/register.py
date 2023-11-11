@@ -11,11 +11,11 @@ def login_user(account, password = ""):
     try:
         user = User.objects.get(account=account)
         user = authenticate(account=account,password=password)
-        # update_last_login(None, user)
+        update_last_login(None, user)
         # print("User is logged:", user!=None)
+
         
         return {
-            # 'user': user,
             'tokens': user.tokens()
         }
     except User.DoesNotExist:
