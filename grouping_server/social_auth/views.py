@@ -1,4 +1,3 @@
-import base64
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -57,7 +56,8 @@ class LoginView(GenericAPIView):
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         
         data = (serializer.validated_data)['tokens']['access']
-        return Response(base64.b64encode(data.encode('UTF-8')), status=status.HTTP_200_OK)
+
+        return Response(data.encode('UTF-8'), status=status.HTTP_200_OK)
 
 class RegisterView(GenericAPIView):
     serializer_class = RegisterSerializer
