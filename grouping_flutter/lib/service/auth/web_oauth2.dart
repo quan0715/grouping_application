@@ -1,8 +1,8 @@
-// import 'dart:js_util';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/service/auth/auth_helpers.dart';
 import 'package:http/http.dart';
-import 'package:universal_html/html.dart' as html;
+// import 'package:universal_html/html.dart' as html;
+import 'dart:html' as html;
 import 'package:pkce/pkce.dart';
 
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -75,9 +75,11 @@ class BaseOauth {
 
   Future initialLoginFlow() async {
     _getSignInGrant();
+    debugPrint(redirectedUrl.toString());
     if (stateSupported) {
       authorizationUrl = grant.getAuthorizationUrl(redirectedUrl,
           scopes: scopes, state: _stateCode);
+      
     } else {
       authorizationUrl =
           grant.getAuthorizationUrl(redirectedUrl, scopes: scopes);
@@ -134,6 +136,7 @@ class BaseOauth {
       url = Uri.parse(stringUrl);
 
       Response response = await post(url, body: body);
+      // debugPrint(response.body);
       // debugPrint(response.body);
       await ResponseHandling.authHandling(response);
     } catch (e) {

@@ -13,7 +13,9 @@ class SocialLogin:
                     'client_secret':cilentSecret,
                     'code':os.environ.get('AUTH_CODE'),
                 }
+        
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
+        print(body['redirect_uri'])
         if 'VERIFIER' in os.environ:
                 body['code_verifier']=os.environ.get('VERIFIER')
         if (grant_type != ''):
