@@ -15,7 +15,6 @@ class AccountAuth {
     try {
       String stringUrl;
       stringUrl = EndPointGetter.getAuthBackendEndpoint('register');
-      // debugPrint(stringUrl);
 
       Map<String, String> body = {
         'account': account,
@@ -29,8 +28,7 @@ class AccountAuth {
 
       await ResponseHandling.authHandling(response);
     } catch (e) {
-      debugPrint("sign UP error");
-      debugPrint(e.toString());
+      debugPrint('sign UP error: $e');
       rethrow;
     }
   }
@@ -63,6 +61,5 @@ class AccountAuth {
 
     await storage.delete(key: 'auth-provider');
     await storage.delete(key: 'auth-token');
-    storage.readAll().then((value) => debugPrint(value.toString()));
   }
 }

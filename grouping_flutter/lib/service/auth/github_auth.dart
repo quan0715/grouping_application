@@ -17,7 +17,6 @@ class GitHubAuth {
   late BaseOauth platformedOauth2;
 
   Future initializeOauthPlatform() async {
-    await dotenv.load(fileName: ".env");
     if (kIsWeb) {
       platformedOauth2 = BaseOauth(
           clientId: dotenv.env['GITHUB_CLIENT_ID_WEB']!,

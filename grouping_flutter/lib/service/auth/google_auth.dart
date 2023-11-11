@@ -18,7 +18,6 @@ class GoogleAuth {
   late final BaseOauth platformedOauth2;
 
   Future<String> _getCorrectGoogleClientId() async {
-    await dotenv.load(fileName: ".env");
     if (kIsWeb) {
       return dotenv.env['GOOGLE_CLIENT_ID_WEB']!;
     } else if (Platform.isAndroid) {
@@ -31,7 +30,6 @@ class GoogleAuth {
   }
 
   Future<String?> _getCorrectGoogleClientSecret() async {
-    await dotenv.load(fileName: ".env");
     if (kIsWeb) {
       return dotenv.env['GOOGLE_CLIENT_SECRET_WEB'];
     } else if (Platform.isAndroid) {
@@ -44,8 +42,6 @@ class GoogleAuth {
   }
 
   Future initializeOauthPlatform() async {
-    await dotenv.load(fileName: ".env");
-
     platformedOauth2 = BaseOauth(
         clientId: await _getCorrectGoogleClientId(),
         clientSecret: await _getCorrectGoogleClientSecret(),

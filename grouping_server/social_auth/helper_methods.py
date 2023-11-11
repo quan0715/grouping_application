@@ -4,9 +4,6 @@ from enum import Enum
 from .config import Config
 
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class SocialLogin:
     def getBody(provider:Enum, clientId, cilentSecret, grant_type = ''):
@@ -18,16 +15,12 @@ class SocialLogin:
                 }
         
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
-        print(body['redirect_uri'])
         if 'VERIFIER' in os.environ:
                 body['code_verifier']=os.environ.get('VERIFIER')
         if (grant_type != ''):
             body['grant_type'] = grant_type
-            # print('grant_type: '+body['grant_type'])
         if 'STATE' in os.environ:
             body['state'] = os.environ.get("STATE")
-            # header = {'Accept': 'application/x-www-form-urlencoded'}
-            # body
 
         return body
         
@@ -78,7 +71,6 @@ class UrlGetter:
                     return Config.lineUserProfileEndpoint
     
     def getFrontEndUrl():
-        print("plateform", os.environ.get('platform'))
         if os.environ.get('PLATFORM') == 'web':
             return Config.frontEndUrlWeb
         else:
