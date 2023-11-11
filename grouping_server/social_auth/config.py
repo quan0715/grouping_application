@@ -1,8 +1,11 @@
 class Config:
   frontEndUrlWeb = 'http://localhost:5000'
   frontEndUrlMobile = 'http://10.0.2.2:5000'
+  # frontEndUrlMobile = 'http://localhost:5000'
   baseUriWeb = 'http://localhost:8000'
   baseUriMobile = 'http://10.0.2.2:8000'
+  # baseUriMobile = 'http://localhost:8000'
+
 
   googleTokenEndpoint = 'https://oauth2.googleapis.com/token'
   googleUserProfileEndpoint = 'https://oauth2.googleapis.com/tokeninfo'

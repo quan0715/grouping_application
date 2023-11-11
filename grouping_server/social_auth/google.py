@@ -6,10 +6,8 @@ from .register import login_user
 
 class GoogleTokenExchange:
     def requestProfile(idToken):
-        print('Google User!!!!!')
         user = id_token.verify_oauth2_token(
                     idToken, googleRequest.Request(),clock_skew_in_seconds = 2)
-        print(user)
 
         if 'sub' in user and 'name' in user:
             return SocialLogin.registerAndLogin(
