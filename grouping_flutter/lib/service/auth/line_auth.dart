@@ -17,7 +17,6 @@ class LineAuth {
   late final BaseOauth platformedOauth2;
 
   Future initializeOauthPlatform() async {
-    await dotenv.load(fileName: ".env");
     if (kIsWeb) {
       platformedOauth2 = BaseOauth(
           clientId: dotenv.env['LINE_CLIENT_ID_WEB']!,
@@ -30,7 +29,6 @@ class LineAuth {
           usePkce: true);
     } else {
       {
-        await dotenv.load(fileName: ".env");
         platformedOauth2 = BaseOauth(
             clientId: dotenv.env['LINE_CLIENT_ID_MOBILE']!,
             clientSecret: dotenv.env['LINE_CLIENT_SECRET_MOBILE']!,
@@ -57,7 +55,6 @@ class LineAuth {
 
   Future handleCodeAndGetProfile() async {
     try {
-      debugPrint("getting profile");
       await platformedOauth2.getAccessToken();
     } catch (e) {
       debugPrint(e.toString());

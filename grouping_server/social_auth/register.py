@@ -12,10 +12,9 @@ def login_user(account, password = ""):
         user = User.objects.get(account=account)
         user = authenticate(account=account,password=password)
         update_last_login(None, user)
-        print("User is logged:", user!=None)
+
         
         return {
-            # 'user': user,
             'tokens': user.tokens()
         }
     except User.DoesNotExist:
@@ -42,13 +41,10 @@ def register_user(account, name, password = ""):
         user = User.objects.create_user(account=account, user_name=name,password=password)
         user = authenticate(account=account, password=password)
         update_last_login(None, user)
-        print("User is logged:", user!=None)
 
         token = user.tokens()
-        print(token)
 
         return {
-            # 'user': user,
             'tokens': token
         }
     except:

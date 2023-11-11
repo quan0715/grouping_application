@@ -11,8 +11,6 @@ class GitHubAndLineToken:
                                     },
                                 )
             user=user.json()
-            print("User: =======================>")
-            print(user)
             if 'id' in user:
                 result = SocialLogin.registerAndLogin(
                     account = user['id'],
