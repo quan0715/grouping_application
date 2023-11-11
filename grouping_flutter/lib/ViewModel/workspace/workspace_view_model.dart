@@ -58,6 +58,10 @@ class WorkspaceViewModel extends ChangeNotifier {
     }
     return tmp;
   }
+
+  WorkspaceChip UserChip() {
+    return WorkspaceChip(workspace: _workspace);
+  }
   
   int get currentWorkspaceColor => _workspace.themeColor;
   int get workspaceNumber => _user.joinedWorkspaces.length;

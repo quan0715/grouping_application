@@ -49,6 +49,14 @@ class _WorkspaceViewState extends State<WorkspaceView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                        const Text('User'),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        viewModel.UserChip(),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Text('工作小組 (${viewModel.workspaceNumber})'),
                         const SizedBox(
                           height: 10,
