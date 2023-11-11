@@ -5,7 +5,7 @@ import 'package:grouping_project/ViewModel/message_service.dart';
 import 'package:grouping_project/model/workspace/message_model.dart';
 import 'package:grouping_project/model/auth/account_model.dart';
 import 'package:grouping_project/model/repo/activity_repo.dart';
-import 'package:grouping_project/model/repo/user_repo.dart';
+// import 'package:grouping_project/model/repo/user_repo.dart';
 import 'package:grouping_project/model/workspace/workspace_model.dart';
 import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
 // import 'package:grouping_project/model/repo/workspace_repo.dart';
@@ -15,7 +15,7 @@ class WorkspaceViewModel extends ChangeNotifier {
   AccountModel _user = AccountModel(); // TODO: initial
 
   late ActivityDatabaseService _databaseService; // TODO: initial
-  late UserService _userService;
+  // late UserService _userService;
 
   final MessageService _messageService = MessageService();
   MessageService get messageService => _messageService;
@@ -75,6 +75,11 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   int getPage(){
     return _pages;
+  }
+
+  Future<void> createEvent(EventModel event) async {
+    await _databaseService.createEvent(event: event);
+    notifyListeners();
   }
   
   @override
