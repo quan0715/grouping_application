@@ -32,7 +32,7 @@ class MessageData{
   }
   
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => message.hashCode;
   
   
 }
