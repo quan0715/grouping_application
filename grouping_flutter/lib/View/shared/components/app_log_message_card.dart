@@ -86,7 +86,7 @@ class LogMessageCard extends StatelessWidget{
     icon: const Icon(Icons.warning,),
     onDelete: onDelete ?? () => {},
   );
-
+  Color get surface => Colors.white;
   Color get backgroundColor => color.withOpacity(0.05);
   Color get borderColor => color;
   Color get iconColor => color;
@@ -109,24 +109,26 @@ class LogMessageCard extends StatelessWidget{
   Widget get _build => Padding(
       padding: outerPadding,
       child: Container(
-        
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: borderRadius,
-          border: border
-        ),
-        child: Padding(
-          padding: innerPadding,
-          child: Row(
-            children: [
-              _buildIcon,
-              _textArea,
-              const Spacer(),
-              _buildDeleteIcon,
-            ],
+        color: surface,
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: borderRadius,
+            border: border
           ),
-        ),
-    )
+          child: Padding(
+            padding: innerPadding,
+            child: Row(
+              children: [
+                _buildIcon,
+                _textArea,
+                const Spacer(),
+                _buildDeleteIcon,
+              ],
+            ),
+          ),
+          ),
+      )
   );
   
   Widget get _textArea => Padding(

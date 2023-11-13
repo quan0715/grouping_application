@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -19,6 +21,39 @@ enum AuthProvider {
   final String string;
   const AuthProvider({required this.string});
 }
+
+(String, String) getAuthProviderKeyAndSecret(AuthProvider provider) {
+  switch (provider) {
+    case AuthProvider.account:
+      return (dotenv.env['ACCOUNT_CLIENT_ID']!, dotenv.env['ACCOUNT_CLIENT_SECRET']!);
+
+    case AuthProvider.google:
+      if (kIsWeb) {
+        return (dotenv.env['GOOGLE_CLIENT_ID_WEB']!, dotenv.env['GOOGLE_CLIENT_SECRET_WEB']! );
+      } else if (Platform.isAndroid) {
+        return (dotenv.env['GOOGLE_CLIENT_ID_ANDROID']!, dotenv.env['GOOGLE_CLIENT_SECRET_ANDROID']!);
+      } else if (Platform.isIOS) {
+        return (dotenv.env['GOOGLE_CLIENT_ID_IOS']!, dotenv.env['GOOGLE_CLIENT_SECRET_IOS']!);
+      } else {
+        throw Exception('Unsupported platform');
+      }
+    
+    case AuthProvider.github:
+      if(kIsWeb){
+        return (dotenv.env['GITHUB_CLIENT_ID_WEB']!, dotenv.env['GITHUB_CLIENT_SECRET_WEB']!);
+      } else {
+        return (dotenv.env['GITHUB_CLIENT_ID_MOBILE']!, dotenv.env['GITHUB_CLIENT_SECRET_MOBILE']!);
+      }
+    
+    case AuthProvider.line:
+      if(kIsWeb){
+        return (dotenv.env['LINE_CLIENT_ID_WEB']!, dotenv.env['LINE_CLIENT_SECRET_WEB']!);
+      } else {
+        return (dotenv.env['LINE_CLIENT_ID_MOBILE']!, dotenv.env['LINE_CLIENT_SECRET_MOBILE']!);
+      }
+  }
+}
+
 
 class StringECBEncryptor {
   static Future<encrypt_package.Encrypted> encryptCode(
@@ -99,7 +134,7 @@ class ResponseHandling {
       await StorageMethods.write(key: 'auth-token', value: response.body);
     } else {
       StorageMethods.delete(key: 'auth-provider');
-      throw Exception('reponses status: ${response.statusCode}');
+      throw Exception('response status: ${response.statusCode}');
     }
   }
 }

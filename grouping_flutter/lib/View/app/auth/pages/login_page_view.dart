@@ -1,22 +1,17 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/View/app/auth/components/action_text_button.dart';
 import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
 import 'package:grouping_project/View/app/auth/components/auth_text_form_field.dart';
 import 'package:grouping_project/View/app/auth/components/third_party_login_button.dart';
-import 'package:grouping_project/View/components/app_elevated_button.dart';
-import 'package:grouping_project/View/components/state.dart';
-import 'package:grouping_project/View/components/title_with_content.dart';
+import 'package:grouping_project/View/shared/components/app_elevated_button.dart';
+import 'package:grouping_project/View/shared/components/state.dart';
+import 'package:grouping_project/View/shared/components/title_with_content.dart';
 import 'package:grouping_project/View/theme/theme.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
 import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/config/assets.dart';
-import 'package:grouping_project/service/auth/github_auth.dart';
-import 'package:grouping_project/service/auth/google_auth.dart';
-import 'package:grouping_project/service/auth/line_auth.dart';
+import 'package:grouping_project/service/auth/auth_helpers.dart';
 import 'package:provider/provider.dart';
-
 class WebLoginViewPage extends AuthLayoutInterface {
   WebLoginViewPage({Key? key}) : super(key: key);
 
@@ -60,6 +55,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: ProtectedTextFormField(
+                  // obscureText: true,
                   hintText: "請輸入密碼",
                   labelText: "你的密碼",
                   prefixIcon: const Icon(Icons.password),
@@ -122,46 +118,67 @@ class WebLoginViewPage extends AuthLayoutInterface {
         ThirdPartyLoginButton(
             primaryColor: Colors.blue,
             icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
-            onPressed: () async {
-              GoogleAuth googleAuth = GoogleAuth();
-              await googleAuth.initializeOauthPlatform();
-              await googleAuth.informParameters();
-              if (context.mounted) {
-                await googleAuth.showWindowAndListen(context);
-              }
-              if (!kIsWeb) {
-                googleAuth.handleCodeAndGetProfile();
-              }
-            }),
+            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.google, context),),
+              // if(!kIsWeb){
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (BuildContext context) {
+              //         return const OAuthWebView(
+              //           launchURI: 'https://www.youtube.com/watch?v=pG6iaOMV46I&list=RDC3GouGa0noM&index=17',
+              //         );
+              //       },
+              //     ),
+              //   );
+              // }
+              // else{
+              //   await launchUrl(Uri.parse('https://www.youtube.com/watch?v=pG6iaOMV46I&list=RDC3GouGa0noM&index=17'));
+              // }
+              // await launchUrl(Uri.parse('https://www.youtube.com/watch?v=pG6iaOMV46I&list=RDC3GouGa0noM&index=17'));
+              // GoogleAuth googleAuth = GoogleAuth();
+              // googleAuth.initializeOauthPlatform();
+              // await googleAuth.informParameters();
+              // if (context.mounted) {
+              //   await googleAuth.showWindowAndListen(context);
+              // }
+              // if (!kIsWeb) {
+              //   googleAuth.handleCodeAndGetProfile();
+              // }
+            // }),        
         ThirdPartyLoginButton(
             primaryColor: Colors.purple,
             icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
-            onPressed: () async {
-              GitHubAuth gitHubAuth = GitHubAuth();
-              await gitHubAuth.initializeOauthPlatform();
-              await gitHubAuth.informParameters();
-              if (context.mounted) {
-                await gitHubAuth.showWindowAndListen(context);
-              }
-              if (!kIsWeb) {
-                gitHubAuth.handleCodeAndGetProfile();
-              }
-            }),
+            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.github, context),
+            // onPressed: () async {
+              // GitHubAuth gitHubAuth = GitHubAuth();
+              // gitHubAuth.initializeOauthPlatform();
+              // await gitHubAuth.informParameters();
+              // if (context.mounted) {
+              //   await gitHubAuth.showWindowAndListen(context);
+              // }
+              // if (!kIsWeb) {
+              //   gitHubAuth.handleCodeAndGetProfile();
+              // }
+            // }),
+        ),
+        
         ThirdPartyLoginButton(
             primaryColor: Colors.green,
             icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
-            onPressed: () async {
-              LineAuth lineAuth = LineAuth();
-              await lineAuth.initializeOauthPlatform();
-              await lineAuth.informParameters();
-              if (context.mounted) {
-                await lineAuth.showWindowAndListen(context);
-              }
+            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.line, context),
+            // onPressed: () async {
+              // LineAuth lineAuth = LineAuth();
+              // lineAuth.initializeOauthPlatform();
+              // await lineAuth.informParameters();
+              // if (context.mounted) {
+              //   await lineAuth.showWindowAndListen(context);
+              // }
 
-              if (!kIsWeb) {
-                lineAuth.handleCodeAndGetProfile();
-              }
-            }),
+              // if (!kIsWeb) {
+              //   lineAuth.handleCodeAndGetProfile();
+              // }
+            // }
+        ),
       ],
     );
   }
@@ -204,29 +221,8 @@ class WebLoginViewPage extends AuthLayoutInterface {
 
   @override
   Widget build(BuildContext context) {
-    if (Uri.base.queryParametersAll.containsKey('code')) {
-      FlutterSecureStorage storage = const FlutterSecureStorage();
-      storage
-          .write(key: 'code', value: Uri.base.queryParameters['code'])
-          .then((value) async {
-        debugPrint((await storage.readAll()).toString());
-        if (Uri.base.queryParametersAll.containsKey('scope')) {
-          GoogleAuth googleAuth = GoogleAuth();
-          await googleAuth.initializeOauthPlatform();
-          await googleAuth.handleCodeAndGetProfile();
-        } else if (Uri.base.queryParametersAll.containsKey('state')) {
-          LineAuth lineAuth = LineAuth();
-          await lineAuth.initializeOauthPlatform();
-          await lineAuth.handleCodeAndGetProfile();
-        } else {
-          GitHubAuth gitHubAuth = GitHubAuth();
-          await gitHubAuth.initializeOauthPlatform();
-          await gitHubAuth.handleCodeAndGetProfile();
-        }
-      });
-    }
     return ChangeNotifierProvider<LoginViewModel>.value(
-      value: loginManager,
+      value: loginManager..isURLContainCode(Uri.base),
       child: super.build(context),
     );
   }
