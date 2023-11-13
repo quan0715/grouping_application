@@ -50,6 +50,8 @@ class WorkspaceViewModel extends ChangeNotifier {
   //   return tmp;
   // }
 
+  WorkspaceChip get ownWorkspace => WorkspaceChip(workspace: _workspace);
+
   List<WorkspaceChip> get workspaces {
     List<WorkspaceChip> tmp = [];
     for(WorkspaceModel workspace in _user.joinedWorkspaces){
@@ -57,10 +59,6 @@ class WorkspaceViewModel extends ChangeNotifier {
       // debugPrint('themeColor: ${workspace.themeColor.toString()}');
     }
     return tmp;
-  }
-
-  WorkspaceChip UserChip() {
-    return WorkspaceChip(workspace: _workspace);
   }
   
   int get currentWorkspaceColor => _workspace.themeColor;
