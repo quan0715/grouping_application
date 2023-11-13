@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/View/components/workspace_chip.dart';
+// import 'package:grouping_project/View/components/workspace_chip.dart';
+import 'package:grouping_project/View/shared/components/components.dart';
 import 'package:grouping_project/ViewModel/message_service.dart';
 import 'package:grouping_project/model/workspace/message_model.dart';
 import 'package:grouping_project/model/auth/account_model.dart';
