@@ -13,8 +13,12 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  // if (kIsWeb){
+  //   await dotenv.load(fileName: ".env");
+  // }
+  // else{
   await dotenv.load(fileName: "assets/.env");
+  // }
 
   runApp(const MyApp());
 }

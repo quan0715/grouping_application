@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/View/components/state.dart';
+import 'package:grouping_project/View/shared/components/state.dart';
 import 'package:grouping_project/model/auth/auth_model_lib.dart';
 import 'package:grouping_project/service/auth/account.dart';
 
@@ -53,7 +53,7 @@ class RegisterModel {
       debugPrint('upload successfully');
       return RegisterState.success;
     } catch (error) {
-      debugPrint('註冊信箱: $email\n使用者密碼: $password 註冊失敗');
+      debugPrint('註冊信箱: $email 使用者密碼: $password 註冊失敗');
       debugPrint(error.toString());
       return RegisterState.fail;
     }

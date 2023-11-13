@@ -3,20 +3,26 @@ import 'package:grouping_project/View/app/auth/components/action_text_button.dar
 import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
 import 'package:grouping_project/View/app/auth/components/auth_text_form_field.dart';
 import 'package:grouping_project/View/app/auth/pages/welcome_message_page_view.dart';
-import 'package:grouping_project/View/components/app_elevated_button.dart';
-import 'package:grouping_project/View/components/title_with_content.dart';
+import 'package:grouping_project/View/shared/components/app_elevated_button.dart';
+import 'package:grouping_project/View/shared/components/components.dart';
+import 'package:grouping_project/View/shared/components/state.dart';
+import 'package:grouping_project/View/shared/components/title_with_content.dart';
 import 'package:grouping_project/View/theme/color.dart';
 import 'package:grouping_project/View/theme/padding.dart';
 import 'package:grouping_project/ViewModel/auth/register_view_model.dart';
+import 'package:grouping_project/ViewModel/message_service.dart';
+import 'package:grouping_project/model/workspace/message_model.dart';
 import 'package:provider/provider.dart';
 
 
 class RegisterViewPage extends AuthLayoutInterface{
   RegisterViewPage({super.key});
 
+  final MessageService messageService = MessageService();
+
   final textFormKey = GlobalKey<FormState>();
 
-  Widget getSignUpAsset(){
+  Widget getRegisterAsset(){
     return Image.asset('assets/images/login.png', fit: BoxFit.values[4]);
   }
 
@@ -91,9 +97,18 @@ class RegisterViewPage extends AuthLayoutInterface{
                 onPressed: () async {
                   if (textFormKey.currentState!.validate()) {
                     await signInManager.register();
-                    debugPrint("註冊成功");
-                    if(context.mounted){
-                      moveToWelcomePage(context, signInManager);
+                    
+                    if(signInManager.registerState == RegisterState.success){
+                      debugPrint("註冊成功");
+                      messageService.addMessage(MessageData.success(title: "註冊成功", message: "註冊成功，即將跳轉頁面"));
+                      await Future.delayed(const Duration(seconds: 2), () => debugPrint("註冊成功，即將跳轉頁面"));
+                      if(context.mounted){
+                        moveToWelcomePage(context, signInManager);
+                      }
+                    }
+                    else{
+                      messageService.addMessage(MessageData.error(title: "註冊失敗", message: "伺服器錯誤請稍候再試"));
+                      debugPrint("註冊失敗");
                     }
                     // TODO: fix register flow 
                   }
@@ -116,22 +131,31 @@ class RegisterViewPage extends AuthLayoutInterface{
   @override
   Widget getBuildLoginFrame(){
     return Consumer<RegisterViewModel>(
-      builder: (context, loginManager,child) => Container(
-        color: AppColor.surface(context),
-        width: formWidth,
-        child: Center(
-            child: AppPadding.medium(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const TitleWithContent(
-                  title: "註冊 SignUp", content: "加入Grouping，註冊新的Grouping 帳號"),
-              const Divider(thickness: 2),
-              _getInputForm(context),
-            ],
+      builder: (context, loginManager,child) => Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            color: AppColor.surface(context),
+            width: formWidth,
+            child: Center(
+                child: AppPadding.medium(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const TitleWithContent(
+                      title: "註冊 Register", content: "加入Grouping，註冊新的Grouping 帳號"),
+                  const Divider(thickness: 2),
+                  _getInputForm(context),
+                ],
+              ),
+            )),
           ),
-        )),
+          Align(
+            alignment: Alignment.topCenter,
+            child: MessagesList(messageService: messageService),
+          ),
+        ],
       ),
     );
   }
@@ -143,14 +167,16 @@ class RegisterViewPage extends AuthLayoutInterface{
         color: AppColor.surfaceVariant(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [getSignUpAsset()],)
+          children: [
+            // MessagesList(messageService: messageService),
+            getRegisterAsset()
+          ],)
       ),
     );
   }  
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ChangeNotifierProvider<RegisterViewModel>(
       create: (context) => RegisterViewModel(),
       builder: (context, child) => super.build(context),

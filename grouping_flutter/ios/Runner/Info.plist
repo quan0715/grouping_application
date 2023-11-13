@@ -80,5 +80,12 @@
 	    <key>NSAllowsArbitraryLoads</key>
 	    <true/>
 	</dict>
+	<key>io.flutter.embedded_views_preview</key>
+	<string>YES</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  		<string>sms</string>
+  		<string>tel</string>
+	</array>
 </dict>
 </plist>

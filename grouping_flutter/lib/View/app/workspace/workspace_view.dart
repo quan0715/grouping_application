@@ -3,6 +3,7 @@ import 'package:grouping_project/View/app/workspace/activity_view.dart';
 import 'package:grouping_project/View/app/workspace/dashboard_view.dart';
 import 'package:grouping_project/View/app/workspace/message.view.dart';
 import 'package:grouping_project/View/app/workspace/setting_view.dart';
+// import 'package:grouping_project/View/shared/components/components.dart';
 import 'package:grouping_project/ViewModel/workspace/workspace_view_model.dart';
 import 'package:grouping_project/model/auth/account_model.dart';
 import 'package:grouping_project/model/workspace/event_model.dart';
