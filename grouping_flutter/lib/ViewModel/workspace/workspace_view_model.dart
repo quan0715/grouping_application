@@ -12,10 +12,10 @@ import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
 // import 'package:grouping_project/model/repo/workspace_repo.dart';
 
 class WorkspaceViewModel extends ChangeNotifier {
-  WorkspaceModel _workspace = WorkspaceModel(); // TODO: initial
-  AccountModel _user = AccountModel(); // TODO: initial
+  final WorkspaceModel _workspace; // TODO: initial
+  final AccountModel _user; // TODO: initial
 
-  late ActivityDatabaseService _databaseService; // TODO: initial
+  late final ActivityDatabaseService _databaseService; // TODO: initial
   // late UserService _userService;
 
   final MessageService _messageService = MessageService();
@@ -23,9 +23,11 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   int _pages = 0;
 
-  WorkspaceViewModel(this._workspace, this._user)
-      : _databaseService = ActivityDatabaseService(
-            workSpaceUid: _workspace.id!, token: 'token');
+  WorkspaceViewModel({required WorkspaceModel workspace, required AccountModel user})
+      : _workspace = workspace,
+        _user = user,
+        _databaseService = ActivityDatabaseService(
+            workSpaceUid: workspace.id!, token: 'token');
 
   // void initialState(WorkspaceModel workspace, AccountModel user){
   //   _workspace = workspace;

@@ -34,7 +34,7 @@ class _WorkspaceViewState extends State<WorkspaceView> {
     // end of test
 
     return ChangeNotifierProvider<WorkspaceViewModel>(
-      create: (context) => WorkspaceViewModel(current, account),
+      create: (context) => WorkspaceViewModel(workspace: current, user: account),
       child: Consumer<WorkspaceViewModel>(
         builder: (context, viewModel, child) {
           List<Widget> pages = [
