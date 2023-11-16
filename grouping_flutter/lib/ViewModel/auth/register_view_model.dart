@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/View/components/state.dart';
+import 'package:grouping_project/View/shared/components/state.dart';
 import 'package:grouping_project/model/auth/auth_model_lib.dart';
 // import 'package:grouping_project/VM/state.dart';
 // import 'package:grouping_project/VM/view_model_lib.dart';
@@ -19,8 +19,8 @@ class RegisterViewModel extends ChangeNotifier {
       passwordRegisterModel.isPasswordConfirmValid;
   bool get isUserNameValid => passwordRegisterModel.isUserNameValid;
   bool isLoading = false;
-  RegisterState registerState = RegisterState.fail;
-
+  RegisterState _registerState = RegisterState.fail;
+  RegisterState get registerState => _registerState;
   void onEmailChange(String value) {
     passwordRegisterModel.updateEmail(value);
     notifyListeners();
@@ -59,7 +59,8 @@ class RegisterViewModel extends ChangeNotifier {
   Future<void> register() async {
     isLoading = true;
     notifyListeners();
-    registerState = await passwordRegisterModel.register(email, password, userName);
+    _registerState = await passwordRegisterModel.register(email, password, userName);
+    // debugPrint(registerState.toString());
     isLoading = false;
     notifyListeners();
   }

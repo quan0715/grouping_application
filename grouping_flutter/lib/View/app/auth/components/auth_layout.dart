@@ -6,6 +6,7 @@ class AuthLayoutInterface extends StatelessWidget{
   
   double get formWidth => 450;
   double get breakPoint => formWidth * 1.5;
+  
   Widget getInfoDisplayFrame(){
     return Container(
       width: formWidth,
@@ -51,11 +52,12 @@ class AuthLayoutInterface extends StatelessWidget{
     return Row(
       children: [
         Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [ getBuildLoginFrame()],
-          ),
+          child: getBuildLoginFrame(),
+          // child: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   children: [ getBuildLoginFrame()],
+          // ),
         ),
       ],
     );
@@ -63,7 +65,6 @@ class AuthLayoutInterface extends StatelessWidget{
   
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return buildPage();
   }
 }

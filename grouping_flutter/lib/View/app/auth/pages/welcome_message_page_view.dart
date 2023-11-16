@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
-import 'package:grouping_project/View/components/app_elevated_button.dart';
-import 'package:grouping_project/View/components/title_with_content.dart';
+import 'package:grouping_project/View/shared/components/app_elevated_button.dart';
+import 'package:grouping_project/View/shared/components/title_with_content.dart';
 import 'package:grouping_project/View/theme/color.dart';
 import 'package:grouping_project/View/theme/padding.dart';
 import 'package:grouping_project/ViewModel/auth/register_view_model.dart';
