@@ -4,8 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:grouping_project/View/app/app_view.dart';
 import 'package:grouping_project/View/app/auth/auth_view.dart';
+// import 'package:grouping_project/View/repo_view.dart';
 import 'package:grouping_project/View/app/workspace/workspace_view.dart';
 import 'package:grouping_project/View/theme/theme_manager.dart';
+import 'package:grouping_project/ViewModel/workspace/event_view_model.dart';
 import 'package:provider/provider.dart';
 // import 'package:universal_html/html.dart';
 
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
       providers: [
         // 呼叫 theme_manager.dart
         ChangeNotifierProvider(create: (context) => ThemeManager()),
+        ChangeNotifierProvider(create: (context) => EventSettingViewModel())
       ],
       child: Consumer<ThemeManager>(
         builder: (context, themeManager, child) => MaterialApp(
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
             '/workspace': (context) => const WorkspaceView(),
             '/test' :(context) => const WorkspaceView()
           },
-          initialRoute: '/',
+          initialRoute: '/test',
           // 呼叫 home_page.dart
           // home: const AppView()
         ),

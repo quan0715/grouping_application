@@ -3,7 +3,7 @@ void main() {
   //   WidgetsFlutterBinding.ensureInitialized();
   //   AuthService authService = AuthService();
   //   FlutterSecureStorage storage = FlutterSecureStorage();
-  //   test('signUp', () async {
+  //   test('signup', () async {
   //     authService
   //         .signUp(account: 'test', password: 'testtest')
   //         .whenComplete(() {
