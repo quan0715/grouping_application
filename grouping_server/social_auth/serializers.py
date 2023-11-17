@@ -8,7 +8,6 @@ from django.core.cache import cache
 # from grouping_project_backend.models import UserManager, User
 from Crypto.Cipher import AES
 import base64
-import datetime
 
 import os
 
@@ -93,22 +92,7 @@ class GitHubSocialAuthSerializer(serializers.Serializer):
         else:
             return oauth2_token_exchange(clientId=os.environ.get('GITHUB_CLIENT_ID_MOBILE'), clientSecret=os.environ.get('GITHUB_CLIENT_SECRET_MOBILE'), 
                               provider=UrlGetter.Provider.GITHUB, grant_type='authorization_code', code=attrs['code'])
-        
 
-class CallbackSerializer(serializers.Serializer):
-
-    _dict = {}
-
-    def __init__(self, instance=None, data=..., **kwargs):
-        self._dict.update(kwargs)
-        super().__init__(instance, data)
-
-    def validate(self, attrs):
-        if 'code' not in self._dict:
-            raise AuthenticationFailed('Auth consent denied')
-        else:
-            cache.set('AUTH_CODE', self._dict.get('code'))
-            return cache.get('AUTH_CODE')
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()

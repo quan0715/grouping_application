@@ -4,7 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from .serializers import (
     LoginSerializer, LogoutSerializer, RegisterSerializer,GoogleSocialAuthSerializer, LineSocialAuthSerializer,
-    GitHubSocialAuthSerializer, CallbackSerializer, TokenExchangeParamSerializer)
+    GitHubSocialAuthSerializer, TokenExchangeParamSerializer)
 """
 conda activate django_4_2_2
 python manage.py makemigrations
@@ -24,20 +24,6 @@ class TokenExchangeParamView(GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-class CallbackView(GenericAPIView):
-
-    serializer_class = CallbackSerializer
-    permission_classes = [AllowAny]
-    authentication_classes= []
-
-    
-    def get(self, request):
-
-        serializer = self.serializer_class(data=request.data,code=self.request.GET.get('code',''))
-        serializer.is_valid(raise_exception=True)
-
-        return Response(status=status.HTTP_200_OK)
 
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
