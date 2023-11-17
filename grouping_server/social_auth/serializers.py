@@ -27,10 +27,8 @@ class TokenExchangeParamSerializer(serializers.Serializer):
         cipher = AES.new(bytes(os.environ['ENCRYPT_KEY32'], 'utf-8'),AES.MODE_ECB)
         if attrs.get("verifier") != '':
             cache.set('VERIFIER', cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8'), timeout=10000)
-            # os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
         if attrs.get('state') != '':
             cache.set('STATE', cipher.decrypt(base64.b64decode(attrs.get("state"))).decode('utf-8'), timeout=10000)
-            # os.environ['STATE'] = cipher.decrypt(base64.b64decode(attrs.get("state"))).decode('utf-8')
         return super().validate(attrs)
 
 
