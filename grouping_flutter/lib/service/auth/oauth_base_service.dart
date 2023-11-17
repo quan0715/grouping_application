@@ -65,8 +65,7 @@ class BaseOAuthService {
 
   Future initialLoginFlow() async {
     _getSignInGrant();
-    // // TODO: remove this when push
-    // debugPrint(redirectedUrl.toString());
+
     if (stateSupported) {
       authorizationUrl = grant.getAuthorizationUrl(redirectedUrl,
           scopes: scopes, state: _stateCode);

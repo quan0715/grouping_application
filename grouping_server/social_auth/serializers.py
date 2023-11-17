@@ -68,7 +68,6 @@ class GoogleSocialAuthSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=255)
 
     def validate(self, attrs):
-        print(attrs['code'])
         return oauth2_token_exchange(clientId=os.environ.get('GOOGLE_CLIENT_ID_WEB'), clientSecret=os.environ.get('GOOGLE_CLIENT_SECRET_WEB'), 
                           provider=UrlGetter.Provider.GOOGLE, grant_type='authorization_code', code=attrs['code'])
 
@@ -77,7 +76,7 @@ class LineSocialAuthSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=255)
 
     def validate(self, attrs):
-        if os.environ.get('PLATFORM') == 'web':
+        if cache.get('PLATFORM') == 'web':
             return oauth2_token_exchange(clientId=os.environ.get('LINE_CLIENT_ID_WEB'), clientSecret=os.environ.get('LINE_CLIENT_SECRET_WEB'), 
                               provider=UrlGetter.Provider.LINE, grant_type='authorization_code', code=attrs['code'])
         else:
@@ -88,7 +87,7 @@ class GitHubSocialAuthSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=255)
 
     def validate(self, attrs):
-        if os.environ.get('PLATFORM') == 'web':
+        if cache.get('PLATFORM') == 'web':
             return oauth2_token_exchange(clientId=os.environ.get('GITHUB_CLIENT_ID_WEB'), clientSecret=os.environ.get('GITHUB_CLIENT_SECRET_WEB'), 
                               provider=UrlGetter.Provider.GITHUB, grant_type='authorization_code', code=attrs['code'])
         else:
@@ -108,8 +107,8 @@ class CallbackSerializer(serializers.Serializer):
         if 'code' not in self._dict:
             raise AuthenticationFailed('Auth consent denied')
         else:
-            os.environ['AUTH_CODE'] = self._dict.get('code')
-            return os.environ.get('AUTH_CODE')
+            cache.set('AUTH_CODE', self._dict.get('code'))
+            return cache.get('AUTH_CODE')
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
@@ -140,8 +139,6 @@ def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecre
             result = requests.post(UrlGetter.Provider.getTokenEndpoint(provider),data=body,headers=header)
             result = result.json()
 
-            # Should be remove
-            print(result)
         except:
             return TokenExchangeError.errorFormatter(
                 TokenExchangeError.HANDLING_ERROR

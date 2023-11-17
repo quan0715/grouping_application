@@ -14,7 +14,6 @@ class SocialLogin:
                     'code':code,
                 }
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
-        print(body['redirect_uri'])
         if cache.__contains__('VERIFIER'):
             print("Here is my verifier")
             print(cache.get('VERIFIER'))
@@ -73,9 +72,9 @@ class UrlGetter:
                     return Config.lineUserProfileEndpoint
     
     def getFrontEndUrl():
-        return Config.frontEndUrlWeb
+        # return Config.frontEndUrlWeb
 
-        # if os.environ.get('PLATFORM') == 'web':
-        #     return Config.frontEndUrlWeb
-        # else:
-        #     return Config.frontEndUrlMobile
+        if cache.get('PLATFORM') == 'web':
+            return Config.frontEndUrlWeb
+        else:
+            return Config.frontEndUrlMobile
