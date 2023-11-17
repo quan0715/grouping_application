@@ -1,6 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/View/shared/components/state.dart';
 import 'package:grouping_project/config/config.dart';
 import 'package:grouping_project/model/auth/auth_model_lib.dart';
@@ -18,6 +16,8 @@ class LoginViewModel extends ChangeNotifier {
   // bool get isFormValid => passwordLoginModel.isFormValid;
 
   bool isLoading = false;
+  bool shouldShowWindow = false;
+  late BaseOAuthService attemptedOauth;
   LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
@@ -60,10 +60,10 @@ class LoginViewModel extends ChangeNotifier {
     // debugPrint(loginState.toString());
   }
 
-  BaseOAuthService getOAuthService(AuthProvider provider) {
+  void getOAuthService(AuthProvider provider) {
     switch (provider) {
       case AuthProvider.google:
-        return BaseOAuthService(
+        attemptedOauth = BaseOAuthService(
             clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
             clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
             scopes: Config.googleScopes,
@@ -72,8 +72,9 @@ class LoginViewModel extends ChangeNotifier {
             provider: AuthProvider.google,
             usePkce: true,
             useState: false);
+        return;
       case AuthProvider.github:
-        return BaseOAuthService(
+        attemptedOauth = BaseOAuthService(
             clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
             clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
             scopes: Config.gitHubScopes,
@@ -82,8 +83,9 @@ class LoginViewModel extends ChangeNotifier {
             provider: AuthProvider.github,
             usePkce: false,
             useState: false);
+        return;
       case AuthProvider.line:
-        return BaseOAuthService(
+        attemptedOauth = BaseOAuthService(
             clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
             clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
             scopes: Config.lineScopes,
@@ -92,50 +94,67 @@ class LoginViewModel extends ChangeNotifier {
             provider: AuthProvider.line,
             useState: true,
             usePkce: true);
+        return;
       default:
         throw Exception("Provider not found");
     }
   }
 
-  Future<void> onThirdPartyLogin(
-      AuthProvider provider, BuildContext context) async {
-    // debugPrint("登入測試");
-    // debugPrint("Email: $email , Password: $password");
-    try {
-      isLoading = true;
-      notifyListeners();
-      // var result = await passwordLoginModel.thirdPartyLogin(provider);
-      BaseOAuthService authService = getOAuthService(provider);
-      await authService.initialLoginFlow();
-      if (context.mounted) {
-        await authService.showWindowAndListen(context);
-      }
-      // loginState = result;
-      isLoading = false;
-      // debugPrint(loginState.toString());
-      notifyListeners();
-    } catch (e) {
-      // Handle any errors that occur during the login process
-      debugPrint(e.toString());
-      loginState = LoginState.loginFail;
-      isLoading = false;
-      notifyListeners();
-    }
-    // debugPrint(loginState.toString());
+  Future<void> onThirdPartyLogin(AuthProvider provider) async {
+    getOAuthService(provider);
+    await attemptedOauth.initialLoginFlow();
+    isLoading = true;
+    shouldShowWindow = true;
+    notifyListeners();
   }
 
+  // Future<void> onThirdPartyLogin(
+  //     AuthProvider provider, BuildContext context) async {
+  //   // debugPrint("登入測試");
+  //   // debugPrint("Email: $email , Password: $password");
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+  //     // var result = await passwordLoginModel.thirdPartyLogin(provider);
+  //     BaseOAuthService authService = getOAuthService(provider);
+  //     await authService.initialLoginFlow();
+  //     if (context.mounted) {
+  //       await authService.showWindowAndListen(context);
+  //     }
+  //     // loginState = result;
+  //     isLoading = false;
+  //     // debugPrint(loginState.toString());
+  //     notifyListeners();
+  //   } catch (e) {
+  //     // Handle any errors that occur during the login process
+  //     debugPrint(e.toString());
+  //     loginState = LoginState.loginFail;
+  //     isLoading = false;
+  //     notifyListeners();
+  //   }
+  //   // debugPrint(loginState.toString());
+  // }
+
   Future isURLContainCode(Uri platformURI) async {
-    if (kIsWeb && platformURI.queryParameters.containsKey('code')) {
-      BaseOAuthService authService;
-      if (platformURI.queryParametersAll.containsKey('scope')) {
-        authService = getOAuthService(AuthProvider.google);
-      } else if (platformURI.queryParametersAll.containsKey('state')) {
-        authService = getOAuthService(AuthProvider.line);
-      } else {
-        authService = getOAuthService(AuthProvider.github);
+    try {
+      if (kIsWeb && platformURI.queryParameters.containsKey('code')) {
+        if (platformURI.queryParametersAll.containsKey('scope')) {
+          getOAuthService(AuthProvider.google);
+        } else if (platformURI.queryParametersAll.containsKey('state')) {
+          getOAuthService(AuthProvider.line);
+        } else {
+          getOAuthService(AuthProvider.github);
+        }
+        await attemptedOauth.getAccessToken();
       }
-      await authService.getAccessToken();
+    } catch (e) {
+      debugPrint(e.toString());
+      loginState = LoginState.loginFail;
     }
     return;
+  }
+
+  Future addCodeToStorage({required String code}) async {
+    await StorageMethods.write(key: 'code', value: code);
   }
 }

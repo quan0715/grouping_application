@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/View/app/auth/components/action_text_button.dart';
 import 'package:grouping_project/View/app/auth/components/auth_layout.dart';
@@ -12,6 +13,10 @@ import 'package:grouping_project/ViewModel/auth/login_view_model.dart';
 import 'package:grouping_project/config/assets.dart';
 import 'package:grouping_project/service/auth/auth_helpers.dart';
 import 'package:provider/provider.dart';
+
+import 'package:webview_flutter/webview_flutter.dart';
+import "package:universal_html/html.dart" as html;
+
 class WebLoginViewPage extends AuthLayoutInterface {
   WebLoginViewPage({Key? key}) : super(key: key);
 
@@ -116,71 +121,85 @@ class WebLoginViewPage extends AuthLayoutInterface {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ThirdPartyLoginButton(
-            primaryColor: Colors.blue,
-            icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
-            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.google, context),),
-              // if(!kIsWeb){
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (BuildContext context) {
-              //         return const OAuthWebView(
-              //           launchURI: 'https://www.youtube.com/watch?v=pG6iaOMV46I&list=RDC3GouGa0noM&index=17',
-              //         );
-              //       },
-              //     ),
-              //   );
-              // }
-              // else{
-              //   await launchUrl(Uri.parse('https://www.youtube.com/watch?v=pG6iaOMV46I&list=RDC3GouGa0noM&index=17'));
-              // }
-              // await launchUrl(Uri.parse('https://www.youtube.com/watch?v=pG6iaOMV46I&list=RDC3GouGa0noM&index=17'));
-              // GoogleAuth googleAuth = GoogleAuth();
-              // googleAuth.initializeOauthPlatform();
-              // await googleAuth.informParameters();
-              // if (context.mounted) {
-              //   await googleAuth.showWindowAndListen(context);
-              // }
-              // if (!kIsWeb) {
-              //   googleAuth.handleCodeAndGetProfile();
-              // }
-            // }),        
-        ThirdPartyLoginButton(
-            primaryColor: Colors.purple,
-            icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
-            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.github, context),
-            // onPressed: () async {
-              // GitHubAuth gitHubAuth = GitHubAuth();
-              // gitHubAuth.initializeOauthPlatform();
-              // await gitHubAuth.informParameters();
-              // if (context.mounted) {
-              //   await gitHubAuth.showWindowAndListen(context);
-              // }
-              // if (!kIsWeb) {
-              //   gitHubAuth.handleCodeAndGetProfile();
-              // }
-            // }),
+          primaryColor: Colors.blue,
+          icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
+          onPressed: () async {
+            await loginManager
+                .onThirdPartyLogin(AuthProvider.google)
+                .whenComplete(() {
+              showWindowAndListen(context, loginManager);
+            });
+          },
         ),
-        
         ThirdPartyLoginButton(
-            primaryColor: Colors.green,
-            icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
-            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.line, context),
-            // onPressed: () async {
-              // LineAuth lineAuth = LineAuth();
-              // lineAuth.initializeOauthPlatform();
-              // await lineAuth.informParameters();
-              // if (context.mounted) {
-              //   await lineAuth.showWindowAndListen(context);
-              // }
-
-              // if (!kIsWeb) {
-              //   lineAuth.handleCodeAndGetProfile();
-              // }
-            // }
+          primaryColor: Colors.purple,
+          icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
+          onPressed: () async {
+            await loginManager
+                .onThirdPartyLogin(AuthProvider.github)
+                .whenComplete(() {
+              showWindowAndListen(context, loginManager);
+            });
+          },
+        ),
+        ThirdPartyLoginButton(
+          primaryColor: Colors.green,
+          icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
+          onPressed: () async {
+            await loginManager
+                .onThirdPartyLogin(AuthProvider.line)
+                .whenComplete(() {
+              showWindowAndListen(context, loginManager);
+            });
+          },
         ),
       ],
     );
+  }
+
+  showWindowAndListen(BuildContext context, LoginViewModel loginVM) {
+    if (kIsWeb) {
+      // oAuthService.grant.close();
+      html.window
+          .open(loginVM.attemptedOauth.authorizationUrl.toString(), "_self");
+    } else {
+      WebViewController controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onWebResourceError: (WebResourceError error) {
+              // TODO: Do some error handling
+              debugPrint(
+                  "===============================> onWebResourceError:");
+              debugPrint(error.errorType.toString());
+              debugPrint(error.errorCode.toString());
+              debugPrint(error.description);
+            },
+            onUrlChange: (change) async {
+              if (change.url!.contains("code")) {
+                await loginManager
+                    .addCodeToStorage(
+                        code: Uri.dataFromString(change.url!)
+                            .queryParameters['code']!)
+                    .then((value) => Navigator.of(context).pop());
+              }
+            },
+          ),
+        )
+        ..loadRequest(loginVM.attemptedOauth.authorizationUrl);
+
+      // authWidgetNotifier.value = WebViewWidget(controller: controller);
+      // oAuthService.grant.close();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return WebViewWidget(controller: controller);
+          },
+        ),
+      );
+    }
+    loginVM.isLoading = false;
   }
 
   @override

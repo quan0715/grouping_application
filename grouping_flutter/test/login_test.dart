@@ -9,7 +9,7 @@ void main() {
     AccountAuth accountAuth = AccountAuth();
     FlutterSecureStorage storage = FlutterSecureStorage();
     WidgetsFlutterBinding.ensureInitialized();
-    test('signUp', () async {
+    test('signUp', () {
       accountAuth
           .signUp(account: 'test', password: 'testtest', username: 'testestest')
           .whenComplete(() {
@@ -22,7 +22,7 @@ void main() {
       });
     });
 
-    test('logout', () async {
+    test('logout', () {
       accountAuth.logOut().whenComplete(() {
         storage
             .containsKey(key: 'auth-token')
@@ -30,7 +30,7 @@ void main() {
       });
     });
 
-    test('wrong password', () async {
+    test('wrong password', () {
       accountAuth
           .signIn(account: 'test', password: '878787')
           .onError((error, stackTrace) {
@@ -39,7 +39,7 @@ void main() {
       });
     });
 
-    test('sign in', () async {
+    test('sign in', () {
       accountAuth
           .signIn(account: 'test', password: 'testtest')
           .whenComplete(() {
