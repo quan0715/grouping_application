@@ -15,8 +15,6 @@ class SocialLogin:
                 }
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
         if cache.__contains__('VERIFIER'):
-            print("Here is my verifier")
-            print(cache.get('VERIFIER'))
             body['code_verifier']=cache.get('VERIFIER')
         if (grant_type != ''):
             body['grant_type'] = grant_type
