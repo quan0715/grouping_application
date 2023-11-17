@@ -25,35 +25,58 @@ enum AuthProvider {
 (String, String) getAuthProviderKeyAndSecret(AuthProvider provider) {
   switch (provider) {
     case AuthProvider.account:
-      return (dotenv.env['ACCOUNT_CLIENT_ID']!, dotenv.env['ACCOUNT_CLIENT_SECRET']!);
+      return (
+        dotenv.env['ACCOUNT_CLIENT_ID']!,
+        dotenv.env['ACCOUNT_CLIENT_SECRET']!
+      );
 
     case AuthProvider.google:
       if (kIsWeb) {
-        return (dotenv.env['GOOGLE_CLIENT_ID_WEB']!, dotenv.env['GOOGLE_CLIENT_SECRET_WEB']! );
+        return (
+          dotenv.env['GOOGLE_CLIENT_ID_WEB']!,
+          dotenv.env['GOOGLE_CLIENT_SECRET_WEB']!
+        );
       } else if (Platform.isAndroid) {
-        return (dotenv.env['GOOGLE_CLIENT_ID_ANDROID']!, dotenv.env['GOOGLE_CLIENT_SECRET_ANDROID']!);
+        return (
+          dotenv.env['GOOGLE_CLIENT_ID_ANDROID']!,
+          dotenv.env['GOOGLE_CLIENT_SECRET_ANDROID']!
+        );
       } else if (Platform.isIOS) {
-        return (dotenv.env['GOOGLE_CLIENT_ID_IOS']!, dotenv.env['GOOGLE_CLIENT_SECRET_IOS']!);
+        return (
+          dotenv.env['GOOGLE_CLIENT_ID_IOS']!,
+          dotenv.env['GOOGLE_CLIENT_SECRET_IOS']!
+        );
       } else {
         throw Exception('Unsupported platform');
       }
-    
+
     case AuthProvider.github:
-      if(kIsWeb){
-        return (dotenv.env['GITHUB_CLIENT_ID_WEB']!, dotenv.env['GITHUB_CLIENT_SECRET_WEB']!);
+      if (kIsWeb) {
+        return (
+          dotenv.env['GITHUB_CLIENT_ID_WEB']!,
+          dotenv.env['GITHUB_CLIENT_SECRET_WEB']!
+        );
       } else {
-        return (dotenv.env['GITHUB_CLIENT_ID_MOBILE']!, dotenv.env['GITHUB_CLIENT_SECRET_MOBILE']!);
+        return (
+          dotenv.env['GITHUB_CLIENT_ID_MOBILE']!,
+          dotenv.env['GITHUB_CLIENT_SECRET_MOBILE']!
+        );
       }
-    
+
     case AuthProvider.line:
-      if(kIsWeb){
-        return (dotenv.env['LINE_CLIENT_ID_WEB']!, dotenv.env['LINE_CLIENT_SECRET_WEB']!);
+      if (kIsWeb) {
+        return (
+          dotenv.env['LINE_CLIENT_ID_WEB']!,
+          dotenv.env['LINE_CLIENT_SECRET_WEB']!
+        );
       } else {
-        return (dotenv.env['LINE_CLIENT_ID_MOBILE']!, dotenv.env['LINE_CLIENT_SECRET_MOBILE']!);
+        return (
+          dotenv.env['LINE_CLIENT_ID_MOBILE']!,
+          dotenv.env['LINE_CLIENT_SECRET_MOBILE']!
+        );
       }
   }
 }
-
 
 class StringECBEncryptor {
   static Future<encrypt_package.Encrypted> encryptCode(

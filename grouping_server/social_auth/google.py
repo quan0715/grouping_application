@@ -6,15 +6,17 @@ from .register import login_user
 
 class GoogleTokenExchange:
     def requestProfile(idToken):
-        user = id_token.verify_oauth2_token(
-                    idToken, googleRequest.Request(),clock_skew_in_seconds = 2)
+        try:
+            user = id_token.verify_oauth2_token(
+                        idToken, googleRequest.Request(),clock_skew_in_seconds = 2)
 
-        if 'sub' in user and 'name' in user:
-            return SocialLogin.registerAndLogin(
-                account = user['sub'],
-                name = user['name'])
-        else:
-            return TokenExchangeError.errorFormatter(
-                TokenExchangeError.GOOGLE_ID_TOKEN_VERIFY_ERROR
-            )
-        
+            if 'sub' in user and 'name' in user:
+                return SocialLogin.registerAndLogin(
+                    account = user['sub'],
+                    name = user['name'])
+            else:
+                return TokenExchangeError.errorFormatter(
+                    TokenExchangeError.GOOGLE_ID_TOKEN_VERIFY_ERROR
+                )
+        except:
+            print('error happens at google token echange')

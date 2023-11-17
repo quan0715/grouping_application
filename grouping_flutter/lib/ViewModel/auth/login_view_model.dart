@@ -64,43 +64,41 @@ class LoginViewModel extends ChangeNotifier {
     switch (provider) {
       case AuthProvider.google:
         return BaseOAuthService(
-        clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
-        clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
-        scopes: Config.googleScopes,
-        authorizationEndpoint: Config.googleAuthEndpoint,
-        tokenEndpoint: Config.googleTokenEndpoint,
-        provider: AuthProvider.google,
-        usePkce: true,
-        useState: false
-      );
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
+            scopes: Config.googleScopes,
+            authorizationEndpoint: Config.googleAuthEndpoint,
+            tokenEndpoint: Config.googleTokenEndpoint,
+            provider: AuthProvider.google,
+            usePkce: true,
+            useState: false);
       case AuthProvider.github:
         return BaseOAuthService(
-          clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
-          clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
-          scopes: Config.gitHubScopes,
-          authorizationEndpoint: Config.gitHubAuthEndpoint,
-          tokenEndpoint: Config.gitHubTokenEndpoint,
-          provider: AuthProvider.github,
-          usePkce: false,
-          useState: false
-        );
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
+            scopes: Config.gitHubScopes,
+            authorizationEndpoint: Config.gitHubAuthEndpoint,
+            tokenEndpoint: Config.gitHubTokenEndpoint,
+            provider: AuthProvider.github,
+            usePkce: false,
+            useState: false);
       case AuthProvider.line:
         return BaseOAuthService(
-          clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
-          clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
-          scopes: Config.lineScopes,
-          authorizationEndpoint: Config.lineAuthEndPoint,
-          tokenEndpoint: Config.lineTokenEndpoint,
-          provider: AuthProvider.line,
-          useState: true,
-          usePkce: true
-        );
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
+            scopes: Config.lineScopes,
+            authorizationEndpoint: Config.lineAuthEndPoint,
+            tokenEndpoint: Config.lineTokenEndpoint,
+            provider: AuthProvider.line,
+            useState: true,
+            usePkce: true);
       default:
         throw Exception("Provider not found");
     }
   }
 
-  Future<void> onThirdPartyLogin(AuthProvider provider, BuildContext context) async {
+  Future<void> onThirdPartyLogin(
+      AuthProvider provider, BuildContext context) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
     try {
@@ -109,7 +107,7 @@ class LoginViewModel extends ChangeNotifier {
       // var result = await passwordLoginModel.thirdPartyLogin(provider);
       BaseOAuthService authService = getOAuthService(provider);
       await authService.initialLoginFlow();
-      if(context.mounted){
+      if (context.mounted) {
         await authService.showWindowAndListen(context);
       }
       // loginState = result;
@@ -127,9 +125,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future isURLContainCode(Uri platformURI) async {
-    if(kIsWeb && platformURI.queryParameters.containsKey('code')){
-      FlutterSecureStorage storage = const FlutterSecureStorage();
-      await storage.write(key: 'code', value: Uri.base.queryParameters['code']);
+    if (kIsWeb && platformURI.queryParameters.containsKey('code')) {
       BaseOAuthService authService;
       if (platformURI.queryParametersAll.containsKey('scope')) {
         authService = getOAuthService(AuthProvider.google);
@@ -140,7 +136,6 @@ class LoginViewModel extends ChangeNotifier {
       }
       await authService.getAccessToken();
     }
-    return ;
-  }  
-
+    return;
+  }
 }

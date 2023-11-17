@@ -7,10 +7,11 @@ class GitHubAndLineToken:
             user = requests.get(userPorfileEndpoint,
                                 headers={
                                     'Accept': 'application/json',
-                                    'Authorization': 'Bearer '+accessToken
+                                    'Authorization': 'Bearer  '+accessToken
                                     },
                                 )
             user=user.json()
+            # print(user)
             if 'id' in user:
                 result = SocialLogin.registerAndLogin(
                     account = user['id'],
