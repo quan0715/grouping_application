@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'dart:math';
@@ -8,9 +9,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:encrypt/encrypt.dart' as encrypt_package;
-
-import 'package:grouping_project/exceptions/auth_service_exceptions.dart';
-import 'package:grouping_project/config/config.dart';
+import 'package:grouping_project/core/config/config.dart';
 
 enum AuthProvider {
   account(string: 'account'),
@@ -127,8 +126,7 @@ class ResponseHandling {
       await StorageMethods.delete(key: 'auth-provider');
 
       Map<String, dynamic> body = json.decode(response.body);
-      throw AuthServiceException(
-          code: body['error-code'], message: body['error']);
+      throw ServerException(exceptionMessage: body['error']);
     } else if (response.statusCode == 200) {
       await StorageMethods.deleteAll();
       await StorageMethods.write(key: 'auth-token', value: response.body);

@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:grouping_project/app/presentation/providers/message_service.dart';
 // import 'package:grouping_project/View/components/workspace_chip.dart';
-import 'package:grouping_project/View/shared/components/components.dart';
-import 'package:grouping_project/ViewModel/message_service.dart';
-import 'package:grouping_project/model/workspace/message_model.dart';
-import 'package:grouping_project/model/auth/account_model.dart';
-import 'package:grouping_project/model/repo/activity_repo.dart';
+import 'package:grouping_project/data/workspace/message_model.dart';
+import 'package:grouping_project/data/repo/account_model.dart';
+import 'package:grouping_project/data/repo/activity_repo.dart';
 // import 'package:grouping_project/model/repo/user_repo.dart';
-import 'package:grouping_project/model/workspace/workspace_model.dart';
-import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
+import 'package:grouping_project/data/workspace/workspace_model.dart';
+import 'package:grouping_project/data/workspace/workspace_model_lib.dart';
+import 'package:grouping_project/app/presentation/components/chips/workspace_chip.dart';
 // import 'package:grouping_project/model/repo/workspace_repo.dart';
 
 class WorkspaceViewModel extends ChangeNotifier {

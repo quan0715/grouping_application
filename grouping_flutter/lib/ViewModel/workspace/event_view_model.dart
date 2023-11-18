@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/model/auth/auth_model_lib.dart';
-import 'package:grouping_project/model/repo/activity_repo.dart';
-import 'package:grouping_project/model/workspace/workspace_model_lib.dart';
+import 'package:grouping_project/data/repo/account_model.dart';
+import 'package:grouping_project/data/repo/activity_repo.dart';
+import 'package:grouping_project/data/workspace/workspace_model_lib.dart';
 // import 'package:grouping_project/model/model_lib.dart';
 // import 'package:grouping_project/service/service_lib.dart';
 import 'package:intl/intl.dart';
@@ -20,14 +20,14 @@ class EventSettingViewModel extends ChangeNotifier{
   AccountModel creatorAccount = AccountModel();
   // True if ownerAccount id equals to creator Account, otherwise False
   // bool forUser = true;
-  // bool get isforUser => forUser;
+  // bool get isForUser => forUser;
   // bool isLoading = false;
 
   // SettingMode settingMode = SettingMode.create;
-  // timeer output format
-  DateFormat dataformat = DateFormat('h:mm a, MMM d, y');
-  String get formattedStartTime => dataformat.format(startTime);
-  String get formattedEndTime => dataformat.format(endTime);
+  // timer output format
+  DateFormat dataFormat = DateFormat('h:mm a, MMM d, y');
+  String get formattedStartTime => dataFormat.format(startTime);
+  String get formattedEndTime => dataFormat.format(endTime);
 
   // getter of eventModel
   AccountModel get eventOwnerAccount => eventModel.creatorAccount;
