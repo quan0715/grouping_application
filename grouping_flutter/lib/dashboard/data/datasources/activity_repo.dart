@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 // import 'package:flutter/material.dart';
+import 'package:grouping_project/dashboard/data/models/event_model.dart';
+import 'package:grouping_project/dashboard/data/models/mission_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:grouping_project/data/workspace/workspace_model_lib.dart';
 
 /// The server backend IP of the database
 const String baseURL = "http://ip"; // TODO: we need to know the django website

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/service/auth/auth_helpers.dart';
+import 'package:grouping_project/auth/utils/auth_helpers.dart';
+import 'package:grouping_project/auth/utils/enums.dart';
 import 'package:http/http.dart';
 import 'package:pkce/pkce.dart';
 import "package:universal_html/html.dart" as html;

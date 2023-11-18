@@ -2,12 +2,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 // import 'package:grouping_project/View/components/workspace_chip.dart';
-import 'package:grouping_project/data/workspace/message_model.dart';
-import 'package:grouping_project/data/repo/account_model.dart';
-import 'package:grouping_project/data/repo/activity_repo.dart';
-// import 'package:grouping_project/model/repo/user_repo.dart';
-import 'package:grouping_project/data/workspace/workspace_model.dart';
-import 'package:grouping_project/data/workspace/workspace_model_lib.dart';
+import 'package:grouping_project/core/message_model.dart';
+import 'package:grouping_project/dashboard/data/datasources/activity_repo.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
+import 'package:grouping_project/dashboard/data/models/event_model.dart';
+import 'package:grouping_project/dashboard/data/models/mission_model.dart';
+import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
 import 'package:grouping_project/app/presentation/components/chips/workspace_chip.dart';
 // import 'package:grouping_project/model/repo/workspace_repo.dart';
 

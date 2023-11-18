@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_this
 import 'package:grouping_project/core/exceptions/exception.dart';
-import 'package:grouping_project/data/repo/account_model.dart';
-import 'package:grouping_project/data/workspace/editable_card_model.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
+import 'package:grouping_project/dashboard/data/models/editable_card_model.dart';
 
 import 'mission_state_model.dart';
 // import 'package:grouping_project/exception.dart';

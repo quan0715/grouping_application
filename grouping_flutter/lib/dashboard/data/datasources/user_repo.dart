@@ -2,7 +2,7 @@ import 'dart:convert';
 
 // import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:grouping_project/data/repo/account_model.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
 // import 'package:grouping_project/model/auth/auth_model_lib.dart';
 
 /// The server backend IP of the database

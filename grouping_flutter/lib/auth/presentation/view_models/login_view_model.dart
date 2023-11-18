@@ -7,10 +7,11 @@ import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.d
 import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dart';
 import 'package:grouping_project/auth/domain/entities/login_entity.dart';
 import 'package:grouping_project/auth/domain/usecases/login_usecase.dart';
-import 'package:grouping_project/data/workspace/message_model.dart';
+import 'package:grouping_project/auth/utils/enums.dart';
+import 'package:grouping_project/core/message_model.dart';
 import 'package:grouping_project/core/config/config.dart';
-import 'package:grouping_project/service/auth/auth_helpers.dart';
-import 'package:grouping_project/service/auth/oauth_base_service.dart';
+import 'package:grouping_project/auth/utils/auth_helpers.dart';
+import 'package:grouping_project/auth/utils/oauth_base_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();

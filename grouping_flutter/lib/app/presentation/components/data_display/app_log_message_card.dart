@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/theme/theme.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
-import 'package:grouping_project/data/workspace/message_model.dart';
+import 'package:grouping_project/core/message_model.dart';
 
 class LogMessageCard extends StatelessWidget{
   final MessageData message;

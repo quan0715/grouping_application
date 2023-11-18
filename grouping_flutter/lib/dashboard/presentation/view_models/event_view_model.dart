@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/data/repo/account_model.dart';
-import 'package:grouping_project/data/repo/activity_repo.dart';
-import 'package:grouping_project/data/workspace/workspace_model_lib.dart';
+import 'package:grouping_project/dashboard/data/datasources/activity_repo.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
+import 'package:grouping_project/dashboard/data/models/event_model.dart';
 // import 'package:grouping_project/model/model_lib.dart';
 // import 'package:grouping_project/service/service_lib.dart';
 import 'package:intl/intl.dart';

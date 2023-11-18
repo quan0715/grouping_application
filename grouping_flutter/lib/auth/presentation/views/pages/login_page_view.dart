@@ -5,8 +5,8 @@ import 'package:grouping_project/auth/presentation/views/components/action_text_
 import 'package:grouping_project/auth/presentation/views/components/auth_layout.dart';
 import 'package:grouping_project/auth/presentation/views/components/auth_text_form_field.dart';
 import 'package:grouping_project/auth/presentation/views/components/third_party_login_button.dart';
+import 'package:grouping_project/auth/utils/enums.dart';
 import 'package:grouping_project/core/config/assets.dart';
-import 'package:grouping_project/service/auth/auth_helpers.dart';
 import 'package:grouping_project/app/presentation/components/buttons/app_elevated_button.dart';
 import 'package:grouping_project/app/presentation/components/components.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';

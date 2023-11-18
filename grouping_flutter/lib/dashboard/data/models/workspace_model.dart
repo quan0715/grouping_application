@@ -1,5 +1,5 @@
 
-import 'package:grouping_project/data/repo/photo_model.dart';
+import 'package:grouping_project/dashboard/data/models/photo_model.dart';
 
 /// ## the type for [WorkspaceModel.tags]
 /// * [content] : the value for this tag

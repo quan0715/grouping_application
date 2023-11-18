@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ThemeModel{
+class AppTheme{
   Brightness brightness = Brightness.light;
   IconData themeIcon = Icons.wb_sunny;
   Color colorSchemeSeed = Colors.amber;

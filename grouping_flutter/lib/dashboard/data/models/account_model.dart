@@ -1,8 +1,8 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
-import 'package:grouping_project/data/repo/photo_model.dart';
-import 'package:grouping_project/data/workspace/editable_card_model.dart';
-import 'package:grouping_project/data/workspace/workspace_model.dart';
+import 'package:grouping_project/dashboard/data/models/editable_card_model.dart';
+import 'package:grouping_project/dashboard/data/models/photo_model.dart';
+import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
 
 // import '../workspace/data_model.dart';
 

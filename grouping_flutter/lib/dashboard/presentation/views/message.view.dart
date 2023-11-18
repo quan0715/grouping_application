@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/ViewModel/workspace/workspace_view_model.dart';
+import 'package:grouping_project/dashboard/presentation/view_models/workspace_view_model.dart';
 
 class MessageView extends StatefulWidget{
   const MessageView({super.key, required this.viewModel});

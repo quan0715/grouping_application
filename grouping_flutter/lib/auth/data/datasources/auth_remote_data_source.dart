@@ -4,7 +4,7 @@ import 'package:grouping_project/auth/data/models/sub_model.dart';
 import 'package:grouping_project/auth/domain/entities/login_entity.dart';
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
-import 'package:grouping_project/service/auth/auth_helpers.dart';
+import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:http/http.dart' as http;
 
 abstract class AuthRemoteDataSource{

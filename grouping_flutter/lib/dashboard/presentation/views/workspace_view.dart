@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/views/workspace/activity_view.dart';
-import 'package:grouping_project/views/workspace/dashboard_view.dart';
-import 'package:grouping_project/views/workspace/message.view.dart';
-import 'package:grouping_project/views/workspace/setting_view.dart';
+import 'package:grouping_project/dashboard/data/models/event_model.dart';
+import 'package:grouping_project/dashboard/data/models/mission_model.dart';
+import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
+import 'package:grouping_project/dashboard/presentation/view_models/workspace_view_model.dart';
+import 'package:grouping_project/dashboard/presentation/views/activity_view.dart';
+import 'package:grouping_project/dashboard/presentation/views/dashboard_view.dart';
+import 'package:grouping_project/dashboard/presentation/views/message.view.dart';
+import 'package:grouping_project/dashboard/presentation/views/setting_view.dart';
 // import 'package:grouping_project/View/shared/components/components.dart';
-import 'package:grouping_project/ViewModel/workspace/workspace_view_model.dart';
-import 'package:grouping_project/data/repo/account_model.dart';
-import 'package:grouping_project/data/workspace/event_model.dart';
-import 'package:grouping_project/data/workspace/mission_model.dart';
-import 'package:grouping_project/data/workspace/workspace_model.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
 import 'package:provider/provider.dart';
 
 class WorkspaceView extends StatefulWidget {

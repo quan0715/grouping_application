@@ -1,5 +1,5 @@
 // create event & mission super class or activity parent class?
-import 'package:grouping_project/data/repo/account_model.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
 // import 'package:grouping_project/model/workspace/data_model.dart';
 
 abstract class EditableCardModel {

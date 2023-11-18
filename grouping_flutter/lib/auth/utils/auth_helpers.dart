@@ -1,25 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:grouping_project/core/exceptions/exceptions.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:encrypt/encrypt.dart' as encrypt_package;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:grouping_project/auth/utils/enums.dart';
 import 'package:grouping_project/core/config/config.dart';
+import 'package:grouping_project/core/exceptions/exceptions.dart';
+import 'package:http/http.dart';
 
-enum AuthProvider {
-  account(string: 'account'),
-  google(string: 'google'),
-  github(string: 'github'),
-  line(string: 'line');
-
-  final String string;
-  const AuthProvider({required this.string});
-}
 
 (String, String) getAuthProviderKeyAndSecret(AuthProvider provider) {
   switch (provider) {

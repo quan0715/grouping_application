@@ -1,7 +1,7 @@
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:grouping_project/View/shared/components/components.dart';
-import 'package:grouping_project/ViewModel/workspace/workspace_view_model.dart';
+import 'package:grouping_project/dashboard/presentation/view_models/workspace_view_model.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key, required this.viewModel});

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:grouping_project/data/workspace/workspace_model.dart';
+import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
 import 'package:http/http.dart' as http;
 
 /// The server backend IP of the database
