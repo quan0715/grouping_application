@@ -4,6 +4,7 @@ import 'package:grouping_project/dashboard/data/models/mission_model.dart';
 import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
 import 'package:grouping_project/dashboard/presentation/view_models/workspace_view_model.dart';
 import 'package:grouping_project/dashboard/presentation/views/activity_view.dart';
+import 'package:grouping_project/dashboard/presentation/views/components/mobile_bottom_navigation_bar.dart';
 import 'package:grouping_project/dashboard/presentation/views/dashboard_view.dart';
 import 'package:grouping_project/dashboard/presentation/views/message.view.dart';
 import 'package:grouping_project/dashboard/presentation/views/setting_view.dart';
@@ -102,68 +103,11 @@ class _WorkspaceViewState extends State<WorkspaceView> {
               ],
             ),
             body: pages[viewModel.getPage()],
-            bottomNavigationBar: NavigationBarTheme(
-              data: NavigationBarThemeData(
-                  labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
-                      (Set<MaterialState> states) => TextStyle(
-                          color: Color(viewModel.currentWorkspaceColor)))),
-              child: NavigationBar(
-                onDestinationSelected: viewModel.setPage,
-                indicatorColor: Color(viewModel.currentWorkspaceColor),
-                selectedIndex: viewModel.getPage(),
-                destinations: [
-                  NavigationDestination(
-                      selectedIcon: const Icon(Icons.dashboard),
-                      icon: Icon(
-                        Icons.dashboard_outlined,
-                        color: Color(viewModel.currentWorkspaceColor),
-                      ),
-                      label: '儀錶板'),
-                  NavigationDestination(
-                      selectedIcon: const Icon(Icons.calendar_today),
-                      icon: Icon(
-                        Icons.calendar_today_outlined,
-                        color: Color(viewModel.currentWorkspaceColor),
-                      ),
-                      label: '活動'),
-                  NavigationDestination(
-                      selectedIcon: const Icon(Icons.message),
-                      icon: Icon(
-                        Icons.message_outlined,
-                        color: Color(viewModel.currentWorkspaceColor),
-                      ),
-                      label: '訊息'),
-                  NavigationDestination(
-                      selectedIcon: const Icon(Icons.settings),
-                      icon: Icon(
-                        Icons.settings_outlined,
-                        color: Color(viewModel.currentWorkspaceColor),
-                      ),
-                      label: '設定')
-                ],
-              ),
-            ),
-            // bottomNavigationBar: BottomNavigationBar(
-            //     type: BottomNavigationBarType.fixed,
-            //     currentIndex: viewModel.getPage(),
-            //     onTap: viewModel.setPage,
-            //     selectedItemColor: const Color(0xFF7D5800),
-            //     selectedIconTheme:
-            //         const IconThemeData(color: Color(0xFF7D5800), size: 25),
-            //     unselectedItemColor: Colors.black,
-            //     unselectedIconTheme:
-            //         const IconThemeData(color: Colors.black, size: 20),
-            //     items: const [
-            //       BottomNavigationBarItem(
-            //           icon: Icon(Icons.dashboard), label: '儀錶板'),
-            //       BottomNavigationBarItem(
-            //           icon: Icon(Icons.calendar_today), label: '活動'),
-            //       BottomNavigationBarItem(
-            //           icon: Icon(Icons.message), label: '訊息'),
-            //       BottomNavigationBarItem(
-            //           icon: Icon(Icons.settings), label: '設定')
-            //     ]),
-            // resizeToAvoidBottomInset: false,
+            bottomNavigationBar: MobileBottomNavigationBar(
+              currentIndex: viewModel.getPage(),
+              themePrimaryColor: Colors.amber,
+              onTap: (index) => viewModel.setPage(index),
+            )
           );
         },
       ),
