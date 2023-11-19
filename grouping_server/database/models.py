@@ -5,12 +5,14 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from rest_framework_simplejwt.tokens import RefreshToken
 import base64
 
+
 class Image(models.Model):
     data = models.ImageField(upload_to='images/')
     updated_at = models.DateTimeField(auto_now=True)
 
+
 class UserManager(BaseUserManager):
-    def create_user(self, account="", user_name = 'unknown', password="", introduction="", slogan=""):
+    def create_user(self, account="", user_name='unknown', password="", introduction="", slogan=""):
         if account is None:
             raise TypeError('Users must have an account input.')
 
@@ -24,7 +26,7 @@ class UserManager(BaseUserManager):
         user.save()
 
         return user
-    
+
     def create_superuser(self, account, password):
         if password is None:
             raise TypeError('Superusers must have a password.')
@@ -36,33 +38,35 @@ class UserManager(BaseUserManager):
 
         return user
 
-
     Auth_Providers = {"google": "google", "line": "line", "github": "github"}
-    
+
     """
     Note:objects = UserManager() is required for django to work properly
     It's not the type of this class
     """
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     # [note: 'email/Oauth id/Line id']
-    account = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=20)
+    account = models.CharField(max_length=20, unique=True, verbose_name="帳號")
+    password = models.CharField(max_length=20, verbose_name="密碼")
 
-    real_name = models.CharField(max_length=20)
-    user_name = models.CharField(max_length=20)
-    slogan = models.CharField(max_length=20)
-    introduction = models.TextField()
+    real_name = models.CharField(max_length=20, verbose_name="真實名稱")
+    user_name = models.CharField(max_length=20, verbose_name="用戶名稱")
+    slogan = models.CharField(max_length=20, verbose_name="座右銘")
+    introduction = models.TextField(verbose_name="簡介")
     photo = models.ForeignKey(
-        Image, null=True, blank=True, on_delete=models.SET_NULL)
+        Image, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="頭像")
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    
+
     USERNAME_FIELD = "account"
     REQUIRED_FIELDS = []
     objects = UserManager()
 
     def __str__(self):
         return "id:%s user_name:%s" % (self.id, self.user_name)
+
     def tokens(self):
         refresh = RefreshToken.for_user(self)
         return {
