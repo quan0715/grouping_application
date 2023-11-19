@@ -1,12 +1,11 @@
 from django.test import TestCase
 
 # Create your tests here.
-from database.models import User, Image
+from database.models import User, Image, UserTag
 from django.db.utils import IntegrityError
 
 
 class UserModelTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.image = Image.objects.create()
@@ -82,7 +81,7 @@ class UserModelTest(TestCase):
         user_instance.save()
         retrieved_image = user_instance.photo
         self.assertEqual(retrieved_image, self.image)
-        
+
     def test_photo_label(self):
         field_label = self.user._meta.get_field('photo').verbose_name
         self.assertEquals(field_label, '頭像')
@@ -90,3 +89,44 @@ class UserModelTest(TestCase):
     def test_object_name_is_correct(self):
         expected_object_name = f"id:{self.user.id} user_name:{self.user.user_name}"
         self.assertEqual(expected_object_name, str(self.user))
+
+
+class UserTagModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create()
+        cls.tag = UserTag.objects.create(belong_user=cls.user)
+
+    def test_user_tag_creation(self):
+        retrieved_user = self.tag.belong_user
+        self.assertEqual(retrieved_user, self.user)
+
+    def test_related_name_in_user(self):
+        retrieved_tags = self.user.tags.all()
+        self.assertIn(self.tag, retrieved_tags)
+
+    def test_user_relative_field_with_delete_tag(self):
+        self.tag.delete()
+        retrieved_tags = self.user.tags.all()
+        self.assertEqual(retrieved_tags.count(), 0)
+
+    def test_title_max_length(self):
+        max_length = self.tag._meta.get_field('title').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_title_label(self):
+        field_label = self.tag._meta.get_field('title').verbose_name
+        self.assertEquals(field_label, '標題')
+
+    def test_content_max_length(self):
+        max_length = self.tag._meta.get_field('content').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_content_label(self):
+        field_label = self.tag._meta.get_field('content').verbose_name
+        self.assertEquals(field_label, '內容')
+
+    def test_cascade_delete_user(self):
+        self.user.delete()
+        with self.assertRaises(UserTag.DoesNotExist):
+            UserTag.objects.get(id=self.tag.id)
