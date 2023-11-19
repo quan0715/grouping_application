@@ -77,8 +77,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserTag(models.Model):
     belong_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='tags')
-    title = models.CharField(max_length=20)
-    content = models.CharField(max_length=20)
+    title = models.CharField(max_length=20, verbose_name="標題")
+    content = models.CharField(max_length=20, verbose_name="內容")
 
 
 class Workspace(models.Model):
