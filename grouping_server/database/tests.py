@@ -4,7 +4,7 @@ from django.test import TestCase
 import os
 from django.test import override_settings
 from django.conf import settings
-from database.models import User, Image, UserTag, Workspace
+from database.models import User, Image, UserTag, Workspace, WorkspaceTag
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -242,3 +242,37 @@ class WorkspaceModelTest(TestCase):
                       self.workspace.members.all())
         self.assertIn(self.workspace,
                       self.user.joined_workspaces.all())
+
+
+class WorkspaceTagModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+        cls.tag = WorkspaceTag.objects.create(belong_workspace=cls.workspace)
+
+    def test_workspace_tag_creation(self):
+        retrieved_workspace = self.tag.belong_workspace
+        self.assertEqual(retrieved_workspace, self.workspace)
+
+    def test_related_name_in_workspace(self):
+        retrieved_tags = self.workspace.tags.all()
+        self.assertIn(self.tag, retrieved_tags)
+
+    def test_workspace_relative_field_with_delete_tag(self):
+        self.tag.delete()
+        retrieved_tags = self.workspace.tags.all()
+        self.assertEqual(retrieved_tags.count(), 0)
+
+    def test_content_max_length(self):
+        max_length = self.tag._meta.get_field('content').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_content_label(self):
+        field_label = self.tag._meta.get_field('content').verbose_name
+        self.assertEquals(field_label, '內容')
+
+    def test_cascade_delete_workspace(self):
+        self.workspace.delete()
+        with self.assertRaises(WorkspaceTag.DoesNotExist):
+            WorkspaceTag.objects.get(id=self.tag.id)
