@@ -82,14 +82,14 @@ class UserTag(models.Model):
 
 
 class Workspace(models.Model):
-    theme_color = models.IntegerField()
-    workspace_name = models.CharField(max_length=20)
-    description = models.TextField()
+    theme_color = models.IntegerField(verbose_name="主題顏色")
+    workspace_name = models.CharField(max_length=20,verbose_name="名稱")
+    description = models.TextField(verbose_name="簡介")
     is_personal = models.BooleanField()
     photo = models.ForeignKey(
-        Image, null=True, blank=True, on_delete=models.SET_NULL)
+        Image, null=True, blank=True, on_delete=models.SET_NULL,verbose_name="頭像")
     members = models.ManyToManyField(
-        User, related_name='joined_workspaces')
+        User, related_name='joined_workspaces',verbose_name="成員")
 
 
 class WorkspaceTag(models.Model):
