@@ -5,7 +5,7 @@ import os
 from django.test import override_settings
 from django.conf import settings
 from database.models import User, Image, UserTag, Workspace, WorkspaceTag, \
-    MissionState, Activity, ActivityNotification
+    MissionState, Activity, ActivityNotification, Event, Mission
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -412,3 +412,40 @@ class ActivityNotificationTest(TestCase):
         self.activity.delete()
         with self.assertRaises(ActivityNotification.DoesNotExist):
             ActivityNotification.objects.get(id=self.notification.id)
+
+
+class EventTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create()
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+        cls.activity = Activity.objects.create(
+            creator=cls.user, belong_workspace=cls.workspace)
+        cls.event = Event.objects.create(
+            belong_activity=cls.activity,
+            start_time=timezone.datetime(2023, 1, 1, tzinfo=timezone.utc),
+            end_time=timezone.datetime(2023, 1, 1, tzinfo=timezone.utc))
+
+    def test_cascade_delete_activity(self):
+        self.activity.delete()
+        with self.assertRaises(Event.DoesNotExist):
+            Event.objects.get(belong_activity=self.activity)
+
+
+class MissionTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create()
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+        cls.activity = Activity.objects.create(
+            creator=cls.user, belong_workspace=cls.workspace)
+        cls.mission = Mission.objects.create(
+            belong_activity=cls.activity,
+            deadline=timezone.datetime(2023, 1, 1, tzinfo=timezone.utc))
+
+    def test_cascade_delete_activity(self):
+        self.activity.delete()
+        with self.assertRaises(Mission.DoesNotExist):
+            Mission.objects.get(belong_activity=self.activity)
