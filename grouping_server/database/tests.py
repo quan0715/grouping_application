@@ -3,6 +3,47 @@ from django.test import TestCase
 # Create your tests here.
 from database.models import User, Image, UserTag
 from django.db.utils import IntegrityError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
+from freezegun import freeze_time
+
+
+class ImageModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create an in-memory image file for testing
+        image_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00zz\xf4\x00\x00\x00\x04gAMA\x00\x00\xb1\x8f\x0b\xfca\x05\x00\x00\x00\x01sRGB\x00\xae\xce\x1c\xe9\x00\x00\x00\tpHYs\x00\x00\x0e\xc3\x00\x00\x0e\xc3\x01\xc7o\xa8d\x00\x00\x00\x19tEXtSoftware\x00www.inkscape.org\x9d\xee}\x07\xf8\x00\x00\x02\x07IDAT\x08\xd7c\xf8\xff\xff?\x00\x05\xfe\x02\xfe\t\xf8\xff\x00\x00\x00\x00IEND\xaeB`\x82'
+
+        cls.image = Image.objects.create(
+            data=SimpleUploadedFile(
+                "test_image.png", image_data, content_type="image/png")
+        )
+
+    def test_image_creation(self):
+        # Retrieve the saved image file path
+        saved_image_path = self.image.data.path
+
+        # Assert that the file was saved correctly
+        self.assertTrue(self.image.id)
+        self.assertTrue(saved_image_path.endswith("test_image.png"))
+
+    def test_updated_at_auto_now(self):
+        # Get the initial updated_at timestamp
+        initial_updated_at = self.image.updated_at
+
+        # Use freezegun to freeze time to a specific date
+        frozen_date = timezone.datetime(2023, 1, 1, tzinfo=timezone.utc)
+        with freeze_time(frozen_date):
+            # Save the image instance, triggering auto_now
+            self.image.save()
+
+        # Get the updated updated_at timestamp
+        new_updated_at = self.image.updated_at
+        
+        # Assert that the updated_at field has changed and is equal to the frozen date
+        self.assertNotEqual(initial_updated_at, new_updated_at)
+        self.assertAlmostEqual(new_updated_at, frozen_date,
+                               delta=timezone.timedelta(seconds=1))
 
 
 class UserModelTest(TestCase):
