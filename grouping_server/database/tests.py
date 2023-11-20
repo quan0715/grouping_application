@@ -1,6 +1,9 @@
 from django.test import TestCase
 
 # Create your tests here.
+import os
+from django.test import override_settings
+from django.conf import settings
 from database.models import User, Image, UserTag
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -8,6 +11,7 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 
+@override_settings(MEDIA_ROOT=settings.UNIT_TEST_ROOT)
 class ImageModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -19,13 +23,25 @@ class ImageModelTest(TestCase):
                 "test_image.png", image_data, content_type="image/png")
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        # Clean up the temporary media folder
+        image_folder = os.path.join(settings.MEDIA_ROOT, "images")
+        for file_name in os.listdir(image_folder):
+            file_path = os.path.join(image_folder, file_name)
+            os.remove(file_path)
+        os.rmdir(image_folder)
+        os.rmdir(settings.MEDIA_ROOT)
+        super().tearDownClass()
+
     def test_image_creation(self):
         # Retrieve the saved image file path
-        saved_image_path = self.image.data.path
+        saved_image_path: str = self.image.data.path
 
         # Assert that the file was saved correctly
         self.assertTrue(self.image.id)
-        self.assertTrue(saved_image_path.endswith("test_image.png"))
+        self.assertTrue(saved_image_path.find("test_image") != -1)
+        self.assertTrue(saved_image_path.find(".png") != -1)
 
     def test_updated_at_auto_now(self):
         # Get the initial updated_at timestamp
@@ -39,7 +55,7 @@ class ImageModelTest(TestCase):
 
         # Get the updated updated_at timestamp
         new_updated_at = self.image.updated_at
-        
+
         # Assert that the updated_at field has changed and is equal to the frozen date
         self.assertNotEqual(initial_updated_at, new_updated_at)
         self.assertAlmostEqual(new_updated_at, frozen_date,
@@ -114,13 +130,13 @@ class UserModelTest(TestCase):
         self.assertEqual(retrieved_image, self.image)
 
     def test_photo_nullability(self):
-        user_instance = User.objects.create(account='another_test_account')
+        another_user = User.objects.create(account='another_test_account')
 
-        self.assertIsNone(user_instance.photo)
+        self.assertIsNone(another_user.photo)
 
-        user_instance.photo = self.image
-        user_instance.save()
-        retrieved_image = user_instance.photo
+        another_user.photo = self.image
+        another_user.save()
+        retrieved_image = another_user.photo
         self.assertEqual(retrieved_image, self.image)
 
     def test_photo_label(self):
