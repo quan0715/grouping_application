@@ -4,7 +4,7 @@ from django.test import TestCase
 import os
 from django.test import override_settings
 from django.conf import settings
-from database.models import User, Image, UserTag, Workspace, WorkspaceTag
+from database.models import User, Image, UserTag, Workspace, WorkspaceTag, MissionState
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -276,3 +276,49 @@ class WorkspaceTagModelTest(TestCase):
         self.workspace.delete()
         with self.assertRaises(WorkspaceTag.DoesNotExist):
             WorkspaceTag.objects.get(id=self.tag.id)
+
+
+class MissionStateModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create a Workspace instance for testing
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+
+        # Create a MissionState instance for testing
+        cls.mission_state = MissionState.objects.create(
+            stage=MissionState.Stage.IN_PROGRESS,
+            name='Test Mission State',
+            belong_workspace=cls.workspace,
+        )
+
+    def test_mission_state_creation(self):
+        # Check that the mission state was created correctly
+        self.assertTrue(self.mission_state.id)
+        self.assertEqual(self.mission_state.stage, MissionState.Stage.IN_PROGRESS)
+        self.assertEqual(self.mission_state.name, 'Test Mission State')
+        self.assertEqual(self.mission_state.belong_workspace, self.workspace)
+
+    def test_default_stage(self):
+        # Create another MissionState instance without specifying the stage
+        new_mission_state = MissionState.objects.create(
+            name='Another Mission State',
+            belong_workspace=self.workspace,
+        )
+
+        # Check that the default stage is set for the new instance
+        self.assertEqual(new_mission_state.stage,
+                         MissionState.Stage.IN_PROGRESS)
+
+    def test_name_max_length(self):
+        max_length = self.mission_state._meta.get_field('name').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_name_label(self):
+        field_label = self.mission_state._meta.get_field('name').verbose_name
+        self.assertEquals(field_label, '名稱')
+        
+    def test_cascade_delete_workspace(self):
+        self.workspace.delete()
+        with self.assertRaises(MissionState.DoesNotExist):
+            MissionState.objects.get(id=self.mission_state.id)
