@@ -4,8 +4,8 @@ import 'package:grouping_project/auth/presentation/views/components/auth_layout.
 import 'package:grouping_project/core/config/assets.dart';
 import 'package:grouping_project/app/presentation/components/buttons/app_elevated_button.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
-import 'package:grouping_project/app/presentation/theme/color.dart';
-import 'package:grouping_project/app/presentation/theme/padding.dart';
+import 'package:grouping_project/core/theme/color.dart';
+import 'package:grouping_project/core/theme/padding.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeView extends AuthLayoutInterface {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/assets.dart';
-import 'package:grouping_project/app/presentation/theme/color.dart';
+import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/app/presentation/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 

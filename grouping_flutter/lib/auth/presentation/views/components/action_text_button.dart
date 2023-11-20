@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/theme/color.dart';
+import 'package:grouping_project/core/theme/color.dart';
 
 class ActionTextButton extends StatelessWidget {
   const ActionTextButton({

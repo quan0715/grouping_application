@@ -1,7 +1,7 @@
 // Application Log message card 
 // for notify user the result of the action
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/theme/theme.dart';
+import 'package:grouping_project/core/theme/theme.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/core/message_model.dart';
 

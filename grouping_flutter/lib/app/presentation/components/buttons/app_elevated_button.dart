@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/theme/theme.dart';
+import 'package:grouping_project/core/theme/theme.dart';
 
 enum AppButtonType{
   primary,

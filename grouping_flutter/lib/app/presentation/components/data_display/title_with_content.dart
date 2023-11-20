@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/theme/color.dart';
-import 'package:grouping_project/app/presentation/theme/text.dart';
+import 'package:grouping_project/core/theme/color.dart';
+import 'package:grouping_project/core/theme/text.dart';
 
 class TitleWithContent extends StatelessWidget {
   final String title;

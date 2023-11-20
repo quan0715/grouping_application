@@ -7,7 +7,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:encrypt/encrypt.dart' as encrypt_package;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:grouping_project/auth/utils/enums.dart';
+import 'package:grouping_project/auth/utils/auth_provider_enum.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart';
