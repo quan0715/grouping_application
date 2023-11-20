@@ -185,3 +185,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+UNIT_TEST_ROOT = os.path.join(BASE_DIR, 'unit_test_data')
