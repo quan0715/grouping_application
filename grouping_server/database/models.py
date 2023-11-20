@@ -105,7 +105,7 @@ class MissionState(models.Model):
         CLOSE = 'CLOSE', _('close')
     stage = models.CharField(
         max_length=15, choices=Stage.choices, default=Stage.IN_PROGRESS)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, verbose_name="名稱")
     belong_workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
 
