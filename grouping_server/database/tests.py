@@ -4,7 +4,7 @@ from django.test import TestCase
 import os
 from django.test import override_settings
 from django.conf import settings
-from database.models import User, Image, UserTag, Workspace, WorkspaceTag, MissionState
+from database.models import User, Image, UserTag, Workspace, WorkspaceTag, MissionState, Activity
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -281,11 +281,8 @@ class WorkspaceTagModelTest(TestCase):
 class MissionStateModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Create a Workspace instance for testing
         cls.workspace = Workspace.objects.create(
             theme_color=0, is_personal=True)
-
-        # Create a MissionState instance for testing
         cls.mission_state = MissionState.objects.create(
             stage=MissionState.Stage.IN_PROGRESS,
             name='Test Mission State',
@@ -293,20 +290,18 @@ class MissionStateModelTest(TestCase):
         )
 
     def test_mission_state_creation(self):
-        # Check that the mission state was created correctly
         self.assertTrue(self.mission_state.id)
-        self.assertEqual(self.mission_state.stage, MissionState.Stage.IN_PROGRESS)
+        self.assertEqual(self.mission_state.stage,
+                         MissionState.Stage.IN_PROGRESS)
         self.assertEqual(self.mission_state.name, 'Test Mission State')
         self.assertEqual(self.mission_state.belong_workspace, self.workspace)
 
     def test_default_stage(self):
-        # Create another MissionState instance without specifying the stage
         new_mission_state = MissionState.objects.create(
             name='Another Mission State',
             belong_workspace=self.workspace,
         )
 
-        # Check that the default stage is set for the new instance
         self.assertEqual(new_mission_state.stage,
                          MissionState.Stage.IN_PROGRESS)
 
@@ -317,8 +312,70 @@ class MissionStateModelTest(TestCase):
     def test_name_label(self):
         field_label = self.mission_state._meta.get_field('name').verbose_name
         self.assertEquals(field_label, '名稱')
-        
+
     def test_cascade_delete_workspace(self):
         self.workspace.delete()
         with self.assertRaises(MissionState.DoesNotExist):
             MissionState.objects.get(id=self.mission_state.id)
+
+
+class ActivityModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create()
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+        cls.contributor = User.objects.create(account="contributor")
+        cls.child = Activity.objects.create(
+            creator=cls.user, belong_workspace=cls.workspace)
+        cls.frozen_date = timezone.datetime(2023, 1, 1, tzinfo=timezone.utc)
+        with freeze_time(cls.frozen_date):
+            cls.activity = Activity.objects.create(
+                creator=cls.user, belong_workspace=cls.workspace)
+
+    def test_title_max_length(self):
+        max_length = self.activity._meta.get_field('title').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_description_max_length(self):
+        max_length = self.activity._meta.get_field('description').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_created_at(self):
+        created_at = self.activity.created_at
+        self.assertAlmostEqual(created_at, self.frozen_date,
+                               delta=timezone.timedelta(seconds=1))
+
+    def test_cascade_delete_creator(self):
+        self.user.delete()
+        with self.assertRaises(Activity.DoesNotExist):
+            Activity.objects.get(id=self.activity.id)
+
+    def test_cascade_delete_creator(self):
+        self.workspace.delete()
+        with self.assertRaises(Activity.DoesNotExist):
+            Activity.objects.get(id=self.activity.id)
+
+    def test_children_relation(self):
+        self.activity.children.add(self.child)
+        self.assertIn(self.child,
+                      self.activity.children.all())
+        self.assertIn(self.activity,
+                      self.child.parents.all())
+
+    def test_children_deletion(self):
+        self.child.delete()
+        self.assertNotIn(self.child,
+                         self.activity.children.all())
+
+    def test_contributors_relation(self):
+        self.activity.contributors.add(self.contributor)
+        self.assertIn(self.contributor,
+                      self.activity.contributors.all())
+        self.assertIn(self.activity,
+                      self.contributor.contributing_activities.all())
+
+    def test_contributors_deletion(self):
+        self.contributor.delete()
+        self.assertNotIn(self.contributor,
+                         self.activity.contributors.all())
