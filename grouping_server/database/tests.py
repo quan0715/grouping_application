@@ -4,7 +4,7 @@ from django.test import TestCase
 import os
 from django.test import override_settings
 from django.conf import settings
-from database.models import User, Image, UserTag
+from database.models import User, Image, UserTag, Workspace
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -187,3 +187,58 @@ class UserTagModelTest(TestCase):
         self.user.delete()
         with self.assertRaises(UserTag.DoesNotExist):
             UserTag.objects.get(id=self.tag.id)
+
+
+class WorkspaceModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.image = Image.objects.create()
+        cls.user = User.objects.create()
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True, photo=cls.image)
+
+    def test_theme_color_label(self):
+        field_label = self.workspace._meta.get_field(
+            'theme_color').verbose_name
+        self.assertEquals(field_label, '主題顏色')
+
+    def test_workspace_name_max_length(self):
+        max_length = self.workspace._meta.get_field(
+            'workspace_name').max_length
+        self.assertEquals(max_length, 20)
+
+    def test_workspace_name_label(self):
+        field_label = self.workspace._meta.get_field(
+            'workspace_name').verbose_name
+        self.assertEquals(field_label, '名稱')
+
+    def test_description_label(self):
+        field_label = self.workspace._meta.get_field(
+            'description').verbose_name
+        self.assertEquals(field_label, '簡介')
+
+    def test_photo_creation(self):
+        retrieved_image = self.workspace.photo
+        self.assertEqual(retrieved_image, self.image)
+
+    def test_photo_nullability(self):
+        another_workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+
+        self.assertIsNone(another_workspace.photo)
+
+        another_workspace.photo = self.image
+        another_workspace.save()
+        retrieved_image = another_workspace.photo
+        self.assertEqual(retrieved_image, self.image)
+
+    def test_photo_label(self):
+        field_label = self.workspace._meta.get_field('photo').verbose_name
+        self.assertEquals(field_label, '頭像')
+
+    def test_members_relation(self):
+        self.workspace.members.add(self.user)
+        self.assertIn(self.user,
+                      self.workspace.members.all())
+        self.assertIn(self.workspace,
+                      self.user.joined_workspaces.all())
