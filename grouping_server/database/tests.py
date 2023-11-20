@@ -4,7 +4,8 @@ from django.test import TestCase
 import os
 from django.test import override_settings
 from django.conf import settings
-from database.models import User, Image, UserTag, Workspace, WorkspaceTag, MissionState, Activity
+from database.models import User, Image, UserTag, Workspace, WorkspaceTag, \
+    MissionState, Activity, ActivityNotification
 from django.db.utils import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -379,3 +380,35 @@ class ActivityModelTest(TestCase):
         self.contributor.delete()
         self.assertNotIn(self.contributor,
                          self.activity.contributors.all())
+
+
+class ActivityNotificationTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create()
+        cls.workspace = Workspace.objects.create(
+            theme_color=0, is_personal=True)
+        cls.activity = Activity.objects.create(
+            creator=cls.user, belong_workspace=cls.workspace)
+        cls.notification = ActivityNotification.objects.create(
+            belong_activity=cls.activity, notify_time=timezone.datetime(2023, 1, 1, tzinfo=timezone.utc))
+
+    def test_activity_notification_creation(self):
+        retrieved_notification = self.notification.belong_activity
+        self.assertEqual(retrieved_notification, self.activity)
+        self.assertEqual(timezone.datetime(
+            2023, 1, 1, tzinfo=timezone.utc), self.notification.notify_time)
+
+    def test_related_name_in_activity(self):
+        retrieved_notifications = self.activity.notifications.all()
+        self.assertIn(self.notification, retrieved_notifications)
+
+    def test_activity_relative_field_with_delete_notification(self):
+        self.notification.delete()
+        retrieved_notifications = self.activity.notifications.all()
+        self.assertEqual(retrieved_notifications.count(), 0)
+
+    def test_cascade_delete_activity(self):
+        self.activity.delete()
+        with self.assertRaises(ActivityNotification.DoesNotExist):
+            ActivityNotification.objects.get(id=self.notification.id)
