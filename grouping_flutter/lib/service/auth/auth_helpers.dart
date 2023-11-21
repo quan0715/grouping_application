@@ -154,7 +154,8 @@ class ResponseHandling {
           code: body['error-code'], message: body['error']);
     } else if (response.statusCode == 200) {
       await StorageMethods.deleteAll();
-      await StorageMethods.write(key: 'auth-token', value: response.body);
+      await StorageMethods.write(
+          key: 'auth-token', value: json.decode(response.body)['auth-token']);
     } else {
       StorageMethods.delete(key: 'auth-provider');
       throw Exception('response status: ${response.statusCode}');
