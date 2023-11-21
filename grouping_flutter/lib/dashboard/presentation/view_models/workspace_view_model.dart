@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 // import 'package:grouping_project/View/components/workspace_chip.dart';
-import 'package:grouping_project/core/message_model.dart';
+import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/dashboard/data/datasources/activity_repo.dart';
 import 'package:grouping_project/dashboard/data/models/account_model.dart';
 import 'package:grouping_project/dashboard/data/models/event_model.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/core/theme_entity.dart';
+import 'package:grouping_project/core/theme/theme_entity.dart';
 
 // TODO: 這是 ViewModel 不能存在在這裡
 

@@ -5,7 +5,7 @@ import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.d
 import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dart';
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/auth/domain/usecases/register_usecase.dart';
-import 'package:grouping_project/core/message_model.dart';
+import 'package:grouping_project/core/shared/message_entity.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   MessageService messageService = MessageService();

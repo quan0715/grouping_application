@@ -8,7 +8,7 @@ import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dar
 import 'package:grouping_project/auth/domain/entities/login_entity.dart';
 import 'package:grouping_project/auth/domain/usecases/login_usecase.dart';
 import 'package:grouping_project/auth/utils/auth_provider_enum.dart';
-import 'package:grouping_project/core/message_model.dart';
+import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/oauth_base_service.dart';

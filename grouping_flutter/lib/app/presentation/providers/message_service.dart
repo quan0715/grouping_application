@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:grouping_project/core/message_model.dart';
+import 'package:grouping_project/core/shared/message_entity.dart';
 
 class MessageService {
   final StreamController<List<MessageData>> _messageController = StreamController<List<MessageData>>.broadcast();
