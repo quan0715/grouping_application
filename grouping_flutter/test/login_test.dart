@@ -9,6 +9,15 @@ void main() {
     AccountAuth accountAuth = AccountAuth();
     FlutterSecureStorage storage = FlutterSecureStorage();
     WidgetsFlutterBinding.ensureInitialized();
+
+    test('user not exist', () {
+      accountAuth
+          .signIn(account: '876543231@123456789', password: 'testtest')
+          .onError((error, stackTrace) {
+        error as AuthServiceException;
+        expect(error.code == 'user_does_not_exist', true);
+      });
+    });
     test('signUp', () {
       accountAuth
           .signUp(account: 'test', password: 'testtest', username: 'testestest')
