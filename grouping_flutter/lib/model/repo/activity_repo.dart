@@ -11,7 +11,7 @@ const String baseURL = "http://ip"; // TODO: we need to know the django website
 /// 
 /// 此 service 可以 get, create, update, delete event 或 mission
 ///
-class DatabaseService {
+class ActivityDatabaseService {
   late final int _workSpaceUid;
   late final String _token;
   late final Map<String, String> headers;
@@ -29,7 +29,7 @@ class DatabaseService {
   /// DatabaseService service = DatabaseService(workSpaceUid: -1, token: userToken);
   /// ```
   ///
-  DatabaseService({required int workSpaceUid, required String token}) {
+  ActivityDatabaseService({required int workSpaceUid, required String token}) {
     _workSpaceUid = workSpaceUid;
     _token = token;
     headers = {

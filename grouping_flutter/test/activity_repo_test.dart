@@ -29,13 +29,10 @@ void main() {
       });
       final responseEvent = jsonEncode(object);
 
-      // final expectAnswer = jsonDecode(responseEvent);
-      // debugPrint(expectAnswer['event'][]);
-
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -61,7 +58,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -87,7 +84,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -119,7 +116,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseEvent, 404));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -153,7 +150,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 201));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -180,7 +177,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 201));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -207,7 +204,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -237,7 +234,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -264,7 +261,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -294,7 +291,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseEvent, 404));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -329,7 +326,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseMission, 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -355,7 +352,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseMission, 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -381,7 +378,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseMission, 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -411,7 +408,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseMission, 404));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -444,7 +441,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 201));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -471,7 +468,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 201));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -498,7 +495,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -528,7 +525,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -555,7 +552,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -585,7 +582,7 @@ void main() {
               headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseMission, 404));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -613,7 +610,7 @@ void main() {
               headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 200));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -631,7 +628,7 @@ void main() {
               headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 400));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
@@ -652,7 +649,7 @@ void main() {
               headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 404));
 
-      final database = DatabaseService(workSpaceUid: 0, token: "test");
+      final database = ActivityDatabaseService(workSpaceUid: 0, token: "test");
       database.setClient(client);
 
       // Act
