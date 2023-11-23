@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:grouping_project/core/shared/color_widget_interface.dart';
 
-class MobileBottomNavigationBar extends StatelessWidget {
+class MobileBottomNavigationBar extends StatelessWidget implements WithThemePrimaryColor{
   final Color themePrimaryColor;
   const MobileBottomNavigationBar({
     Key? key,
@@ -19,7 +20,7 @@ class MobileBottomNavigationBar extends StatelessWidget {
 
   Widget getUnselectedIcon(IconData icon) => Icon(
     icon,
-    color: themePrimaryColor,
+    color: getThemePrimaryColor,
   );
 
   @override
@@ -59,4 +60,8 @@ class MobileBottomNavigationBar extends StatelessWidget {
       ),
     );
   }
+  
+  @override
+  // TODO: implement getThemePrimaryColor
+  Color get getThemePrimaryColor => themePrimaryColor;
 }
