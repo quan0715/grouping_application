@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grouping_project/model/auth/account_model.dart';
-import 'package:grouping_project/model/photo_model.dart';
-import 'package:grouping_project/model/repo/user_repo.dart';
+import 'package:grouping_project/dashboard/data/datasources/user_repo.dart';
+import 'package:grouping_project/dashboard/data/models/account_model.dart';
+import 'package:grouping_project/dashboard/data/models/photo_model.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
 
