@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
