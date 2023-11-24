@@ -20,6 +20,8 @@ class LoginViewModel extends ChangeNotifier {
   AuthRepositoryImpl repo = AuthRepositoryImpl(
       remoteDataSource: AuthRemoteDataSourceImpl(),
       localDataSource: AuthLocalDataSourceImpl());
+  bool shouldShowWindow = false;
+  late BaseOAuthService attemptedOauth;
   String get password => passwordLoginEntity.password;
   String get email => passwordLoginEntity.email;
 
@@ -80,7 +82,7 @@ class LoginViewModel extends ChangeNotifier {
   BaseOAuthService getOAuthService(AuthProvider provider) {
     switch (provider) {
       case AuthProvider.google:
-        return BaseOAuthService(
+        attemptedOauth = BaseOAuthService(
             clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
             clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
             scopes: Config.googleScopes,
@@ -89,8 +91,9 @@ class LoginViewModel extends ChangeNotifier {
             provider: AuthProvider.google,
             usePkce: true,
             useState: false);
+        return attemptedOauth;
       case AuthProvider.github:
-        return BaseOAuthService(
+        attemptedOauth = BaseOAuthService(
             clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
             clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
             scopes: Config.gitHubScopes,
@@ -99,8 +102,9 @@ class LoginViewModel extends ChangeNotifier {
             provider: AuthProvider.github,
             usePkce: false,
             useState: false);
+        return attemptedOauth;
       case AuthProvider.line:
-        return BaseOAuthService(
+        attemptedOauth = BaseOAuthService(
             clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
             clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
             scopes: Config.lineScopes,
@@ -109,24 +113,21 @@ class LoginViewModel extends ChangeNotifier {
             provider: AuthProvider.line,
             useState: true,
             usePkce: true);
+        return attemptedOauth;
       default:
         throw Exception("Provider not found");
     }
   }
 
-  Future<void> onThirdPartyLogin(
-      AuthProvider provider, BuildContext context) async {
+  Future<void> onThirdPartyLogin(AuthProvider provider) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
     try {
       isLoading = true;
-      notifyListeners();
       BaseOAuthService authService = getOAuthService(provider);
       await authService.initialLoginFlow();
-      if (context.mounted) {
-        await authService.showWindowAndListen(context);
-      }
-      isLoading = false;
+      shouldShowWindow = true;
+
       notifyListeners();
     } catch (e) {
       // Handle any errors that occur during the login process
@@ -153,5 +154,9 @@ class LoginViewModel extends ChangeNotifier {
       await authService.getAccessToken();
     }
     return;
+  }
+
+  Future addCodeToStorage({required String code}) async {
+    await StorageMethods.write(key: 'code', value: code);
   }
 }

@@ -1,12 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/auth_provider_enum.dart';
 import 'package:http/http.dart';
 import 'package:pkce/pkce.dart';
-import "package:universal_html/html.dart" as html;
 import 'package:oauth2/oauth2.dart' as oauth2;
-import 'package:webview_flutter/webview_flutter.dart';
 
 class BaseOAuthService {
   late oauth2.AuthorizationCodeGrant grant;
@@ -64,13 +61,13 @@ class BaseOAuthService {
     }
   }
 
-  Future _informCode() async {
-    String stringUrl = EndPointGetter.getAuthBackendEndpoint('callback');
+  // Future _informCode() async {
+  //   String stringUrl = EndPointGetter.getAuthBackendEndpoint('callback');
 
-    String? code = await StorageMethods.read(key: 'code');
+  //   String? code = await StorageMethods.read(key: 'code');
 
-    await get(Uri.parse(stringUrl).replace(queryParameters: {'code': code!}));
-  }
+  //   await get(Uri.parse(stringUrl).replace(queryParameters: {'code': code!}));
+  // }
 
   Future initialLoginFlow() async {
     _getSignInGrant();
@@ -94,58 +91,17 @@ class BaseOAuthService {
           ? (await StringECBEncryptor.encryptCode(_stateCode)).base64
           : '',
       'verifier': pkceSupported
-          ? (await StringECBEncryptor.encryptCode(_stateCode)).base64
+          ? (await StringECBEncryptor.encryptCode(_pkcePair.codeVerifier))
+              .base64
           : '',
       'platform': kIsWeb ? 'web' : 'mobile'
     };
     await post(Uri.parse(stringUrl), body: body);
   }
 
-  // TODO: this is view, no context here
-  Future<void> showWindowAndListen(BuildContext context) async {
-    if (kIsWeb) {
-      grant.close();
-      html.window.open(authorizationUrl.toString(), "_self");
-    } else {
-      WebViewController controller = WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setNavigationDelegate(
-          NavigationDelegate(
-            onWebResourceError: (WebResourceError error) {
-              // TODO: Do some error handling
-              debugPrint(
-                  "===============================> onWebResourceError:");
-              debugPrint(error.errorType.toString());
-              debugPrint(error.errorCode.toString());
-              debugPrint(error.description);
-            },
-            onUrlChange: (change) {
-              debugPrint(change.toString());
-              // if (change.url!.contains("code")) {
-              //   // Navigator.of(context).pop();
-              //   // TODO: pass to back end needed to change
-              // }
-            },
-          ),
-        )
-        ..loadRequest(authorizationUrl);
-
-      // authWidgetNotifier.value = WebViewWidget(controller: controller);
-      grant.close();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return WebViewWidget(controller: controller);
-          },
-        ),
-      );
-    }
-  }
-
   Future getAccessToken() async {
-    await _informCode();
-    Object body = {};
+    // await _informCode();
+    Object body = {"code": await StorageMethods.read(key: 'code')};
     try {
       Uri url;
       String stringUrl = EndPointGetter.getAuthBackendEndpoint(provider.string);
