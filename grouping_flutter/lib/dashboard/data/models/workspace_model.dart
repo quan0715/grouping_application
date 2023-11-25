@@ -1,19 +1,9 @@
-
+import 'package:grouping_project/core/util/data_mapper.dart';
 import 'package:grouping_project/dashboard/data/models/photo_model.dart';
+import 'package:grouping_project/dashboard/data/models/workspace_tag_model.dart';
+import 'package:grouping_project/dashboard/domain/entities/workspace_entity.dart';
 
-/// ## the type for [WorkspaceModel.tags]
-/// * [content] : the value for this tag
-class WorkspaceTag {
-  String content;
-  WorkspaceTag({required this.content});
-
-  @override
-  String toString() {
-    return 'WorkSpace tag: $content';
-  }
-}
-
-class WorkspaceModel{
+class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   final int? id;
   int themeColor;
   String name;
@@ -26,14 +16,14 @@ class WorkspaceModel{
   static final WorkspaceModel defaultWorkspace = WorkspaceModel._default();
 
   WorkspaceModel._default()
-    : id = -1,
-      name = 'unknown',
-      description = 'unknown',
-      themeColor = 0,
-      isPersonal = true,
-      photo = null,
-      memberIds = [],
-      tags = [];
+      : id = -1,
+        name = 'unknown',
+        description = 'unknown',
+        themeColor = 0,
+        isPersonal = true,
+        photo = null,
+        memberIds = [],
+        tags = [];
 
   WorkspaceModel({
     int? id,
@@ -43,8 +33,8 @@ class WorkspaceModel{
     bool? isPersonal,
     Photo? photo,
     List<String>? memberIds,
-    List<WorkspaceTag>? tags, 
-  }) :  id = id ?? defaultWorkspace.id,
+    List<WorkspaceTag>? tags,
+  })  : id = id ?? defaultWorkspace.id,
         themeColor = themeColor ?? defaultWorkspace.themeColor,
         name = name ?? defaultWorkspace.name,
         description = description ?? defaultWorkspace.description,
@@ -54,26 +44,29 @@ class WorkspaceModel{
         tags = tags ?? defaultWorkspace.tags;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': id,
-    'theme_color': themeColor,
-    'workspace_name': name,
-    'description': description,
-    'is_personal': isPersonal,
-    'photo': photo?.toJson(),
-    'members': memberIds,
-    'tags': tags,
-  };
+        'id': id,
+        'theme_color': themeColor,
+        'workspace_name': name,
+        'description': description,
+        'is_personal': isPersonal,
+        'photo': photo?.toJson(),
+        'members': memberIds,
+        'tags': tags,
+      };
 
-  factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) => WorkspaceModel(
-    id: data['id'],
-    themeColor: data['theme_color'],
-    name: data['workspace_name'],
-    description: data['description'],
-    isPersonal: data['is_personal'],
-    photo: data['photo'] != null ? Photo.fromJson(data['photo'] as Map<String, dynamic>) : null,
-    memberIds: data['members'].cast<String>() as List<String>,
-    tags: data['tags'].cast<WorkspaceTag>() as List<WorkspaceTag>,
-  );
+  factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) =>
+      WorkspaceModel(
+        id: data['id'],
+        themeColor: data['theme_color'],
+        name: data['workspace_name'],
+        description: data['description'],
+        isPersonal: data['is_personal'],
+        photo: data['photo'] != null
+            ? Photo.fromJson(data['photo'] as Map<String, dynamic>)
+            : null,
+        memberIds: data['members'].cast<String>() as List<String>,
+        tags: data['tags'].cast<WorkspaceTag>() as List<WorkspaceTag>,
+      );
 
   @override
   String toString() {
@@ -88,12 +81,24 @@ class WorkspaceModel{
       "tags": tags,
     }.toString();
   }
-  
+
+  @override
+  WorkspaceEntity mapToEntity() {
+    return WorkspaceEntity(
+        id: id,
+        themeColor: themeColor,
+        name: name,
+        description: description,
+        photo: photo,
+        memberIds: memberIds,
+        tags: tags);
+  }
+
   @override
   bool operator ==(Object other) {
     return toString() == other.toString();
   }
-  
+
   @override
   // TODO: implement hashCode
   int get hashCode => id!;

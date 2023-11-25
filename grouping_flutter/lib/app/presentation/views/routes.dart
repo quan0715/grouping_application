@@ -12,6 +12,7 @@ final applicationRoute = GoRouter(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return const AppView();
+        // return const WorkspaceView();
       },
       routes: <RouteBase>[
         GoRoute(

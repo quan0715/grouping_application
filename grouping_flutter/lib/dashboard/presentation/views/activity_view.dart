@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/dashboard/presentation/view_models/workspace_view_model.dart';
 
@@ -20,7 +21,7 @@ class _ActivityViewState extends State<ActivityView> {
       child: Column(
         children: [
           Expanded(
-            flex: 3,
+            flex: kIsWeb ? 3 : 1,
             child: Container(
               // height: 30,
               width: double.infinity,
@@ -29,7 +30,7 @@ class _ActivityViewState extends State<ActivityView> {
             ),
           ),
           Expanded(
-              flex: 8,
+              flex: 3,
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(border: Border.all()),
@@ -58,7 +59,7 @@ class _ActivityViewState extends State<ActivityView> {
                     ]),
               )),
           Expanded(
-              flex: 10,
+              flex: 3,
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(border: Border.all()),
@@ -82,6 +83,7 @@ class _ActivityViewState extends State<ActivityView> {
                               ))
                         ],
                       ),
+                      
                       // TODO: get mission and create chip
                     ]),
               ))
