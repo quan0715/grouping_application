@@ -22,9 +22,10 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = ['id', 'theme_color', 'workspace_name',
-                  'description', 'is_personal', 'photo', 'members', 'tags']
+                  'description', 'is_personal', 'photo', 'members', 'tags', 'activities']
         extra_kwargs = {
-            'members': {'many': True, 'required': False, 'allow_empty': True}
+            'members': {'many': True, 'required': False, 'allow_empty': True},
+            'activities': {'many': True, 'read_only': True}
         }
 
     def create(self, validated_data):
@@ -108,7 +109,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     event = EventSerializer(required=False)
     mission = MissionSerializer(required=False)
     children = serializers.PrimaryKeyRelatedField(many=True,
-                                                read_only=True)
+                                                  read_only=True)
     contributors = serializers.PrimaryKeyRelatedField(many=True,
                                                       read_only=True)
     notifications = ActivityNotificationSerializer(
