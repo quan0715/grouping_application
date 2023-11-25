@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 
 class WorkspaceChip extends StatelessWidget {
   const WorkspaceChip({super.key, required this.workspace});

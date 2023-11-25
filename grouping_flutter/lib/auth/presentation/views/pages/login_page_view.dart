@@ -30,9 +30,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
     context.go('/register');
   }
 
-  void moveToHome(BuildContext context) {
+  void moveToHome(BuildContext context, int userId) {
     debugPrint("前往主畫面");
-    context.go('/user/${loginManager.userAccessToken}}');
+    context.go('/user/$userId');
   }
 
   Widget _getInputForm() {
@@ -74,7 +74,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
                     if(loginManager.userAccessToken.isNotEmpty) {
                       debugPrint("登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
                       if(context.mounted){
-                        moveToHome(context);
+                        moveToHome(context, loginManager.userId);
                       }
                     }
                   }

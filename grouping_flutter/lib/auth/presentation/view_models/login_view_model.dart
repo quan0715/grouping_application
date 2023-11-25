@@ -12,6 +12,7 @@ import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/oauth_base_service.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();
@@ -27,6 +28,10 @@ class LoginViewModel extends ChangeNotifier {
   String userAccessToken = "";
 
   bool isLoading = false;
+
+  int get userId => 
+    JwtDecoder.isExpired(userAccessToken)
+    ? "" : JwtDecoder.decode(userAccessToken)["user_id"];
   // LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
@@ -63,6 +68,17 @@ class LoginViewModel extends ChangeNotifier {
       (authToken){
         userAccessToken = authToken.token;
         debugPrint("access token : $userAccessToken");
+        if(JwtDecoder.isExpired(userAccessToken)){
+          debugPrint("token is expired");
+          messageService.addMessage(MessageData.error(title: "登入失敗", message: "登入失敗，請重新登入"));
+        }
+        else{
+          debugPrint("token is not expired");
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(userAccessToken);
+  // Now you can use your decoded token
+          debugPrint(decodedToken.toString());
+          messageService.addMessage(MessageData.success(title: "登入成功", message: "登入成功"));
+        }
       }
     );
     isLoading = false;

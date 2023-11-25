@@ -27,7 +27,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
 
       int statusCode = response.statusCode;
       debugPrint('statusCode: $statusCode');
-      // debugPrint(response.body);
+      debugPrint('qqqqqqq: ${response.body}');
       if(statusCode == 200){
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson({
           'auth-token': response.body,
