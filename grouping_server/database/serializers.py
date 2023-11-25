@@ -196,13 +196,15 @@ class ActivityPatchSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     joined_workspaces = WorkspaceSerializer(many=True, read_only=True)
     tags = UserTagSerializer(many=True, required=False, allow_empty=True)
-    contributing_activities = ActivitySerializer(many=True, read_only=True)
     photo = ImageSerializer(required=False)
 
     class Meta:
         model = User
         fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction',
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
+        extra_kargs = {
+            'contributing_activities': {'many': True, 'read_only': True}
+        }
 
     def update(self, instance, validated_data):
         photo_data = validated_data.pop('photo', None)
