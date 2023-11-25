@@ -3,11 +3,10 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import empty
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.core.cache import cache
 
 # from grouping_project_backend.models import UserManager, User
 from Crypto.Cipher import AES
-from enum import Enum
-import urllib.parse
 import base64
 
 import os
@@ -23,13 +22,13 @@ class TokenExchangeParamSerializer(serializers.Serializer):
     state = serializers.CharField(max_length=255, allow_blank=True)
     
     def validate(self, attrs):
-        os.environ['PLATFORM'] = attrs.get('platform')
+        cache.set('PLATFORM', attrs.get('platform'), timeout=10000)
 
         cipher = AES.new(bytes(os.environ['ENCRYPT_KEY32'], 'utf-8'),AES.MODE_ECB)
         if attrs.get("verifier") != '':
-            os.environ['VERIFIER'] = cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8')
+            cache.set('VERIFIER', cipher.decrypt(base64.b64decode(attrs.get("verifier"))).decode('utf-8'), timeout=10000)
         if attrs.get('state') != '':
-            os.environ['STATE'] = cipher.decrypt(base64.b64decode(attrs.get("state"))).decode('utf-8')
+            cache.set('STATE', cipher.decrypt(base64.b64decode(attrs.get("state"))).decode('utf-8'), timeout=10000)
         return super().validate(attrs)
 
 
@@ -63,46 +62,35 @@ class RegisterSerializer(serializers.Serializer):
 
 # The toutorial's code is at https://github.com/CryceTruly/incomeexpensesapi/tree/master/social_auth
 class GoogleSocialAuthSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=255)
 
     def validate(self, attrs):
         return oauth2_token_exchange(clientId=os.environ.get('GOOGLE_CLIENT_ID_WEB'), clientSecret=os.environ.get('GOOGLE_CLIENT_SECRET_WEB'), 
-                          provider=UrlGetter.Provider.GOOGLE,grant_type='authorization_code')
+                          provider=UrlGetter.Provider.GOOGLE, grant_type='authorization_code', code=attrs['code'])
 
 
 class LineSocialAuthSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=255)
+
     def validate(self, attrs):
-        if os.environ.get('PLATFORM') == 'web':
+        if cache.get('PLATFORM') == 'web':
             return oauth2_token_exchange(clientId=os.environ.get('LINE_CLIENT_ID_WEB'), clientSecret=os.environ.get('LINE_CLIENT_SECRET_WEB'), 
-                              provider=UrlGetter.Provider.LINE,grant_type='authorization_code')
+                              provider=UrlGetter.Provider.LINE, grant_type='authorization_code', code=attrs['code'])
         else:
             return oauth2_token_exchange(clientId=os.environ.get('LINE_CLIENT_ID_MOBILE'), clientSecret=os.environ.get('LINE_CLIENT_SECRET_MOBILE'), 
-                              provider=UrlGetter.Provider.LINE,grant_type='authorization_code')
+                              provider=UrlGetter.Provider.LINE, grant_type='authorization_code', code=attrs['code'])
 
 class GitHubSocialAuthSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=255)
 
     def validate(self, attrs):
-        if os.environ.get('PLATFORM') == 'web':
+        if cache.get('PLATFORM') == 'web':
             return oauth2_token_exchange(clientId=os.environ.get('GITHUB_CLIENT_ID_WEB'), clientSecret=os.environ.get('GITHUB_CLIENT_SECRET_WEB'), 
-                              provider=UrlGetter.Provider.GITHUB)
+                              provider=UrlGetter.Provider.GITHUB, grant_type='authorization_code', code=attrs['code'])
         else:
             return oauth2_token_exchange(clientId=os.environ.get('GITHUB_CLIENT_ID_MOBILE'), clientSecret=os.environ.get('GITHUB_CLIENT_SECRET_MOBILE'), 
-                              provider=UrlGetter.Provider.GITHUB)
-        
+                              provider=UrlGetter.Provider.GITHUB, grant_type='authorization_code', code=attrs['code'])
 
-class CallbackSerializer(serializers.Serializer):
-
-    _dict = {}
-
-    def __init__(self, instance=None, data=..., **kwargs):
-        self._dict.update(kwargs)
-        super().__init__(instance, data)
-
-    def validate(self, attrs):
-        if 'code' not in self._dict:
-            raise AuthenticationFailed('Auth consent denied')
-        else:
-            os.environ['AUTH_CODE'] = self._dict.get('code')
-            return os.environ.get('AUTH_CODE')
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
@@ -120,18 +108,19 @@ class LogoutSerializer(serializers.Serializer):
                 'error':'The token is invalid or expired. Please login again.'
             }
 
-def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecret:str = '',grant_type = ''):
+def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecret:str = '',grant_type = '', code = ''):
 
-    if not os.environ.get('AUTH_CODE'):
+    if code == '':
         return TokenExchangeError.errorFormatter(
             TokenExchangeError.NO_CODE_IN_STORAGE_ERROR
         )
     else:
         try:
-            body = SocialLogin.getBody(provider, clientId, clientSecret, grant_type)
+            body = SocialLogin.getBody(provider, clientId, clientSecret, grant_type,code)
             header = {'Accept': 'application/json'}
             result = requests.post(UrlGetter.Provider.getTokenEndpoint(provider),data=body,headers=header)
             result = result.json()
+
         except:
             return TokenExchangeError.errorFormatter(
                 TokenExchangeError.HANDLING_ERROR

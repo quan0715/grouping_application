@@ -1,26 +1,25 @@
-import requests
 from .register import register_user, login_user
 from enum import Enum
 from .config import Config
 
 import os
+from django.core.cache import cache
 
 class SocialLogin:
-    def getBody(provider:Enum, clientId, cilentSecret, grant_type = ''):
+    def getBody(provider:Enum, clientId, cilentSecret, grant_type = '', code = ''):
         
         body = {
                     'client_id':clientId,
                     'client_secret':cilentSecret,
-                    'code':os.environ.get('AUTH_CODE'),
+                    'code':code,
                 }
-        
         body['redirect_uri'] = UrlGetter.getFrontEndUrl()
-        if 'VERIFIER' in os.environ:
-                body['code_verifier']=os.environ.get('VERIFIER')
+        if cache.__contains__('VERIFIER'):
+            body['code_verifier']=cache.get('VERIFIER')
         if (grant_type != ''):
             body['grant_type'] = grant_type
-        if 'STATE' in os.environ:
-            body['state'] = os.environ.get("STATE")
+        if cache.__contains__('STATE'):
+            body['state'] = cache.get("STATE")
 
         return body
         
@@ -71,7 +70,9 @@ class UrlGetter:
                     return Config.lineUserProfileEndpoint
     
     def getFrontEndUrl():
-        if os.environ.get('PLATFORM') == 'web':
+        # return Config.frontEndUrlWeb
+
+        if cache.get('PLATFORM') == 'web':
             return Config.frontEndUrlWeb
         else:
             return Config.frontEndUrlMobile

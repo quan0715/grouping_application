@@ -48,7 +48,15 @@ def register_user(account, name, password = ""):
             'tokens': token
         }
     except:
-        return {
-            'error-code':'unexpected_error',
-            'error':'Unexpacted error occured, please contact admin'
-        }
+        try:
+            user = User.objects.get(account=account)
+            if user!=None:
+                return {
+                    'error-code':'user_already_exist',
+                    'error':'User already exsisted, please login directly.'
+                }
+        except:
+            return {
+                'error-code':'unexpected_error',
+                'error':'Unexpacted error occured, please contact admin'
+            }

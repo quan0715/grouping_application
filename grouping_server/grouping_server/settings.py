@@ -29,15 +29,18 @@ SECRET_KEY = 'django-insecure-s9thampkfo-g-r$@ue%1iwl3#bn_--vft)aljwt-%c@xsc%b&7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = [
-#     '*'
-#     # '192.168.0.102',
-#     # 'localhost',
-#     # '127.0.0.1'
+ALLOWED_HOSTS = [
+    # '*'
+    # '192.168.0.102',
+    'localhost',
+    # '127.0.0.1'
     
-#     # the test domain own by Bryant
-#     # 'amazed-privately-goshawk.ngrok-free.app'
-# ]
+    # the test domain own by Bryant
+    # 'amazed-privately-goshawk.ngrok-free.app'
+
+    # # the test domain own by Winnie, should be cleaned wehn push!
+    # '6fc6-114-25-167-2.ngrok-free.app',
+]
 
 
 # Application definition
@@ -74,12 +77,14 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5000",
-    "http://localhost:8080"
+    # # This is ngrok address, need to be cleaned before git push
+    # "https://63c0-114-25-167-2.ngrok-free.app",
 ]
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:5000",
-    "http://localhost:8080"
+    # # This is ngrok address, need to be cleaned before git push
+    # "https://63c0-114-25-167-2.ngrok-free.app",
 ]
 
 ROOT_URLCONF = 'grouping_server.urls'
