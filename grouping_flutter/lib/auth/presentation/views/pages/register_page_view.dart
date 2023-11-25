@@ -28,9 +28,9 @@ class RegisterViewPage extends AuthLayoutInterface{
     // Navigator.pushNamed(context, '/login');
   }
 
-  void moveToUserPage(BuildContext context, RegisterViewModel signInManager) {
+  void moveToUserPage(BuildContext context, int userId) {
     debugPrint("前往歡迎頁面");
-    context.go('/user/${signInManager.userAccessToken}');
+    context.go('/user/$userId');
   }
 
 
@@ -94,7 +94,7 @@ class RegisterViewPage extends AuthLayoutInterface{
                       debugPrint("註冊成功");
                       await Future.delayed(const Duration(seconds: 2), () => debugPrint("註冊成功，即將跳轉頁面"));
                       if(context.mounted){
-                        moveToUserPage(context, registerManager);
+                        moveToUserPage(context, registerManager.userId);
                       }
                     }
                   }
