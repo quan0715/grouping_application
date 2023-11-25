@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grouping_project/dashboard/data/datasources/activity_repo.dart';
-import 'package:grouping_project/dashboard/data/models/event_model.dart';
-import 'package:grouping_project/dashboard/data/models/mission_model.dart';
+import 'package:grouping_project/space/data/datasources/activity_repo.dart';
+import 'package:grouping_project/space/data/models/event_model.dart';
+import 'package:grouping_project/space/data/models/mission_model.dart';
 // import 'package:grouping_project/model/workspace/event_model.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
