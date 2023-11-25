@@ -22,9 +22,10 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = ['id', 'theme_color', 'workspace_name',
-                  'description', 'is_personal', 'photo', 'members', 'tags']
+                  'description', 'is_personal', 'photo', 'members', 'tags', 'activities']
         extra_kwargs = {
-            'members': {'many': True, 'required': False, 'allow_empty': True}
+            'members': {'many': True, 'required': False, 'allow_empty': True},
+            'activities': {'many': True, 'read_only': True}
         }
 
     def create(self, validated_data):
@@ -108,7 +109,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     event = EventSerializer(required=False)
     mission = MissionSerializer(required=False)
     children = serializers.PrimaryKeyRelatedField(many=True,
-                                                read_only=True)
+                                                  read_only=True)
     contributors = serializers.PrimaryKeyRelatedField(many=True,
                                                       read_only=True)
     notifications = ActivityNotificationSerializer(
@@ -195,13 +196,15 @@ class ActivityPatchSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     joined_workspaces = WorkspaceSerializer(many=True, read_only=True)
     tags = UserTagSerializer(many=True, required=False, allow_empty=True)
-    contributing_activities = ActivitySerializer(many=True, read_only=True)
     photo = ImageSerializer(required=False)
 
     class Meta:
         model = User
         fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction',
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
+        extra_kargs = {
+            'contributing_activities': {'many': True, 'read_only': True}
+        }
 
     def update(self, instance, validated_data):
         photo_data = validated_data.pop('photo', None)
