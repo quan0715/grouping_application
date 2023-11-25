@@ -9,10 +9,10 @@ import 'package:grouping_project/dashboard/data/models/workspace_model.dart';
 /// ## the type for [AccountModel.tags]
 /// * [tag] : the key for this tag
 /// * [content] : the value for this tag
-class AccountTag {
+class AccountTagModel {
   String tag;
   String content;
-  AccountTag({required this.tag, required this.content});
+  AccountTagModel({required this.tag, required this.content});
 
   @override
   String toString() {
@@ -33,7 +33,7 @@ class AccountModel {
   // String photoId;
   // Uint8List photo;
   Photo? photo;
-  List<AccountTag> tags;
+  List<AccountTagModel> tags;
   List<WorkspaceModel> joinedWorkspaces;
   // List<String> joinedWorkspaceIds;
   List<EditableCardModel> contributingActivities;
@@ -71,7 +71,7 @@ class AccountModel {
     String? introduction,
     // String? photoId,
     Photo? photo,
-    List<AccountTag>? tags,
+    List<AccountTagModel>? tags,
     List<WorkspaceModel>? joinedWorkspaces,
     List<EditableCardModel>? contributingActivities,
     // List<String>? associateEntityId,
@@ -101,7 +101,7 @@ class AccountModel {
     String? slogan,
     String? introduction,
     Photo? photo,
-    List<AccountTag>? tags,
+    List<AccountTagModel>? tags,
     // String? photoId,
     List<WorkspaceModel>? joinedWorkspaces,
     List<EditableCardModel>? contributingActivities,
@@ -184,7 +184,7 @@ class AccountModel {
         // color: data['color'] as int,
         slogan: data['slogan'] as String,
         photo: data['photo'] != null ? Photo.fromJson(data['photo'] as Map<String, dynamic>) : null,
-        tags: data['tags'].cast<AccountTag>() as List<AccountTag>,
+        tags: data['tags'].cast<AccountTagModel>() as List<AccountTagModel>,
         // tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
         //     ? _fromBackendTags(
         //         List.from(data['tags']), List.from(data['tag_contents']))

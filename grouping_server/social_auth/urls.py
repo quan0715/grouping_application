@@ -2,7 +2,7 @@ from django.urls import include, path
 # from .viewsets import GoogleOauthViewSet
 from rest_framework.routers import DefaultRouter
 from .views import (LoginView, RegisterView, GoogleSocialAuthView, LineSocialAuthView, GitHubSocialAuthView,
-                    LogoutView, CallbackView, TokenExchangeParamView)
+                    LogoutView, TokenExchangeParamView)
 
 router = DefaultRouter()
 # router.register(r'google', GoogleOauthViewSet, basename='google')
@@ -14,7 +14,6 @@ urlpatterns = [
     path("line/", LineSocialAuthView.as_view()),
     path("github/", GitHubSocialAuthView.as_view()),
     path("logout/", LogoutView.as_view()),
-    path("callback/",CallbackView.as_view()),
     path("exchange_params/",TokenExchangeParamView.as_view()),
 ]
 

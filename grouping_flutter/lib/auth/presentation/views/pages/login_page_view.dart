@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:universal_html/html.dart' as html;
+
 import 'package:grouping_project/auth/presentation/view_models/login_view_model.dart';
 import 'package:grouping_project/auth/presentation/views/components/action_text_button.dart';
 import 'package:grouping_project/auth/presentation/views/components/auth_layout.dart';
@@ -15,6 +18,8 @@ import 'package:grouping_project/core/theme/padding.dart';
 import 'package:grouping_project/core/theme/text.dart';
 import 'package:grouping_project/app/presentation/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
 class WebLoginViewPage extends AuthLayoutInterface {
   WebLoginViewPage({Key? key}) : super(key: key);
 
@@ -71,9 +76,10 @@ class WebLoginViewPage extends AuthLayoutInterface {
                 onPressed: () async {
                   if (textFormKey.currentState!.validate()) {
                     await loginManager.onPasswordLogin();
-                    if(loginManager.userAccessToken.isNotEmpty) {
-                      debugPrint("登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
-                      if(context.mounted){
+                    if (loginManager.userAccessToken.isNotEmpty) {
+                      debugPrint(
+                          "登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
+                      if (context.mounted) {
                         moveToHome(context);
                       }
                     }
@@ -121,22 +127,79 @@ class WebLoginViewPage extends AuthLayoutInterface {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ThirdPartyLoginButton(
-            primaryColor: Colors.blue,
-            icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
-            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.google, context),),
-        ThirdPartyLoginButton(
-            primaryColor: Colors.purple,
-            icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
-            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.github, context),
+          primaryColor: Colors.blue,
+          icon: Image.asset(Assets.googleIconPath, fit: BoxFit.cover),
+          onPressed: () async => await loginManager
+              .onThirdPartyLogin(AuthProvider.google)
+              .whenComplete(() {
+            showWindowAndListen(context, loginManager);
+          }),
         ),
-        
         ThirdPartyLoginButton(
-            primaryColor: Colors.green,
-            icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
-            onPressed: () async => await loginManager.onThirdPartyLogin(AuthProvider.line, context),
+          primaryColor: Colors.purple,
+          icon: Image.asset(Assets.gitHubIconPath, fit: BoxFit.cover),
+          onPressed: () async => await loginManager
+              .onThirdPartyLogin(AuthProvider.github)
+              .whenComplete(() {
+            showWindowAndListen(context, loginManager);
+          }),
+        ),
+        ThirdPartyLoginButton(
+          primaryColor: Colors.green,
+          icon: Image.asset(Assets.lineIconPath, fit: BoxFit.cover),
+          onPressed: () async => await loginManager
+              .onThirdPartyLogin(AuthProvider.line)
+              .whenComplete(() {
+            showWindowAndListen(context, loginManager);
+          }),
         ),
       ],
     );
+  }
+
+  showWindowAndListen(BuildContext context, LoginViewModel loginVM) {
+    if (kIsWeb) {
+      // oAuthService.grant.close();
+      html.window
+          .open(loginVM.attemptedOauth.authorizationUrl.toString(), "_self");
+    } else {
+      WebViewController controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onWebResourceError: (WebResourceError error) {
+              // TODO: Do some error handling
+              debugPrint(
+                  "===============================> onWebResourceError:");
+              debugPrint(error.errorType.toString());
+              debugPrint(error.errorCode.toString());
+              debugPrint(error.description);
+            },
+            onUrlChange: (change) async {
+              if (change.url!.contains("code")) {
+                await loginManager
+                    .addCodeToStorage(
+                        code: Uri.dataFromString(change.url!)
+                            .queryParameters['code']!)
+                    .then((value) => Navigator.of(context).pop());
+              }
+            },
+          ),
+        )
+        ..loadRequest(loginVM.attemptedOauth.authorizationUrl);
+
+      // authWidgetNotifier.value = WebViewWidget(controller: controller);
+      // oAuthService.grant.close();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return WebViewWidget(controller: controller);
+          },
+        ),
+      );
+    }
+    loginVM.isLoading = false;
   }
 
   @override
@@ -149,7 +212,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
           alignment: Alignment.topCenter,
           children: [
             Center(
-              child: AppPadding.medium(
+                child: AppPadding.medium(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
