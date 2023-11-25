@@ -115,7 +115,7 @@ class Activity(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     belong_workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE)
+        Workspace, on_delete=models.CASCADE, related_name='activities')
     children = models.ManyToManyField(
         'self', symmetrical=False, blank=True, related_name='parents')
     contributors = models.ManyToManyField(
