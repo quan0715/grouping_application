@@ -3,9 +3,12 @@ from .models import Image, User, UserTag,  MissionState, Activity, ActivityNotif
 
 
 class ImageSerializer(serializers.ModelSerializer):
+    image_uri = serializers.ImageField(source='data', read_only=True)
+    data = serializers.ImageField(write_only=True)
+
     class Meta:
         model = Image
-        fields = ['id', 'data', 'updated_at']
+        fields = ['id', 'image_uri', 'data', 'updated_at']
 
 
 class WorkspaceTagSerializer(serializers.ModelSerializer):
