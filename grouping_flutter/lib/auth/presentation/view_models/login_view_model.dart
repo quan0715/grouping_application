@@ -11,6 +11,7 @@ import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/oauth_base_service.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();
@@ -27,6 +28,10 @@ class LoginViewModel extends ChangeNotifier {
   String userAccessToken = "";
 
   bool isLoading = false;
+
+  int get userId => 
+    JwtDecoder.isExpired(userAccessToken)
+    ? "" : JwtDecoder.decode(userAccessToken)["user_id"];
   // LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
@@ -50,21 +55,20 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onPasswordLogin() async {
     debugPrint("Login with: Email: $email , Password: $password");
 
-    PasswordLoginUseCase passwordLoginUseCase =
-        PasswordLoginUseCase(repository: repo);
+    PasswordLoginUseCase passwordLoginUseCase = PasswordLoginUseCase(repository: repo);
     userAccessToken = "";
     isLoading = true;
     notifyListeners();
-    final failureOrAuthToken =
-        await passwordLoginUseCase.call(passwordLoginEntity);
+    final failureOrAuthToken = await passwordLoginUseCase(passwordLoginEntity);
+
     failureOrAuthToken.fold((failure) {
       debugPrint(failure.errorMessage);
-      messageService.addMessage(
-          MessageData.error(title: "登入失敗", message: failure.errorMessage));
+      messageService.addMessage(MessageData.error(title: "登入失敗", message: failure.errorMessage));
     }, (authToken) {
       userAccessToken = authToken.token;
       debugPrint("access token : $userAccessToken");
     });
+    
     isLoading = false;
     notifyListeners();
   }
