@@ -1,10 +1,15 @@
 class Config:
   frontEndUrlWeb = 'http://localhost:5000'
   frontEndUrlMobile = 'http://10.0.2.2:5000'
-  # frontEndUrlMobile = 'http://localhost:5000'
   baseUriWeb = 'http://localhost:8000'
   baseUriMobile = 'http://10.0.2.2:8000'
-  # baseUriMobile = 'http://localhost:8000'
+
+  # Below are used for testing ngrok setup
+
+  # frontEndUrlWeb = 'https://63c0-114-25-167-2.ngrok-free.app'
+  # frontEndUrlMobile = 'https://63c0-114-25-167-2.ngrok-free.app'
+  # baseUriWeb = 'https://6fc6-114-25-167-2.ngrok-free.app'
+  # baseUriMobile = 'https://6fc6-114-25-167-2.ngrok-free.app'
 
 
   googleTokenEndpoint = 'https://oauth2.googleapis.com/token'

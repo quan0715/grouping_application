@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
@@ -18,12 +17,13 @@ class LoginViewModel extends ChangeNotifier {
   LoginEntity passwordLoginEntity = LoginEntity();
   MessageService messageService = MessageService();
   AuthRepositoryImpl repo = AuthRepositoryImpl(
-    remoteDataSource: AuthRemoteDataSourceImpl(),
-    localDataSource: AuthLocalDataSourceImpl()
-  );
+      remoteDataSource: AuthRemoteDataSourceImpl(),
+      localDataSource: AuthLocalDataSourceImpl());
+  bool shouldShowWindow = false;
+  late BaseOAuthService attemptedOauth;
   String get password => passwordLoginEntity.password;
   String get email => passwordLoginEntity.email;
-  
+
   String userAccessToken = "";
 
   bool isLoading = false;
@@ -49,22 +49,22 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<void> onPasswordLogin() async {
     debugPrint("Login with: Email: $email , Password: $password");
-    
-    PasswordLoginUseCase passwordLoginUseCase = PasswordLoginUseCase(repository: repo);
+
+    PasswordLoginUseCase passwordLoginUseCase =
+        PasswordLoginUseCase(repository: repo);
     userAccessToken = "";
     isLoading = true;
     notifyListeners();
-    final failureOrAuthToken = await passwordLoginUseCase.call(passwordLoginEntity);
-    failureOrAuthToken.fold(
-      (failure){
-        debugPrint(failure.errorMessage);
-        messageService.addMessage(MessageData.error(title: "登入失敗", message: failure.errorMessage));
-      },
-      (authToken){
-        userAccessToken = authToken.token;
-        debugPrint("access token : $userAccessToken");
-      }
-    );
+    final failureOrAuthToken =
+        await passwordLoginUseCase.call(passwordLoginEntity);
+    failureOrAuthToken.fold((failure) {
+      debugPrint(failure.errorMessage);
+      messageService.addMessage(
+          MessageData.error(title: "登入失敗", message: failure.errorMessage));
+    }, (authToken) {
+      userAccessToken = authToken.token;
+      debugPrint("access token : $userAccessToken");
+    });
     isLoading = false;
     notifyListeners();
   }
@@ -75,61 +75,58 @@ class LoginViewModel extends ChangeNotifier {
     passwordLoginEntity.accountEmail = "123123123";
     passwordLoginEntity.accountPassword = "123123123";
     notifyListeners();
-    return ;
+    return;
   }
 
   BaseOAuthService getOAuthService(AuthProvider provider) {
     switch (provider) {
       case AuthProvider.google:
-        return BaseOAuthService(
-        clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
-        clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
-        scopes: Config.googleScopes,
-        authorizationEndpoint: Config.googleAuthEndpoint,
-        tokenEndpoint: Config.googleTokenEndpoint,
-        provider: AuthProvider.google,
-        usePkce: true,
-        useState: false
-      );
+        attemptedOauth = BaseOAuthService(
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
+            scopes: Config.googleScopes,
+            authorizationEndpoint: Config.googleAuthEndpoint,
+            tokenEndpoint: Config.googleTokenEndpoint,
+            provider: AuthProvider.google,
+            usePkce: true,
+            useState: false);
+        return attemptedOauth;
       case AuthProvider.github:
-        return BaseOAuthService(
-          clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
-          clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
-          scopes: Config.gitHubScopes,
-          authorizationEndpoint: Config.gitHubAuthEndpoint,
-          tokenEndpoint: Config.gitHubTokenEndpoint,
-          provider: AuthProvider.github,
-          usePkce: false,
-          useState: false
-        );
+        attemptedOauth = BaseOAuthService(
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
+            scopes: Config.gitHubScopes,
+            authorizationEndpoint: Config.gitHubAuthEndpoint,
+            tokenEndpoint: Config.gitHubTokenEndpoint,
+            provider: AuthProvider.github,
+            usePkce: false,
+            useState: false);
+        return attemptedOauth;
       case AuthProvider.line:
-        return BaseOAuthService(
-          clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
-          clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
-          scopes: Config.lineScopes,
-          authorizationEndpoint: Config.lineAuthEndPoint,
-          tokenEndpoint: Config.lineTokenEndpoint,
-          provider: AuthProvider.line,
-          useState: true,
-          usePkce: true
-        );
+        attemptedOauth = BaseOAuthService(
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
+            scopes: Config.lineScopes,
+            authorizationEndpoint: Config.lineAuthEndPoint,
+            tokenEndpoint: Config.lineTokenEndpoint,
+            provider: AuthProvider.line,
+            useState: true,
+            usePkce: true);
+        return attemptedOauth;
       default:
         throw Exception("Provider not found");
     }
   }
 
-  Future<void> onThirdPartyLogin(AuthProvider provider, BuildContext context) async {
+  Future<void> onThirdPartyLogin(AuthProvider provider) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
     try {
       isLoading = true;
-      notifyListeners();
       BaseOAuthService authService = getOAuthService(provider);
       await authService.initialLoginFlow();
-      if(context.mounted){
-        await authService.showWindowAndListen(context);
-      }
-      isLoading = false;
+      shouldShowWindow = true;
+
       notifyListeners();
     } catch (e) {
       // Handle any errors that occur during the login process
@@ -142,7 +139,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future isURLContainCode(Uri platformURI) async {
-    if(kIsWeb && platformURI.queryParameters.containsKey('code')){
+    if (kIsWeb && platformURI.queryParameters.containsKey('code')) {
       FlutterSecureStorage storage = const FlutterSecureStorage();
       await storage.write(key: 'code', value: Uri.base.queryParameters['code']);
       BaseOAuthService authService;
@@ -155,7 +152,10 @@ class LoginViewModel extends ChangeNotifier {
       }
       await authService.getAccessToken();
     }
-    return ;
-  }  
+    return;
+  }
 
+  Future addCodeToStorage({required String code}) async {
+    await StorageMethods.write(key: 'code', value: code);
+  }
 }
