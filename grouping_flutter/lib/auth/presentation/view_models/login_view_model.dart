@@ -55,21 +55,20 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onPasswordLogin() async {
     debugPrint("Login with: Email: $email , Password: $password");
 
-    PasswordLoginUseCase passwordLoginUseCase =
-        PasswordLoginUseCase(repository: repo);
+    PasswordLoginUseCase passwordLoginUseCase = PasswordLoginUseCase(repository: repo);
     userAccessToken = "";
     isLoading = true;
     notifyListeners();
-    final failureOrAuthToken =
-        await passwordLoginUseCase.call(passwordLoginEntity);
+    final failureOrAuthToken = await passwordLoginUseCase(passwordLoginEntity);
+
     failureOrAuthToken.fold((failure) {
       debugPrint(failure.errorMessage);
-      messageService.addMessage(
-          MessageData.error(title: "登入失敗", message: failure.errorMessage));
+      messageService.addMessage(MessageData.error(title: "登入失敗", message: failure.errorMessage));
     }, (authToken) {
       userAccessToken = authToken.token;
       debugPrint("access token : $userAccessToken");
     });
+    
     isLoading = false;
     notifyListeners();
   }

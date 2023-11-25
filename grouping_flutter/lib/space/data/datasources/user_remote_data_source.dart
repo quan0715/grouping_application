@@ -2,6 +2,7 @@ import 'dart:convert';
 
 // import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
+import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouping_project/space/data/models/account_model.dart';
 
@@ -14,9 +15,8 @@ abstract class UserRemoteDataSource{
   UserRemoteDataSource({String token = ""});
   Future<AccountModel> getUserData({required int uid});
   Future<AccountModel> updateUserData({required AccountModel account});
-
+  
 }
-
 class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   late final String _token;
   late final Map<String, String> headers;
@@ -37,7 +37,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     _token = token;
     headers = {
       "Content-Type": "application/json",
-      "Authorization":"Bearer ${_token.substring(1, _token.length - 1)}",
+      "Authorization":"Bearer $_token",
     };
   }
 
@@ -65,17 +65,17 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   
   @override
   Future<AccountModel> getUserData({required int uid}) async {
-    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/users/$uid"), headers: headers);
-
-    if (response.statusCode == 200) {
-      return AccountModel.fromJson(data: jsonDecode(response.body));
-    } else if (response.statusCode == 400) {
-      throw Exception("Invalid Syntax");
-    } else if (response.statusCode == 404) {
-      throw Exception("The requesting data was not found");
-    } else {
-      // TODO: raise Error
-      return AccountModel.defaultAccount;
+    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/$uid");
+    final response = await _client.get(apiUri, headers: headers);
+    switch (response.statusCode) {
+        case 200:
+          return AccountModel.fromJson(data: jsonDecode(response.body));
+        case 400:
+          throw ServerException(exceptionMessage: "Invalid Syntax");
+        case 404:
+          throw ServerException(exceptionMessage: "The requesting data was not found");
+        default:
+          return AccountModel.defaultAccount;
     }
   }
 
@@ -93,18 +93,18 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   /// 
   @override
   Future<AccountModel> updateUserData({required AccountModel account}) async {
-    final response = await _client.patch(Uri.parse("${Config.baseUriWeb}/users/${account.id}"),
-        headers: headers, body: jsonEncode(account));
+    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}");
+    final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account));
 
-    if (response.statusCode == 200) {
-      return AccountModel.fromJson(data: jsonDecode(response.body));
-    } else if (response.statusCode == 400) {
-      throw Exception("Invalid Syntax");
-    } else if (response.statusCode == 404) {
-      throw Exception("The requesting data was not found");
-    } else {
-      // TODO: raise Error
-      return AccountModel.defaultAccount;
+    switch (response.statusCode) {
+      case 200:
+        return AccountModel.fromJson(data: jsonDecode(response.body));
+      case 400:
+        throw ServerException(exceptionMessage: "Invalid Syntax");
+      case 404:
+        throw ServerException(exceptionMessage: "The requesting data was not found");
+      default:
+        return AccountModel.defaultAccount;
     }
   }
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grouping_project/space/data/datasources/user_remote_data_source.dart';
 import 'package:grouping_project/space/data/models/account_model.dart';
-import 'package:grouping_project/space/data/models/photo_model.dart';
+import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,7 +45,7 @@ void main() {
           name: 'test name',
           slogan: 'test slogan',
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);
@@ -70,7 +70,7 @@ void main() {
           name: 'test name',
           slogan: 'test slogan',
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);
@@ -98,7 +98,7 @@ void main() {
           name: 'test name',
           slogan: 'test slogan',
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);

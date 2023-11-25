@@ -1,5 +1,5 @@
 
-import 'package:grouping_project/space/data/models/photo_model.dart';
+import 'package:grouping_project/space/data/models/image_model.dart';
 
 /// ## the type for [WorkspaceModel.tags]
 /// * [content] : the value for this tag
@@ -19,7 +19,7 @@ class WorkspaceModel{
   String name;
   String description;
   bool isPersonal;
-  Photo? photo;
+  ImageModel? photo;
   List<String> memberIds;
   List<WorkspaceTag> tags;
 
@@ -41,7 +41,7 @@ class WorkspaceModel{
     String? name,
     String? description,
     bool? isPersonal,
-    Photo? photo,
+    ImageModel? photo,
     List<String>? memberIds,
     List<WorkspaceTag>? tags, 
   }) :  id = id ?? defaultWorkspace.id,
@@ -70,7 +70,7 @@ class WorkspaceModel{
     name: data['workspace_name'],
     description: data['description'],
     isPersonal: data['is_personal'],
-    photo: data['photo'] != null ? Photo.fromJson(data['photo'] as Map<String, dynamic>) : null,
+    photo: data['photo'] != null ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>) : null,
     memberIds: data['members'].cast<String>() as List<String>,
     tags: data['tags'].cast<WorkspaceTag>() as List<WorkspaceTag>,
   );

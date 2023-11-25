@@ -26,12 +26,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       final response = await http.post(Uri.parse(endPoint), body: body);
 
       int statusCode = response.statusCode;
-      debugPrint('statusCode: $statusCode');
-      debugPrint('qqqqqqq: ${response.body}');
+      // debugPrint('statusCode: $statusCode');
+      // debugPrint('qqqqqqq: ${response.body}');
+      Map<String, dynamic> jsonData = json.decode(response.body);
       if(statusCode == 200){
-        AuthTokenModel authTokenModel = AuthTokenModel.fromJson({
-          'auth-token': response.body,
-        });
+        AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
         return authTokenModel;
       }else if (statusCode == 401){
         // debugPrint(jsonData.toString());

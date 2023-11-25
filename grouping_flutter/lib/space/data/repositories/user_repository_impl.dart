@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/datasources/user_local_data_source.dart';
@@ -18,17 +17,13 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<Either<Failure, UserEntity>> getUser(int userID) async {
-    final user = await remoteDataSource.getUserData(uid: 5);
-    debugPrint(user.toString());
-    // try {
-     
-    //   // localDataSource.cacheUser(user);
-    //   // return Right(user);
-    //   return Right();
-    // } catch error on ServerException  {
-    //   return Left(ServerFailure(errorMessage: ));
-    // }
-    throw UnimplementedError();
+    try {
+     final userModel = await remoteDataSource.getUserData(uid: 5);
+      // debugPrint(user.toString());
+      return Right(UserEntity.fromModel(userModel));
+    } on ServerException catch(error) {
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    }
   }
 
   @override

@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
-import 'package:grouping_project/space/data/models/photo_model.dart';
+import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
 // import '../workspace/data_model.dart';
@@ -32,7 +32,7 @@ class AccountModel {
   String introduction;
   // String photoId;
   // Uint8List photo;
-  Photo? photo;
+  ImageModel? photo;
   List<AccountTagModel> tags;
   List<WorkspaceModel> joinedWorkspaces;
   // List<String> joinedWorkspaceIds;
@@ -70,7 +70,7 @@ class AccountModel {
     String? slogan,
     String? introduction,
     // String? photoId,
-    Photo? photo,
+    ImageModel? photo,
     List<AccountTagModel>? tags,
     List<WorkspaceModel>? joinedWorkspaces,
     List<EditableCardModel>? contributingActivities,
@@ -100,7 +100,7 @@ class AccountModel {
     String? nickname,
     String? slogan,
     String? introduction,
-    Photo? photo,
+    ImageModel? photo,
     List<AccountTagModel>? tags,
     // String? photoId,
     List<WorkspaceModel>? joinedWorkspaces,
@@ -125,37 +125,6 @@ class AccountModel {
       // associateEntityId: associateEntityId ?? this.associateEntityId,
     );
   }
-
-  /// convert `List<AccountTag>` to `List<String>` with `AccountTag.tag`
-  // List<String> _toBackendTag(List<AccountTag> accountTagList) {
-  //   List<String> processList = [];
-  //   for (AccountTag accountTag in accountTagList) {
-  //     processList.add(accountTag.tag);
-  //   }
-  //   return processList;
-  // }
-
-  /// convert `List<AccountTag>` to `List<String>` with `AccountTag.content`
-  // List<String> _toBackendTagContent(List<AccountTag> accountTagList) {
-  //   List<String> processList = [];
-  //   for (AccountTag accountTag in accountTagList) {
-  //     processList.add(accountTag.content);
-  //   }
-  //   return processList;
-  // }
-
-  /// convert two `List<String>` to `List<AccountTag>`
-  // static List<AccountTag> _fromBackendTags(
-  //     List<String> tagList, List<String> tagContentList) {
-  //   List<AccountTag> processList = [];
-  //   for (var i = 0; i < tagList.length; i++) {
-  //     if (i < tagContentList.length) {
-  //       processList
-  //           .add(AccountTag(tag: tagList[i], content: tagContentList[i]));
-  //     }
-  //   }
-  //   return processList;
-  // }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': this.id,
@@ -183,7 +152,7 @@ class AccountModel {
         introduction: data['introduction'] as String,
         // color: data['color'] as int,
         slogan: data['slogan'] as String,
-        photo: data['photo'] != null ? Photo.fromJson(data['photo'] as Map<String, dynamic>) : null,
+        photo: data['photo'] != null ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>) : null,
         tags: data['tags'].cast<AccountTagModel>() as List<AccountTagModel>,
         // tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
         //     ? _fromBackendTags(
@@ -198,34 +167,6 @@ class AccountModel {
         //     ? List.from(data['associate_entity_id'])
         //     : null
       );
-
-  /// ### collect the data in this instance which need to upload to storage
-  /// * ***DO NOT*** use this method in frontend
-  // @override
-  // Map<String, Uint8List> toStorage() {
-  //   return {if (photo != defaultAccount.photo) 'photo': photo};
-  // }
-
-  // /// ### set the data in this instance which need to downlaod from storage
-  // /// * ***DO NOT*** use this method in frontend
-  // @override
-  // void setAttributeFromStorage({required Map<String, Uint8List> data}) {
-  //   photo = data['photo'] ?? defaultAccount.photo;
-  // }
-
-  /// ### add an associate entity id to this account
-  // void addEntity(String id) {
-  //   if (associateEntityId.contains(id) == false) {
-  //     associateEntityId.add(id);
-  //   }
-  // }
-
-  /// ### remove an associate entity id to this account
-  // void removeEntity(String id) {
-  //   if (associateEntityId.contains(id) == true) {
-  //     associateEntityId.remove(id);
-  //   }
-  // }
   @override
   String toString() {
     return {

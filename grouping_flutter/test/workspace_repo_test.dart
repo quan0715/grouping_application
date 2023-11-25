@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grouping_project/space/data/datasources/workspace_repo.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
-import 'package:grouping_project/space/data/models/photo_model.dart';
+import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,7 +45,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseAccount = jsonEncode(object);
@@ -70,7 +70,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseWorkspace = jsonEncode(object);
@@ -97,7 +97,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseWorkspace = jsonEncode(object);
@@ -145,7 +145,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseAccount = jsonEncode(object);
@@ -170,7 +170,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseWorkspace = jsonEncode(object);
@@ -197,7 +197,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseAccount = jsonEncode(object);
@@ -222,7 +222,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseWorkspace = jsonEncode(object);
@@ -249,7 +249,7 @@ void main() {
           name: 'test name',
           themeColor: 0x7f2473,
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = workspace.toJson();
       final responseWorkspace = jsonEncode(object);
