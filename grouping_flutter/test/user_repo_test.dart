@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grouping_project/dashboard/data/datasources/user_repo.dart';
-import 'package:grouping_project/dashboard/data/models/account_model.dart';
-import 'package:grouping_project/dashboard/data/models/photo_model.dart';
+import 'package:grouping_project/space/data/datasources/user_remote_data_source.dart';
+import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,7 +28,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act
@@ -45,7 +45,7 @@ void main() {
           name: 'test name',
           slogan: 'test slogan',
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);
@@ -53,7 +53,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act
@@ -70,7 +70,7 @@ void main() {
           name: 'test name',
           slogan: 'test slogan',
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);
@@ -78,7 +78,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 400));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act
@@ -98,7 +98,7 @@ void main() {
           name: 'test name',
           slogan: 'test slogan',
           photo:
-              Photo(data: 'test url', photoId: -1, updateAt: DateTime.now()));
+              ImageModel(data: 'test url', imageId: -1, updateAt: DateTime.now()));
 
       Map<String, dynamic> object = account.toJson();
       final responseAccount = jsonEncode(object);
@@ -106,7 +106,7 @@ void main() {
       when(() => client.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(responseAccount, 404));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act
@@ -130,7 +130,7 @@ void main() {
       when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseAccount, 200));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act
@@ -151,7 +151,7 @@ void main() {
       when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseAccount, 400));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act
@@ -175,7 +175,7 @@ void main() {
       when(() => client.patch(any(), headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(responseAccount, 404));
 
-      final UserService userService = UserService(token: -1);
+      final UserRemoteDataSourceImpl userService = UserRemoteDataSourceImpl(token: "-1");
       userService.setClient(client);
 
       // Act

@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:grouping_project/app/presentation/views/app_view.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
 import 'package:grouping_project/auth/presentation/views/pages/welcome_message_page_view.dart';
-import 'package:grouping_project/dashboard/presentation/views/pages/user_page_view.dart';
-import 'package:grouping_project/dashboard/presentation/views/workspace_view.dart';
+import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
+import 'package:grouping_project/space/presentation/views/workspace_view.dart';
 
 final applicationRoute = GoRouter(
   routes: <RouteBase>[

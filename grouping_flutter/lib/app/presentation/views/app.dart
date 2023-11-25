@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/login_manager.dart';
 import 'package:grouping_project/app/presentation/views/routes.dart';
 import 'package:grouping_project/app/presentation/providers/theme_provider.dart';
-import 'package:grouping_project/dashboard/presentation/view_models/event_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/event_view_model.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatelessWidget{
