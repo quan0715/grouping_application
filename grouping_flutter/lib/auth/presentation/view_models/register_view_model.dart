@@ -6,6 +6,7 @@ import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dar
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/auth/domain/usecases/register_usecase.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   MessageService messageService = MessageService();
@@ -24,6 +25,10 @@ class RegisterViewModel extends ChangeNotifier {
   // bool get isPasswordConfirmValid => passwordRegisterModel.isPasswordConfirmValid;
   // bool get isUserNameValid => passwordRegisterModel.isUserNameValid;
   bool isLoading = false;
+
+  int get userId => 
+    JwtDecoder.isExpired(userAccessToken)
+    ? "" : JwtDecoder.decode(userAccessToken)["user_id"];
 
   void onEmailChange(String value) {
     registerEntity.updateEmail(value);
