@@ -32,7 +32,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        members = validated_data.pop('members', None)
+        validated_data.pop('members', None)
         photo_data = validated_data.pop('photo', None)
         tags_data = validated_data.pop('tags', None)
 
@@ -41,9 +41,6 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             workspace = Workspace.objects.create(photo=photo, **validated_data)
         else:
             workspace = Workspace.objects.create(**validated_data)
-        # add joined_workspaces for members and members for workspace
-        for member in members:
-            workspace.members.add(member.id)
 
         if tags_data:
             for tag_data in tags_data:

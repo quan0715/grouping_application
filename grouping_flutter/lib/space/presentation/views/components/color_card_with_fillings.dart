@@ -36,7 +36,7 @@ class SettingColorCardWidget extends StatelessWidget
   Widget _buildBody(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: getThemeTertiaryColor,
           borderRadius: BorderRadius.circular(borderRadius),
           border: Border(
             left: _getColoredBorder,

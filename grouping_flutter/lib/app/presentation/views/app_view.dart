@@ -4,7 +4,7 @@ import 'package:grouping_project/app/presentation/providers/login_manager.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
 import 'package:provider/provider.dart';
 
-class AppView extends StatelessWidget{
+class AppView extends StatelessWidget {
   const AppView({Key? key}) : super(key: key);
 
   @override
@@ -14,16 +14,14 @@ class AppView extends StatelessWidget{
         return FutureBuilder(
           future: loginManager.checkLoginState(),
           builder: (context, snapshot) {
-            if(snapshot.connectionState == ConnectionState.done){
-              if(!loginManager.isLogin){
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (!loginManager.isLogin) {
                 context.go('/login');
-              }
-              else{
+              } else {
                 context.go('/user/${loginManager.userAccessToken}');
               }
               return const SizedBox();
-            }
-            else{
+            } else {
               return const AuthView();
             }
           },
