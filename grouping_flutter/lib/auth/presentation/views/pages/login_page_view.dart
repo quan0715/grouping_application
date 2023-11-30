@@ -40,6 +40,18 @@ class WebLoginViewPage extends AuthLayoutInterface {
     context.go('/user/$userId');
   }
 
+  Future onPasswordLogin(BuildContext context, LoginViewModel loginManager) async {
+    if (textFormKey.currentState!.validate()) {
+      await loginManager.onPasswordLogin();
+      if (loginManager.userAccessToken.isNotEmpty) {
+        debugPrint("登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
+        if(context.mounted){
+          moveToHome(context, loginManager.userId);
+        }
+      }
+    }
+  }
+
   Widget _getInputForm() {
     return Consumer<LoginViewModel>(
       builder: (context, loginManager, child) => Padding(
@@ -53,9 +65,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: AuthTextFormField(
-                  hintText: "請輸入帳號",
-                  labelText: "你的帳號",
-                  prefixIcon: const Icon(Icons.account_circle),
+                  hintText: "請輸入註冊信箱",
+                  labelText: "你的信箱",
+                  prefixIcon: const Icon(Icons.email),
                   validator: loginManager.emailValidator,
                   onChanged: (value) => loginManager.updateEmail(value!),
                 ),
@@ -73,17 +85,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
               ),
               AppButton(
                 buttonType: AppButtonType.hightLight,
-                onPressed: () async {
-                  if (textFormKey.currentState!.validate()) {
-                    await loginManager.onPasswordLogin();
-                    if(loginManager.userAccessToken.isNotEmpty) {
-                      debugPrint("登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
-                      if(context.mounted){
-                        moveToHome(context, loginManager.userId);
-                      }
-                    }
-                  }
-                },
+                onPressed: () async => await onPasswordLogin(context, loginManager),
                 label: '登入',
               ),
               ActionTextButton(
