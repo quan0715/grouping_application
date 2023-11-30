@@ -4,13 +4,13 @@ import 'package:grouping_project/space/domain/entities/space_profile_entity.dart
 import 'package:grouping_project/space/presentation/views/components/color_card_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 
-class DrawerNavigationCard extends StatelessWidget implements WithThemePrimaryColor{
+class NavigatedProfileInfoCardButton extends StatelessWidget implements WithThemePrimaryColor{
   // TODO: will be change at future
   // it should be SpaceNavigateEntity 
   final SpaceProfileEntity profile;
   final bool isSelected;
   
-  const DrawerNavigationCard({
+  const NavigatedProfileInfoCardButton({
     super.key,
     required this.profile,
     this.isSelected = false,
@@ -41,11 +41,15 @@ class DrawerNavigationCard extends StatelessWidget implements WithThemePrimaryCo
             ProfileAvatar(
               themePrimaryColor: getThemePrimaryColor,
               label: profile.spaceName,
+              avatarSize: 35,
+              // labelFontSize: 10,
             ),
             const SizedBox(width: 10,),
             Text(
               profile.spaceName,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                fontWeight: FontWeight.bold
+              )
             ),
             const Spacer(),
             showSelectedWidget,
