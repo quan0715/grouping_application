@@ -80,7 +80,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   }
 
   @override
-  WorkspaceEntity mapToEntity() {
+  WorkspaceEntity toEntity() {
     return WorkspaceEntity(
         id: id,
         themeColor: themeColor,
@@ -88,7 +88,22 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         description: description,
         photo: photo,
         memberIds: memberIds,
-        tags: tags);
+        tags: tags,
+        isPersonal: isPersonal);
+  }
+
+  @override
+  factory WorkspaceModel.fromEntity(WorkspaceEntity entity){
+    return WorkspaceModel(
+      id: entity.id,
+      themeColor: entity.themeColor,
+      name: entity.name,
+      description: entity.description,
+      photo: entity.photo,
+      memberIds: entity.memberIds,
+      tags: entity.tags,
+      isPersonal: entity.isPersonal
+    );
   }
 
   @override
@@ -97,6 +112,5 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   }
 
   @override
-  // TODO: implement hashCode
-  int get hashCode => id!;
+  int get hashCode => Object.hash(id, name, description);
 }

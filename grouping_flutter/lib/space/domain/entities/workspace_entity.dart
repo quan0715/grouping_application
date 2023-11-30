@@ -12,6 +12,7 @@ class WorkspaceEntity {
   final List<String> memberIds;   // TODO: entity should get the name and photo of member instead of memberId
   late final List<AccountModel> members;
   final List<WorkspaceTag> tags;
+  final bool isPersonal;
 
   WorkspaceEntity(
       {required this.id,
@@ -20,5 +21,6 @@ class WorkspaceEntity {
       required this.description,
       required this.photo,
       required this.memberIds,
-      required this.tags});
+      required this.tags,
+      required this.isPersonal});
 }

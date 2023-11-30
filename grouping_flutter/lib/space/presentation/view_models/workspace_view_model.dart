@@ -4,16 +4,17 @@ import 'package:grouping_project/app/presentation/providers/message_service.dart
 // import 'package:grouping_project/View/components/workspace_chip.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/activity_repo.dart';
-import 'package:grouping_project/space/data/models/account_model.dart';
 import 'package:grouping_project/space/data/models/event_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/app/presentation/components/chips/workspace_chip.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
+import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 // import 'package:grouping_project/model/repo/workspace_repo.dart';
 
 class WorkspaceViewModel extends ChangeNotifier {
-  final WorkspaceModel _workspace; // TODO: initial
-  final AccountModel _user; // TODO: initial
+  final WorkspaceEntity _workspace; // TODO: initial
+  final UserEntity _user; // TODO: initial
 
   late final ActivityDatabaseService _databaseService; // TODO: initial
   // late UserService _userService;
@@ -23,7 +24,7 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   int _pages = 0;
 
-  WorkspaceViewModel({required WorkspaceModel workspace, required AccountModel user})
+  WorkspaceViewModel({required WorkspaceEntity workspace, required UserEntity user})
       : _workspace = workspace,
         _user = user,
         _databaseService = ActivityDatabaseService(
@@ -55,10 +56,11 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   WorkspaceChip get ownWorkspace => WorkspaceChip(workspace: _workspace);
 
+  // TODO: how to get entity instead of model
   List<WorkspaceChip> get workspaces {
     List<WorkspaceChip> tmp = [];
     for(WorkspaceModel workspace in _user.joinedWorkspaces){
-      tmp.add(WorkspaceChip(workspace: workspace));
+      tmp.add(WorkspaceChip(workspace: workspace.toEntity()));
       // debugPrint('themeColor: ${workspace.themeColor.toString()}');
     }
     return tmp;
