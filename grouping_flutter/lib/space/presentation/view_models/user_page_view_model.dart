@@ -17,6 +17,7 @@ class UserPageViewModel extends ChangeNotifier{
 
   List<SpaceProfileEntity> get userProfiles => [
     UserSpaceProfileEntity(spaceName: "張百寬 的個人儀表板", spacePhotoPicPath: "",spaceColor: const Color(0xFF7D5800)),
+    // GroupSpaceProfileEntity(spaceName: "張百寬 的個人儀表板", spacePhotoPicPath: "", spaceColor: const Color(0xFF006874)),
   ];
 
   List<SpaceProfileEntity> get workspaceProfiles => [

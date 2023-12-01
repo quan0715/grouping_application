@@ -4,6 +4,7 @@ import 'package:grouping_project/space/presentation/views/components/dashboard_a
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
+import 'package:grouping_project/space/presentation/views/frames/space_info_and_navigator_frame.dart';
 import 'package:provider/provider.dart';
 
 
@@ -16,12 +17,35 @@ class UserPageView extends StatelessWidget {
     child: _buildBody()
   );
 
+  Widget _buildDashBoard(BuildContext context, List<Widget> frames){
+    return Consumer<UserPageViewModel>(
+      builder: (context, viewModel, child) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        child: Container(
+          // color: viewModel.selectedProfile.spaceColor,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Row(
+            children: frames,
+          ),
+        ),
+      )
+    );
+  }
+
   Widget _buildBody(){
     return Consumer<UserPageViewModel>(
       builder: (context, viewModel, child) => Scaffold(
+        backgroundColor: Colors.white,
         appBar: _getAppBar(context, viewModel),
-        body: const Center(
-          child: Text('User Page'),
+        body: Center(
+          child: _buildDashBoard(context, [
+            // TODO: add frames
+            SpaceInfoAndNavigatorFrame(
+              frameColor: viewModel.selectedProfile.spaceColor,
+              frameWidth: MediaQuery.of(context).size.width * 0.2,
+            ),
+          ]),
         ),
         bottomNavigationBar: _getNavigationBar(context, viewModel),
         drawer: DashboardDrawer(
@@ -53,3 +77,5 @@ class UserPageView extends StatelessWidget {
     }
   }
 }
+
+

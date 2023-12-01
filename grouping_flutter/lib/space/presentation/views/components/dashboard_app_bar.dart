@@ -42,6 +42,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
         ProfileAvatar(
           themePrimaryColor: getThemePrimaryColor,
           label: profile.spaceName,
+          avatarSize: 35,
         ),
         const SizedBox(width: 10,),
         Text(
@@ -54,6 +55,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
 
   Widget _buildWebView(BuildContext context){
     return AppBar(
+      backgroundColor: Colors.white,
       centerTitle: false,
       leading: _getMenuButton(context),
       title: _getTitleWidget(context),
@@ -63,6 +65,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
 
   Widget _buildMobileView(BuildContext context){
     return AppBar(
+      backgroundColor: Colors.white,
       centerTitle: false,
       leading: IconButton(
         onPressed: () => Scaffold.maybeOf(context)!.openDrawer(),
