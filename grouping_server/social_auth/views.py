@@ -6,6 +6,7 @@ from .serializers import (
     LoginSerializer, LogoutSerializer, RegisterSerializer,GoogleSocialAuthSerializer, LineSocialAuthSerializer,
     GitHubSocialAuthSerializer, TokenExchangeParamSerializer)
 """
+cd grouping_server
 conda activate django_4_2_2
 python manage.py makemigrations
 python manage.py migrate

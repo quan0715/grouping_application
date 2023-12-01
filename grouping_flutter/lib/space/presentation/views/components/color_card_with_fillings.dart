@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/core/shared/color_widget_interface.dart';
 
-class SettingColorCardWidget extends StatelessWidget
-    implements WithThemeSettingColor {
-  final Color secondaryColor;
-  final Color tertiaryColor;
+class ColorFillingCardWidget extends StatelessWidget {
+  final Color titleColor;
+  final Color fillingColor;
   final Widget? child;
   final double borderRadius;
   final EdgeInsets padding;
-  @override
-  Color get getThemeSecondaryColor => secondaryColor;
-  @override
-  Color get getThemeTertiaryColor => tertiaryColor;
+  final String title;
+  final String content;
 
-  const SettingColorCardWidget({
+  const ColorFillingCardWidget({
     super.key,
-    required this.secondaryColor,
-    required this.tertiaryColor,
+    required this.titleColor,
+    required this.fillingColor,
+    required this.title,
+    required this.content,
     this.child,
     this.borderRadius = 5,
     this.padding = const EdgeInsets.symmetric(
@@ -28,25 +26,28 @@ class SettingColorCardWidget extends StatelessWidget
   @override
   Widget build(BuildContext context) => _buildBody(context);
 
-  BorderSide get _getColoredBorder => BorderSide(
-        color: getThemeSecondaryColor,
-        width: 1,
-      );
-
   Widget _buildBody(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: getThemeTertiaryColor,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border(
-            left: _getColoredBorder,
-            right: _getColoredBorder,
-            top: _getColoredBorder,
-            bottom: _getColoredBorder,
-          )),
+        color: fillingColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
       child: Padding(
         padding: padding,
-        child: child,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title,
+                style: TextStyle(
+                    color: titleColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold)),
+            Text(content,
+                style:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
+          ]),
+          child ?? const SizedBox()
+        ]),
       ),
     );
   }

@@ -7,6 +7,7 @@ abstract class WithThemePrimaryColor {
 
 // TODO: check it this is ok
 abstract class WithThemeSettingColor {
-  Color get getThemeSecondaryColor;
-  Color get getThemeTertiaryColor;
+  Color get getTitleColor;
+  Color get getBoxFillingColor;
+  Color get getBackGroundColor;
 }
