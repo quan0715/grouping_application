@@ -70,6 +70,7 @@ dependencies:
   dartz: ^0.10.1
   shared_preferences: ^2.2.2
   jwt_decoder: ^2.0.1
+  gap: ^3.0.1
 
 
 dev_dependencies:
