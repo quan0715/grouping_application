@@ -41,7 +41,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     };
   }
 
-  // / 設定當前 UserService 要對後端傳遞的**客戶(client)** 
+  /// 設定當前 UserService 要對後端傳遞的**客戶(client)** 
   void setClient(http.Client client) {
     _client = client;
   }
