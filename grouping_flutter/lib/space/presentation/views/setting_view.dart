@@ -18,7 +18,7 @@ class SettingView extends StatefulWidget implements WithThemeSettingColor {
   Color get getTitleColor =>
       Color.lerp(Color(viewModel.currentWorkspaceColor), Colors.black, 0.15)!;
   @override
-  Color get getBoxFillingColor =>
+  Color get getTextBoxFillingColor =>
       Color.lerp(Color(viewModel.currentWorkspaceColor), Colors.white, 0.9)!;
   @override
   Color get getBackGroundColor =>
@@ -28,7 +28,7 @@ class SettingView extends StatefulWidget implements WithThemeSettingColor {
     List<ColorFillingCardWidget> tmp = [
       ColorFillingCardWidget(
         // TODO: change this into workspace color
-        fillingColor: getBoxFillingColor,
+        fillingColor: getTextBoxFillingColor,
         titleColor: getTitleColor,
         title: "帳號登出",
         content: "登出此帳號",
@@ -64,7 +64,9 @@ class _SettingViewState extends State<SettingView> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 80),
+              padding: EdgeInsets.symmetric(
+                  vertical: 30,
+                  horizontal: MediaQuery.of(context).size.width * 0.06),
               child: Column(children: widget.accountSetting),
             )));
   }

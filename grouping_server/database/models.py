@@ -19,6 +19,8 @@ class UserManager(BaseUserManager):
         user = self.model(account=account)
         user.set_password(password)
         user.user_name = user_name
+        user.real_name = ""
+        user.slogan = ""
         user.introduction = introduction
         user.photo_id = user.id
         user.save()
@@ -45,9 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     account = models.CharField(max_length=20, unique=True, verbose_name="帳號")
     password = models.CharField(max_length=20, verbose_name="密碼")
 
-    # real_name = models.CharField(max_length=20, verbose_name="真實名稱")
+    real_name = models.CharField(max_length=20, verbose_name="真實名稱")
     user_name = models.CharField(max_length=20, verbose_name="用戶名稱")
-    # slogan = models.CharField(max_length=20, verbose_name="座右銘")
+    slogan = models.CharField(max_length=20, verbose_name="座右銘")
     introduction = models.TextField(verbose_name="簡介")
     photo = models.ForeignKey(
         Image, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="頭像")

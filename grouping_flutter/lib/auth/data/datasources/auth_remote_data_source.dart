@@ -7,15 +7,15 @@ import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:http/http.dart' as http;
 
-abstract class AuthRemoteDataSource{
+abstract class AuthRemoteDataSource {
   Future<AuthTokenModel> passwordLogin(LoginEntity loginEntity);
   Future<AuthTokenModel> register(RegisterEntity registerEntity);
-
+  //TODO: after pass the refresh token to front-end, logout should make the refresh token added into black list
 }
 
-class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
-  Future<AuthTokenModel> passwordLogin(LoginEntity loginEntity) async{
+  Future<AuthTokenModel> passwordLogin(LoginEntity loginEntity) async {
     try {
       String endPoint = EndPointGetter.getAuthBackendEndpoint('signin');
 
@@ -29,14 +29,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       // debugPrint('statusCode: $statusCode');
       // debugPrint('qqqqqqq: ${response.body}');
       Map<String, dynamic> jsonData = json.decode(response.body);
-      if(statusCode == 200){
+      if (statusCode == 200) {
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
         return authTokenModel;
-      }else if (statusCode == 401){
+      } else if (statusCode == 401) {
         // debugPrint(jsonData.toString());
         Map<String, dynamic> jsonData = json.decode(response.body);
         throw ServerException(exceptionMessage: jsonData['error']);
-      }else{
+      } else {
         throw ServerException(exceptionMessage: 'response status: $statusCode');
       }
     } catch (e) {
@@ -48,7 +48,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
   }
 
   @override
-  Future<AuthTokenModel> register(RegisterEntity entity) async{
+  Future<AuthTokenModel> register(RegisterEntity entity) async {
     try {
       String endPoint = EndPointGetter.getAuthBackendEndpoint('register');
       // FIX ME: use email or accountName?
@@ -62,17 +62,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       int statusCode = response.statusCode;
       debugPrint('statusCode: $statusCode');
       // debugPrint(response.body);
-      if(statusCode == 200){
+      if (statusCode == 200) {
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson({
           'auth-token': response.body,
         });
         return authTokenModel;
-      }else if (statusCode == 401){
+      } else if (statusCode == 401) {
         // debugPrint(jsonData.toString());
         Map<String, dynamic> jsonData = json.decode(response.body);
         debugPrint(jsonData.toString());
         throw ServerException(exceptionMessage: jsonData['error']);
-      }else{
+      } else {
         throw ServerException(exceptionMessage: 'response status: $statusCode');
       }
     } catch (e) {
