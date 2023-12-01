@@ -69,6 +69,6 @@ class UserPageViewModel extends ChangeNotifier{
 
   Future<void> init() async{
     debugPrint("UserPageViewModel init");
-    await getCurrentUser(5);
+    await getCurrentUser(1);
   }
 }

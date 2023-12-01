@@ -43,7 +43,7 @@ class UserPageView extends StatelessWidget {
             // TODO: add frames
             SpaceInfoAndNavigatorFrame(
               frameColor: viewModel.selectedProfile.spaceColor,
-              frameWidth: MediaQuery.of(context).size.width * 0.2,
+              frameWidth: MediaQuery.of(context).size.width * 0.25,
             ),
           ]),
         ),
