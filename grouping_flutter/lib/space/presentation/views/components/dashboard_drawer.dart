@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
-import 'package:grouping_project/space/presentation/views/components/drawer_navigation_card.dart';
+import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 
 class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
@@ -82,7 +82,7 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
           const SizedBox(height: 5,),
           ...userProfiles.map((profile) => Padding(
             padding: _blockPadding,
-            child: DrawerNavigationCard (profile: profile, isSelected: profile == selectedProfile,),
+            child: NavigatedProfileInfoCardButton (profile: profile, isSelected: profile == selectedProfile,),
           )),
         ],
       ),
@@ -99,7 +99,7 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
           const SizedBox(height: 5,),
           ...workspaceProfiles.map((profile) => Padding(
             padding: _blockPadding,
-            child: DrawerNavigationCard (profile: profile, isSelected: profile == selectedProfile,),
+            child: NavigatedProfileInfoCardButton (profile: profile, isSelected: profile == selectedProfile,),
           )),
         ],
       ),
