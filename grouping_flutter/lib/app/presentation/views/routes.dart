@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
-import 'package:grouping_project/app/presentation/views/app_view.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
-import 'package:grouping_project/auth/presentation/views/pages/welcome_message_page_view.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
-import 'package:grouping_project/space/presentation/views/workspace_view.dart';
-import 'package:provider/provider.dart';
+import 'package:grouping_project/space/presentation/views/pages/workspace_page_view.dart';
 
 
 
@@ -48,7 +45,7 @@ class AppRouter {
           path: '/workspace/:workspaceId',
           builder: (BuildContext context, GoRouterState state) {
             // debugPrint(state.pathParameters['workspaceId'].toString());
-            return const WorkspaceView();
+            return const WorkspacePageView();
           },
         ),
       ],

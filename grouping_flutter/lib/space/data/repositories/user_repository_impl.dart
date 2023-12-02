@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
-import 'package:grouping_project/space/data/datasources/user_local_data_source.dart';
-import 'package:grouping_project/space/data/datasources/user_remote_data_source.dart';
+import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
+import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/repositories/user_repository.dart';
 

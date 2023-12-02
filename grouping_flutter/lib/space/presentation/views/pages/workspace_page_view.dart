@@ -1,43 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/providers/token_manager.dart';
-import 'package:grouping_project/auth/data/models/auth_token_model.dart';
+import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
-import 'package:grouping_project/space/presentation/views/frames/space_info_and_navigator_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/workspace_info_and_navigator_frame.dart';
 import 'package:provider/provider.dart';
 
 
-class UserPageView extends StatefulWidget {
-  const UserPageView({super.key});
-
+class WorkspacePageView extends StatelessWidget {
+  const WorkspacePageView({super.key});
+  
   @override
-  State<UserPageView> createState() => _UserPageViewState();
-}
-
-class _UserPageViewState extends State<UserPageView> {
-
-  late final UserPageViewModel viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    viewModel = UserPageViewModel(
-      tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel
-    );
-    viewModel.init();
-  }
-
-  @override
-  Widget build(BuildContext context) => ChangeNotifierProvider<UserPageViewModel>.value(
-    value: viewModel,
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+    create: (context) => WorkspaceViewModel()..init(),
     child: _buildBody()
   );
 
   Widget _buildDashBoard(BuildContext context, List<Widget> frames){
-    return Consumer<UserPageViewModel>(
+    return Consumer<WorkspaceViewModel>(
       builder: (context, viewModel, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         child: Container(
@@ -53,44 +35,49 @@ class _UserPageViewState extends State<UserPageView> {
   }
 
   Widget _buildBody(){
-    return Consumer<UserPageViewModel>(
-      builder: (context, viewModel, child) => Scaffold(
+    return Consumer2<UserPageViewModel, WorkspaceViewModel>(
+      builder: (context, userVM, workspaceVM, child) => Scaffold(
         backgroundColor: Colors.white,
-        appBar: _getAppBar(context, viewModel),
+        appBar: _getAppBar(context, workspaceVM),
         body: Center(
           child: _buildDashBoard(context, [
-            // TODO: create and add other frame into 
-            SpaceInfoAndNavigatorFrame(
-              frameColor: viewModel.selectedProfile.spaceColor,
+            // TODO: add frames
+            // SpaceInfoAndNavigatorFrame(
+            //   frameColor: userVM.selectedProfile.spaceColor,
+            //   frameWidth: MediaQuery.of(context).size.width * 0.25,
+            // ),
+            WorkspaceInfoAndNavigatorFrame(
+              workspace: workspaceVM.getEntity(),
+              frameColor: workspaceVM.workspaceProfile.spaceColor,
               frameWidth: MediaQuery.of(context).size.width * 0.25,
-            ),
+            )
           ]),
         ),
-        bottomNavigationBar: _getNavigationBar(context, viewModel),
+        bottomNavigationBar: _getNavigationBar(context, workspaceVM),
         drawer: DashboardDrawer(
-          selectedProfile: viewModel.selectedProfile,
-          userProfiles: viewModel.userProfiles,
-          workspaceProfiles: viewModel.workspaceProfiles,
+          selectedProfile: userVM.selectedProfile,
+          userProfiles: userVM.userProfiles,
+          workspaceProfiles: userVM.workspaceProfiles,
         ),
       ),
     );
   }
 
-  DashboardAppBar _getAppBar(BuildContext context, UserPageViewModel viewModel){
+  DashboardAppBar _getAppBar(BuildContext context, WorkspaceViewModel viewModel){
     return DashboardAppBar(
       // color: viewModel.selectedProfile.spaceColor,
-      profile: viewModel.selectedProfile,
+      profile: viewModel.workspaceProfile,
     );
   }
-
-  Widget? _getNavigationBar(BuildContext context, UserPageViewModel viewModel){
+  
+  Widget? _getNavigationBar(BuildContext context, WorkspaceViewModel viewModel){
     if(kIsWeb){
       return null;
     }else{
       debugPrint("is not web, return bottom navigation bar");
       return MobileBottomNavigationBar(
           currentIndex: viewModel.currentPageIndex,
-          themePrimaryColor: viewModel.selectedProfile.spaceColor,
+          themePrimaryColor: viewModel.workspaceProfile.spaceColor,
           onTap: (index) => viewModel.updateCurrentIndex(index),
       );
     }
