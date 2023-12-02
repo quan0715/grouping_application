@@ -4,7 +4,7 @@ import 'package:grouping_project/app/presentation/views/app_view.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
 import 'package:grouping_project/auth/presentation/views/pages/welcome_message_page_view.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
-import 'package:grouping_project/space/presentation/views/workspace_view.dart';
+import 'package:grouping_project/space/presentation/views/pages/workspace_page_view.dart';
 
 final applicationRoute = GoRouter(
   routes: <RouteBase>[
@@ -12,6 +12,7 @@ final applicationRoute = GoRouter(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return const AppView();
+        // return const WorkspaceView();
       },
       routes: <RouteBase>[
         GoRoute(
@@ -43,7 +44,7 @@ final applicationRoute = GoRouter(
           path: 'workspace/:workspaceId',
           builder: (BuildContext context, GoRouterState state) {
             // debugPrint(state.pathParameters['workspaceId'].toString());
-            return const WorkspaceView();
+            return const WorkspacePageView();
           },
         ),
       ],
