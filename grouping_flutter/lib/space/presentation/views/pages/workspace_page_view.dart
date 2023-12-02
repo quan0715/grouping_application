@@ -5,6 +5,7 @@ import 'package:grouping_project/space/presentation/views/components/dashboard_a
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
+import 'package:grouping_project/space/presentation/views/frames/workspace_info_and_navigator_frame.dart';
 import 'package:provider/provider.dart';
 
 
@@ -17,164 +18,70 @@ class WorkspacePageView extends StatelessWidget {
     child: _buildBody()
   );
 
-  Widget _buildBody(){
-    return Consumer<UserPageViewModel>(
-      builder: (context, viewModel, child) => Scaffold(
-        appBar: _getAppBar(context, viewModel),
-        body: const Center(
-          child: Text('Workspace Page'),
+  Widget _buildDashBoard(BuildContext context, List<Widget> frames){
+    return Consumer<WorkspaceViewModel>(
+      builder: (context, viewModel, child) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        child: Container(
+          // color: viewModel.selectedProfile.spaceColor,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Row(
+            children: frames,
+          ),
         ),
-        bottomNavigationBar: _getNavigationBar(context, viewModel),
+      )
+    );
+  }
+
+  Widget _buildBody(){
+    return Consumer2<UserPageViewModel, WorkspaceViewModel>(
+      builder: (context, userVM, workspaceVM, child) => Scaffold(
+        backgroundColor: Colors.white,
+        appBar: _getAppBar(context, workspaceVM),
+        body: Center(
+          child: _buildDashBoard(context, [
+            // TODO: add frames
+            // SpaceInfoAndNavigatorFrame(
+            //   frameColor: userVM.selectedProfile.spaceColor,
+            //   frameWidth: MediaQuery.of(context).size.width * 0.25,
+            // ),
+            WorkspaceInfoAndNavigatorFrame(
+              workspace: workspaceVM.getEntity(),
+              frameColor: workspaceVM.workspaceProfile.spaceColor,
+              frameWidth: MediaQuery.of(context).size.width * 0.25,
+            )
+          ]),
+        ),
+        bottomNavigationBar: _getNavigationBar(context, workspaceVM),
         drawer: DashboardDrawer(
-          selectedProfile: viewModel.selectedProfile,
-          userProfiles: viewModel.userProfiles,
-          workspaceProfiles: viewModel.workspaceProfiles,
+          selectedProfile: userVM.selectedProfile,
+          userProfiles: userVM.userProfiles,
+          workspaceProfiles: userVM.workspaceProfiles,
         ),
       ),
     );
   }
 
-  DashboardAppBar _getAppBar(BuildContext context, UserPageViewModel viewModel){
+  DashboardAppBar _getAppBar(BuildContext context, WorkspaceViewModel viewModel){
     return DashboardAppBar(
       // color: viewModel.selectedProfile.spaceColor,
-      profile: viewModel.selectedProfile,
+      profile: viewModel.workspaceProfile,
     );
   }
   
-  Widget? _getNavigationBar(BuildContext context, UserPageViewModel viewModel){
+  Widget? _getNavigationBar(BuildContext context, WorkspaceViewModel viewModel){
     if(kIsWeb){
       return null;
     }else{
       debugPrint("is not web, return bottom navigation bar");
       return MobileBottomNavigationBar(
           currentIndex: viewModel.currentPageIndex,
-          themePrimaryColor: viewModel.selectedProfile.spaceColor,
+          themePrimaryColor: viewModel.workspaceProfile.spaceColor,
           onTap: (index) => viewModel.updateCurrentIndex(index),
       );
     }
   }
 }
 
-// import 'package:flutter/material.dart';
-// import 'package:grouping_project/space/data/models/event_model.dart';
-// import 'package:grouping_project/space/data/models/mission_model.dart';
-// import 'package:grouping_project/space/data/models/workspace_model.dart';
-// import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
-// import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
-// import 'package:grouping_project/space/presentation/views/activity_view.dart';
-// import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
-// import 'package:grouping_project/space/presentation/views/message.view.dart';
-// import 'package:grouping_project/space/presentation/views/pages/dashboard_subpage_view.dart';
-// import 'package:grouping_project/space/presentation/views/setting_view.dart';
-// // import 'package:grouping_project/View/shared/components/components.dart';
-// import 'package:grouping_project/space/data/models/account_model.dart';
-// import 'package:provider/provider.dart';
 
-// class WorkspaceView extends StatefulWidget {
-//   const WorkspaceView({Key? key}) : super(key: key);
-
-//   @override
-//   State<WorkspaceView> createState() => _WorkspaceViewState();
-// }
-
-// class _WorkspaceViewState extends State<WorkspaceView> {
-//   @override
-//   Widget build(BuildContext context) {
-//     // this is test-use data
-//     // WorkspaceModel current = WorkspaceModel(name: '張', themeColor: 0xFF7D5800);
-
-//     WorkspaceModel current =
-//         WorkspaceModel(name: 'test workspace', themeColor: 0xFF7D5800);
-//     WorkspaceEntity workspace = current.toEntity();
-//     EventModel event = EventModel(title: 'test event');
-//     MissionModel mission = MissionModel(title: 'test mission');
-//     AccountModel currentUser = AccountModel(
-//         name: 'I am a cat',
-//         nickname: 'cat',
-//         account: 'asdf',
-//         joinedWorkspaces: [current],
-//         contributingActivities: [event, mission]);
-//     // UserEntity account = UserEntity.fromModel(currentUser);
-//     // end of test
-
-//     return ChangeNotifierProvider<WorkspaceViewModel>(
-//       create: (context) =>
-//           WorkspaceViewModel()..init(),
-//       child: Consumer<WorkspaceViewModel>(
-//         builder: (context, viewModel, child) {
-//           List<Widget> pages = [
-//             DashboardView(viewModel: viewModel),
-//             ActivityView(viewModel: viewModel),
-//             MessageView(viewModel: viewModel),
-//             SettingView(viewModel: viewModel),
-//           ];
-//           return Scaffold(
-//               drawer: Drawer(
-//                 child: Padding(
-//                   padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: <Widget>[
-//                           const Text(
-//                             'User',
-//                             style: TextStyle(
-//                                 fontWeight: FontWeight.bold, fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 10,
-//                           ),
-//                           viewModel.ownWorkspace,
-//                           const SizedBox(
-//                             height: 15,
-//                           ),
-//                           Text(
-//                             '工作小組 (${viewModel.workspaceNumber})',
-//                             style: const TextStyle(
-//                                 fontWeight: FontWeight.bold, fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 10,
-//                           ),
-//                         ] +
-//                         viewModel.workspaces,
-//                   ),
-//                 ),
-//               ),
-//               appBar: AppBar(
-//                 automaticallyImplyLeading: false,
-//                 title: const Text('張百寬的工作區'),
-//                 centerTitle: false,
-//                 titleSpacing: 5,
-//                 titleTextStyle: const TextStyle(
-//                   fontSize: 16,
-//                   color: Colors.black,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//                 leadingWidth: 50,
-//                 leading: const Padding(
-//                   padding: EdgeInsets.all(6.0),
-//                   child: CircleAvatar(
-//                     radius: 16,
-//                     child: Text("張"),
-//                   ),
-//                 ),
-//                 actions: [
-//                   Builder(builder: (context) {
-//                     return IconButton(
-//                       onPressed: () => Scaffold.maybeOf(context)!.openDrawer(),
-//                       icon: const Icon(Icons.menu),
-//                     );
-//                   }),
-//                 ],
-//               ),
-//               body: pages[viewModel.getPage()],
-//               bottomNavigationBar: MobileBottomNavigationBar(
-//                 currentIndex: viewModel.getPage(),
-//                 themePrimaryColor: Colors.amber,
-//                 onTap: (index) => viewModel.setPage(index),
-//               ));
-//         },
-//       ),
-//     );
-//   }
-// }

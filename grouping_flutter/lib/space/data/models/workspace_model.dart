@@ -11,7 +11,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   String description;
   bool isPersonal;
   ImageModel? photo;
-  List<String> memberIds;
+  List<int> memberIds;
   List<EditableCardModel> contributingActivities;
   List<WorkspaceTag> tags;
 
@@ -35,7 +35,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
     String? description,
     bool? isPersonal,
     ImageModel? photo,
-    List<String>? memberIds,
+    List<int>? memberIds,
     List<EditableCardModel>? contributingActivities,
     List<WorkspaceTag>? tags,
   })  : id = id ?? defaultWorkspace.id,
@@ -66,7 +66,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
     description: data['description'],
     isPersonal: data['is_personal'],
     photo: data['photo'] != null ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>) : null,
-    memberIds: data['members'].cast<String>() as List<String>,
+    memberIds: data['members'].cast<String>() as List<int>,
     tags: data['tags'].cast<WorkspaceTag>() as List<WorkspaceTag>,
   );
 

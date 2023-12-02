@@ -1,7 +1,7 @@
-import 'package:grouping_project/space/data/models/account_model.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_tag_model.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 
 class WorkspaceEntity {
@@ -10,8 +10,9 @@ class WorkspaceEntity {
   final String name;
   final String description;
   final ImageModel? photo;
-  final List<String> memberIds;   // TODO: entity should get the name and photo of member instead of memberId
-  late final List<AccountModel> members;
+  final List<int> memberIds;
+  // late final List<AccountModel> members;
+  late final List<UserEntity> members;
   final List<EditableCardModel> contributingActivities;
   final List<WorkspaceTag> tags;
   final bool isPersonal;
