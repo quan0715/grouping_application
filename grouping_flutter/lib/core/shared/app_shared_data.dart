@@ -1,7 +1,7 @@
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 
-class SharedPrefs {
+class AppSharedData {
   static late final SharedPreferencesPlugin _instance;
 
   static SharedPreferencesPlugin get instance => _instance;

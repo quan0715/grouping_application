@@ -11,7 +11,6 @@ import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/oauth_base_service.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();

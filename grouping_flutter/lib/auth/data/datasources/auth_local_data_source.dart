@@ -1,6 +1,6 @@
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
-import 'package:grouping_project/core/shared/shared_prefs.dart';
+import 'package:grouping_project/core/shared/app_shared_data.dart';
 
 
 
@@ -16,7 +16,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   
   @override
   Future<void>? cacheToken(AuthTokenModel? tokenModel) async{
-    final sharedPreferences = SharedPrefs.instance;
+    final sharedPreferences = AppSharedData.instance;
     if(tokenModel?.token == null){
       throw CacheException(
         exceptionMessage: 'cache Token is null',
@@ -26,14 +26,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         exceptionMessage: 'cache Token is expired',
       );
     } else{
-      await sharedPreferences.setValue("String", 'auth-token', tokenModel!.token);
+      await sharedPreferences.setValue("String", 'auth-token', tokenModel.token);
     }
   }
   
   @override
   Future<AuthTokenModel> getCacheToken() async {
     // String? token = await storage.read(key: 'auth-token');
-    final sharedPreferences = SharedPrefs.instance;
+    final sharedPreferences = AppSharedData.instance;
     final tokenString = (await sharedPreferences.getAllWithPrefix(''))['auth-token'] ?? "";
 
     // debugPrint('get token from cache $data');
@@ -55,7 +55,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   
   @override
   Future<void> clearCacheToken() async {
-    final sharedPreferences = SharedPrefs.instance;
+    final sharedPreferences = AppSharedData.instance;
     await sharedPreferences.remove('auth-token');
   }
   

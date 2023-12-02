@@ -6,7 +6,6 @@ import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dar
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/auth/domain/usecases/register_usecase.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   MessageService messageService = MessageService();
