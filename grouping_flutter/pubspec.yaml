@@ -71,6 +71,7 @@ dependencies:
   shared_preferences: ^2.2.2
   jwt_decoder: ^2.0.1
   gap: ^3.0.1
+  shared_preferences_web: ^2.2.1
 
 
 dev_dependencies:

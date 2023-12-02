@@ -29,9 +29,7 @@ class LoginViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-  int get userId => 
-    JwtDecoder.isExpired(userAccessToken)
-    ? "" : JwtDecoder.decode(userAccessToken)["user_id"];
+
   // LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {

@@ -18,7 +18,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, UserEntity>> getUser(int userID) async {
     try {
-     final userModel = await remoteDataSource.getUserData(uid: 5);
+     final userModel = await remoteDataSource.getUserData(uid: userID);
       // debugPrint(user.toString());
       return Right(UserEntity.fromModel(userModel));
     } on ServerException catch(error) {

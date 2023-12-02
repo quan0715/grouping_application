@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
+import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
@@ -8,12 +10,29 @@ import 'package:grouping_project/space/presentation/views/frames/space_info_and_
 import 'package:provider/provider.dart';
 
 
-class UserPageView extends StatelessWidget {
+class UserPageView extends StatefulWidget {
   const UserPageView({super.key});
-  
+
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-    create: (context) => UserPageViewModel()..init(),
+  State<UserPageView> createState() => _UserPageViewState();
+}
+
+class _UserPageViewState extends State<UserPageView> {
+
+  late final UserPageViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = UserPageViewModel(
+      tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel
+    );
+    viewModel.init();
+  }
+
+  @override
+  Widget build(BuildContext context) => ChangeNotifierProvider<UserPageViewModel>.value(
+    value: viewModel,
     child: _buildBody()
   );
 
@@ -40,7 +59,7 @@ class UserPageView extends StatelessWidget {
         appBar: _getAppBar(context, viewModel),
         body: Center(
           child: _buildDashBoard(context, [
-            // TODO: add frames
+            // TODO: create and add other frame into 
             SpaceInfoAndNavigatorFrame(
               frameColor: viewModel.selectedProfile.spaceColor,
               frameWidth: MediaQuery.of(context).size.width * 0.2,
@@ -63,7 +82,7 @@ class UserPageView extends StatelessWidget {
       profile: viewModel.selectedProfile,
     );
   }
-  
+
   Widget? _getNavigationBar(BuildContext context, UserPageViewModel viewModel){
     if(kIsWeb){
       return null;

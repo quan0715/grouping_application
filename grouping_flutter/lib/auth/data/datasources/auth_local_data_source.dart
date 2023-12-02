@@ -1,6 +1,6 @@
-import 'package:grouping_project/auth/data/models/sub_model.dart';
+import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:grouping_project/core/shared/shared_prefs.dart';
 
 
 
@@ -13,43 +13,50 @@ abstract class AuthLocalDataSource {
 // const cachedPokemon = 'CACHED_POKEMON';
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  // final FlutterSecureStorage storage;
-
-  AuthLocalDataSourceImpl();
   
   @override
   Future<void>? cacheToken(AuthTokenModel? tokenModel) async{
-    final sharedPreferences = await SharedPreferences.getInstance();
+    final sharedPreferences = SharedPrefs.instance;
     if(tokenModel?.token == null){
       throw CacheException(
         exceptionMessage: 'cache Token is null',
       );
-    }else{
-      // debugPrint('write token to cache ${tokenModel!.token}');
-      await sharedPreferences.setString('auth-token', tokenModel!.token);
-      // await storage.write(key: 'auth-token', value: tokenModel!.token);
+    }else if(tokenModel!.isExpired){
+      throw CacheException(
+        exceptionMessage: 'cache Token is expired',
+      );
+    } else{
+      await sharedPreferences.setValue("String", 'auth-token', tokenModel!.token);
     }
   }
   
   @override
   Future<AuthTokenModel> getCacheToken() async {
     // String? token = await storage.read(key: 'auth-token');
-    final sharedPreferences = await SharedPreferences.getInstance();
-    final token = sharedPreferences.getString('auth-token');
-    // debugPrint('get token from cache $token');
-    if (token != null) {
-      return AuthTokenModel(token: token);
-    } else {
+    final sharedPreferences = SharedPrefs.instance;
+    final tokenString = (await sharedPreferences.getAllWithPrefix(''))['auth-token'] ?? "";
+
+    // debugPrint('get token from cache $data');
+    final tokenModel = AuthTokenModel(token: tokenString as String);
+    // debugPrint('get token from cache $tokenModel');
+    if (tokenModel.token.isEmpty) {
       throw CacheException(
-        exceptionMessage: 'Token is null',
+        exceptionMessage: 'cache Token is empty',
       );
+    }
+    else if(tokenModel.isExpired){
+      throw CacheException(
+        exceptionMessage: 'cache Token is expired',
+      );
+    } else {
+      return tokenModel;
     }
   }
   
   @override
   Future<void> clearCacheToken() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.clear();
+    final sharedPreferences = SharedPrefs.instance;
+    await sharedPreferences.remove('auth-token');
   }
   
 }

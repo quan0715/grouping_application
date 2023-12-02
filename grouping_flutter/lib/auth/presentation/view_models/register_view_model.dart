@@ -26,10 +26,6 @@ class RegisterViewModel extends ChangeNotifier {
   // bool get isUserNameValid => passwordRegisterModel.isUserNameValid;
   bool isLoading = false;
 
-  int get userId => 
-    JwtDecoder.isExpired(userAccessToken)
-    ? "" : JwtDecoder.decode(userAccessToken)["user_id"];
-
   void onEmailChange(String value) {
     registerEntity.updateEmail(value);
     notifyListeners();

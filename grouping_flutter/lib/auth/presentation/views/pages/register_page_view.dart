@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/auth/presentation/view_models/register_view_model.dart';
 import 'package:grouping_project/auth/presentation/views/components/action_text_button.dart';
 import 'package:grouping_project/auth/presentation/views/components/auth_layout.dart';
@@ -27,10 +28,19 @@ class RegisterViewPage extends AuthLayoutInterface{
     context.go('/login');
     // Navigator.pushNamed(context, '/login');
   }
-
-  void moveToUserPage(BuildContext context, int userId) {
-    debugPrint("前往歡迎頁面");
-    context.go('/user/$userId');
+  
+  void onRegister(RegisterViewModel registerManager, BuildContext context) async {
+    if (textFormKey.currentState!.validate()) {
+      await registerManager.register();
+      if(registerManager.userAccessToken.isNotEmpty){
+        debugPrint("註冊成功");
+        await Future.delayed(const Duration(seconds: 2), () => debugPrint("註冊成功，即將跳轉頁面"));
+        if(context.mounted){
+          debugPrint("前往主畫面");
+          await Provider.of<TokenManager>(context, listen: false).updateToken();
+        }
+      }
+    }
   }
 
 
@@ -87,18 +97,7 @@ class RegisterViewPage extends AuthLayoutInterface{
               ),
               AppButton(
                 buttonType: AppButtonType.hightLight,
-                onPressed: () async {
-                  if (textFormKey.currentState!.validate()) {
-                    await registerManager.register();
-                    if(registerManager.userAccessToken.isNotEmpty){
-                      debugPrint("註冊成功");
-                      await Future.delayed(const Duration(seconds: 2), () => debugPrint("註冊成功，即將跳轉頁面"));
-                      if(context.mounted){
-                        moveToUserPage(context, registerManager.userId);
-                      }
-                    }
-                  }
-                },
+                onPressed: () => onRegister(registerManager, context),
                 label: '註冊',
               ),
               ActionTextButton(
