@@ -69,7 +69,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     final response = await _client.get(apiUri, headers: headers);
     switch (response.statusCode) {
         case 200:
-          return AccountModel.fromJson(data: jsonDecode(response.body));
+        // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
+          return AccountModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
         case 400:
           throw ServerException(exceptionMessage: "Invalid Syntax");
         case 404:
