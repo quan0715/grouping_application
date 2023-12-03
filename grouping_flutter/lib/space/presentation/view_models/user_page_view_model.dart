@@ -94,6 +94,7 @@ class UserPageViewModel extends ChangeNotifier {
   Future<void> init() async {
     //TODO:init with
     debugPrint("UserPageViewModel init");
-    await getCurrentUser(JwtDecoder.decode(await getAccessToken())["user_id"]);
+    final String token = await getAccessToken();
+    await getCurrentUser(JwtDecoder.decode(token)["user_id"]);
   }
 }

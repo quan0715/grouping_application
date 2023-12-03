@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 abstract class AuthRemoteDataSource {
   Future<AuthTokenModel> passwordLogin(LoginEntity loginEntity);
   Future<AuthTokenModel> register(RegisterEntity registerEntity);
-  //TODO: after pass the refresh token to front-end, logout should make the refresh token added into black list
+  Future<void> logout(AuthTokenModel authTokenModel);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -51,13 +51,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<AuthTokenModel> register(RegisterEntity entity) async {
     try {
       String endPoint = EndPointGetter.getAuthBackendEndpoint('register');
-      // FIX ME: use email or accountName?
       Map<String, String> body = {
         'account': entity.email,
         'password': entity.password,
         'username': entity.userName,
       };
-      final response = await http.post(Uri.parse(endPoint), body: body);
+      final response = await http.post(
+        Uri.parse(endPoint),
+        body: body,
+      );
 
       int statusCode = response.statusCode;
       debugPrint('statusCode: $statusCode');
@@ -77,6 +79,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
     } catch (e) {
       // debugPrint(e.toString());
+      throw ServerException(
+        exceptionMessage: e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<void> logout(AuthTokenModel authTokenModel) async {
+    try {
+      String endPoint = EndPointGetter.getAuthBackendEndpoint('logout');
+
+      Map<String, String> headers = {
+        "Authorization": "Bearer ${authTokenModel.token}",
+      };
+      Map<String, String> body = {'refresh_token': authTokenModel.refresh};
+      debugPrint(body.toString());
+
+      final response =
+          await http.post(Uri.parse(endPoint), body: body, headers: headers);
+
+      int statusCode = response.statusCode;
+      debugPrint('statusCode: $statusCode');
+      if (statusCode == 200) {
+        return;
+      } else if (statusCode == 400) {
+        // debugPrint(jsonData.toString());
+        Map<String, dynamic> jsonData = json.decode(response.body);
+        debugPrint(jsonData.toString());
+        throw ServerException(exceptionMessage: jsonData['error']);
+      } else {
+        throw ServerException(exceptionMessage: 'response status: $statusCode');
+      }
+    } catch (e) {
       throw ServerException(
         exceptionMessage: e.toString(),
       );

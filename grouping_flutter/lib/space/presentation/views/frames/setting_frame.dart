@@ -10,7 +10,6 @@ import 'package:grouping_project/space/presentation/views/components/user_action
 /*
 cd grouping_flutter
 flutter run --web-port 5000
-2
 
 */
 
