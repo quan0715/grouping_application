@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grouping_project/space/data/datasources/user_remote_data_source.dart';
+import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
 import 'package:grouping_project/space/data/models/account_model.dart';
 import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:mocktail/mocktail.dart';
