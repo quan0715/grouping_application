@@ -1,8 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
+import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
-import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart'; // directly use data layer??
+// import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart'; // directly use data layer??
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/workspace_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
@@ -22,6 +23,7 @@ class WorkspaceViewModel extends ChangeNotifier {
   int get currentPageIndex => _pages;
 
   WorkspaceEntity? _workspace;
+  AuthTokenModel tokenModel = AuthTokenModel(token: "");
 
   SpaceProfileEntity get workspaceProfile => GroupSpaceProfileEntity(spaceName: "張百寬 的 workspace", spacePhotoPicPath: "", spaceColor: const Color(0xFFBF5F07));
 
@@ -42,21 +44,6 @@ class WorkspaceViewModel extends ChangeNotifier {
     // TODO: how do i know the workspaceID of this id?
     await getCurrentWorkspace(0);
     await getAllMembers();
-  }
-
-  // TODO: it will be replicated with other viewmodel, need to be solved
-  Future<String> getAccessToken() async {
-    debugPrint("UserPageViewModel getAccessToken");
-    AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl();
-    // AuthLocalDataSource authLocalDataSource = AuthLocalDataSource();
-    try {
-      final token = await authLocalDataSource.getCacheToken();
-      return token.token;
-    } catch (e) {
-      debugPrint(e.toString());
-      messageService.addMessage(MessageData.error(message: e.toString()));
-      return "";
-    }
   }
 
   // TODO: this use case in user viewmodel? since workspace shouldn't create workspace
@@ -84,7 +71,7 @@ class WorkspaceViewModel extends ChangeNotifier {
     GetCurrentWorkspaceUseCase getCurrentWorkspaceUseCase =
         GetCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
       remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: await getAccessToken()),
+          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
       localDataSource: WorkspaceLocalDataSourceImpl(),
     ));
 
@@ -105,7 +92,7 @@ class WorkspaceViewModel extends ChangeNotifier {
     UpdateCurrentWorkspaceUseCase updateCurrentWorkspaceUseCase =
         UpdateCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
       remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: await getAccessToken()),
+          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
       localDataSource: WorkspaceLocalDataSourceImpl(),
     ));
 
@@ -124,7 +111,7 @@ class WorkspaceViewModel extends ChangeNotifier {
     DeleteCurrentWorkspaceUseCase deleteCurrentWorkspaceUseCase =
         DeleteCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
       remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: await getAccessToken()),
+          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
       localDataSource: WorkspaceLocalDataSourceImpl(),
     ));
 
@@ -142,7 +129,7 @@ class WorkspaceViewModel extends ChangeNotifier {
     for(int userId in _workspace!.memberIds){
       GetCurrentUserUseCase getCurrentUserUseCase = GetCurrentUserUseCase(
         UserRepositoryImpl(
-          remoteDataSource: UserRemoteDataSourceImpl(token: await getAccessToken()),
+          remoteDataSource: UserRemoteDataSourceImpl(token: tokenModel.token),
           localDataSource: UserLocalDataSourceImpl(),
         )
       );
