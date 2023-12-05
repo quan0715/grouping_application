@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/auth/data/models/sub_model.dart';
+import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/auth/domain/entities/login_entity.dart';
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
@@ -33,8 +33,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
         return authTokenModel;
       }else if (statusCode == 401){
-        // debugPrint(jsonData.toString());
-        Map<String, dynamic> jsonData = json.decode(response.body);
         throw ServerException(exceptionMessage: jsonData['error']);
       }else{
         throw ServerException(exceptionMessage: 'response status: $statusCode');
@@ -62,15 +60,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource{
       int statusCode = response.statusCode;
       debugPrint('statusCode: $statusCode');
       // debugPrint(response.body);
+      Map<String, dynamic> jsonData = json.decode(response.body);
       if(statusCode == 200){
-        AuthTokenModel authTokenModel = AuthTokenModel.fromJson({
-          'auth-token': response.body,
-        });
+        AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
         return authTokenModel;
       }else if (statusCode == 401){
-        // debugPrint(jsonData.toString());
-        Map<String, dynamic> jsonData = json.decode(response.body);
-        debugPrint(jsonData.toString());
         throw ServerException(exceptionMessage: jsonData['error']);
       }else{
         throw ServerException(exceptionMessage: 'response status: $statusCode');
