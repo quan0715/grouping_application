@@ -66,5 +66,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> clearCacheToken() async {
     final sharedPreferences = AppSharedData.instance;
     await sharedPreferences.remove('auth-token');
+    await sharedPreferences.remove('refresh-token');
   }
 }

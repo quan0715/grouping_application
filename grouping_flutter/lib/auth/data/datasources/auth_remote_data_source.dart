@@ -88,14 +88,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         "Authorization": "Bearer ${authTokenModel.token}",
       };
       Map<String, String> body = {'refresh_token': authTokenModel.refresh};
-      debugPrint(body.toString());
 
       final response =
           await http.post(Uri.parse(endPoint), body: body, headers: headers);
 
       int statusCode = response.statusCode;
-      // debugPrint('statusCode: $statusCode');
-      Map<String, dynamic> jsonData = json.decode(response.body);
+      debugPrint('response.body: ${response.body}');
+      Map<String, dynamic> jsonData =
+          response.body.isEmpty ? {} : json.decode(response.body);
       if (statusCode == 200) {
         return;
       } else if (statusCode == 400) {

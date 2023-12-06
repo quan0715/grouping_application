@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
+
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
 import 'package:grouping_project/space/presentation/views/components/setting_title_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
+import 'package:provider/provider.dart';
 
 /*
 cd grouping_flutter
@@ -73,12 +76,9 @@ class _SettingViewState extends State<SettingFrame> {
         content: "登出此帳號",
         child: UserActionButton.secondary(
           onPressed: () async {
-            widget.viewModel.logout().whenComplete(() {
-              widget.viewModel.getAccessToken().then(
-                    (value) =>
-                        debugPrint("The token is cleared: ${value == ""}"),
-                  );
-              moveToSignInPage(context);
+            widget.viewModel.logOut().whenComplete(() {
+              Provider.of<TokenManager>(context, listen: false).updateToken();
+              GoRouter.of(context).go('/');
             });
           },
           label: "登出",
@@ -92,7 +92,7 @@ class _SettingViewState extends State<SettingFrame> {
   }
 
   void moveToSignInPage(BuildContext context) {
-    debugPrint("Move back to sign in page");
+    debugPrint("Logout back to login page");
     context.go('/login');
   }
 
