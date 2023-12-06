@@ -11,7 +11,6 @@ import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/oauth_base_service.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginViewModel extends ChangeNotifier {
   // final AuthService authService = AuthService();
@@ -29,9 +28,7 @@ class LoginViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-  int get userId => 
-    JwtDecoder.isExpired(userAccessToken)
-    ? "" : JwtDecoder.decode(userAccessToken)["user_id"];
+
   // LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
@@ -76,7 +73,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> init() async {
     messageService.clearMessages();
     await repo.localDataSource.clearCacheToken();
-    passwordLoginEntity.accountEmail = "123123123";
+    passwordLoginEntity.accountEmail = "quan@gmail.com";
     passwordLoginEntity.accountPassword = "123123123";
     notifyListeners();
     return;

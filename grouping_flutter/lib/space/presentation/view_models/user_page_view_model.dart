@@ -1,11 +1,10 @@
 import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dart';
-import 'package:grouping_project/auth/domain/usecases/logout_usecase.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
+import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
@@ -15,7 +14,9 @@ import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/usecases/get_current_user_usecase.dart';
 
 class UserPageViewModel extends ChangeNotifier {
+  UserPageViewModel({required this.tokenModel});
   int currentPageIndex = 0;
+  AuthTokenModel tokenModel = AuthTokenModel(token: "", refresh: "");
   SpaceProfileEntity get selectedProfile => userProfiles.first;
   MessageService messageService = MessageService();
   UserEntity? currentUser;
@@ -44,29 +45,16 @@ class UserPageViewModel extends ChangeNotifier {
       ];
 
   void updateCurrentIndex(int index) {
+    // for mobile use
     currentPageIndex = index;
     notifyListeners();
-  }
-
-  Future<String> getAccessToken() async {
-    debugPrint("UserPageViewModel getAccessToken");
-    AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl();
-    // AuthLocalDataSource authLocalDataSource = AuthLocalDataSource();
-    try {
-      final token = await authLocalDataSource.getCacheToken();
-      return token.token;
-    } catch (e) {
-      debugPrint(e.toString());
-      messageService.addMessage(MessageData.error(message: e.toString()));
-      return "";
-    }
   }
 
   Future getCurrentUser(int userId) async {
     debugPrint("UserPageViewModel getCurrentUser");
     GetCurrentUserUseCase getCurrentUserUseCase =
         GetCurrentUserUseCase(UserRepositoryImpl(
-      remoteDataSource: UserRemoteDataSourceImpl(token: await getAccessToken()),
+      remoteDataSource: UserRemoteDataSourceImpl(token: tokenModel.token),
       localDataSource: UserLocalDataSourceImpl(),
     ));
 
@@ -82,19 +70,17 @@ class UserPageViewModel extends ChangeNotifier {
     });
   }
 
-  Future logout() async {
-    debugPrint("UserPageViewModel logout");
-    LogoutUseCase logoutUseCase = LogoutUseCase(AuthRepositoryImpl(
-        remoteDataSource: AuthRemoteDataSourceImpl(),
-        localDataSource: AuthLocalDataSourceImpl()));
-
-    await logoutUseCase();
+  Future<void> logOut() async {
+    LogOutUseCase logOutUseCase = LogOutUseCase(AuthRepositoryImpl(
+      remoteDataSource: AuthRemoteDataSourceImpl(),
+      localDataSource: AuthLocalDataSourceImpl(),
+    ));
+    await logOutUseCase.call();
   }
 
   Future<void> init() async {
     //TODO:init with
     debugPrint("UserPageViewModel init");
-    final String token = await getAccessToken();
-    await getCurrentUser(JwtDecoder.decode(token)["user_id"]);
+    await getCurrentUser(tokenModel.userId);
   }
 }

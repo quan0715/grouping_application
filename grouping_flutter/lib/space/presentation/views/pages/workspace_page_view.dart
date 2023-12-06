@@ -22,7 +22,7 @@ class WorkspacePageView extends StatelessWidget {
     return Consumer<WorkspaceViewModel>(
       builder: (context, viewModel, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        child: Container(
+        child: SizedBox(
           // color: viewModel.selectedProfile.spaceColor,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,

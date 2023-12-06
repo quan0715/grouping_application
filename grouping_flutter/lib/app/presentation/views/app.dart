@@ -1,34 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/providers/login_manager.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/app/presentation/views/routes.dart';
 import 'package:grouping_project/app/presentation/providers/theme_provider.dart';
-import 'package:grouping_project/space/presentation/view_models/event_view_model.dart';
 import 'package:provider/provider.dart';
 
-class App extends StatelessWidget{
+class App extends StatefulWidget{
   const App({super.key});
-  
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  final TokenManager tokenManager = TokenManager();
+  late final AppRouter appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    tokenManager.init();
+    appRouter = AppRouter(tokenManager: tokenManager);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // 呼叫 theme_manager.dart
-        // ChangeNotifierProvider(create: (context) => LoginManager()),
-        // ChangeNotifierProvider(create: (context) => MessageService()),
         ChangeNotifierProvider(create: (context) => ThemeManager()),
-        ChangeNotifierProvider(create: (context) => EventSettingViewModel()),
-        ChangeNotifierProvider(create: (context) => LoginManager()..checkLoginState()),
+        ChangeNotifierProvider<TokenManager>.value(value: tokenManager)
       ],
       child: Consumer<ThemeManager>(
-        builder: (context, themeManager, child) => MaterialApp.router(
-          theme: ThemeData(
-            useMaterial3: true,
-            colorSchemeSeed: themeManager.colorSchemeSeed,
+        builder: (context, themeManager, child) => 
+          MaterialApp.router(
+            theme: ThemeData(
+              useMaterial3: true,
+              colorSchemeSeed: themeManager.colorSchemeSeed,
+            ),
+            debugShowCheckedModeBanner: false,
+            routerConfig: appRouter.goRoute,
           ),
-          debugShowCheckedModeBanner: false,
-          routerConfig: applicationRoute,
         ),
-      ),
     );
   }
 }
