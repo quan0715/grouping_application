@@ -94,13 +94,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           await http.post(Uri.parse(endPoint), body: body, headers: headers);
 
       int statusCode = response.statusCode;
-      debugPrint('statusCode: $statusCode');
+      // debugPrint('statusCode: $statusCode');
+      Map<String, dynamic> jsonData = json.decode(response.body);
       if (statusCode == 200) {
         return;
       } else if (statusCode == 400) {
         // debugPrint(jsonData.toString());
-        Map<String, dynamic> jsonData = json.decode(response.body);
-        debugPrint(jsonData.toString());
         throw ServerException(exceptionMessage: jsonData['error']);
       } else {
         throw ServerException(exceptionMessage: 'response status: $statusCode');
