@@ -9,10 +9,12 @@ class TestTreadPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test Thread'),
+        title: const Text('Test Thread'),
       ),
-      body: ChatThreadBody(
-        threadTitle: "Test Bot",
+      body: const Center(
+        child: ChatThreadBody(
+          threadTitle: "Test Bot",
+        ),
       )
     );
   }

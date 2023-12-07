@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:grouping_project/core/shared/color_widget_interface.dart';
+import 'package:grouping_project/core/theme/color.dart';
 
-class ColorFillingCardWidget extends StatelessWidget {
-  final Color titleColor;
-  final Color fillingColor;
+class ColorFillingCardWidget extends StatelessWidget implements WithThemePrimaryColor{
+  final Color primaryColor;
   final Widget? child;
   final double borderRadius;
   final EdgeInsets padding;
@@ -11,8 +12,7 @@ class ColorFillingCardWidget extends StatelessWidget {
 
   const ColorFillingCardWidget({
     super.key,
-    required this.titleColor,
-    required this.fillingColor,
+    required this.primaryColor,
     required this.title,
     required this.content,
     this.child,
@@ -24,31 +24,46 @@ class ColorFillingCardWidget extends StatelessWidget {
   });
 
   @override
+  Color get getThemePrimaryColor => primaryColor;
+
+  Color get backgroundColor => primaryColor.withOpacity(0.1);
+
+  @override
   Widget build(BuildContext context) => _buildBody(context);
 
   Widget _buildBody(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: fillingColor,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Padding(
         padding: padding,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title,
-                style: TextStyle(
-                    color: titleColor,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold)),
-            Text(content,
-                style:
-                    const TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
+        child:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    color: getThemePrimaryColor,
+                    fontWeight: FontWeight.bold
+                  )
+                ),
+                Text(
+                  content,
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                    color: AppColor.onSurfaceColor
+                  )
+                )
           ]),
           child ?? const SizedBox()
         ]),
       ),
     );
   }
+  
+
 }

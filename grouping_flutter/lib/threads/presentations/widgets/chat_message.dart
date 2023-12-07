@@ -3,11 +3,17 @@ import 'package:grouping_project/threads/domains/entity/message_entity.dart';
 
 class ChatMessageCard extends StatelessWidget {
   final MessageEntity message;
+  final bool isWaiting;
 
   const ChatMessageCard({
     super.key,
     required this.message,
+    this.isWaiting = false,
   });
+
+  BoxConstraints get _constraints => const BoxConstraints(
+    maxWidth: 150,
+  ); 
     
   @override
   Widget build(BuildContext context) => _buildBody(context);
@@ -27,6 +33,7 @@ class ChatMessageCard extends StatelessWidget {
       children: [
         const Spacer(),
         Container(
+          constraints: _constraints,
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
@@ -63,15 +70,22 @@ class ChatMessageCard extends StatelessWidget {
               ),
             ),
             Container(
+              constraints: _constraints,
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(message.messageText, style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.normal,
-              )),
+              child: isWaiting 
+                ? const Row(
+                  children: [
+                    Expanded(child: LinearProgressIndicator()),
+                  ],
+                )
+                : Text(message.messageText, style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.normal,
+                )),
             ),
           ],
         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
@@ -26,26 +25,14 @@ class SpaceInfoAndNavigatorFrame extends StatelessWidget implements WithThemePri
   @override
   Widget build(BuildContext context) => _buildBody(context);
 
-  Widget _tempLogOutButton({required VoidCallback onLogout}){
-    return UserActionButton.secondary(
-      onPressed: onLogout,
-      label: "登出",
-      primaryColor: Colors.red,
-      icon: const Icon(Icons.logout),
-    );
-  }
-
   Widget _buildBody(BuildContext context){
-    final frameDecoration = BoxDecoration(
-      color: frameColor.withOpacity(0.05),
-      borderRadius: const BorderRadius.all(
-        Radius.circular(10.0),
-      ),
-    );
     return Container(
       width: frameWidth,
       height: frameHeight,
-      decoration: frameDecoration,
+      decoration: BoxDecoration(
+        color: frameColor.withOpacity(0.05),
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)
+      )),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(
@@ -54,14 +41,6 @@ class SpaceInfoAndNavigatorFrame extends StatelessWidget implements WithThemePri
           children: [
             _buildSpaceInfo(context),
             const Spacer(),
-            _tempLogOutButton(
-              onLogout: () async {
-                await Provider.of<UserPageViewModel>(context, listen: false).logOut();
-                if(context.mounted){
-                  await Provider.of<TokenManager>(context, listen: false).updateToken();
-                }
-              }
-            ),
             // _buildNavigator(context),
           ],
         ),

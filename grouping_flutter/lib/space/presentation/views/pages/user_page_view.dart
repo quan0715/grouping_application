@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
-import 'package:grouping_project/space/presentation/views/frames/setting_frame.dart';
-import 'package:grouping_project/space/presentation/views/frames/space_info_and_navigator_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/user_space_info_and_navigator_frame.dart';
 import 'package:provider/provider.dart';
 
 class UserPageView extends StatefulWidget {
@@ -43,6 +44,7 @@ class _UserPageViewState extends State<UserPageView> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: frames,
                 ),
               ),
@@ -59,9 +61,12 @@ class _UserPageViewState extends State<UserPageView> {
             // TODO: create and add other frame into
             SpaceInfoAndNavigatorFrame(
               frameColor: viewModel.selectedProfile.spaceColor,
-              frameWidth: MediaQuery.of(context).size.width * 0.25,
+              frameWidth: MediaQuery.of(context).size.width * 0.2,
             ),
-            SettingFrame(viewModel: viewModel)
+            const Gap(10),
+            Expanded(child: UserSettingFrame(
+              frameColor: viewModel.selectedProfile.spaceColor,
+            ))
           ]),
         ),
         bottomNavigationBar: _getNavigationBar(context, viewModel),

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
+import 'package:grouping_project/app/presentation/views/app.dart';
+import 'package:grouping_project/core/theme/color.dart';
+import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
+import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 
 class CreateWorkspaceDialog extends StatelessWidget{
@@ -8,12 +13,12 @@ class CreateWorkspaceDialog extends StatelessWidget{
   @override
   Widget build(BuildContext context) => _buildBody(context);
 
-  TextStyle titleTextStyle(BuildContext context) => Theme.of(context).textTheme.titleLarge!.copyWith(
+  TextStyle titleTextStyle(BuildContext context) => Theme.of(context).textTheme.labelLarge!.copyWith(
     color: Theme.of(context).primaryColor,
     fontWeight: FontWeight.bold,
   );
 
-  TextStyle labelTextStyle(BuildContext context) => Theme.of(context).textTheme.titleMedium!.copyWith(
+  TextStyle labelTextStyle(BuildContext context) => Theme.of(context).textTheme.labelMedium!.copyWith(
     color: Theme.of(context).primaryColor,
     fontWeight: FontWeight.bold,
   );
@@ -22,6 +27,8 @@ class CreateWorkspaceDialog extends StatelessWidget{
 
   Widget _buildBody(BuildContext context){
     return Dialog(
+      backgroundColor: Colors.white,
+      elevation: 0,
       child: Padding(
         padding: _innerPadding,
         child: ConstrainedBox(
@@ -34,9 +41,13 @@ class CreateWorkspaceDialog extends StatelessWidget{
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("建立新小組", style: titleTextStyle(context)),
+              const TitleWithContent(
+                title: "建立新小組", 
+                content: "建立你的團隊，並邀請成員加入",
+              ),
               const Divider(),
               _buildGroupBasicInfoInputSection(context),
+              const Gap(10),
               _buildGroupAdditionalInfoInputSection(context),
               const Gap(10),
               _buildActionList(context),
@@ -46,6 +57,7 @@ class CreateWorkspaceDialog extends StatelessWidget{
       ),
     );
   }
+
   
   Widget _buildActionList(BuildContext context){
     return Row(
@@ -74,7 +86,11 @@ class CreateWorkspaceDialog extends StatelessWidget{
   }
   
   Widget _buildGroupBasicInfoInputSection(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColor.mainSpaceColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(5),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -83,34 +99,29 @@ class CreateWorkspaceDialog extends StatelessWidget{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("小組基本資料", style: labelTextStyle(context)),
+            const Gap(5),
             Row(
               children: [
-                // upload image
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: const Icon(Icons.add_a_photo),
+                ProfileAvatar(
+                  themePrimaryColor: AppColor.mainSpaceColor, 
+                  label: "label",
+                  avatarSize: 48,
+                  avatar: Icon(Icons.add_a_photo, color: AppColor.onSurfaceColor, size: 20,),
                 ),
                 const Gap(10),
                 Expanded(
-                  child: Container(
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "請輸入小組名稱",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide.none,
-                          ),
+                  child: Center(
+                    child: TextField(
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: AppColor.onSurfaceColor,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: "請輸入小組名稱",
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
@@ -120,23 +131,22 @@ class CreateWorkspaceDialog extends StatelessWidget{
             ),
             const Gap(10),
             Text("小組介紹", style: labelTextStyle(context)),
+            const Gap(5),
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "請輸入小組介紹",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide.none,
-                          ),
+                  child: Center(
+                    child: TextField(
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: AppColor.onSurfaceColor,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: "請輸入小組介紹",
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
@@ -146,11 +156,12 @@ class CreateWorkspaceDialog extends StatelessWidget{
             ),
             const Gap(10),
             Text("小組標籤", style: labelTextStyle(context)),
+            const Gap(5),
             Row(
               children: [
                 Expanded(
                   child: Container(
-                    height: 60,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
@@ -165,11 +176,13 @@ class CreateWorkspaceDialog extends StatelessWidget{
                                 foregroundColor: Colors.black54,
                               ),
                               onPressed: (){}, 
-                              child: const Row(
+                              child: Row(
                                 children: [
-                                  Icon(Icons.add),
-                                  Gap(5),
-                                  Text("新增標籤"),
+                                  const Icon(Icons.add),
+                                  const Gap(5),
+                                  Text("新增標籤", style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    color: AppColor.onSurfaceColor,
+                                  ),),
                                 ],
                               )),
                           ],
@@ -189,47 +202,38 @@ class CreateWorkspaceDialog extends StatelessWidget{
   }
   
   Widget _buildGroupAdditionalInfoInputSection(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("佈景主題顏色", style: labelTextStyle(context)),
-                // const Gap(10),
-                Text(
-                  "更改佈景主題顏色", 
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  )
-                )
-              ],
-            ),
-            const Spacer(),
-            // dropdown menu to chose color
-            DropdownButton(
-              items: const [
-                DropdownMenuItem(
-                  child: Text("紅色"),
-                  value: "red",
-                ),
-                DropdownMenuItem(
-                  child: Text("藍色"),
-                  value: "blue",
-                ),
-                DropdownMenuItem(
-                  child: Text("綠色"),
-                  value: "green",
-                ),
-              ], 
-              onChanged: (value){}
-            )
-          ],
-        ),
-      ),
-    );
+    return ColorFillingCardWidget(
+       primaryColor: AppColor.mainSpaceColor,
+       title: "佈景主題顏色",
+       content: "更改佈景主題顏色",
+       child: DropdownButton(
+        isDense: true,
+        underline: const SizedBox(),
+        value: 0,
+        items: [
+          DropdownMenuItem(
+            value: 0,
+            child: CircleAvatar(backgroundColor: AppColor.mainSpaceColor, ),
+          ),
+          DropdownMenuItem(
+            value: 1,
+            child: CircleAvatar(backgroundColor: AppColor.spaceColor1,),
+          ),
+          DropdownMenuItem(
+            value: 2,
+            child: CircleAvatar(backgroundColor: AppColor.spaceColor2,),
+          ),
+          DropdownMenuItem(
+            value: 3,
+            child: CircleAvatar(backgroundColor: AppColor.spaceColor3,),
+          ),
+          DropdownMenuItem(
+            value: 4,
+            child: CircleAvatar(backgroundColor: AppColor.spaceColor4,),
+          ),
+         ], 
+         onChanged: (value){}
+      )
+      );
   }
 }
