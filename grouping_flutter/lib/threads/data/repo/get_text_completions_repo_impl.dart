@@ -5,7 +5,7 @@ import 'package:grouping_project/threads/domains/repo/gpt_text_completions_repo.
 import 'package:http/http.dart' as http;
 class GptTextCompletionsRepoImpl implements GptTextCompletionsRepo {
 
-  String openAiApiKey = "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";
+  String openAiApiKey = "";
 
   @override
   Future<String> getGptTextCompletions({required String message}) async {
