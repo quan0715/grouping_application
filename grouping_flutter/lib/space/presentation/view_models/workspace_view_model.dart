@@ -120,18 +120,18 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   // List<EventModel> get events => _user.joinedWorkspaces.whereType<EventModel>().toList();
   List<EventModel> getEvents() =>
-      _workspace!.contributingActivities.whereType<EventModel>().toList();
+      _workspace!.activities.whereType<EventModel>().toList();
   // int get eventNumber => _user.contributingActivities.whereType<EventModel>().length;
-  int getEventLength() => _workspace!.contributingActivities
+  int getEventLength() => _workspace!.activities
       .whereType<EventModel>()
       .toList()
       .length;
 
   // List<MissionModel> get missions => _user.joinedWorkspaces.whereType<MissionModel>().toList();
   List<MissionModel> getMissions() =>
-      _workspace!.contributingActivities.whereType<MissionModel>().toList();
+      _workspace!.activities.whereType<MissionModel>().toList();
   // int get missionNumber => _user.contributingActivities.whereType<MissionModel>().length;
-  int getMissionLength() => _workspace!.contributingActivities
+  int getMissionLength() => _workspace!.activities
       .whereType<MissionModel>()
       .toList()
       .length;

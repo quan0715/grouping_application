@@ -7,8 +7,8 @@ abstract class ActivityRepository {
   // Future<Either<Failure, EditableCardEntity>> createActivity(EditableCardEntity editableCard);
   // Future<Either<Failure, EditableCardEntity>> updateActivity(EditableCardEntity editableCard);
   Future<Either<Failure, EditableCardEntity>> getActivity(int activityID);
-  Future<Either<Failure, EditableCardEntity>> createActivity(EditableCardEntity editableCard);
-  Future<Either<Failure, EditableCardEntity>> updateActivity(EditableCardEntity editableCard);
+  Future<Either<Failure, EditableCardEntity>> createActivity(EditableCardEntity entity);
+  Future<Either<Failure, EditableCardEntity>> updateActivity(EditableCardEntity entity);
   // Future<Either<Failure, EditableCardEntity>> getActivity(int activityID);
   // Future<Either<Failure, EditableCardEntity>> createActivity(EditableCardEntity editableCard);
   // Future<Either<Failure, EditableCardEntity>> updateActivity(EditableCardEntity editableCard);
