@@ -4,9 +4,7 @@ import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
-import 'package:grouping_project/space/domain/entities/editable_card_entity.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/repositories/activity_repository.dart';
@@ -23,37 +21,77 @@ class ActivityRepositoryImpl extends ActivityRepository {
   ActivityRepositoryImpl({required this.remoteDataSource, required this.localDataSource});
 
   @override
-  Future<Either<Failure, EditableCardEntity>> getActivity(int activityID) async {
+  Future<Either<Failure, EventEntity>> getEvent(int eventID) async {
     try {
-      final EditableCardModel activity = await remoteDataSource.getActivityData(activityID: activityID);
-      return Right(activity.toEntity());
+      final EventModel event = await remoteDataSource.getActivityData(activityID: eventID) as EventModel;
+      return Right(event.toEntity());
     } on ServerException catch(error){
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    } on TypeError {
+      return Left(ServerFailure(errorMessage: 'Given ID is not event ID'));
     }
   }
 
   @override
-  Future<Either<Failure, EditableCardEntity>> createActivity(EditableCardEntity entity) async {
+  Future<Either<Failure, MissionEntity>> getMission(int missionID) async {
     try {
-      bool isEvent = (entity is EventEntity);
-      final EditableCardModel activity = await remoteDataSource.createActivityData(activity: isEvent ? EventModel.fromEntity(entity) : MissionModel.fromEntity(entity as MissiontEntity));
-      return Right(activity.toEntity());
+      final MissionModel mission = await remoteDataSource.getActivityData(activityID: missionID) as MissionModel;
+      return Right(mission.toEntity());
     } on ServerException catch(error){
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    } on TypeError {
+      return Left(ServerFailure(errorMessage: 'Given ID is not mission ID'));
     }
   }
 
   @override
-  Future<Either<Failure, EditableCardEntity>> updateActivity(EditableCardEntity entity) async {
+  Future<Either<Failure, EventEntity>> createEvent(EventEntity entity) async {
     try {
-      bool isEvent = (entity is EventEntity);
-      final EditableCardModel activity = await remoteDataSource.updateActivityData(activity: isEvent ? EventModel.fromEntity(entity) : MissionModel.fromEntity(entity as MissiontEntity));
-      return Right(activity.toEntity());
+      final EventModel event = await remoteDataSource.createActivityData(activity: EventModel.fromEntity(entity)) as EventModel;
+      return Right(event.toEntity());
     } on ServerException catch(error){
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    } on TypeError {
+      return Left(ServerFailure(errorMessage: "Given entity is not event entity"));
     }
   }
 
+  @override
+  Future<Either<Failure, MissionEntity>> createMission(MissionEntity entity) async {
+    try {
+      final MissionModel mission = await remoteDataSource.createActivityData(activity: MissionModel.fromEntity(entity)) as MissionModel;
+      return Right(mission.toEntity());
+    } on ServerException catch(error){
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    } on TypeError {
+      return Left(ServerFailure(errorMessage: "Given entity is not mission entity"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, EventEntity>> updateEvent(EventEntity entity) async {
+    try {
+      final EventModel event = await remoteDataSource.updateActivityData(activity: EventModel.fromEntity(entity)) as EventModel;
+      return Right(event.toEntity());
+    } on ServerException catch(error){
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    } on TypeError {
+      return Left(ServerFailure(errorMessage: "Given entity is not event entity"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MissionEntity>> updateMission(MissionEntity entity) async {
+    try {
+      final MissionModel mission = await remoteDataSource.updateActivityData(activity: MissionModel.fromEntity(entity)) as MissionModel;
+      return Right(mission.toEntity());
+    } on ServerException catch(error){
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    } on TypeError {
+      return Left(ServerFailure(errorMessage: "Given entity is not mission entity"));
+    }
+  }
+  
   @override
   Future<Either<Failure, void>> deleteActivity(int activityID) async {
     try {

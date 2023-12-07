@@ -1,14 +1,14 @@
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 import 'package:grouping_project/space/domain/entities/editable_card_entity.dart';
 
-class MissiontEntity extends EditableCardEntity{
+class MissionEntity extends EditableCardEntity{
   final DateTime deadline;
   final String stateId;
   final MissionStateModel state;
   final List<String> parentMissionIds;
   final List<String> childMissionIds;
 
-  MissiontEntity(
+  MissionEntity(
       {required super.id,
       required super.title,
       required super.introduction,

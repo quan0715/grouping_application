@@ -130,8 +130,8 @@ class MissionModel extends EditableCardModel {
       };
 
   @override
-  MissiontEntity toEntity() {
-    return MissiontEntity(
+  MissionEntity toEntity() {
+    return MissionEntity(
         id: id,
         title: title,
         introduction: introduction,
@@ -145,7 +145,7 @@ class MissionModel extends EditableCardModel {
         childMissionIds: childMissionIds);
   }
 
-  factory MissionModel.fromEntity(MissiontEntity entity){
+  factory MissionModel.fromEntity(MissionEntity entity){
     return MissionModel(
       id: entity.id,
       title: entity.title,
