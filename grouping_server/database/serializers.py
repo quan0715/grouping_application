@@ -46,6 +46,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             for tag_data in tags_data:
                 WorkspaceTag.objects.create(
                     belong_workspace=workspace, **tag_data)
+
         return workspace
 
     def update(self, instance, validated_data):

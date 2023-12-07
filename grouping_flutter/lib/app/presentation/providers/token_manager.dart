@@ -3,35 +3,34 @@ import 'package:grouping_project/auth/data/datasources/auth_local_data_source.da
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 
 class TokenManager extends ChangeNotifier {
-  
   // String? userAccessToken = '';
-  AuthTokenModel tokenModel = AuthTokenModel(token: '');
-  bool get isLogin => tokenModel.isValid; 
+  AuthTokenModel tokenModel = AuthTokenModel(token: '', refresh: '');
+  bool get isLogin => tokenModel.isValid;
 
-  Future<void> updateToken() async{
+  Future<void> updateToken() async {
     // debugPrint("TokenManager getAccessToken");
     AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl();
     // AuthLocalDataSource authLocalDataSource = AuthLocalDataSource();
-    try{
+    try {
       final token = await authLocalDataSource.getCacheToken();
       // debugPrint("TokenManager getAccessToken token: ${token.token}");
       debugPrint("update token");
       tokenModel = token;
       notifyListeners();
       // return token;
-    }catch(e){
+    } catch (e) {
       debugPrint(e.toString());
-      tokenModel = AuthTokenModel(token: '');
+      tokenModel = AuthTokenModel(token: '', refresh: '');
       notifyListeners();
     }
   }
 
-  void updateTokenModel(AuthTokenModel token){
+  void updateTokenModel(AuthTokenModel token) {
     tokenModel = token;
     notifyListeners();
   }
 
-  Future<void> init() async{
+  Future<void> init() async {
     await updateToken();
   }
 }
