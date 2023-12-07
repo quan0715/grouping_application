@@ -20,7 +20,7 @@ class UserActionButton extends ElevatedButton implements WithThemePrimaryColor{
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5),
-        side: BorderSide(color: color.withOpacity(0.3), width:1),
+        // side: BorderSide(color: color.withOpacity(0.3), width:1),
       ),
     );
 

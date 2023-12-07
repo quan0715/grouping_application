@@ -72,7 +72,7 @@ class UserPageViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> logOut() async {
+  Future<void> logout() async {
     LogOutUseCase logOutUseCase = LogOutUseCase(AuthRepositoryImpl(
       remoteDataSource: AuthRemoteDataSourceImpl(),
       localDataSource: AuthLocalDataSourceImpl(),
