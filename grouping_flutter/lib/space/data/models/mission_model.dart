@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_this
 import 'package:grouping_project/core/exceptions/exception.dart';
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
@@ -31,7 +31,7 @@ class MissionModel extends EditableCardModel {
           contributors: [],
           introduction: 'unknown',
           notifications: [],
-          creatorAccount: AccountModel.defaultAccount,
+          creatorAccount: UserModel.defaultAccount,
           id: 0,
         );
 

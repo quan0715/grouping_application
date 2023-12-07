@@ -1,4 +1,4 @@
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 
 abstract class EditableCardEntity {
   final int? id;
@@ -6,7 +6,7 @@ abstract class EditableCardEntity {
   final String introduction;
   final List<int> contributors;
   final List<DateTime> notifications;
-  final AccountModel creatorAccount;
+  final UserModel creatorAccount;
 
   EditableCardEntity(
       {required this.id,

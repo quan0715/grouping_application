@@ -1,5 +1,5 @@
 // ignore_for_file: unnecessary_this
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
@@ -29,7 +29,7 @@ class EventModel extends EditableCardModel {
           contributors: [],
           introduction: 'unknown',
           notifications: [],
-          creatorAccount: AccountModel.defaultAccount,
+          creatorAccount: UserModel.defaultAccount,
           id: 0,
         );
 
@@ -42,7 +42,7 @@ class EventModel extends EditableCardModel {
       DateTime? endTime,
       List<int>? contributors,
       String? introduction,
-      AccountModel? creatorAccount,
+      UserModel? creatorAccount,
       List<String>? relatedMissionIds,
       List<DateTime>? notifications})
       : this.startTime = startTime ?? defaultEvent.startTime,

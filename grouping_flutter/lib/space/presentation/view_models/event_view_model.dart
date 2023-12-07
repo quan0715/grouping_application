@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/space/data/datasources/activity_repo.dart';
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/event_model.dart';
 // import 'package:grouping_project/model/model_lib.dart';
 // import 'package:grouping_project/service/service_lib.dart';
@@ -17,7 +17,7 @@ class EventSettingViewModel extends ChangeNotifier{
   // Event 的擁有者, group or people Account。
   // AccountModel ownerAccount = AccountModel();
   // Event 的創建者, 只有在第一次create的時候有用。
-  AccountModel creatorAccount = AccountModel();
+  UserModel creatorAccount = UserModel();
   // True if ownerAccount id equals to creator Account, otherwise False
   // bool forUser = true;
   // bool get isForUser => forUser;
@@ -30,7 +30,7 @@ class EventSettingViewModel extends ChangeNotifier{
   String get formattedEndTime => dataFormat.format(endTime);
 
   // getter of eventModel
-  AccountModel get eventOwnerAccount => eventModel.creatorAccount;
+  UserModel get eventOwnerAccount => eventModel.creatorAccount;
   String get title => eventModel.title; // Event title
   String get introduction => eventModel.introduction; // Introduction od event
   String get ownerAccountName =>
@@ -107,7 +107,7 @@ class EventSettingViewModel extends ChangeNotifier{
   }
 
   void initializeNewEvent(
-      {required AccountModel creatorAccount}) {
+      {required UserModel creatorAccount}) {
     // event.ownerAccount = ownerAccount;
     this.creatorAccount = creatorAccount;
     // debugPrint('owner ${this.ownerAccount.id}');

@@ -1,7 +1,7 @@
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
-import 'package:grouping_project/space/data/models/image_model.dart';
-import 'package:grouping_project/space/data/models/workspace_tag_model.dart';
-import 'package:grouping_project/space/domain/entities/user_entity.dart';
+import 'package:grouping_project/core/data/models/image_model.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
+// import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 
 class WorkspaceEntity {
@@ -10,12 +10,10 @@ class WorkspaceEntity {
   final String name;
   final String description;
   final ImageModel? photo;
-  final List<int> memberIds;
-  // late final List<AccountModel> members;
-  late final List<UserEntity> members;
+  // final List<int> memberIds;
+  final List<Member> members;
   final List<EditableCardModel> contributingActivities;
-  final List<WorkspaceTag> tags;
-  final bool isPersonal;
+  final List<String> tags;
 
   WorkspaceEntity(
       {required this.id,
@@ -23,8 +21,7 @@ class WorkspaceEntity {
       required this.name,
       required this.description,
       required this.photo,
-      required this.memberIds,
+      required this.members,
       required this.contributingActivities,
-      required this.tags,
-      required this.isPersonal});
+      required this.tags});
 }

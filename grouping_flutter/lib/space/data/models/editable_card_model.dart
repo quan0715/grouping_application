@@ -1,6 +1,6 @@
 // create event & mission super class or activity parent class?
 import 'package:grouping_project/core/util/data_mapper.dart';
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 // import 'package:grouping_project/model/workspace/data_model.dart';
 
 abstract class EditableCardModel extends DataMapper{
@@ -10,7 +10,7 @@ abstract class EditableCardModel extends DataMapper{
   List<int> contributors;
   // List<String> tags;
   List<DateTime> notifications;
-  AccountModel creatorAccount;
+  UserModel creatorAccount;
 
   EditableCardModel(
       {required this.id,
