@@ -1,4 +1,4 @@
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
@@ -12,7 +12,7 @@ class WorkspaceEntity {
   final ImageModel? photo;
   // final List<int> memberIds;
   final List<Member> members;
-  final List<EditableCardModel> activities;
+  final List<ActivityModel> activities;
   final List<String> tags;
 
   WorkspaceEntity(

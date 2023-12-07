@@ -1,13 +1,13 @@
 // ignore_for_file: unnecessary_this
 import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
 // import 'account_model.dart';
 
 /// ## a data model for event
 /// * to upload/download, use `DataController`
-class EventModel extends EditableCardModel {
+class EventModel extends ActivityModel {
   // String title;
   DateTime startTime;
   DateTime endTime;

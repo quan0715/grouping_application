@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/data/models/event_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ActivityRemoteDataSource {
   ActivityRemoteDataSource();
-  Future<EditableCardModel> getActivityData({required int activityID});
-  Future<EditableCardModel> createActivityData({required EditableCardModel activity});
-  Future<EditableCardModel> updateActivityData({required EditableCardModel activity});
+  Future<ActivityModel> getActivityData({required int activityID});
+  Future<ActivityModel> createActivityData({required ActivityModel activity});
+  Future<ActivityModel> updateActivityData({required ActivityModel activity});
   Future<void> deleteActivityData({required int activityID});
 }
 
@@ -58,10 +58,10 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
 
   /// ## 獲取想要的 activity 的資訊
   /// 
-  /// 傳入 [activityID] 來獲取 [EditableCardModel]\
-  /// 若未出錯則回傳 [EditableCardModel]\
+  /// 傳入 [activityID] 來獲取 [ActivityModel]\
+  /// 若未出錯則回傳 [ActivityModel]\
   /// 若 [activityID] 有格式錯誤則會丟出 [ServerException]\
-  /// 若 [activityID] 所對應的 [EditableCardModel] 不存在則會丟出 [ServerException]
+  /// 若 [activityID] 所對應的 [ActivityModel] 不存在則會丟出 [ServerException]
   /// 
   /// ### Example
   /// ```dart
@@ -70,7 +70,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// ```
   /// 
   @override
-  Future<EditableCardModel> getActivityData({required int activityID}) async {
+  Future<ActivityModel> getActivityData({required int activityID}) async {
     final response = await _client.get(
         Uri.parse("${Config.baseUriWeb}/$_workSpaceUid/activities/$activityID"),
         headers: headers);
@@ -91,8 +91,8 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
 
   /// ## 創立一個 activity
   /// 
-  /// 傳入 [EditableCardModel] 來建立一個 [EditableCardModel]\
-  /// 若未出錯則回傳 [EditableCardModel]\
+  /// 傳入 [ActivityModel] 來建立一個 [ActivityModel]\
+  /// 若未出錯則回傳 [ActivityModel]\
   /// 若 [activity] 有格式錯誤則會丟出 [ServerException]
   /// 
   /// ### Example
@@ -102,7 +102,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// ```
   /// 
   @override
-  Future<EditableCardModel> createActivityData({required EditableCardModel activity}) async {
+  Future<ActivityModel> createActivityData({required ActivityModel activity}) async {
     Map<String, dynamic> body = activity.toJson();
     body.addAll({"belong_workspace": _workSpaceUid.toString()});
 
@@ -125,10 +125,10 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
 
   /// ## 更新 activity 的資訊
   /// 
-  /// 傳入 [EditableCardModel] 來更新資料\
-  /// 若未出錯則回傳更新後的 [EditableCardModel]\
+  /// 傳入 [ActivityModel] 來更新資料\
+  /// 若未出錯則回傳更新後的 [ActivityModel]\
   /// 若 [activity] 有格式錯誤則會丟出 [ServerException]\
-  /// 若 [activity] 所對應的 [EditableCardModel] 不存在則會丟出 [ServerException]
+  /// 若 [activity] 所對應的 [ActivityModel] 不存在則會丟出 [ServerException]
   /// 
   /// ### Example
   /// ```dart
@@ -137,7 +137,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// ```
   /// 
   @override
-  Future<EditableCardModel> updateActivityData({required EditableCardModel activity}) async {
+  Future<ActivityModel> updateActivityData({required ActivityModel activity}) async {
     Map<String, dynamic> body = activity.toJson();
     body.addAll({"belong_workspace": _workSpaceUid.toString()});
 

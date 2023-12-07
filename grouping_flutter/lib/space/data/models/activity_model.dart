@@ -3,7 +3,7 @@ import 'package:grouping_project/core/util/data_mapper.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 // import 'package:grouping_project/model/workspace/data_model.dart';
 
-abstract class EditableCardModel extends DataMapper{
+abstract class ActivityModel extends DataMapper{
   final int? id;
   String title;
   String introduction;
@@ -12,7 +12,7 @@ abstract class EditableCardModel extends DataMapper{
   List<DateTime> notifications;
   UserModel creatorAccount;
 
-  EditableCardModel(
+  ActivityModel(
       {required this.id,
       required this.title,
       required this.introduction,

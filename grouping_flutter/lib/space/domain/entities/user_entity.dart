@@ -1,5 +1,5 @@
 import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
@@ -13,7 +13,7 @@ class UserEntity{
   ImageModel? photo;
   List<UserTagModel> tags;
   List<WorkspaceModel> joinedWorkspaces;
-  List<EditableCardModel> contributingActivities;
+  List<ActivityModel> contributingActivities;
 
   // build constructor
   UserEntity({

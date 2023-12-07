@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_this
 import 'package:grouping_project/core/exceptions/exception.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
 import 'mission_state_model.dart';
@@ -11,7 +11,7 @@ import 'mission_state_model.dart';
 
 /// ## a data model for misison
 /// * to upload/download, use `DataController`
-class MissionModel extends EditableCardModel {
+class MissionModel extends ActivityModel {
   DateTime deadline;
   String stateId;
   MissionStateModel state;

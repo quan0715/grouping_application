@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
@@ -41,7 +41,7 @@ class UserModel {
   ImageModel? photo;
   List<UserTagModel> tags;
   List<WorkspaceModel> joinedWorkspaces;
-  List<EditableCardModel> contributingActivities;
+  List<ActivityModel> contributingActivities;
 
   /// default account that all attribute is set to a default value
   static final UserModel defaultAccount = UserModel._default();
@@ -70,7 +70,7 @@ class UserModel {
     ImageModel? photo,
     List<UserTagModel>? tags,
     List<WorkspaceModel>? joinedWorkspaces,
-    List<EditableCardModel>? contributingActivities,
+    List<ActivityModel>? contributingActivities,
   })  : this.id = accountId ?? defaultAccount.id,
         this.account = account ?? defaultAccount.account,
         this.password = password ?? defaultAccount.password,

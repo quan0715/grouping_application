@@ -1,5 +1,5 @@
 import 'package:grouping_project/core/util/data_mapper.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
@@ -12,7 +12,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   String description;
   ImageModel? photo;
   List<Member> members;
-  List<EditableCardModel> activities;
+  List<ActivityModel> activities;
   List<String> tags;
 
   static final WorkspaceModel defaultWorkspace = WorkspaceModel._default();
@@ -34,7 +34,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
     String? description,
     ImageModel? photo,
     List<Member>? members,
-    List<EditableCardModel>? activities,
+    List<ActivityModel>? activities,
     List<String>? tags,
   })  : id = id ?? defaultWorkspace.id,
         themeColor = themeColor ?? defaultWorkspace.themeColor,
