@@ -19,9 +19,9 @@ class UserManager(BaseUserManager):
         user = self.model(account=account)
         user.set_password(password)
         user.user_name = user_name
-        user.real_name = ''
+        user.real_name = ""
+        user.slogan = ""
         user.introduction = introduction
-        user.slogan = slogan
         user.photo_id = user.id
         user.save()
 
@@ -40,10 +40,6 @@ class UserManager(BaseUserManager):
 
     Auth_Providers = {"google": "google", "line": "line", "github": "github"}
 
-    """
-    Note:objects = UserManager() is required for django to work properly
-    It's not the type of this class
-    """
 
 
 class User(AbstractBaseUser, PermissionsMixin):

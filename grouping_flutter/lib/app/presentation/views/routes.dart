@@ -6,23 +6,20 @@ import 'package:grouping_project/space/presentation/views/pages/user_page_view.d
 import 'package:grouping_project/space/presentation/views/pages/workspace_page_view.dart';
 import 'package:grouping_project/threads/presentations/pages/test_page.dart';
 
-
-
 class AppRouter {
   // bool isLogin = false;
   AppRouter({required this.tokenManager});
 
   GoRouter get goRoute => _goRouter;
-  
+
   late final TokenManager tokenManager;
   late final GoRouter _goRouter = GoRouter(
       initialLocation: '/',
       refreshListenable: tokenManager,
       routes: [
         GoRoute(
-          path: '/',
-          redirect: (BuildContext context, GoRouterState state) => '/login'
-        ),
+            path: '/',
+            redirect: (BuildContext context, GoRouterState state) => '/login'),
         GoRoute(
           path: '/login',
           builder: (BuildContext context, GoRouterState state) {
@@ -60,27 +57,24 @@ class AppRouter {
       redirect: (BuildContext context, GoRouterState state) async {
         debugPrint(state.matchedLocation);
         // await tokenManager.updateToken();
-        bool isInLoginPage = state.matchedLocation == '/login' ;
+        bool isInLoginPage = state.matchedLocation == '/login';
         bool isInRegisterPage = state.matchedLocation == '/register';
         // bool isInUserPage = state.matchedLocation.contains('/user/');
         // bool isInWorkspacePage = state.matchedLocation.contains('/workspace/');
         bool isLogin = tokenManager.isLogin;
 
-        if(isInLoginPage || isInRegisterPage){
-          if(isLogin){
+        if (isInLoginPage || isInRegisterPage) {
+          if (isLogin) {
             debugPrint("redirect to user page");
             return '/user/${tokenManager.tokenModel.userId}';
           }
           return null;
-        }
-        else{
-          if(!isLogin){
+        } else {
+          if (!isLogin) {
             debugPrint("redirect to login page");
             return '/login';
           }
         }
         return null;
-      }
-
-    );
+      });
 }
