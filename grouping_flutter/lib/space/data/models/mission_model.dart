@@ -2,6 +2,7 @@
 import 'package:grouping_project/core/exceptions/exception.dart';
 import 'package:grouping_project/space/data/models/account_model.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
 import 'mission_state_model.dart';
 // import 'package:grouping_project/exception.dart';
@@ -11,43 +12,27 @@ import 'mission_state_model.dart';
 /// ## a data model for misison
 /// * to upload/download, use `DataController`
 class MissionModel extends EditableCardModel {
-  // String title;
   DateTime deadline;
-  // List<String> contributorIds;
-  // String introduction;
   String stateId;
   MissionStateModel state;
-  // List<String> tags;
-  // List<DateTime> notifications;
   List<String> parentMissionIds;
   List<String> childMissionIds;
-  // AccountModel ownerAccount;
 
   static final MissionModel defaultMission = MissionModel._default();
 
   MissionModel._default()
-      :
-        // : this.title = 'unknown',
-        this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        // this.contributorIds = [],
-        // this.introduction = 'unknown',
+      : this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
         this.stateId = MissionStateModel.defaultUnknownState.id!,
         this.state = MissionStateModel.defaultUnknownState,
-        // this.tags = [],
-        // this.notifications = [],
         this.parentMissionIds = [],
         this.childMissionIds = [],
-        // this.ownerAccount = AccountModel.defaultAccount,
         super(
           title: 'unknown',
           contributors: [],
           introduction: 'unknown',
-          // tags: [],
           notifications: [],
           creatorAccount: AccountModel.defaultAccount,
           id: 0,
-          // databasePath: 'mission',
-          // storageRequired: false,
         );
 
   /// ## a data model for mission
@@ -144,6 +129,38 @@ class MissionModel extends EditableCardModel {
         'notifications': _notificationsToJson(),
       };
 
+  @override
+  MissiontEntity toEntity() {
+    return MissiontEntity(
+        id: id,
+        title: title,
+        introduction: introduction,
+        contributors: contributors,
+        notifications: notifications,
+        creatorAccount: creatorAccount,
+        deadline: deadline,
+        stateId: stateId,
+        state: state,
+        parentMissionIds: parentMissionIds,
+        childMissionIds: childMissionIds);
+  }
+
+  factory MissionModel.fromEntity(MissiontEntity entity){
+    return MissionModel(
+      id: entity.id,
+      title: entity.title,
+      introduction: entity.introduction,
+      contributors: entity.contributors,
+      notifications: entity.notifications,
+      // createAccount: entity.creatorAccount,
+      deadline: entity.deadline,
+      stateId: entity.stateId,
+      state: entity.state,
+      parentMissionIds: entity.parentMissionIds,
+      childMissionIds: entity.childMissionIds
+    );
+  }
+
   List<Map<String, String>> _notificationsToJson() {
     List<Map<String, String>> notiMap = [];
     for (DateTime noti in this.notifications) {
@@ -200,7 +217,7 @@ class MissionModel extends EditableCardModel {
   bool operator ==(Object other) {
     return this.toString() == other.toString();
   }
-  
+
   @override
   // TODO: implement hashCode
   int get hashCode => id!;

@@ -223,39 +223,39 @@ class EventSettingViewModel extends ChangeNotifier{
   //   (_) => DateTime.now(),
   // );
 
-  Future<void> createEvent() async {
-    // Create event with eventData
-    // Add account profile id into contributorIds
-    // eventModel.contributorIds.add(creatorAccount.id!);
-    // debugPrint("on save ${eventModel.contributorIds.toString()}");
-    // debugPrint(eventModel.contributorIds.toString());
+  // Future<void> createEvent() async {
+  //   // Create event with eventData
+  //   // Add account profile id into contributorIds
+  //   // eventModel.contributorIds.add(creatorAccount.id!);
+  //   // debugPrint("on save ${eventModel.contributorIds.toString()}");
+  //   // debugPrint(eventModel.contributorIds.toString());
     
-    // TODO: workspace id?
-    ActivityDatabaseService databaseService = ActivityDatabaseService(workSpaceUid: 0, token: 'test token');
-    EventModel response = await databaseService.createEvent(event: eventModel);
-    eventModel = response;
-    // await DatabaseService(ownerUid: eventOwnerAccount.id!, forUser: false)
-    //     .setEvent(event: eventModel);
-    notifyListeners();
-  }
+  //   // TODO: workspace id?
+  //   ActivityDatabaseService databaseService = ActivityDatabaseService(workSpaceUid: 0, token: 'test token');
+  //   EventModel response = await databaseService.createEvent(event: eventModel);
+  //   eventModel = response;
+  //   // await DatabaseService(ownerUid: eventOwnerAccount.id!, forUser: false)
+  //   //     .setEvent(event: eventModel);
+  //   notifyListeners();
+  // }
 
-  Future<void> editEvent() async {
-    // edit event with eventData
-    // debugPrint("on save ${eventModel.contributorIds.toString()}");
+  // Future<void> editEvent() async {
+  //   // edit event with eventData
+  //   // debugPrint("on save ${eventModel.contributorIds.toString()}");
 
-    ActivityDatabaseService databaseService = ActivityDatabaseService(workSpaceUid: 0, token: 'test token');
-    EventModel response = await databaseService.updataEvent(event: eventModel);
-    eventModel = response;
-    // await DatabaseService(ownerUid: eventOwnerAccount.id!, forUser: false)
-    //     .setEvent(event: eventModel);
-    notifyListeners();
-  }
+  //   ActivityDatabaseService databaseService = ActivityDatabaseService(workSpaceUid: 0, token: 'test token');
+  //   EventModel response = await databaseService.updataEvent(event: eventModel);
+  //   eventModel = response;
+  //   // await DatabaseService(ownerUid: eventOwnerAccount.id!, forUser: false)
+  //   //     .setEvent(event: eventModel);
+  //   notifyListeners();
+  // }
 
-  Future<void> deleteEvent() async {
-    ActivityDatabaseService databaseService = ActivityDatabaseService(workSpaceUid: 0, token: 'test token');
-    databaseService.deleteActivity(activityId: eventModel.id!);
-    // await DatabaseService(ownerUid: eventOwnerAccount.id!, forUser: false)
-    //     .deleteEvent(eventModel);
-    notifyListeners();
-  }
+  // Future<void> deleteEvent() async {
+  //   ActivityDatabaseService databaseService = ActivityDatabaseService(workSpaceUid: 0, token: 'test token');
+  //   databaseService.deleteActivity(activityId: eventModel.id!);
+  //   // await DatabaseService(ownerUid: eventOwnerAccount.id!, forUser: false)
+  //   //     .deleteEvent(eventModel);
+  //   notifyListeners();
+  // }
 }
