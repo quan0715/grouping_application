@@ -12,7 +12,7 @@ class WorkspaceEntity {
   final ImageModel? photo;
   // final List<int> memberIds;
   final List<Member> members;
-  final List<EditableCardModel> contributingActivities;
+  final List<EditableCardModel> activities;
   final List<String> tags;
 
   WorkspaceEntity(
@@ -22,6 +22,6 @@ class WorkspaceEntity {
       required this.description,
       required this.photo,
       required this.members,
-      required this.contributingActivities,
+      required this.activities,
       required this.tags});
 }

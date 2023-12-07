@@ -2,6 +2,7 @@ import 'package:grouping_project/core/util/data_mapper.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
 class WorkspaceModel extends DataMapper<WorkspaceEntity> {
@@ -11,7 +12,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   String description;
   ImageModel? photo;
   List<Member> members;
-  List<EditableCardModel> contributingActivities;
+  List<EditableCardModel> activities;
   List<String> tags;
 
   static final WorkspaceModel defaultWorkspace = WorkspaceModel._default();
@@ -23,7 +24,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         themeColor = 0,
         photo = null,
         members = [],
-        contributingActivities = [],
+        activities = [],
         tags = [];
 
   WorkspaceModel({
@@ -33,7 +34,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
     String? description,
     ImageModel? photo,
     List<Member>? members,
-    List<EditableCardModel>? contributingActivities,
+    List<EditableCardModel>? activities,
     List<String>? tags,
   })  : id = id ?? defaultWorkspace.id,
         themeColor = themeColor ?? defaultWorkspace.themeColor,
@@ -41,8 +42,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         description = description ?? defaultWorkspace.description,
         photo = photo ?? defaultWorkspace.photo,
         members = members ?? defaultWorkspace.members,
-        contributingActivities =
-            contributingActivities ?? defaultWorkspace.contributingActivities,
+        activities = activities ?? defaultWorkspace.activities,
         tags = tags ?? defaultWorkspace.tags;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -52,23 +52,30 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         'description': description,
         'photo': photo?.toJson(),
         'members': members.map((member) => member.toJson()).toList(),
+        'activities': activities.map((activity) => activity.toJson()).toList(),
         'tags': tags,
       };
 
   factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) =>
       WorkspaceModel(
-        id: data['id'],
-        themeColor: data['theme_color'],
-        name: data['workspace_name'],
-        description: data['description'],
+        id: data['id'] ?? defaultWorkspace.id,
+        themeColor: data['theme_color'] ?? defaultWorkspace.themeColor,
+        name: data['workspace_name'] ?? defaultWorkspace.name,
+        description: data['description'] ?? defaultWorkspace.description,
         photo: data['photo'] != null
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
-        members: (data['members'].cast<Map<String, dynamic>>()
+        members: ((data['members'] ?? []).cast<Map<String, dynamic>>()
                 as List<Map<String, dynamic>>)
             .map((member) => Member.fromJson(data: member))
             .toList(),
-        tags: data['tags'].cast<String>() as List<String>,
+        activities: ((data['activities'] ?? [])
+                .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
+            .map((activity) => activity['event'] != null
+                ? EventModel.fromJson(data: activity)
+                : MissionModel.fromJson(data: activity))
+            .toList(),
+        tags: (data['tags'] ?? []).cast<String>() as List<String>,
       );
 
   @override
@@ -80,7 +87,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
       "description": description,
       "photo": photo,
       "members": members,
-      "activities": contributingActivities,
+      "activities": activities,
       "tags": tags,
     }.toString();
   }
@@ -88,27 +95,28 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   @override
   WorkspaceEntity toEntity() {
     return WorkspaceEntity(
-        id: id,
-        themeColor: themeColor,
-        name: name,
-        description: description,
-        photo: photo,
-        members: members,
-        contributingActivities: contributingActivities,
-        tags: tags,);
+      id: id,
+      themeColor: themeColor,
+      name: name,
+      description: description,
+      photo: photo,
+      members: members,
+      activities: activities,
+      tags: tags,
+    );
   }
 
-  @override
   factory WorkspaceModel.fromEntity(WorkspaceEntity entity) {
     return WorkspaceModel(
-        id: entity.id,
-        themeColor: entity.themeColor,
-        name: entity.name,
-        description: entity.description,
-        photo: entity.photo,
-        members: entity.members,
-        contributingActivities: entity.contributingActivities,
-        tags: entity.tags,);
+      id: entity.id,
+      themeColor: entity.themeColor,
+      name: entity.name,
+      description: entity.description,
+      photo: entity.photo,
+      members: entity.members,
+      activities: entity.activities,
+      tags: entity.tags,
+    );
   }
 
   @override

@@ -8,16 +8,24 @@ import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 // import '../workspace/data_model.dart';
 
 /// ## the type for [UserModel.tags]
-/// * [tag] : the key for this tag
+/// * [title] : the key for this tag
 /// * [content] : the value for this tag
 class UserTagModel {
-  String tag;
+  String title;
   String content;
-  UserTagModel({required this.tag, required this.content});
+  UserTagModel({required this.title, required this.content});
+
+  factory UserTagModel.fromJson({required Map<String, dynamic> data}) =>
+      UserTagModel(title: data['title'], content: data['content']);
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'title': this.title,
+        'content': this.content,
+      };
 
   @override
   String toString() {
-    return 'Account Tag: $tag : $content';
+    return 'Account Tag: $title : $content';
   }
 }
 
@@ -109,18 +117,21 @@ class UserModel {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': this.id,
-        'account': this.account,
-        'password': this.password,
         'user_name': this.name,
         'introduction': this.introduction,
         'photo': this.photo?.toJson(),
-        'tags': this.tags,
-        'joined_workspaces': this.joinedWorkspaces,
-        'contributing_activities': this.contributingActivities,
+        'tags': this.tags.map((tag) => tag.toJson()).toList(),
+        'joined_workspaces': this
+            .joinedWorkspaces
+            .map((workspace) => workspace.toJson())
+            .toList(),
+        'contributing_activities': this
+            .contributingActivities
+            .map((activity) => activity.toJson())
+            .toList(),
       };
 
-  factory UserModel.fromJson({required Map<String, dynamic> data}) =>
-      UserModel(
+  factory UserModel.fromJson({required Map<String, dynamic> data}) => UserModel(
         accountId: data['id'] as int,
         account: data['account'] as String,
         password: data['password'] as String,
@@ -129,14 +140,22 @@ class UserModel {
         photo: data['photo'] != null
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
-        tags: data['tags'].cast<UserTagModel>() as List<UserTagModel>,
-        joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
-            as List<WorkspaceModel>,
-        contributingActivities: (data['contributing_activities']
+        tags: ((data['tags'] ?? []).cast<Map<String, dynamic>>()
+                as List<Map<String, dynamic>>)
+            .map((tag) => UserTagModel.fromJson(data: tag))
+            .toList(),
+        joinedWorkspaces: ((data['joined_workspaces'] ?? [])
+                .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
+            .map((workspace) => WorkspaceModel.fromJson(data: workspace))
+            .toList(),
+        // joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
+        //     as List<WorkspaceModel>,
+        contributingActivities: ((data['contributing_activities'] ?? [])
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
                 ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity)).toList(),
+                : MissionModel.fromJson(data: activity))
+            .toList(),
       );
   @override
   String toString() {
