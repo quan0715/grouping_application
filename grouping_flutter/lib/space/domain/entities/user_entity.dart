@@ -3,7 +3,7 @@ import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
-class UserEntity{
+class UserEntity {
   final int? id;
   String account;
   String name;
@@ -31,7 +31,7 @@ class UserEntity{
     required this.contributingActivities,
   });
 
-  factory UserEntity.fromModel(AccountModel account){
+  factory UserEntity.fromModel(AccountModel account) {
     return UserEntity(
       id: account.id,
       account: account.account,

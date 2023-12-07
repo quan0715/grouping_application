@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
+import 'package:dartz/dartz_unsafe.dart';
+import 'package:flutter/foundation.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
@@ -143,30 +145,38 @@ class AccountModel {
         // 'associate_entity_id': this.associateEntityId,
       };
 
-  factory AccountModel.fromJson({required Map<String, dynamic> data}) =>
-      AccountModel(
-        accountId: data['id'] as int, // TODO: id? userid?
-        account: data['account'] as String,
-        name: data['real_name'] as String,
-        nickname: data['user_name'] as String,
-        introduction: data['introduction'] as String,
-        // color: data['color'] as int,
-        slogan: data['slogan'] as String,
-        photo: data['photo'] != null ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>) : null,
-        tags: data['tags'].cast<AccountTagModel>() as List<AccountTagModel>,
-        // tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
-        //     ? _fromBackendTags(
-        //         List.from(data['tags']), List.from(data['tag_contents']))
-        //     : null,
-        joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
-            as List<WorkspaceModel>,
-        contributingActivities: data['contributing_activities']
-            .cast<EditableCardModel>() as List<EditableCardModel>,
-        // photoId: data['photo_id'],
-        // associateEntityId: data['associate_entity_id'] is Iterable
-        //     ? List.from(data['associate_entity_id'])
-        //     : null
-      );
+  factory AccountModel.fromJson({required Map<String, dynamic> data}) {
+    debugPrint((data['tags'].cast<AccountTagModel>() as List<AccountTagModel>)
+        .length
+        .toString());
+    return AccountModel(
+      accountId: data['id'] as int, // TODO: id? userid?
+      account: data['account'] as String,
+      name: data['real_name'] as String,
+      nickname: data['user_name'] as String,
+      introduction: data['introduction'] as String,
+      // color: data['color'] as int,
+      slogan: data['slogan'] as String,
+      photo: data['photo'] != null
+          ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
+          : null,
+      tags: (data['tags'] as List)
+          .map((e) => AccountTagModel(tag: e["title"]!, content: e["content"]!))
+          .toList(),
+      // tags: (data['tags'] is Iterable) && (data['tag_contents'] is Iterable)
+      //     ? _fromBackendTags(
+      //         List.from(data['tags']), List.from(data['tag_contents']))
+      //     : null,
+      joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
+          as List<WorkspaceModel>,
+      contributingActivities: data['contributing_activities']
+          .cast<EditableCardModel>() as List<EditableCardModel>,
+      // photoId: data['photo_id'],
+      // associateEntityId: data['associate_entity_id'] is Iterable
+      //     ? List.from(data['associate_entity_id'])
+      //     : null
+    );
+  }
   @override
   String toString() {
     return {

@@ -65,6 +65,7 @@ class UserPageViewModel extends ChangeNotifier {
         (failure) => messageService.addMessage(
             MessageData.error(message: failure.toString())), (user) {
       currentUser = user;
+      notifyListeners();
       debugPrint("UserPageViewModel getCurrentUser success");
       // print user data
       debugPrint(user.toString());

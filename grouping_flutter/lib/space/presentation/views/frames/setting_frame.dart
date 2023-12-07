@@ -36,7 +36,7 @@ class SettingFrame extends StatefulWidget implements WithThemeSettingColor {
 
 class _SettingViewState extends State<SettingFrame> {
   List<Widget> _getAccountSettingWidget(BuildContext context) {
-    List<Widget> tmp = [
+    return <Widget>[
       const SettingTitle(title: "個人帳號設定", content: "設定個人帳號"),
       const Padding(
           padding: EdgeInsets.symmetric(vertical: 5), child: Divider()),
@@ -44,7 +44,7 @@ class _SettingViewState extends State<SettingFrame> {
         fillingColor: widget.getTextBoxFillingColor,
         titleColor: widget.getTitleColor,
         title: "帳號名稱",
-        content: widget.viewModel.currentUser?.nickname ?? "這裡應為帳號名稱",
+        content: widget.viewModel.currentUser?.name ?? "這裡應為帳號名稱",
         child: UserActionButton.primary(
           onPressed: () {
             debugPrint("This is not yet implemented.");
@@ -85,8 +85,29 @@ class _SettingViewState extends State<SettingFrame> {
           primaryColor: Colors.red,
           icon: const Icon(Icons.logout),
         ),
-      )
+      ),
+      const Gap(10),
     ];
+  }
+
+  List<Widget> _getAccountTagWidget() {
+    List<Widget> tmp = <Widget>[
+      const SettingTitle(title: "個人資料設定", content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤"),
+      const Padding(
+          padding: EdgeInsets.symmetric(vertical: 5), child: Divider()),
+    ];
+    int length = widget.viewModel.currentUser?.tags.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      tmp += [
+        ColorFillingCardWidget(
+          fillingColor: widget.getTextBoxFillingColor,
+          titleColor: widget.getTitleColor,
+          title: widget.viewModel.currentUser?.tags[i].tag ?? "",
+          content: widget.viewModel.currentUser?.tags[i].content ?? "",
+        ),
+        const Gap(10)
+      ];
+    }
 
     return tmp;
   }
@@ -108,7 +129,9 @@ class _SettingViewState extends State<SettingFrame> {
           padding: EdgeInsets.symmetric(
               vertical: 30,
               horizontal: MediaQuery.of(context).size.width * 0.06),
-          child: Column(children: _getAccountSettingWidget(context)),
+          child: Column(
+              children:
+                  _getAccountSettingWidget(context) + _getAccountTagWidget()),
         ),
       ),
     );
