@@ -6,6 +6,7 @@ import 'package:grouping_project/space/presentation/view_models/user_page_view_m
 import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
+import 'package:grouping_project/space/presentation/views/frames/create_workspace_dialog.dart';
 import 'package:provider/provider.dart';
 
 class SpaceInfoAndNavigatorFrame extends StatelessWidget implements WithThemePrimaryColor{
@@ -100,19 +101,19 @@ class SpaceInfoAndNavigatorFrame extends StatelessWidget implements WithThemePri
                 fontWeight: FontWeight.bold,
             )),
             const Spacer(),
-            // UserActionButton.secondary(
-            //   onPressed: (){},
-            //   label: "創建小組",
-            //   primaryColor: getThemePrimaryColor,
-            //   icon: const Icon(Icons.add),
-            // ),
-            // const Gap(5),
-            // UserActionButton.secondary(
-            //   onPressed: (){},
-            //   label: "加入小組",
-            //   primaryColor: getThemePrimaryColor,
-            //   icon: const Icon(Icons.group_add),
-            // ),
+            UserActionButton.secondary(
+              onPressed: () => _onCreateGroup(context),
+              label: "創建小組",
+              primaryColor: getThemePrimaryColor,
+              icon: const Icon(Icons.add),
+            ),
+            const Gap(5),
+            UserActionButton.secondary(
+              onPressed: (){},
+              label: "加入小組",
+              primaryColor: getThemePrimaryColor,
+              icon: const Icon(Icons.group_add),
+            ),
           ],
         ),
         const Gap(10),
@@ -124,7 +125,17 @@ class SpaceInfoAndNavigatorFrame extends StatelessWidget implements WithThemePri
     );
   }
   
+
+
   @override
   Color get getThemePrimaryColor => frameColor;
+  
+  _onCreateGroup(BuildContext context) async {
+    // open create group dialog
+    await showDialog(
+      context: context,
+      builder: (context) => const CreateWorkspaceDialog()
+    );
+  }
 }
 

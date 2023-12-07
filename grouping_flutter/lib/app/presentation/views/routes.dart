@@ -4,6 +4,7 @@ import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
 import 'package:grouping_project/space/presentation/views/pages/workspace_page_view.dart';
+import 'package:grouping_project/threads/presentations/pages/test_page.dart';
 
 
 
@@ -48,6 +49,13 @@ class AppRouter {
             return const WorkspacePageView();
           },
         ),
+        GoRoute(
+          path: '/threads',
+          builder: (BuildContext context, GoRouterState state) {
+            // debugPrint(state.pathParameters['workspaceId'].toString());
+            return const TestTreadPage();
+          },
+        ),
       ],
       redirect: (BuildContext context, GoRouterState state) async {
         debugPrint(state.matchedLocation);
@@ -71,7 +79,6 @@ class AppRouter {
             return '/login';
           }
         }
-
         return null;
       }
 
