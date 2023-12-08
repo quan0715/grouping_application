@@ -30,3 +30,4 @@ typing_extensions==4.7.1
 tzdata==2023.3
 uritemplate==4.1.1
 urllib3==1.26.16
+freezegun==1.2.2

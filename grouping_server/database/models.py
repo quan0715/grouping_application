@@ -75,25 +75,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserTag(models.Model):
     belong_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='tags')
-    title = models.CharField(max_length=20)
-    content = models.CharField(max_length=20)
+    title = models.CharField(max_length=20, verbose_name="標題")
+    content = models.CharField(max_length=20, verbose_name="內容")
 
 
 class Workspace(models.Model):
-    theme_color = models.IntegerField()
-    workspace_name = models.CharField(max_length=20)
-    description = models.TextField()
+    theme_color = models.IntegerField(verbose_name="主題顏色")
+    workspace_name = models.CharField(max_length=20, verbose_name="名稱")
+    description = models.TextField(verbose_name="簡介")
     is_personal = models.BooleanField()
     photo = models.ForeignKey(
-        Image, null=True, blank=True, on_delete=models.SET_NULL)
+        Image, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="頭像")
     members = models.ManyToManyField(
-        User, related_name='joined_workspaces')
+        User, related_name='joined_workspaces', verbose_name="成員")
 
 
 class WorkspaceTag(models.Model):
     belong_workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name='tags')
-    content = models.CharField(max_length=20)
+    content = models.CharField(max_length=20, verbose_name="內容")
 
 
 class MissionState(models.Model):
@@ -103,7 +103,7 @@ class MissionState(models.Model):
         CLOSE = 'CLOSE', _('close')
     stage = models.CharField(
         max_length=15, choices=Stage.choices, default=Stage.IN_PROGRESS)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, verbose_name="名稱")
     belong_workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
 
