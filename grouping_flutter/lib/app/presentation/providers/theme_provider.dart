@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/theme/theme_entity.dart';
 
-// TODO: 這是 ViewModel 不能存在在這裡
-
 class ThemeManager with ChangeNotifier {
   // 這是 ViewModel
   // brightness 用來切換主題是Model

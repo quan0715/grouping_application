@@ -39,6 +39,7 @@ class TokenExchangeError(Enum):
     GITHUB_OR_LINE_TOKEN_EXCHANGE_ERROR = 'When exchanging token, error occured'
     REQUEST_PROFILE_ERROR = 'When requesting profile, error occured'
     UNEXPECTED_ERROR = 'Code handle process failed unexpected'
+    REFRESH_TOKEN_EXPIRED = 'Refresh token already expired'
 
     def errorFormatter(toBeFormatted:Enum):
         return {
