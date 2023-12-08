@@ -5,7 +5,7 @@ import 'package:grouping_project/core/data/models/member_model.dart';
 
 
 class WorkspaceEntity {
-  final int? id;
+  final int id;
   final int themeColor;
   final String name;
   final String description;

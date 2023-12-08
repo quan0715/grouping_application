@@ -1,9 +1,9 @@
-import 'package:grouping_project/space/domain/entities/editable_card_entity.dart';
+import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 
-class EventEntity extends EditableCardEntity{
-  final DateTime startTime;
-  final DateTime endTime;
-  final List<String> relatedMissionIds;
+class EventEntity extends ActivityEntity{
+  DateTime startTime;
+  DateTime endTime;
+  List<String> relatedMissionIds;
 
   EventEntity(
       {required super.id,
@@ -11,8 +11,9 @@ class EventEntity extends EditableCardEntity{
       required super.introduction,
       required super.contributors,
       required super.notifications,
-      required super.creatorAccount,
       required this.startTime,
       required this.endTime,
-      required this.relatedMissionIds});
+      required this.relatedMissionIds,
+      super.creatorAccount,
+      super.creator});
 }

@@ -13,12 +13,15 @@ import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/workspace_usecaes_lib.dart';
 
 class WorkspaceViewModel extends ChangeNotifier {
+
+  WorkspaceViewModel({required this.tokenModel});
+
   int _pages = 0;
 
   int get currentPageIndex => _pages;
 
   WorkspaceEntity? _workspace;
-  AuthTokenModel tokenModel = AuthTokenModel(token: "");
+  AuthTokenModel tokenModel = AuthTokenModel(token: "", refresh: "");
 
   SpaceProfileEntity get workspaceProfile => GroupSpaceProfileEntity(spaceName: "張百寬 的 workspace", spacePhotoPicPath: "", spaceColor: const Color(0xFFBF5F07));
 

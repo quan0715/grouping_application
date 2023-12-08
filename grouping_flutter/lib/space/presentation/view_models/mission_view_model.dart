@@ -4,29 +4,30 @@ import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
+import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 // import 'package:grouping_project/space/data/datasources/activity_repo.dart';
 import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
-import 'package:grouping_project/space/domain/entities/event_entity.dart';
+import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/create_event_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/create_mission_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/activity_usecases/delete_activity_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/get_event_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/update_event_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/get_mission_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/update_mission_usecase.dart';
 // import 'package:grouping_project/model/model_lib.dart';
 // import 'package:grouping_project/service/service_lib.dart';
 import 'package:intl/intl.dart';
 
-enum EventState {
+enum MissionState {
   create,
   edit;
 }
 
-class EventSettingViewModel extends ChangeNotifier {
-  EventSettingViewModel(
+class MissionSettingViewModel extends ChangeNotifier {
+  MissionSettingViewModel(
       {required this.tokenModel, required this.workspaceEntity});
 
-  EventEntity? _event;
+  MissionEntity? _mission;
   UserEntity? creator;
   WorkspaceEntity? workspaceEntity;
   AuthTokenModel tokenModel = AuthTokenModel(token: "", refresh: "");
@@ -34,71 +35,71 @@ class EventSettingViewModel extends ChangeNotifier {
   MessageService get messageService => _messageService;
 
   Future<void> init(
-      {required EventState state, int? eventID, UserEntity? creator}) async {
-    if (state == EventState.edit) {
-      await getEvent(eventID!);
-    } else if (state == EventState.create) {
-      initializeNewEvent(creator: creator!);
+      {required MissionState state, int? missionID, UserEntity? creator}) async {
+    if (state == MissionState.edit) {
+      await getMission(missionID!);
+    } else if (state == MissionState.create) {
+      initializeNewMission(creator: creator!);
     }
   }
 
-  Future<void> getEvent(int eventID) async {
+  Future<void> getMission(int missionID) async {
     // debugPrint("EventSettingViewModel getEvent");
-    GetEventUseCase getEventUseCase = GetEventUseCase(ActivityRepositoryImpl(
+    GetMissionUseCase getMissionUseCase = GetMissionUseCase(ActivityRepositoryImpl(
       remoteDataSource: ActivityRemoteDataSourceImpl(
           token: tokenModel.token, workSpaceUid: workspaceEntity!.id),
       localDataSource: ActivityLocalDataSourceImpl(),
     ));
 
-    final failureOrEvent = await getEventUseCase(eventID);
+    final failureOrMission = await getMissionUseCase(missionID);
 
-    failureOrEvent.fold(
+    failureOrMission.fold(
         (failure) => messageService.addMessage(
-            MessageData.error(message: failure.toString())), (event) {
-      _event = event;
-      creator = _event!.creator;
+            MessageData.error(message: failure.toString())), (mission) {
+      _mission = mission;
+      creator = _mission!.creator;
     });
   }
 
-  Future<void> createEvent(EventEntity event) async {
+  Future<void> createMission(MissionEntity mission) async {
     // debugPrint("EventSettingViewModel getEvent");
-    CreateEventUseCase createEventUseCase =
-        CreateEventUseCase(ActivityRepositoryImpl(
+    CreateMissionUseCase createMissionUseCase =
+        CreateMissionUseCase(ActivityRepositoryImpl(
       remoteDataSource: ActivityRemoteDataSourceImpl(
           token: tokenModel.token, workSpaceUid: workspaceEntity!.id),
       localDataSource: ActivityLocalDataSourceImpl(),
     ));
 
-    final failureOrEvent = await createEventUseCase(event);
+    final failureOrMission = await createMissionUseCase(mission);
 
-    failureOrEvent.fold(
+    failureOrMission.fold(
         (failure) => messageService.addMessage(
-            MessageData.error(message: failure.toString())), (event) {
-      _event = event;
-      creator = _event!.creator;
+            MessageData.error(message: failure.toString())), (mission) {
+      _mission = mission;
+      creator = _mission!.creator;
     });
   }
 
-  Future<void> updateEvent(EventEntity event) async {
+  Future<void> updateMission(MissionEntity mission) async {
     // debugPrint("EventSettingViewModel getEvent");
-    UpdateEventUseCase updateEventUseCase =
-        UpdateEventUseCase(ActivityRepositoryImpl(
+    UpdateMissionUseCase updateMissionUseCase =
+        UpdateMissionUseCase(ActivityRepositoryImpl(
       remoteDataSource: ActivityRemoteDataSourceImpl(
           token: tokenModel.token, workSpaceUid: workspaceEntity!.id),
       localDataSource: ActivityLocalDataSourceImpl(),
     ));
 
-    final failureOrEvent = await updateEventUseCase(event);
+    final failureOrMission = await updateMissionUseCase(mission);
 
-    failureOrEvent.fold(
+    failureOrMission.fold(
         (failure) => messageService.addMessage(
-            MessageData.error(message: failure.toString())), (event) {
-      _event = event;
-      creator = _event!.creator;
+            MessageData.error(message: failure.toString())), (mission) {
+      _mission = mission;
+      creator = _mission!.creator;
     });
   }
 
-  Future<void> deleteEvent(int eventID) async {
+  Future<void> deleteMission(int missionID) async {
     // debugPrint("EventSettingViewModel getEvent");
     DeleteActivityUseCase deleteActivityUseCase =
         DeleteActivityUseCase(ActivityRepositoryImpl(
@@ -107,7 +108,7 @@ class EventSettingViewModel extends ChangeNotifier {
       localDataSource: ActivityLocalDataSourceImpl(),
     ));
 
-    final failureOrEmpty = await deleteActivityUseCase(eventID);
+    final failureOrEmpty = await deleteActivityUseCase(missionID);
 
     failureOrEmpty.fold(
         (failure) => messageService
@@ -118,20 +119,17 @@ class EventSettingViewModel extends ChangeNotifier {
   // SettingMode settingMode = SettingMode.create;
   // timer output format
   DateFormat dataFormat = DateFormat('h:mm a, MMM d, y');
-  String get formattedStartTime => dataFormat.format(startTime);
-  String get formattedEndTime => dataFormat.format(endTime);
+  String get formattedDeadline => dataFormat.format(deadline);
 
-  // getter of eventModel
-  String get title => _event!.title; // Event title
-  String get introduction => _event!.introduction; // Introduction od event
-  String get ownerAccountName => creator!.name; // event owner account name
-  DateTime get startTime => _event!.startTime; // event start time
-  DateTime get endTime => _event!.endTime; // event end time
 
+  String get title => _mission!.title; // Mission title
+  String get introduction => _mission!.introduction; // Introduction of mission
+  String get ownerAccountName => creator!.name; // mission owner account name
+  DateTime get deadline => _mission!.deadline; // mission deadline
   // get event card Material design  color scheem seed;
   bool onTime() {
     final currentTime = DateTime.now();
-    return currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+    return currentTime.isBefore(deadline);
   }
 
   // double onTimePercentage() {
@@ -151,7 +149,7 @@ class EventSettingViewModel extends ChangeNotifier {
   //     eventModel.contributorIds.contains(model.id!);
 
   void updateTitle(String newTitle) {
-    _event!.title = newTitle == '' ? '事件標題' : newTitle;
+    _mission!.title = newTitle == '' ? '事件標題' : newTitle;
     notifyListeners();
   }
 
@@ -160,7 +158,7 @@ class EventSettingViewModel extends ChangeNotifier {
   }
 
   void updateIntroduction(String newIntro) {
-    _event!.introduction = newIntro == '' ? '事件介紹' : newIntro;
+    _mission!.introduction = newIntro == '' ? '事件介紹' : newIntro;
     notifyListeners();
   }
 
@@ -168,40 +166,27 @@ class EventSettingViewModel extends ChangeNotifier {
     return introduction.isEmpty ? '不可為空' : null;
   }
 
-  void updateStartTime(DateTime newStart) {
-    _event!.startTime = newStart;
-    if (_event!.startTime.isAfter(_event!.endTime)) {
-      DateTime temp = _event!.startTime;
-      _event!.startTime = _event!.endTime;
-      _event!.endTime = temp;
-    }
+  void updateDeadline(DateTime newDeadline) {
+    _mission!.deadline = newDeadline;
     notifyListeners();
   }
 
-  void updateEndTime(DateTime newEnd) {
-    _event!.endTime = newEnd;
-    if (_event!.startTime.isAfter(_event!.endTime)) {
-      DateTime temp = _event!.startTime;
-      _event!.startTime = _event!.endTime;
-      _event!.endTime = temp;
-    }
-    notifyListeners();
-  }
-
-  void initializeNewEvent({required UserEntity creator}) {
+  void initializeNewMission({required UserEntity creator}) {
     this.creator = creator;
     // debugPrint('owner ${this.ownerAccount.id}');
     // debugPrint('ownerAccount ${ownerAccount.associateEntityAccount.length}');
 
-    _event = EventEntity(
+    _mission = MissionEntity(
         id: -1,
         title: '事件標題',
         introduction: '事件介紹',
         contributors: [],
         notifications: [],
-        startTime: DateTime.now(),
-        endTime: DateTime.now().add(const Duration(hours: 1)),
-        relatedMissionIds: [],
+        deadline: DateTime.now().add(const Duration(hours: 1)),
+        stateId: -1,
+        state: MissionStateModel.defaultProgressState,
+        parentMissionIds: [],
+        childMissionIds: [],
         creator: creator);
 
     notifyListeners();

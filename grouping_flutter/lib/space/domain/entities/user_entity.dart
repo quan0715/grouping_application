@@ -5,7 +5,7 @@ import 'package:grouping_project/space/data/models/workspace_model.dart';
 
 class UserEntity{
   final int? id;
-  // String account;
+  String account;
   String name;
   // String nickname;
   // String slogan;
@@ -18,7 +18,7 @@ class UserEntity{
   // build constructor
   UserEntity({
     this.id,
-    // required this.account,
+    required this.account,
     required this.name,
     required this.introduction,
     // required this.photoId,
@@ -32,7 +32,7 @@ class UserEntity{
   factory UserEntity.fromModel(UserModel account){
     return UserEntity(
       id: account.id,
-      // account: account.account,
+      account: account.account,
       name: account.name,
       introduction: account.introduction,
       // photoId: account.photoId,

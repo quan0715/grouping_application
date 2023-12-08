@@ -1,5 +1,5 @@
 // ignore_for_file: unnecessary_this
-import 'package:grouping_project/core/exceptions/exception.dart';
+// import 'package:grouping_project/core/exceptions/exception.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
@@ -13,7 +13,7 @@ import 'mission_state_model.dart';
 /// * to upload/download, use `DataController`
 class MissionModel extends ActivityModel {
   DateTime deadline;
-  String stateId;
+  int stateId;
   MissionStateModel state;
   List<String> parentMissionIds;
   List<String> childMissionIds;
@@ -22,7 +22,7 @@ class MissionModel extends ActivityModel {
 
   MissionModel._default()
       : this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        this.stateId = MissionStateModel.defaultUnknownState.id!,
+        this.stateId = MissionStateModel.defaultUnknownState.id,
         this.state = MissionStateModel.defaultUnknownState,
         this.parentMissionIds = [],
         this.childMissionIds = [],
@@ -47,7 +47,7 @@ class MissionModel extends ActivityModel {
     DateTime? deadline,
     List<int>? contributors,
     String? introduction,
-    String? stateId,
+    int? stateId,
     MissionStateModel? state,
     List<String>? tags,
     List<DateTime>? notifications,
@@ -104,7 +104,7 @@ class MissionModel extends ActivityModel {
           introduction: data['description'] as String,
           deadline: DateTime.parse(data['mission']['deadline']),
           // state: MissionStateModel.fromJson(data: data['state']),
-          stateId: data['mission']['state'].toString(),
+          stateId: data['mission']['state'],
           contributors: data['contributors'].cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
           parentMissionIds: data['parents'].cast<String>() as List<String>,
@@ -185,15 +185,17 @@ class MissionModel extends ActivityModel {
   /// ### This is the perfered method to change state of mission
   /// - please make sure the [stateModel] is a correct model in database
   void setStateByStateModel(MissionStateModel stateModel) {
-    if (stateModel.id != null) {
-      stateId = stateModel.id!;
-      state = stateModel;
-    } else {
-      throw GroupingProjectException(
-          message: 'This state model is not from the database.',
-          code: GroupingProjectExceptionCode.wrongParameter,
-          stackTrace: StackTrace.current);
-    }
+    stateId = stateModel.id;
+    state = stateModel;
+    // if (stateModel.id != null) {
+    //   stateId = stateModel.id!;
+    //   state = stateModel;
+    // } else {
+    //   throw GroupingProjectException(
+    //       message: 'This state model is not from the database.',
+    //       code: GroupingProjectExceptionCode.wrongParameter,
+    //       stackTrace: StackTrace.current);
+    // }
   }
 
   @override

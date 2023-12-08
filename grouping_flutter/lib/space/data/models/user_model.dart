@@ -4,6 +4,7 @@ import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 // import '../workspace/data_model.dart';
 
@@ -157,6 +158,19 @@ class UserModel {
                 : MissionModel.fromJson(data: activity))
             .toList(),
       );
+
+  factory UserModel.fromEntity(UserEntity entity){
+    return UserModel(
+      accountId: entity.id ?? defaultAccount.id,
+      name: entity.name,
+      introduction: entity.introduction,
+      photo: entity.photo ?? defaultAccount.photo,
+      tags: entity.tags,
+      joinedWorkspaces: entity.joinedWorkspaces,
+      contributingActivities: entity.contributingActivities,
+    );
+  }
+
   @override
   String toString() {
     return {

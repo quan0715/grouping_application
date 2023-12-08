@@ -95,7 +95,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   @override
   WorkspaceEntity toEntity() {
     return WorkspaceEntity(
-      id: id,
+      id: id ?? -1,
       themeColor: themeColor,
       name: name,
       description: description,
