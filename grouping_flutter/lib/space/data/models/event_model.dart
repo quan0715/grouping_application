@@ -1,12 +1,13 @@
 // ignore_for_file: unnecessary_this
-import 'package:grouping_project/space/data/models/account_model.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
+import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
 // import 'account_model.dart';
 
 /// ## a data model for event
 /// * to upload/download, use `DataController`
-class EventModel extends EditableCardModel {
+class EventModel extends ActivityModel {
   // String title;
   DateTime startTime;
   DateTime endTime;
@@ -22,22 +23,14 @@ class EventModel extends EditableCardModel {
   EventModel._default()
       : this.startTime = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
         this.endTime = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        // this.contributorIds = [],
-        // this.introduction = 'unknown',
-        // this.tags = [],
         this.relatedMissionIds = [],
-        // this.notifications = [],
-        // this.ownerAccount = AccountModel.defaultAccount,
         super(
           title: 'unknown',
           contributors: [],
           introduction: 'unknown',
-          // tags: [],
           notifications: [],
-          creatorAccount: AccountModel.defaultAccount,
+          creatorAccount: UserModel.defaultAccount,
           id: 0,
-          // databasePath: 'event',
-          // storageRequired: false,
         );
 
   /// ## a data model for event
@@ -49,32 +42,19 @@ class EventModel extends EditableCardModel {
       DateTime? endTime,
       List<int>? contributors,
       String? introduction,
-      // List<String>? tags,
-      AccountModel? creatorAccount,
+      UserModel? creatorAccount,
       List<String>? relatedMissionIds,
       List<DateTime>? notifications})
       : this.startTime = startTime ?? defaultEvent.startTime,
         this.endTime = endTime ?? defaultEvent.endTime,
-        // this.contributorIds =
-        //     contributorIds ?? List.from(defaultEvent.contributorIds),
-        // this.introduction = introduction ?? defaultEvent.introduction,
-        // this.tags = tags ?? List.from(defaultEvent.tags),
         this.relatedMissionIds =
             relatedMissionIds ?? List.from(defaultEvent.relatedMissionIds),
-        // this.notifications =
-        //     notifications ?? List.from(defaultEvent.notifications),
-        // this.ownerAccount = defaultEvent.ownerAccount,
         super(
           title: title ?? defaultEvent.title,
-          contributors:
-              contributors ?? List.from(defaultEvent.contributors),
+          contributors: contributors ?? List.from(defaultEvent.contributors),
           introduction: introduction ?? defaultEvent.introduction,
-          // tags: tags ?? List.from(defaultEvent.tags),
           notifications: notifications ?? List.from(defaultEvent.notifications),
           creatorAccount: creatorAccount ?? defaultEvent.creatorAccount,
-          // databasePath: defaultEvent.databasePath,
-          // storageRequired: defaultEvent.storageRequired,
-          // setOwnerRequired: true
         );
 
   factory EventModel.fromJson({required Map<String, dynamic> data}) =>
@@ -86,10 +66,9 @@ class EventModel extends EditableCardModel {
           endTime: DateTime.parse(data['event']['end_time']),
           contributors: data['contributors'].cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
-          relatedMissionIds:
-              data['children'].cast<String>() as List<String>,
-          notifications:
-              _notificationFromJson(data['notifications'].cast<Map<String, String>>()));
+          relatedMissionIds: data['children'].cast<String>() as List<String>,
+          notifications: _notificationFromJson(
+              data['notifications'].cast<Map<String, String>>()));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -107,17 +86,45 @@ class EventModel extends EditableCardModel {
         'notifications': _notificationsToJson()
       };
 
-  List<Map<String, String>> _notificationsToJson(){
+  @override
+  EventEntity toEntity() {
+    return EventEntity(
+        id: id,
+        title: title,
+        introduction: introduction,
+        contributors: contributors,
+        notifications: notifications,
+        creatorAccount: creatorAccount,
+        startTime: startTime,
+        endTime: endTime,
+        relatedMissionIds: relatedMissionIds);
+  }
+
+  factory EventModel.fromEntity(EventEntity entity){
+    return EventModel(
+      id: entity.id,
+      title: entity.title,
+      introduction: entity.introduction,
+      contributors: entity.contributors,
+      notifications: entity.notifications,
+      creatorAccount: entity.creatorAccount,
+      startTime: entity.startTime,
+      endTime: entity.endTime,
+      relatedMissionIds: entity.relatedMissionIds,
+    );
+  }
+
+  List<Map<String, String>> _notificationsToJson() {
     List<Map<String, String>> notiMap = [];
-    for(DateTime noti in this.notifications){
+    for (DateTime noti in this.notifications) {
       notiMap.add({"notify_time": noti.toIso8601String()});
     }
     return notiMap;
   }
 
-  static List<DateTime> _notificationFromJson(List<Map<String, String>> data){
+  static List<DateTime> _notificationFromJson(List<Map<String, String>> data) {
     List<DateTime> noti = [];
-    for(Map<String, String> object in data){
+    for (Map<String, String> object in data) {
       noti.add(DateTime.parse(object.values.elementAt(0)));
     }
     return noti;
@@ -147,9 +154,8 @@ class EventModel extends EditableCardModel {
   bool operator ==(Object other) {
     return this.toString() == other.toString();
   }
-  
+
   @override
   // TODO: implement hashCode
   int get hashCode => id!;
-  
 }
