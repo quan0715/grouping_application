@@ -47,7 +47,7 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
           ColorFillingCardWidget(
             primaryColor: getThemePrimaryColor,
             title: "帳號名稱",
-            content: viewModel.currentUser?.nickname ?? "這裡應為帳號名稱",
+            content: viewModel.currentUser?.name ?? "這裡應為帳號名稱",
             child: UserActionButton.primary(
               onPressed: () {
                 debugPrint("This is not yet implemented.");

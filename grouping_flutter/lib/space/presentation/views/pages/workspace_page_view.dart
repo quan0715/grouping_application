@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
@@ -8,13 +9,28 @@ import 'package:grouping_project/space/presentation/views/components/mobile_bott
 import 'package:grouping_project/space/presentation/views/frames/workspace_info_and_navigator_frame.dart';
 import 'package:provider/provider.dart';
 
-
-class WorkspacePageView extends StatelessWidget {
+class WorkspacePageView extends StatefulWidget {
   const WorkspacePageView({super.key});
+
+  @override
+  State<WorkspacePageView> createState() => _WorkspacePageViewState();
+
+}
+
+class _WorkspacePageViewState extends State<WorkspacePageView> {
+
+  late final WorkspaceViewModel viewModel;
+
+  @override
+  void initState(){
+    super.initState();
+    viewModel = WorkspaceViewModel(tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel);
+    viewModel.init();
+  }
   
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-    create: (context) => WorkspaceViewModel()..init(),
+  Widget build(BuildContext context) => ChangeNotifierProvider<WorkspaceViewModel>.value(
+    value: viewModel,
     child: _buildBody()
   );
 
