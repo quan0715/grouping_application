@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
-import 'package:grouping_project/app/presentation/views/app.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
