@@ -76,6 +76,35 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> onTagAddPressed() async {
+    onTagChanging = true;
+    indexOfChangingTag = currentUser!.tags.length;
+    notifyListeners();
+  }
+
+  Future<void> onTagAddDone(String tag, String content) async {
+    currentUser!.tags.add(AccountTagModel(tag: tag, content: content));
+
+    onTagChanging = false;
+    indexOfChangingTag = null;
+
+    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
+        remoteDataSource:
+            UserRemoteDataSourceImpl(token: _viewModel.tokenModel.token),
+        localDataSource: UserLocalDataSourceImpl()));
+
+    final failureOrUser = await updateUserUseCase(currentUser!);
+
+    failureOrUser.fold(
+        (failure) => _viewModel.messageService
+            .addMessage(MessageData.error(message: failure.toString())),
+        (user) {
+      debugPrint(user.tags.toString());
+    });
+
+    notifyListeners();
+  }
+
   Future<void> onTagDelete(int index) async {
     currentUser!.tags.removeAt(index);
     onTagChanging = false;
@@ -104,8 +133,13 @@ class SettingPageViewModel extends ChangeNotifier {
   }
 
   Future<void> onEditingDone() async {
-    currentUser!.tags[indexOfChangingTag!] =
-        AccountTagModel(tag: firstEditedFiled, content: secondEditedFiled);
+    if (indexOfChangingTag != currentUser!.tags.length) {
+      currentUser!.tags[indexOfChangingTag!] =
+          AccountTagModel(tag: firstEditedFiled, content: secondEditedFiled);
+    } else {
+      currentUser!.tags.add(
+          AccountTagModel(tag: firstEditedFiled, content: secondEditedFiled));
+    }
 
     onTagChanging = false;
     indexOfChangingTag = null;

@@ -31,11 +31,6 @@ class UserSettingFrame extends StatefulWidget {
 class _SettingViewState extends State<UserSettingFrame>
     implements WithThemeSettingColor {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) => _buildBody();
 
   Widget _buildBody() {
@@ -77,6 +72,19 @@ class _SettingViewState extends State<UserSettingFrame>
     debugPrint("This is not yet implemented.");
   }
 
+  Future<void> onTagAddPressed() async {
+    if (Provider.of<SettingPageViewModel>(context, listen: false)
+            .currentUser!
+            .tags
+            .length <
+        4) {
+      await Provider.of<SettingPageViewModel>(context, listen: false)
+          .onTagAddPressed();
+    } else {
+      debugPrint("You can't add more tags.");
+    }
+  }
+
   Future<void> onTagDelete(int i) async {
     await Provider.of<SettingPageViewModel>(context, listen: false)
         .onTagDelete(i);
@@ -113,7 +121,7 @@ class _SettingViewState extends State<UserSettingFrame>
     UserPageViewModel userPageViewModel =
         Provider.of<UserPageViewModel>(context);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const TitleWithContent(
+      TitleWithContent(
         title: "個人帳號設定",
         content: "設定個人帳號",
       ),
@@ -161,8 +169,15 @@ class _SettingViewState extends State<UserSettingFrame>
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-              const TitleWithContent(
-                  title: "個人資料設定", content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤"),
+              TitleWithContent(
+                title: "個人資料設定",
+                content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤",
+                child: UserActionButton.secondary(
+                    onPressed: () => onTagAddPressed(),
+                    icon: const Icon(Icons.add),
+                    label: "創建新標籤",
+                    primaryColor: getThemePrimaryColor),
+              ),
               const Divider(height: 10, thickness: 1)
             ] +
             _getExsistedTags(context));
@@ -225,6 +240,37 @@ class _SettingViewState extends State<UserSettingFrame>
           const Gap(10)
         ];
       }
+      if (settingPageViewModel.indexOfChangingTag ==
+          settingPageViewModel.currentUser!.tags.length) {
+        temp += [
+          TwoInfoEditCardWidget(
+            primaryColor: getThemePrimaryColor,
+            firstEditTitle: "標籤名稱",
+            secondEditTitle: "標籤資訊",
+            firstEditingContent: "",
+            secondEditingContent: "",
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                UserActionButton.secondary(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => onEditingCancel(),
+                    label: "放棄",
+                    primaryColor: getThemePrimaryColor),
+                const Gap(10),
+                UserActionButton.primary(
+                    icon: const Icon(Icons.done),
+                    onPressed: () async => onEditingDone(),
+                    label: "儲存",
+                    primaryColor: getThemePrimaryColor)
+              ],
+            ),
+          ),
+        ];
+      }
+      if (userPageViewModel.currentUser!.tags.length == 0) {
+        temp += [const Gap(10)];
+      }
       return temp;
     } else {
       return [const SizedBox()];
@@ -237,7 +283,10 @@ class _SettingViewState extends State<UserSettingFrame>
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const TitleWithContent(title: "個人儀錶板設定", content: "你可以自訂義儀表板設定"),
+          TitleWithContent(
+            title: "個人儀錶板設定",
+            content: "你可以自訂義儀表板設定",
+          ),
           const Divider(height: 10, thickness: 1),
           ColorFillingCardWidget(
             primaryColor: getThemePrimaryColor,
