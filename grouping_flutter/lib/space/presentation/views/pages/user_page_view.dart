@@ -28,10 +28,7 @@ class _UserPageViewState extends State<UserPageView> {
     viewModel = UserPageViewModel(
         tokenModel:
             Provider.of<TokenManager>(context, listen: false).tokenModel);
-    settingPageViewModel = SettingPageViewModel(
-        currentUser: null,
-        token:
-            Provider.of<TokenManager>(context, listen: false).tokenModel.token);
+    settingPageViewModel = SettingPageViewModel(currentUser: null);
     viewModel.init().whenComplete(() => settingPageViewModel.init(viewModel));
   }
 

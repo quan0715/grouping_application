@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:grouping_project/space/data/models/editable_card_model.dart';
 import 'package:grouping_project/space/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 // import '../workspace/data_model.dart';
 
@@ -19,6 +20,10 @@ class AccountTagModel {
   @override
   String toString() {
     return 'Account Tag: $tag : $content';
+  }
+
+  Map<String, String> toJson() {
+    return {"title": tag, "content": content};
   }
 }
 
@@ -128,6 +133,23 @@ class AccountModel {
     );
   }
 
+  factory AccountModel.fromEntity({required UserEntity userEntity}) =>
+      AccountModel(
+        accountId: userEntity.id,
+        account: userEntity.account,
+        name: userEntity.name,
+        nickname: userEntity.nickname,
+        slogan: userEntity.slogan,
+        introduction: userEntity.introduction,
+        // color: userEntity.color,
+        photo: userEntity.photo,
+        tags: userEntity.tags,
+        // photoId: userEntity.photoId,
+        joinedWorkspaces: userEntity.joinedWorkspaces,
+        contributingActivities: userEntity.contributingActivities,
+        // associateEntityId: userEntity.associateEntityId,
+      );
+
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': this.id,
         'real_name': this.name,
@@ -136,8 +158,8 @@ class AccountModel {
         // 'color': this.color,
         'slogan': this.slogan,
         'introduction': this.introduction,
-        'tags': this.tags,
-        'photo': this.photo?.toJson(),
+        'tags': this.tags.map((e) => e.toJson()).toList(),
+        // 'photo': this.photo?.toJson(),
         // 'tag_contents': _toBackendTagContent(this.tags),
         'joined_workspaces': this.joinedWorkspaces,
         'contributing_activities': this.contributingActivities,

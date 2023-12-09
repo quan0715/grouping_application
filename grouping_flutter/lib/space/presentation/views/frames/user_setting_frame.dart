@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+
 import 'package:provider/provider.dart';
 
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
+import 'package:grouping_project/space/presentation/views/components/two_info_edit_card.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
@@ -71,12 +73,28 @@ class _SettingViewState extends State<UserSettingFrame>
     }
   }
 
-  void onChangeTag() async {
+  void onChangeAccountName() async {
     debugPrint("This is not yet implemented.");
   }
 
-  void onChangeAccountName() async {
-    debugPrint("This is not yet implemented.");
+  Future<void> onTagDelete(int i) async {
+    await Provider.of<SettingPageViewModel>(context, listen: false)
+        .onTagDelete(i);
+  }
+
+  void onEditPressed(int i) async {
+    Provider.of<SettingPageViewModel>(context, listen: false).onEditPressed(i);
+    debugPrint(Provider.of<SettingPageViewModel>(context, listen: false)
+        .onTagChanging
+        .toString());
+  }
+
+  void onEditingCancel() {
+    Provider.of<SettingPageViewModel>(context, listen: false).onEditingCancel();
+  }
+
+  void onEditingDone() {
+    Provider.of<SettingPageViewModel>(context, listen: false).onEditingDone();
   }
 
   void onNightViewToggled(bool value) {
@@ -85,12 +103,10 @@ class _SettingViewState extends State<UserSettingFrame>
         .onNightViewToggled(value);
   }
 
-  void onChangeThemeColor() async {
+  void onChangeThemeColor(Color color) async {
     debugPrint("This is not yet implemented.");
     debugPrint(
         "String interpretation of Color.value: ${widget.frameColor.value}");
-    debugPrint(
-        "Is the current user in SeTTingPageVM there? ${Provider.of<SettingPageViewModel>(context, listen: false).currentUser != null}");
   }
 
   Widget _getAccountBody() {
@@ -155,19 +171,57 @@ class _SettingViewState extends State<UserSettingFrame>
   List<Widget> _getExsistedTags(BuildContext context) {
     UserPageViewModel userPageViewModel =
         Provider.of<UserPageViewModel>(context);
+    SettingPageViewModel settingPageViewModel =
+        Provider.of<SettingPageViewModel>(context);
     if (mounted && userPageViewModel.currentUser != null) {
       List<Widget> temp = [];
       for (int i = 0; i < userPageViewModel.currentUser!.tags.length; i++) {
         temp += [
-          ColorFillingCardWidget(
-            primaryColor: getThemePrimaryColor,
-            title: userPageViewModel.currentUser!.tags[i].tag,
-            content: userPageViewModel.currentUser!.tags[i].content,
-            child: IconButton(
-              icon: const Icon(Icons.create_outlined),
-              onPressed: () => onChangeTag(),
-            ),
-          ),
+          settingPageViewModel.onTagChanging &&
+                  settingPageViewModel.indexOfChangingTag == i
+              ? TwoInfoEditCardWidget(
+                  primaryColor: getThemePrimaryColor,
+                  firstEditTitle: "標籤名稱",
+                  secondEditTitle: "標籤資訊",
+                  firstEditingContent:
+                      userPageViewModel.currentUser!.tags[i].tag,
+                  secondEditingContent:
+                      userPageViewModel.currentUser!.tags[i].content,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      UserActionButton.secondary(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () async => await onTagDelete(i),
+                          label: "刪除",
+                          primaryColor: getThemePrimaryColor),
+                      const Gap(10),
+                      UserActionButton.secondary(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => onEditingCancel(),
+                          label: "放棄修改",
+                          primaryColor: getThemePrimaryColor),
+                      const Gap(10),
+                      UserActionButton.primary(
+                          icon: const Icon(Icons.done),
+                          onPressed: () async => onEditingDone(),
+                          label: "儲存",
+                          primaryColor: getThemePrimaryColor)
+                    ],
+                  ),
+                )
+              : ColorFillingCardWidget(
+                  primaryColor: getThemePrimaryColor,
+                  title: userPageViewModel.currentUser!.tags[i].tag,
+                  content: userPageViewModel.currentUser!.tags[i].content,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.create_outlined,
+                    ),
+                    color: getThemePrimaryColor,
+                    onPressed: () => onEditPressed(i),
+                  ),
+                ),
           const Gap(10)
         ];
       }
@@ -190,6 +244,7 @@ class _SettingViewState extends State<UserSettingFrame>
             title: "佈景主題",
             content: "夜覽模式",
             child: CupertinoSwitch(
+                activeColor: getThemePrimaryColor,
                 value: settingPageViewModel.isNightView,
                 onChanged: (value) => onNightViewToggled(value)),
           ),
@@ -199,7 +254,8 @@ class _SettingViewState extends State<UserSettingFrame>
             title: "佈景顏色",
             content: "更改佈景主題顏色",
             child: UserActionButton.secondary(
-                onPressed: () => onChangeThemeColor(),
+                //TODO:place true color selection
+                onPressed: () => onChangeThemeColor(Colors.amber),
                 icon: const Icon(Icons.square_rounded),
                 label: "顏色",
                 primaryColor: getThemePrimaryColor),

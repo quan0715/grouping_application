@@ -4,6 +4,7 @@ import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
+import 'package:grouping_project/space/data/models/account_model.dart';
 import 'package:grouping_project/space/data/models/setting_model.dart';
 import 'package:grouping_project/space/domain/entities/setting_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
@@ -30,9 +31,14 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> updateUser(UserEntity user) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+  Future<Either<Failure, UserEntity>> updateUser(UserEntity user) async {
+    try {
+      final userModel = await remoteDataSource.updateUserData(
+          account: AccountModel.fromEntity(userEntity: user));
+      return Right(UserEntity.fromModel(userModel));
+    } on ServerException catch (error) {
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    }
   }
 
   @override
