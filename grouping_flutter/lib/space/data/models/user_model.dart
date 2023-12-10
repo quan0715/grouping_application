@@ -123,7 +123,7 @@ class UserModel {
             .toList(),
       );
 
-  factory UserModel.fromEntity(UserEntity entity){
+  factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
       accountId: entity.id ?? defaultAccount.id,
       userName: entity.name,

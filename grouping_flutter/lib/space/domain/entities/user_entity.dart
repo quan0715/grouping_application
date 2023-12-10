@@ -4,7 +4,7 @@ import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
-class UserEntity{
+class UserEntity {
   final int? id;
   String account;
   String name;
@@ -31,7 +31,7 @@ class UserEntity{
     required this.contributingActivities,
   });
 
-  factory UserEntity.fromModel(UserModel account){
+  factory UserEntity.fromModel(UserModel account) {
     return UserEntity(
       id: account.id,
       account: account.account,

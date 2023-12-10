@@ -9,21 +9,23 @@ import 'package:grouping_project/space/presentation/views/components/profile_ava
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 import 'package:provider/provider.dart';
 
-class CreateWorkspaceDialog extends StatelessWidget{
+class CreateWorkspaceDialog extends StatelessWidget {
   const CreateWorkspaceDialog({super.key});
 
   @override
   Widget build(BuildContext context) => _buildBody(context);
 
-  TextStyle titleTextStyle(BuildContext context) => Theme.of(context).textTheme.labelLarge!.copyWith(
-    color: Theme.of(context).primaryColor,
-    fontWeight: FontWeight.bold,
-  );
+  TextStyle titleTextStyle(BuildContext context) =>
+      Theme.of(context).textTheme.labelLarge!.copyWith(
+            color: Theme.of(context).primaryColor,
+            fontWeight: FontWeight.bold,
+          );
 
-  TextStyle labelTextStyle(BuildContext context) => Theme.of(context).textTheme.labelMedium!.copyWith(
-    color: Theme.of(context).primaryColor,
-    fontWeight: FontWeight.bold,
-  );
+  TextStyle labelTextStyle(BuildContext context) =>
+      Theme.of(context).textTheme.labelMedium!.copyWith(
+            color: Theme.of(context).primaryColor,
+            fontWeight: FontWeight.bold,
+          );
 
   EdgeInsets get _innerPadding => const EdgeInsets.all(40.0);
 
@@ -47,7 +49,7 @@ class CreateWorkspaceDialog extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TitleWithContent(
+                TitleWithContent(
                   title: "建立新小組", 
                   content: "建立你的團隊，並邀請成員加入",
                 ),
@@ -95,7 +97,7 @@ class CreateWorkspaceDialog extends StatelessWidget{
       ),
     );
   }
-  
+
   Widget _buildGroupBasicInfoInputSection(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -105,145 +107,149 @@ class CreateWorkspaceDialog extends StatelessWidget{
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("小組基本資料", style: labelTextStyle(context)),
-            const Gap(5),
-            Row(
-              children: [
-                ProfileAvatar(
-                  themePrimaryColor: AppColor.mainSpaceColor, 
-                  label: "label",
-                  avatarSize: 48,
-                  avatar: Icon(Icons.add_a_photo, color: AppColor.onSurfaceColor, size: 20,),
-                ),
-                const Gap(10),
-                Expanded(
-                  child: Center(
-                    child: TextField(
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: AppColor.onSurfaceColor,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: "請輸入小組名稱",
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide.none,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("小組基本資料", style: labelTextStyle(context)),
+              const Gap(5),
+              Row(
+                children: [
+                  ProfileAvatar(
+                    themePrimaryColor: AppColor.mainSpaceColor,
+                    label: "label",
+                    avatarSize: 48,
+                    avatar: Icon(
+                      Icons.add_a_photo,
+                      color: AppColor.onSurfaceColor,
+                      size: 20,
+                    ),
+                  ),
+                  const Gap(10),
+                  Expanded(
+                    child: Center(
+                      child: TextField(
+                        style:
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: AppColor.onSurfaceColor,
+                                ),
+                        decoration: InputDecoration(
+                          hintText: "請輸入小組名稱",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const Gap(10),
-            Text("小組介紹", style: labelTextStyle(context)),
-            const Gap(5),
-            Row(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: TextField(
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: AppColor.onSurfaceColor,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: "請輸入小組介紹",
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide.none,
+                ],
+              ),
+              const Gap(10),
+              Text("小組介紹", style: labelTextStyle(context)),
+              const Gap(5),
+              Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: TextField(
+                        style:
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: AppColor.onSurfaceColor,
+                                ),
+                        decoration: InputDecoration(
+                          hintText: "請輸入小組介紹",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const Gap(10),
-            Text("小組標籤", style: labelTextStyle(context)),
-            const Gap(5),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
+                ],
+              ),
+              const Gap(10),
+              Text("小組標籤", style: labelTextStyle(context)),
+              const Gap(5),
+              Row(
+                children: [
+                  Expanded(
+                      child: Container(
                     height: 48,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Row(
-                          children: [
-                            TextButton(
+                        child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        children: [
+                          TextButton(
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.black54,
                               ),
-                              onPressed: (){}, 
+                              onPressed: () {},
                               child: Row(
                                 children: [
                                   const Icon(Icons.add),
                                   const Gap(5),
-                                  Text("新增標籤", style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: AppColor.onSurfaceColor,
-                                  ),),
+                                  Text(
+                                    "新增標籤",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          color: AppColor.onSurfaceColor,
+                                        ),
+                                  ),
                                 ],
                               )),
-                          ],
-                        ),
-                      )
-                    ),
-                     
-                  )
-                ),
-              ],
-            ),
-            const Gap(10),
-          ]
-        ),
+                        ],
+                      ),
+                    )),
+                  )),
+                ],
+              ),
+              const Gap(10),
+            ]),
       ),
     );
   }
-  
+
   Widget _buildGroupAdditionalInfoInputSection(BuildContext context) {
     return ColorFillingCardWidget(
-       primaryColor: AppColor.mainSpaceColor,
-       title: "佈景主題顏色",
-       content: "更改佈景主題顏色",
-       child: DropdownButton(
-        isDense: true,
-        underline: const SizedBox(),
-        value: 0,
-        items: [
-          DropdownMenuItem(
-            value: 0,
-            child: CircleAvatar(backgroundColor: AppColor.mainSpaceColor, radius: 12,),
-          ),
-          DropdownMenuItem(
-            value: 1,
-            child: CircleAvatar(backgroundColor: AppColor.spaceColor1, radius: 12,),
-          ),
-          DropdownMenuItem(
-            value: 2,
-            child: CircleAvatar(backgroundColor: AppColor.spaceColor2, radius: 12,),
-          ),
-          DropdownMenuItem(
-            value: 3,
-            child: CircleAvatar(backgroundColor: AppColor.spaceColor3, radius: 12,),
-          ),
-          DropdownMenuItem(
-            value: 4,
-            child: CircleAvatar(backgroundColor: AppColor.spaceColor4, radius: 12,),
-          ),
-         ], 
-         onChanged: (value){}
+        primaryColor: AppColor.mainSpaceColor,
+        title: "佈景主題顏色",
+        content: "更改佈景主題顏色",
+        child: DropdownButton(
+          isDense: true,
+          underline: const SizedBox(),
+          value: 0,
+          items: [
+            DropdownMenuItem(
+              value: 1,
+              child: CircleAvatar(backgroundColor: AppColor.spaceColor1, radius: 12,),
+            ),
+            DropdownMenuItem(
+              value: 2,
+              child: CircleAvatar(backgroundColor: AppColor.spaceColor2, radius: 12,),
+            ),
+            DropdownMenuItem(
+              value: 3,
+              child: CircleAvatar(backgroundColor: AppColor.spaceColor3, radius: 12,),
+            ),
+            DropdownMenuItem(
+              value: 4,
+              child: CircleAvatar(backgroundColor: AppColor.spaceColor4, radius: 12,),
+            ),
+          ], 
+          onChanged: (value){}
       )
       );
   }

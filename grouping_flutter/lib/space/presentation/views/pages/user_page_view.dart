@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
+import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
+import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_space_info_and_navigator_frame.dart';
-import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
 
@@ -29,23 +31,31 @@ class UserPageView extends StatefulWidget  {
 class _UserPageViewState extends State<UserPageView> {
   
   late final UserSpaceViewModel userPageViewModel;
+  late final SettingPageViewModel settingPageViewModel;
 
   @override
   void initState() {
     super.initState();
     userPageViewModel = UserSpaceViewModel();
+    settingPageViewModel = SettingPageViewModel(currentUser: null);
   }
 
   @override
   Widget build(BuildContext context){
-    return ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
-      create: (context) => userPageViewModel
-        ..userDataProvider = Provider.of<UserDataProvider>(context, listen: false)
-        ..init(),
-      update: (context, userDataProvider, userPageViewModel) => userPageViewModel!..update(userDataProvider),
+    return MultiProvider(
+      providers: [
+       ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
+        create: (context) => userPageViewModel
+          ..userDataProvider = Provider.of<UserDataProvider>(context, listen: false)
+          ..init(),
+        update: (context, userDataProvider, userPageViewModel) => userPageViewModel!..update(userDataProvider),
+        ),
+        ChangeNotifierProvider<SettingPageViewModel>.value(value: settingPageViewModel),
+      ],
       child: _buildBody(),
     );
   }
+
 
   List<Widget> _getFrames(){
     var spaceInfoAndNavigatorFrame = SpaceInfoAndNavigatorFrame(
@@ -135,12 +145,12 @@ class _UserPageViewState extends State<UserPageView> {
             backgroundColor: Colors.white,
             appBar: _getAppBar(),
             frames: _getFrames(),
-            drawer: _getDrawer()
+            drawer: _getDrawer(context)
       ),
     );
   }
 
-  Widget _getDrawer(){
+  Widget _getDrawer(BuildContext context){
     var user = Provider.of<UserDataProvider>(context, listen: false);
     return DashboardDrawer(
       selectedProfile: user.getUserProfile(),
@@ -168,4 +178,5 @@ class _UserPageViewState extends State<UserPageView> {
   //     );
   //   }
   // }
+
 }
