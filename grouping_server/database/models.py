@@ -47,11 +47,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     account = models.CharField(max_length=20, unique=True, verbose_name="帳號")
     password = models.CharField(max_length=20, verbose_name="密碼")
 
-    real_name = models.CharField(
-        max_length=20, verbose_name="真實名稱", default="")
     user_name = models.CharField(
         max_length=20, verbose_name="用戶名稱", default="")
-    slogan = models.CharField(max_length=20, verbose_name="座右銘", default="")
     introduction = models.TextField(verbose_name="簡介", default="")
     photo = models.ForeignKey(
         Image, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="頭像")
@@ -83,7 +80,6 @@ class Workspace(models.Model):
     theme_color = models.IntegerField()
     workspace_name = models.CharField(max_length=20)
     description = models.TextField()
-    is_personal = models.BooleanField()
     photo = models.ForeignKey(
         Image, null=True, blank=True, on_delete=models.SET_NULL)
     members = models.ManyToManyField(

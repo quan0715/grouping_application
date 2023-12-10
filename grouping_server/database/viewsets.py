@@ -1,6 +1,6 @@
 from rest_framework import viewsets, mixins
 from .models import Activity, User, Workspace, MissionState, Image
-from .serializers import ActivitySerializer, UserSerializer, WorkspaceSerializer, MissionStateSerializer, ActivityPatchSerializer, ImageSerializer
+from .serializers import ActivitySerializer, UserSerializer, WorkspaceSerializer, MissionStateSerializer, ActivityPatchSerializer, ImageSerializer, UserGetSerializer, WorkspaceGetSerializer
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -12,6 +12,11 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
     queryset = Workspace.objects.all()
     serializer_class = WorkspaceSerializer
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return WorkspaceGetSerializer
+        return super().get_serializer_class()
+
 
 class UserViewSet(mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
@@ -19,6 +24,11 @@ class UserViewSet(mixins.RetrieveModelMixin,
                   viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserGetSerializer
+        return super().get_serializer_class()
 
 
 class ActivityViewSet(viewsets.ModelViewSet):
