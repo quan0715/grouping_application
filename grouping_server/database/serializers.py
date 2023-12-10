@@ -88,10 +88,16 @@ class WorkspaceSimpleSerializer(serializers.ModelSerializer):
         }
 
 
-class UserTagSerializer(serializers.ModelSerializer):
+class UserSimpleSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+
     class Meta:
-        model = UserTag
-        fields = ['title', 'content']
+        model = User
+        fields = ['id', 'user_name', 'photo']
+        extra_kargs = {
+            'id': {'read_only': True},
+            'user_name': {'read_only': True},
+        }
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -121,15 +127,6 @@ class MissionSerializer(serializers.ModelSerializer):
         fields = ['deadline', 'state']
 
 
-class ActivityNotificationSerializer(serializers.ModelSerializer):
-    notify_time = serializers.DateTimeField(
-        input_formats=["%Y-%m-%d", "iso-8601"])
-
-    class Meta:
-        model = ActivityNotification
-        fields = ['notify_time']
-
-
 class ActivitySimpleSerializer(serializers.ModelSerializer):
     event = EventSerializer(read_only=True)
     mission = MissionSerializer(read_only=True)
@@ -142,6 +139,39 @@ class ActivitySimpleSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'title': {'read_only': True},
         }
+
+
+class WorkspaceGetSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+    members = UserSimpleSerializer(many=True, read_only=True)
+    tags = WorkspaceTagSerializer(many=True, read_only=True)
+    activities = ActivitySimpleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Workspace
+        fields = ['id', 'theme_color', 'workspace_name', 'description',
+                  'photo', 'members', 'tags', 'activities']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'theme_color': {'read_only': True},
+            'workspace_name': {'read_only': True},
+            'description': {'read_only': True},
+        }
+
+
+class UserTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTag
+        fields = ['title', 'content']
+
+
+class ActivityNotificationSerializer(serializers.ModelSerializer):
+    notify_time = serializers.DateTimeField(
+        input_formats=["%Y-%m-%d", "iso-8601"])
+
+    class Meta:
+        model = ActivityNotification
+        fields = ['notify_time']
 
 
 class ActivitySerializer(serializers.ModelSerializer):
