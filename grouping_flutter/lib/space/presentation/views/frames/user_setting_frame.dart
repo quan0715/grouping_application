@@ -129,7 +129,7 @@ class _SettingViewState extends State<UserSettingFrame>
       ColorFillingCardWidget(
         primaryColor: getThemePrimaryColor,
         title: "帳號名稱",
-        content: userPageViewModel.currentUser?.nickname ?? "這裡應為帳號名稱",
+        content: userPageViewModel.currentUser?.name ?? "這裡應為帳號名稱",
         child: UserActionButton.primary(
           onPressed: () => onChangeAccountName(),
           label: "更換帳號名稱",
@@ -199,7 +199,7 @@ class _SettingViewState extends State<UserSettingFrame>
                   firstEditTitle: "標籤名稱",
                   secondEditTitle: "標籤資訊",
                   firstEditingContent:
-                      userPageViewModel.currentUser!.tags[i].tag,
+                      userPageViewModel.currentUser!.tags[i].title,
                   secondEditingContent:
                       userPageViewModel.currentUser!.tags[i].content,
                   child: Row(
@@ -227,7 +227,7 @@ class _SettingViewState extends State<UserSettingFrame>
                 )
               : ColorFillingCardWidget(
                   primaryColor: getThemePrimaryColor,
-                  title: userPageViewModel.currentUser!.tags[i].tag,
+                  title: userPageViewModel.currentUser!.tags[i].title,
                   content: userPageViewModel.currentUser!.tags[i].content,
                   child: IconButton(
                     icon: const Icon(

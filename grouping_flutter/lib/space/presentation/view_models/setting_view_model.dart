@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/repositories/user_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/setting_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
@@ -26,7 +26,7 @@ class SettingPageViewModel extends ChangeNotifier {
   String secondEditedFiled = "";
 
   void onEditPressed(int index) {
-    firstEditedFiled = currentUser!.tags[index].tag;
+    firstEditedFiled = currentUser!.tags[index].title;
     secondEditedFiled = currentUser!.tags[index].content;
 
     onTagChanging = true;
@@ -82,8 +82,8 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onTagAddDone(String tag, String content) async {
-    currentUser!.tags.add(AccountTagModel(tag: tag, content: content));
+  Future<void> onTagAddDone(String title, String content) async {
+    currentUser!.tags.add(UserTagModel(title: title, content: content));
 
     onTagChanging = false;
     indexOfChangingTag = null;
@@ -135,10 +135,10 @@ class SettingPageViewModel extends ChangeNotifier {
   Future<void> onEditingDone() async {
     if (indexOfChangingTag != currentUser!.tags.length) {
       currentUser!.tags[indexOfChangingTag!] =
-          AccountTagModel(tag: firstEditedFiled, content: secondEditedFiled);
+          UserTagModel(title: firstEditedFiled, content: secondEditedFiled);
     } else {
       currentUser!.tags.add(
-          AccountTagModel(tag: firstEditedFiled, content: secondEditedFiled));
+          UserTagModel(title: firstEditedFiled, content: secondEditedFiled));
     }
 
     onTagChanging = false;
