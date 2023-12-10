@@ -75,6 +75,19 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         return instance
 
 
+class WorkspaceSimpleSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+
+    class Meta:
+        model = Workspace
+        fields = ['id', 'theme_color', 'workspace_name', 'photo']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'theme_color': {'read_only': True},
+            'workspace_name': {'read_only': True}
+        }
+
+
 class UserTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserTag
@@ -92,14 +105,20 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ['start_time', 'end_time']
 
 
+class MissionStateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MissionState
+        fields = ['id', 'stage', 'name', 'belong_workspace']
+
+
 class MissionSerializer(serializers.ModelSerializer):
     deadline = serializers.DateTimeField(
         input_formats=["%Y-%m-%d", "iso-8601"])
+    state = MissionStateSerializer(required=False)
 
     class Meta:
         model = Mission
         fields = ['deadline', 'state']
-        extra_kwargs = {'state': {'required': False}}
 
 
 class ActivityNotificationSerializer(serializers.ModelSerializer):
@@ -109,6 +128,20 @@ class ActivityNotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityNotification
         fields = ['notify_time']
+
+
+class ActivitySimpleSerializer(serializers.ModelSerializer):
+    event = EventSerializer(read_only=True)
+    mission = MissionSerializer(read_only=True)
+    belong_workspace = WorkspaceSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Activity
+        fields = ['id', 'title', 'event', 'mission', 'belong_workspace']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'title': {'read_only': True},
+        }
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -209,7 +242,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction', 'photo_data',
+        fields = ['id', 'account', 'user_name', 'introduction', 'photo_data',
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
         extra_kargs = {
             'contributing_activities': {'many': True, 'read_only': True}
@@ -236,7 +269,20 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class MissionStateSerializer(serializers.ModelSerializer):
+class UserGetSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+    tags = UserTagSerializer(many=True, read_only=True)
+    joined_workspaces = WorkspaceSimpleSerializer(many=True, read_only=True)
+    contributing_activities = ActivitySimpleSerializer(
+        many=True, read_only=True)
+
     class Meta:
-        model = MissionState
-        fields = ['id', 'stage', 'name', 'belong_workspace']
+        model = User
+        fields = ['id', 'account', 'user_name', 'introduction',
+                  'photo', 'tags', 'joined_workspaces', 'contributing_activities']
+        extra_kargs = {
+            'id': {'read_only': True},
+            'account': {'read_only': True},
+            'user_name': {'read_only': True},
+            'introduction': {'read_only': True}
+        }
