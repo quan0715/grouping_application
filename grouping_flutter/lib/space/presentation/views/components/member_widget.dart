@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/domain/entities/user_entity.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
+// import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 
 class MemberWidget extends StatelessWidget {
 
-  final UserEntity profile;
+  final Member profile;
   final bool isLeader;
   final Color themePrimaryColor;
   
@@ -21,10 +22,10 @@ class MemberWidget extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Row(
       children: [
-        ProfileAvatar(themePrimaryColor: themePrimaryColor, label: profile.name),
+        ProfileAvatar(themePrimaryColor: themePrimaryColor, label: profile.userName),
             const SizedBox(width: 10,),
             Text(
-              profile.name,
+              profile.userName,
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
                 fontWeight: FontWeight.bold
               )

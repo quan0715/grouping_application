@@ -12,19 +12,25 @@ class Image(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, account="", user_name='unknown', password="", introduction="", slogan=""):
+    def create_default_workspace(self, user):
+        workspace = Workspace.objects.create(workspace_name=f'{user.user_name} 的個人工作區',
+                                             description=f'{user.user_name} 的個人工作區',
+                                             theme_color=1)
+        workspace.members.add(user)
+        workspace.save()
+
+    def create_user(self, account, password, user_name='unknown', introduction=""):
         if account is None:
             raise TypeError('Users must have an account input.')
+        elif password is None:
+            raise TypeError('Users must have an password input.')
 
         user = self.model(account=account)
         user.set_password(password)
         user.user_name = user_name
-        user.real_name = ""
-        user.slogan = ""
         user.introduction = introduction
-        user.photo_id = user.id
         user.save()
-
+        self.create_default_workspace(user)
         return user
 
     def create_superuser(self, account, password):
@@ -41,17 +47,13 @@ class UserManager(BaseUserManager):
     Auth_Providers = {"google": "google", "line": "line", "github": "github"}
 
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     # [note: 'email/Oauth id/Line id']
     account = models.CharField(max_length=20, unique=True, verbose_name="帳號")
     password = models.CharField(max_length=20, verbose_name="密碼")
 
-    real_name = models.CharField(
-        max_length=20, verbose_name="真實名稱", default="")
     user_name = models.CharField(
         max_length=20, verbose_name="用戶名稱", default="")
-    slogan = models.CharField(max_length=20, verbose_name="座右銘", default="")
     introduction = models.TextField(verbose_name="簡介", default="")
     photo = models.ForeignKey(
         Image, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="頭像")
@@ -83,7 +85,6 @@ class Workspace(models.Model):
     theme_color = models.IntegerField()
     workspace_name = models.CharField(max_length=20)
     description = models.TextField()
-    is_personal = models.BooleanField()
     photo = models.ForeignKey(
         Image, null=True, blank=True, on_delete=models.SET_NULL)
     members = models.ManyToManyField(
