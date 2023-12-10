@@ -99,7 +99,7 @@ class SettingPageViewModel extends ChangeNotifier {
         (failure) => _viewModel.messageService
             .addMessage(MessageData.error(message: failure.toString())),
         (user) {
-      debugPrint(user.tags.toString());
+      debugPrint("Tag added to database");
     });
 
     notifyListeners();
@@ -120,7 +120,7 @@ class SettingPageViewModel extends ChangeNotifier {
         (failure) => _viewModel.messageService
             .addMessage(MessageData.error(message: failure.toString())),
         (user) {
-      debugPrint(user.tags.toString());
+      debugPrint("Tag deleted");
     });
 
     notifyListeners();
@@ -155,7 +155,7 @@ class SettingPageViewModel extends ChangeNotifier {
         (failure) => _viewModel.messageService
             .addMessage(MessageData.error(message: failure.toString())),
         (user) {
-      debugPrint(user.tags.toString());
+      debugPrint("Tag edited");
     });
 
     notifyListeners();
