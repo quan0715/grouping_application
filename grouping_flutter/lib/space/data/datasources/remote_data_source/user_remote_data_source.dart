@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
@@ -39,9 +38,11 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       "Content-Type": "application/json",
       "Authorization":"Bearer $_token",
     };
+    // debugPrint(_token);
+    // debugPrint(headers.toString());
   }
 
-  // / 設定當前 UserService 要對後端傳遞的**客戶(client)** 
+  // 設定當前 UserService 要對後端傳遞的**客戶(client)** 
   void setClient(http.Client client) {
     _client = client;
   }
@@ -67,9 +68,11 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   Future<UserModel> getUserData({required int uid}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/$uid");
     final response = await _client.get(apiUri, headers: headers);
+    // debugPrint(response.body);
     switch (response.statusCode) {
         case 200:
         // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
+          // debugPrint(utf8.decode(response.bodyBytes));
           return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
         case 400:
           throw ServerException(exceptionMessage: "Invalid Syntax");

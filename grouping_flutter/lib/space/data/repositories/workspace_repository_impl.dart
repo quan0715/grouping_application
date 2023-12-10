@@ -31,7 +31,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository{
   @override
   Future<Either<Failure, WorkspaceEntity>> createWorkspace(WorkspaceEntity workspace) async {
     try {
-      final WorkspaceModel workspaceModel = await remoteDataSource.createWorkspaceData(workspace: WorkspaceModel.fromEntity(workspace));
+      final workspaceModel = await remoteDataSource.createWorkspaceData(workspace: WorkspaceModel.fromEntity(workspace));
       return Right(workspaceModel.toEntity());
     } on ServerException catch(error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));

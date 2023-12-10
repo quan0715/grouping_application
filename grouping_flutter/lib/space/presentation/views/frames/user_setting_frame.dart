@@ -6,6 +6,7 @@ import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
+import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 import 'package:provider/provider.dart';
 
@@ -28,14 +29,14 @@ class UserSettingFrame extends StatefulWidget  {
 class _SettingViewState extends State<UserSettingFrame> implements WithThemeSettingColor {
 
   void onLogout() async {
-    await Provider.of<UserPageViewModel>(context, listen: false).logout();
+    await Provider.of<UserSpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
     if(context.mounted){
       await Provider.of<TokenManager>(context, listen: false).updateToken();
     }
   }
 
   Widget _getAccountSettingBody() {
-    return Consumer<UserPageViewModel>(
+    return Consumer<UserSpaceViewModel>(
       builder: (context, viewModel, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -47,7 +48,8 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
           ColorFillingCardWidget(
             primaryColor: getThemePrimaryColor,
             title: "帳號名稱",
-            content: viewModel.currentUser?.name ?? "這裡應為帳號名稱",
+            content: "這裡應為帳號名稱",
+            // viewModel.currentUser?.name ?? "這裡應為帳號名稱",
             child: UserActionButton.primary(
               onPressed: () {
                 debugPrint("This is not yet implemented.");
@@ -61,7 +63,8 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
           ColorFillingCardWidget(
             primaryColor: getThemePrimaryColor,
             title: "綁定信箱",
-            content: viewModel.currentUser?.account ?? "這裡應為信箱",
+            content: "這裡應為信箱"
+            // viewModel.currentUser?.account ?? "這裡應為信箱",
           ),
           const Gap(10),
           ColorFillingCardWidget(
@@ -90,24 +93,18 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
   Widget build(BuildContext context) => _buildBody();
 
   Widget _buildBody(){
-    return Container(
-      width: widget.frameWidth,
-      height: widget.frameHeight,
-      decoration: BoxDecoration(
-        color: getBackGroundColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10.0)
-      )),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _getAccountSettingBody(),
-            const Spacer(),
-            // _buildNavigator(context),
-          ],
-        ),
+    return DashboardFrameLayout(
+      frameWidth: widget.frameWidth,
+      frameHeight: widget.frameHeight,
+      frameColor: widget.frameColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _getAccountSettingBody(),
+          const Spacer(),
+          // _buildNavigator(context),
+        ],
       ),
     );
   }
