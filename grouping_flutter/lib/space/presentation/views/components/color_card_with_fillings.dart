@@ -47,15 +47,15 @@ class ColorFillingCardWidget extends StatelessWidget implements WithThemePrimary
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
                     color: getThemePrimaryColor,
                     fontWeight: FontWeight.bold
                   )
                 ),
                 Text(
                   content,
-                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: AppColor.onSurfaceColor
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    color: AppColor.onSurfaceColor.withOpacity(0.9)
                   )
                 )
           ]),

@@ -15,11 +15,12 @@ import 'package:grouping_project/space/presentation/views/components/layout/dash
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 
 class UserSettingFrame extends StatefulWidget {
-  const UserSettingFrame(
-      {this.frameColor = Colors.white,
-      this.frameHeight,
-      this.frameWidth,
-      super.key});
+  const UserSettingFrame({
+    super.key,
+    this.frameColor = Colors.white,
+    this.frameHeight,
+    this.frameWidth,
+  });
 
   final Color frameColor;
   final double? frameHeight;
@@ -29,32 +30,27 @@ class UserSettingFrame extends StatefulWidget {
   State<UserSettingFrame> createState() => _SettingViewState();
 }
 
-class _SettingViewState extends State<UserSettingFrame>
-    implements WithThemeSettingColor {
+class _SettingViewState extends State<UserSettingFrame> implements WithThemeSettingColor {
+  
   @override
   Widget build(BuildContext context) => _buildBody();
 
   Widget _buildBody() {
     return Consumer<SettingPageViewModel>(
       builder: (context, viewModel, child) => Consumer<UserSpaceViewModel>(
-        builder: (context, userPageViewModel, child) => SingleChildScrollView(
-          child: Container(
-            width: widget.frameWidth,
-            height: widget.frameHeight,
-            decoration: BoxDecoration(
-                color: getBackGroundColor,
-                borderRadius: const BorderRadius.all(Radius.circular(10.0))),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _getAccountBody(),
-                  _getPersonalDataBody(),
-                  _getPersonalDashboardBody(),
-                ],
-              ),
+        builder: (context, userPageViewModel, child) => DashboardFrameLayout(
+          frameColor: getThemePrimaryColor,
+          frameHeight: widget.frameHeight,
+          frameWidth: widget.frameWidth,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _getAccountBody(),
+                _getPersonalDataBody(),
+                _getPersonalDashboardBody(),
+              ],
             ),
           ),
         ),
@@ -74,13 +70,8 @@ class _SettingViewState extends State<UserSettingFrame>
   }
 
   Future<void> onTagAddPressed() async {
-    if (Provider.of<SettingPageViewModel>(context, listen: false)
-            .currentUser!
-            .tags
-            .length <
-        4) {
-      await Provider.of<SettingPageViewModel>(context, listen: false)
-          .onTagAddPressed();
+    if (Provider.of<SettingPageViewModel>(context, listen: false).currentUser.tags.length < 4) {
+      await Provider.of<SettingPageViewModel>(context, listen: false).onTagAddPressed();
     } else {
       debugPrint("You can't add more tags.");
     }
@@ -108,14 +99,12 @@ class _SettingViewState extends State<UserSettingFrame>
 
   void onNightViewToggled(bool value) {
     debugPrint("isNightView: $value");
-    Provider.of<SettingPageViewModel>(context, listen: false)
-        .onNightViewToggled(value);
+    Provider.of<SettingPageViewModel>(context, listen: false).onNightViewToggled(value);
   }
 
   void onChangeThemeColor(Color color) async {
     debugPrint("This is not yet implemented.");
-    debugPrint(
-        "String interpretation of Color.value: ${widget.frameColor.value}");
+    debugPrint("String interpretation of Color.value: ${widget.frameColor.value}");
   }
 
   Widget _getAccountBody() {
@@ -170,39 +159,37 @@ class _SettingViewState extends State<UserSettingFrame>
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-              TitleWithContent(
-                title: "個人資料設定",
-                content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤",
-                child: UserActionButton.secondary(
-                    onPressed: () => onTagAddPressed(),
-                    icon: const Icon(Icons.add),
-                    label: "創建新標籤",
-                    primaryColor: getThemePrimaryColor),
-              ),
-              const Divider(height: 10, thickness: 1)
-            ] +
-            _getExsistedTags(context));
+          TitleWithContent(
+            title: "個人資料設定",
+            content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤",
+            child: UserActionButton.secondary(
+                onPressed: () => onTagAddPressed(),
+                icon: const Icon(Icons.add),
+                label: "創建新標籤",
+                primaryColor: getThemePrimaryColor),
+          ),
+          const Divider(height: 10, thickness: 1),
+          ..._getExistingTags(context)
+        ] 
+      );
   }
 
-  List<Widget> _getExsistedTags(BuildContext context) {
-    UserSpaceViewModel userPageViewModel =
-        Provider.of<UserSpaceViewModel>(context);
-    SettingPageViewModel settingPageViewModel =
-        Provider.of<SettingPageViewModel>(context);
-    if (mounted && userPageViewModel.currentUser != null) {
+  List<Widget> _getExistingTags(BuildContext context) {
+    // UserSpaceViewModel userPageViewModel = Provider.of<UserSpaceViewModel>(context);
+    SettingPageViewModel settingPageViewModel = Provider.of<SettingPageViewModel>(context);
+    if (mounted) {
       List<Widget> temp = [];
-      for (int i = 0; i < userPageViewModel.currentUser!.tags.length; i++) {
+      for (int i = 0; i < settingPageViewModel.currentUser.tags.length; i++) {
         temp += [
-          settingPageViewModel.onTagChanging &&
-                  settingPageViewModel.indexOfChangingTag == i
+          settingPageViewModel.onTagChanging && settingPageViewModel.indexOfChangingTag == i
               ? TwoInfoEditCardWidget(
                   primaryColor: getThemePrimaryColor,
                   firstEditTitle: "標籤名稱",
                   secondEditTitle: "標籤資訊",
                   firstEditingContent:
-                      userPageViewModel.currentUser!.tags[i].title,
+                      settingPageViewModel.currentUser.tags[i].title,
                   secondEditingContent:
-                      userPageViewModel.currentUser!.tags[i].content,
+                      settingPageViewModel.currentUser.tags[i].content,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -228,8 +215,8 @@ class _SettingViewState extends State<UserSettingFrame>
                 )
               : ColorFillingCardWidget(
                   primaryColor: getThemePrimaryColor,
-                  title: userPageViewModel.currentUser!.tags[i].title,
-                  content: userPageViewModel.currentUser!.tags[i].content,
+                  title: settingPageViewModel.currentUser.tags[i].title,
+                  content: settingPageViewModel.currentUser.tags[i].content,
                   child: IconButton(
                     icon: const Icon(
                       Icons.create_outlined,
@@ -242,7 +229,7 @@ class _SettingViewState extends State<UserSettingFrame>
         ];
       }
       if (settingPageViewModel.indexOfChangingTag ==
-          settingPageViewModel.currentUser!.tags.length) {
+          settingPageViewModel.currentUser.tags.length) {
         temp += [
           TwoInfoEditCardWidget(
             primaryColor: getThemePrimaryColor,
@@ -269,7 +256,7 @@ class _SettingViewState extends State<UserSettingFrame>
           ),
         ];
       }
-      if (userPageViewModel.currentUser!.tags.length == 0) {
+      if (settingPageViewModel.currentUser.tags.isEmpty) {
         temp += [const Gap(10)];
       }
       return temp;

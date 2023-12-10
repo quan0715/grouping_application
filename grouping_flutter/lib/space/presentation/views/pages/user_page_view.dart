@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
-import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
@@ -37,7 +36,10 @@ class _UserPageViewState extends State<UserPageView> {
   void initState() {
     super.initState();
     userPageViewModel = UserSpaceViewModel();
-    settingPageViewModel = SettingPageViewModel(currentUser: null);
+    var userData = Provider.of<UserDataProvider>(context, listen: false);
+    userPageViewModel.userDataProvider = userData;
+    settingPageViewModel = SettingPageViewModel();
+    settingPageViewModel.userDataProvider = userData;
   }
 
   @override
@@ -45,12 +47,13 @@ class _UserPageViewState extends State<UserPageView> {
     return MultiProvider(
       providers: [
        ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
-        create: (context) => userPageViewModel
-          ..userDataProvider = Provider.of<UserDataProvider>(context, listen: false)
-          ..init(),
-        update: (context, userDataProvider, userPageViewModel) => userPageViewModel!..update(userDataProvider),
+          create: (context) => userPageViewModel..init(),
+          update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..update(userDataProvider),
         ),
-        ChangeNotifierProvider<SettingPageViewModel>.value(value: settingPageViewModel),
+        ChangeNotifierProxyProvider<UserDataProvider, SettingPageViewModel>(
+          create: (context) => settingPageViewModel..init(),
+          update: (context, userDataProvider, userSpaceSettingViewModel) => userSpaceSettingViewModel!..update(userDataProvider),
+        ),
       ],
       child: _buildBody(),
     );
@@ -63,7 +66,8 @@ class _UserPageViewState extends State<UserPageView> {
       frameWidth: MediaQuery.of(context).size.width * 0.18,
     );
     var userSettingFrame = UserSettingFrame(
-      frameColor: userPageViewModel.selectedProfile.spaceColor
+      frameColor: userPageViewModel.selectedProfile.spaceColor,
+      frameHeight: MediaQuery.of(context).size.height,
     );
     var threadFrame = const ChatThreadBody(
       threadTitle: "Test Thread",

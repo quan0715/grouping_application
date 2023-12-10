@@ -97,10 +97,13 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
     debugPrint(workspaceBody.toString());
+    
     final response = await _client.post(
-        Uri.parse("${Config.baseUriWeb}/workspaces"),
+        Uri.parse("${Config.baseUriWeb}/api/workspaces/"),
         headers: headers,
         body: jsonEncode(workspaceBody));
+
+    debugPrint(response.body);
 
     switch (response.statusCode) {
       case 200:

@@ -98,9 +98,10 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   @override
   Future<UserModel> updateUserData({required UserModel account}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
+    debugPrint(account.introduction.isEmpty.toString());
     final response = await _client.patch(apiUri,
-        headers: headers, body: jsonEncode(account));
-
+        headers: headers, body: jsonEncode(account.toJson()));
+    debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
         return UserModel.fromJson(data: jsonDecode(response.body));

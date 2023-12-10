@@ -230,7 +230,7 @@ class CreateWorkspaceDialog extends StatelessWidget {
         child: DropdownButton(
           isDense: true,
           underline: const SizedBox(),
-          value: 0,
+          value: 1,
           items: [
             DropdownMenuItem(
               value: 1,
