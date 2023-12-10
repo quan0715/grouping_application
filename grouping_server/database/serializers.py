@@ -9,6 +9,9 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ['id', 'image_uri', 'data', 'updated_at']
+        extra_kwargs = {
+            'updated_at': {'read_only': True}
+        }
 
 
 class WorkspaceTagSerializer(serializers.ModelSerializer):
@@ -20,12 +23,13 @@ class WorkspaceTagSerializer(serializers.ModelSerializer):
 class WorkspaceSerializer(serializers.ModelSerializer):
     tags = WorkspaceTagSerializer(
         many=True, required=False, allow_empty=True)
-    photo = ImageSerializer(required=False)
+    photo_data = serializers.ImageField(write_only=True)
+    photo = ImageSerializer(read_only=True)
 
     class Meta:
         model = Workspace
         fields = ['id', 'theme_color', 'workspace_name',
-                  'description', 'is_personal', 'photo', 'members', 'tags', 'activities']
+                  'description', 'is_personal', 'photo_data', 'photo', 'members', 'tags', 'activities']
         extra_kwargs = {
             'members': {'many': True, 'required': False, 'allow_empty': True},
             'activities': {'many': True, 'read_only': True}
@@ -33,11 +37,11 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('members', None)
-        photo_data = validated_data.pop('photo', None)
+        photo_data = validated_data.pop('photo_data', None)
         tags_data = validated_data.pop('tags', None)
 
         if photo_data:
-            photo = Image.objects.create(**photo_data)
+            photo = Image.objects.create(data=photo_data)
             workspace = Workspace.objects.create(photo=photo, **validated_data)
         else:
             workspace = Workspace.objects.create(**validated_data)
@@ -46,10 +50,11 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             for tag_data in tags_data:
                 WorkspaceTag.objects.create(
                     belong_workspace=workspace, **tag_data)
+
         return workspace
 
     def update(self, instance, validated_data):
-        photo_data = validated_data.pop('photo', None)
+        photo_data = validated_data.pop('photo_data', None)
         tags_data = validated_data.pop('tags', None)
 
         instance = super().update(instance, validated_data)
@@ -57,7 +62,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         if photo_data:
             if instance.photo:
                 instance.photo.delete()
-            photo = Image.objects.create(**photo_data)
+            photo = Image.objects.create(data=photo_data)
             instance.photo = photo
             instance.save()
 
@@ -199,18 +204,19 @@ class ActivityPatchSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     joined_workspaces = WorkspaceSerializer(many=True, read_only=True)
     tags = UserTagSerializer(many=True, required=False, allow_empty=True)
-    photo = ImageSerializer(required=False)
+    photo_data = serializers.ImageField(write_only=True)
+    photo = ImageSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction',
+        fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction', 'photo_data',
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
         extra_kargs = {
             'contributing_activities': {'many': True, 'read_only': True}
         }
 
     def update(self, instance, validated_data):
-        photo_data = validated_data.pop('photo', None)
+        photo_data = validated_data.pop('photo_data', None)
         tags_data = validated_data.pop('tags', None)
 
         instance = super().update(instance, validated_data)
@@ -218,7 +224,7 @@ class UserSerializer(serializers.ModelSerializer):
         if photo_data:
             if instance.photo:
                 instance.photo.delete()
-            photo = Image.objects.create(**photo_data)
+            photo = Image.objects.create(data=photo_data)
             instance.photo = photo
             instance.save()
 
