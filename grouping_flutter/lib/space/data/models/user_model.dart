@@ -135,7 +135,7 @@ class UserModel {
   factory UserModel.fromJson({required Map<String, dynamic> data}) => UserModel(
         accountId: data['id'] as int,
         account: data['account'] as String,
-        password: data['password'] as String,
+        // password: data['password'] as String,
         name: data['user_name'] as String,
         introduction: data['introduction'] as String,
         photo: data['photo'] != null
@@ -159,7 +159,7 @@ class UserModel {
             .toList(),
       );
 
-  factory UserModel.fromEntity(UserEntity entity){
+  factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
       accountId: entity.id ?? defaultAccount.id,
       name: entity.name,
