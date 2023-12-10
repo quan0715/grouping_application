@@ -12,19 +12,25 @@ class Image(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, account="", user_name='unknown', password="", introduction="", slogan=""):
+    def create_default_workspace(self, user):
+        workspace = Workspace.objects.create(workspace_name=f'{user.user_name} 的個人工作區',
+                                             description=f'{user.user_name} 的個人工作區',
+                                             theme_color=1)
+        workspace.members.add(user)
+        workspace.save()
+
+    def create_user(self, account, password, user_name='unknown', introduction=""):
         if account is None:
             raise TypeError('Users must have an account input.')
+        elif password is None:
+            raise TypeError('Users must have an password input.')
 
         user = self.model(account=account)
         user.set_password(password)
         user.user_name = user_name
-        user.real_name = ""
-        user.slogan = ""
         user.introduction = introduction
-        user.photo_id = user.id
         user.save()
-
+        self.create_default_workspace(user)
         return user
 
     def create_superuser(self, account, password):
@@ -39,7 +45,6 @@ class UserManager(BaseUserManager):
         return user
 
     Auth_Providers = {"google": "google", "line": "line", "github": "github"}
-
 
 
 class User(AbstractBaseUser, PermissionsMixin):
