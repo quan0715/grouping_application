@@ -120,16 +120,26 @@ class MissionStateSerializer(serializers.ModelSerializer):
 class MissionSerializer(serializers.ModelSerializer):
     deadline = serializers.DateTimeField(
         input_formats=["%Y-%m-%d", "iso-8601"])
-    state = MissionStateSerializer(required=False)
 
     class Meta:
         model = Mission
         fields = ['deadline', 'state']
 
 
+class MissionSimpleSerializer(serializers.ModelSerializer):
+    state = MissionStateSerializer(read_only=True)
+
+    class Meta:
+        model = Mission
+        fields = ['deadline', 'state']
+        extra_kwargs = {
+            'deadline': {'read_only': True},
+        }
+
+
 class ActivitySimpleSerializer(serializers.ModelSerializer):
     event = EventSerializer(read_only=True)
-    mission = MissionSerializer(read_only=True)
+    mission = MissionSimpleSerializer(read_only=True)
     belong_workspace = WorkspaceSimpleSerializer(read_only=True)
 
     class Meta:
