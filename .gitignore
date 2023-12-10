@@ -26,3 +26,6 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 .DS_Store
+grouping_server/database/migrations/
+grouping_server/grouping_server/migrations/
+grouping_server/social_auth/migrations/

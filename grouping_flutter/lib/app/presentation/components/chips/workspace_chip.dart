@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
 class WorkspaceChip extends StatelessWidget {
   const WorkspaceChip({super.key, required this.workspace});
 
-  final WorkspaceModel workspace;
+  final WorkspaceEntity workspace;
 
   @override
   Widget build(BuildContext context) {

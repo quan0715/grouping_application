@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
 import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:grouping_project/auth/data/models/sub_model.dart';
+import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/auth/domain/entities/login_entity.dart';
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/auth/domain/repositories/auth_login_repositories.dart';
@@ -18,7 +18,8 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<Either<Failure, AuthTokenModel>> passwordLogin(LoginEntity loginEntity) async {
+  Future<Either<Failure, AuthTokenModel>> passwordLogin(
+      LoginEntity loginEntity) async {
     try {
       final token = await remoteDataSource.passwordLogin(loginEntity);
       await localDataSource.cacheToken(token);
@@ -29,7 +30,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthTokenModel>> userRegister(RegisterEntity registerEntity) async{
+  Future<Either<Failure, AuthTokenModel>> userRegister(
+      RegisterEntity registerEntity) async {
     try {
       final token = await remoteDataSource.register(registerEntity);
       await localDataSource.cacheToken(token);
@@ -41,6 +43,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logOut() async {
+    final authTokenModel = await localDataSource.getCacheToken();
+    await remoteDataSource.logout(authTokenModel);
     await localDataSource.clearCacheToken();
   }
 }

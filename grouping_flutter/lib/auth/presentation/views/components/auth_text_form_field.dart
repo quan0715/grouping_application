@@ -67,7 +67,6 @@ class _ProtectedTextFormFieldState extends State<ProtectedTextFormField> {
 
   @override
   void initState() {
-    // TODO: implement initState
     obscureText = widget.obscureText;
     super.initState();
   }

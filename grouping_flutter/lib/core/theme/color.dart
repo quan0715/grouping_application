@@ -33,4 +33,24 @@ class AppColor{
   static Color logWarning = Colors.orange;
   static Color logInfo = Colors.blue;
   static Color logOthers = Colors.grey;
+
+  // space color
+  static Color mainSpaceColor = const Color(0xFF7D5800);
+  static Color spaceColor1 = const Color(0xFF006874);
+  static Color spaceColor2 = const Color(0xFF206FCC);
+  static Color spaceColor3 = const Color(0xFFFF8F8F);
+  static Color spaceColor4 = const Color(0xFFBF5F07);
+  // colorScheme
+  static Color onSurfaceColor = const Color(0xFF1E1E1E);
+  static Color surfaceColor = const Color(0xFFE5E5E5);
+
+
+
+  // static ColorScheme lightColorScheme = ColorScheme(
+  //   primary: mainSpaceColor,
+    
+  //   brightness: Brightness.light, onPrimary: null,
+  // );
+
+
 }

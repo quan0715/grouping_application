@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:universal_html/html.dart' as html;
 
 import 'package:grouping_project/auth/presentation/view_models/login_view_model.dart';
@@ -32,12 +33,13 @@ class WebLoginViewPage extends AuthLayoutInterface {
 
   void moveToRegisterPage(BuildContext context) {
     debugPrint("前往註冊畫面");
-    context.go('/register');
+    GoRouter.of(context).go('/register');
   }
 
-  void moveToHome(BuildContext context, int userId) {
+  void moveToHome(BuildContext context) async{
     debugPrint("前往主畫面");
-    context.go('/user/$userId');
+    await Provider.of<TokenManager>(context, listen: false).updateToken();
+    // GoRouter.of(context).go('/user/$userId');
   }
 
   Future onPasswordLogin(BuildContext context, LoginViewModel loginManager) async {
@@ -46,7 +48,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
       if (loginManager.userAccessToken.isNotEmpty) {
         debugPrint("登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
         if(context.mounted){
-          moveToHome(context, loginManager.userId);
+          moveToHome(context);
         }
       }
     }

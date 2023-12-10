@@ -7,6 +7,7 @@ class ProfileAvatar extends StatelessWidget{
   final double avatarSize;
   final double labelFontSize;
   final double radius;
+  
   const ProfileAvatar({
     super.key,
     required this.themePrimaryColor,
@@ -17,14 +18,19 @@ class ProfileAvatar extends StatelessWidget{
     this.radius = 10,
   });
 
-  Widget _getAvatar() {
+  Widget _getAvatar(BuildContext context) {
     if (avatar != null) {
       return avatar!;
     }
     return Center(
       child: Text(
         label.substring(0, 2),
-        style: TextStyle(color: themePrimaryColor, fontSize: labelFontSize, fontWeight: FontWeight.bold)));
+        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+          color: themePrimaryColor,
+          // fontSize: labelFontSize,
+          fontWeight: FontWeight.bold
+        ))
+      );
   }
 
   Widget _buildBody(BuildContext context) {
@@ -35,12 +41,8 @@ class ProfileAvatar extends StatelessWidget{
         color: themePrimaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: themePrimaryColor.withOpacity(0.3), width: 2),
-        // image: const DecorationImage(
-        //   image: AssetImage('assets/images/profile_male.png'),
-        //   fit: BoxFit.fill,
-        // ),
       ),
-      child: _getAvatar(),
+      child: _getAvatar(context),
     );
   }
 

@@ -103,10 +103,7 @@ class LogoutSerializer(serializers.Serializer):
         try:
             RefreshToken(self.token).blacklist()
         except TokenError:
-            return {
-                'error-code': 'invalid_token',
-                'error':'The token is invalid or expired. Please login again.'
-            }
+            return TokenExchangeError.errorFormatter(TokenExchangeError.REFRESH_TOKEN_EXPIRED)
 
 def oauth2_token_exchange(clientId:str, provider:UrlGetter.Provider, clientSecret:str = '',grant_type = '', code = ''):
 
