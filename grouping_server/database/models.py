@@ -80,7 +80,6 @@ class Workspace(models.Model):
     theme_color = models.IntegerField()
     workspace_name = models.CharField(max_length=20)
     description = models.TextField()
-    is_personal = models.BooleanField()
     photo = models.ForeignKey(
         Image, null=True, blank=True, on_delete=models.SET_NULL)
     members = models.ManyToManyField(

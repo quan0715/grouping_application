@@ -29,7 +29,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = ['id', 'theme_color', 'workspace_name',
-                  'description', 'is_personal', 'photo_data', 'photo', 'members', 'tags', 'activities']
+                  'description', 'photo_data', 'photo', 'members', 'tags', 'activities']
         extra_kwargs = {
             'members': {'many': True, 'required': False, 'allow_empty': True},
             'activities': {'many': True, 'read_only': True}
