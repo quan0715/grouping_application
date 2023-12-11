@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
+// import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
@@ -98,10 +99,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   @override
   Future<UserModel> updateUserData({required UserModel account}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
-    debugPrint(account.introduction.isEmpty.toString());
     final response = await _client.patch(apiUri,
         headers: headers, body: jsonEncode(account.toJson()));
-    debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
         return UserModel.fromJson(data: jsonDecode(response.body));

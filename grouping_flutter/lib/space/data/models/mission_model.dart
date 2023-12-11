@@ -105,12 +105,12 @@ class MissionModel extends ActivityModel {
           deadline: DateTime.parse(data['mission']['deadline']),
           // state: MissionStateModel.fromJson(data: data['state']),
           stateId: data['mission']['state'],
-          contributors: data['contributors'].cast<int>() as List<int>,
+          contributors: (data['contributors'] ?? []).cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
-          parentMissionIds: data['parents'].cast<String>() as List<String>,
-          childMissionIds: data['children'].cast<String>() as List<String>,
+          parentMissionIds: (data['parents'] ?? []).cast<String>() as List<String>,
+          childMissionIds: (data['children'] ?? []).cast<String>() as List<String>,
           notifications: _notificationFromJson(
-              data['notifications'].cast<Map<String, String>>()));
+              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{

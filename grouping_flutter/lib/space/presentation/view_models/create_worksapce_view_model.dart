@@ -22,10 +22,7 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
     photo: null, 
     members: [], 
     activities: [], 
-    tags: [
-      "test1",
-      "test2",
-    ]
+    tags: []
   );
 
   Future<void> createWorkspace() async {

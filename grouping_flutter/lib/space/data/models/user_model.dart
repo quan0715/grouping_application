@@ -26,7 +26,7 @@ class UserTagModel {
 
   @override
   String toString() {
-    return 'Account Tag: $title : $content';
+    return 'title: $title, content: $content';
   }
 }
 
