@@ -76,6 +76,8 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         'tags': tags.map((tag) => tag.toJson()).toList(),
       };
 
+  /// I change the member cast to make it tempary correct,
+  /// but it should be changed to the correct on later
   factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) =>
       WorkspaceModel(
         id: data['id'] ?? defaultWorkspace.id,
@@ -85,9 +87,9 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         photo: data['photo'] != null
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
-        members: ((data['members'] ?? []).cast<Map<String, dynamic>>()
-                as List<Map<String, dynamic>>)
-            .map((member) => Member.fromJson(data: member))
+        members: ((data['members'] ?? []) as List)
+            .map((memberID) => Member(
+                id: memberID, userName: 'unknown')) //TODO: make it correct
             .toList(),
         activities: ((data['activities'] ?? []).cast<Map<String, dynamic>>()
                 as List<Map<String, dynamic>>)

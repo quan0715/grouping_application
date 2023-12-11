@@ -13,13 +13,12 @@ import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/core/theme/padding.dart';
 import 'package:provider/provider.dart';
 
-
-class RegisterViewPage extends AuthLayoutInterface{
+class RegisterViewPage extends AuthLayoutInterface {
   RegisterViewPage({super.key});
 
   final textFormKey = GlobalKey<FormState>();
 
-  Widget getRegisterAsset(){
+  Widget getRegisterAsset() {
     return Image.asset(Assets.loginImagePath, fit: BoxFit.values[4]);
   }
 
@@ -28,21 +27,22 @@ class RegisterViewPage extends AuthLayoutInterface{
     context.go('/login');
     // Navigator.pushNamed(context, '/login');
   }
-  
-  void onRegister(RegisterViewModel registerManager, BuildContext context) async {
+
+  void onRegister(
+      RegisterViewModel registerManager, BuildContext context) async {
     if (textFormKey.currentState!.validate()) {
       await registerManager.register();
-      if(registerManager.userAccessToken.isNotEmpty){
+      if (registerManager.userAccessToken.isNotEmpty) {
         debugPrint("註冊成功");
-        await Future.delayed(const Duration(seconds: 2), () => debugPrint("註冊成功，即將跳轉頁面"));
-        if(context.mounted){
+        await Future.delayed(
+            const Duration(seconds: 2), () => debugPrint("註冊成功，即將跳轉頁面"));
+        if (context.mounted) {
           debugPrint("前往主畫面");
           await Provider.of<TokenManager>(context, listen: false).updateToken();
         }
       }
     }
   }
-
 
   Widget _getInputForm(BuildContext context) {
     return Consumer<RegisterViewModel>(
@@ -61,7 +61,8 @@ class RegisterViewPage extends AuthLayoutInterface{
                   labelText: "輸入帳號名稱",
                   prefixIcon: const Icon(Icons.account_circle),
                   validator: registerManager.userNameValidator,
-                  onChanged: (value) => registerManager.onUserNameChange(value!),
+                  onChanged: (value) =>
+                      registerManager.onUserNameChange(value!),
                 ),
               ),
               Padding(
@@ -81,7 +82,8 @@ class RegisterViewPage extends AuthLayoutInterface{
                   labelText: "你的密碼",
                   prefixIcon: const Icon(Icons.password),
                   validator: registerManager.passwordConfirmValidator,
-                  onChanged: (value) => registerManager.onPasswordChange(value!),
+                  onChanged: (value) =>
+                      registerManager.onPasswordChange(value!),
                 ),
               ),
               Padding(
@@ -92,7 +94,8 @@ class RegisterViewPage extends AuthLayoutInterface{
                   labelText: "再次密碼",
                   prefixIcon: const Icon(Icons.password),
                   validator: registerManager.passwordConfirmValidator,
-                  onChanged: (value) => registerManager.onPasswordConfirmChange(value!),
+                  onChanged: (value) =>
+                      registerManager.onPasswordConfirmChange(value!),
                 ),
               ),
               AppButton(
@@ -113,9 +116,9 @@ class RegisterViewPage extends AuthLayoutInterface{
   }
 
   @override
-  Widget getBuildLoginFrame(){
+  Widget getBuildLoginFrame() {
     return Consumer<RegisterViewModel>(
-      builder: (context, registerManager,child) => Container(
+      builder: (context, registerManager, child) => Container(
         color: AppColor.surface(context),
         width: formWidth,
         child: Stack(
@@ -127,8 +130,9 @@ class RegisterViewPage extends AuthLayoutInterface{
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TitleWithContent(
-                      title: "註冊 Register", content: "加入Grouping，註冊新的Grouping 帳號"),
+                  TitleWithContent(
+                      title: "註冊 Register",
+                      content: "加入Grouping，註冊新的Grouping 帳號"),
                   const Divider(thickness: 2),
                   _getInputForm(context),
                 ],
@@ -136,7 +140,8 @@ class RegisterViewPage extends AuthLayoutInterface{
             )),
             Align(
               alignment: const Alignment(0, -0.9),
-              child: MessagesList(messageService: registerManager.messageService),
+              child:
+                  MessagesList(messageService: registerManager.messageService),
             )
           ],
         ),
@@ -145,25 +150,22 @@ class RegisterViewPage extends AuthLayoutInterface{
   }
 
   @override
-  Widget getInfoDisplayFrame(){
+  Widget getInfoDisplayFrame() {
     return Consumer<RegisterViewModel>(
       builder: (context, value, child) => Container(
-        color: AppColor.surfaceVariant(context),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            getRegisterAsset()
-          ],)
-      ),
+          color: AppColor.surfaceVariant(context),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [getRegisterAsset()],
+          )),
     );
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<RegisterViewModel>(
       create: (context) => RegisterViewModel()..init(),
       builder: (context, child) => super.build(context),
-    ); 
+    );
   }
-
 }

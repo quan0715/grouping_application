@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
+import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
@@ -19,6 +20,7 @@ class UserPageView extends StatefulWidget {
 
 class _UserPageViewState extends State<UserPageView> {
   late final UserPageViewModel viewModel;
+  late final SettingPageViewModel settingPageViewModel;
 
   @override
   void initState() {
@@ -26,13 +28,19 @@ class _UserPageViewState extends State<UserPageView> {
     viewModel = UserPageViewModel(
         tokenModel:
             Provider.of<TokenManager>(context, listen: false).tokenModel);
-    viewModel.init();
+    settingPageViewModel = SettingPageViewModel(currentUser: null);
+    viewModel.init().whenComplete(() => settingPageViewModel.init(viewModel));
   }
 
   @override
-  Widget build(BuildContext context) =>
-      ChangeNotifierProvider<UserPageViewModel>.value(
-          value: viewModel, child: _buildBody());
+  Widget build(BuildContext context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider<UserPageViewModel>.value(value: viewModel),
+          ChangeNotifierProvider<SettingPageViewModel>.value(
+              value: settingPageViewModel),
+        ],
+        child: _buildBody(),
+      );
 
   Widget _buildDashBoard(BuildContext context, List<Widget> frames) {
     return Consumer<UserPageViewModel>(
@@ -52,28 +60,31 @@ class _UserPageViewState extends State<UserPageView> {
   }
 
   Widget _buildBody() {
-    return Consumer<UserPageViewModel>(
-      builder: (context, viewModel, child) => Scaffold(
-        backgroundColor: Colors.white,
-        appBar: _getAppBar(context, viewModel),
-        body: Center(
-          child: _buildDashBoard(context, [
-            // TODO: create and add other frame into
-            SpaceInfoAndNavigatorFrame(
-              frameColor: viewModel.selectedProfile.spaceColor,
-              frameWidth: MediaQuery.of(context).size.width * 0.2,
-            ),
-            const Gap(10),
-            Expanded(child: UserSettingFrame(
-              frameColor: viewModel.selectedProfile.spaceColor,
-            ))
-          ]),
-        ),
-        bottomNavigationBar: _getNavigationBar(context, viewModel),
-        drawer: DashboardDrawer(
-          selectedProfile: viewModel.selectedProfile,
-          userProfiles: viewModel.userProfiles,
-          workspaceProfiles: viewModel.workspaceProfiles,
+    return Consumer<SettingPageViewModel>(
+      builder: (context, viewModel, child) => Consumer<UserPageViewModel>(
+        builder: (context, viewModel, child) => Scaffold(
+          backgroundColor: Colors.white,
+          appBar: _getAppBar(context, viewModel),
+          body: Center(
+            child: _buildDashBoard(context, [
+              // TODO: create and add other frame into
+              SpaceInfoAndNavigatorFrame(
+                frameColor: viewModel.selectedProfile.spaceColor,
+                frameWidth: MediaQuery.of(context).size.width * 0.2,
+              ),
+              const Gap(10),
+              Expanded(
+                  child: UserSettingFrame(
+                frameColor: viewModel.selectedProfile.spaceColor,
+              ))
+            ]),
+          ),
+          bottomNavigationBar: _getNavigationBar(context, viewModel),
+          drawer: DashboardDrawer(
+            selectedProfile: viewModel.selectedProfile,
+            userProfiles: viewModel.userProfiles,
+            workspaceProfiles: viewModel.workspaceProfiles,
+          ),
         ),
       ),
     );
