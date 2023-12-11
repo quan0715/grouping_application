@@ -5,6 +5,26 @@ import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
+/// ## the type for [WorkspaceModel.tags]
+/// * [title] : the key for this tag
+/// * [content] : the value for this tag
+class WorkspaceTagModel {
+  String content;
+  WorkspaceTagModel({required this.content});
+
+  factory WorkspaceTagModel.fromJson({required Map<String, dynamic> data}) =>
+      WorkspaceTagModel(content: data['content'] ?? 'empty');
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'content': content,
+      };
+
+  @override
+  String toString() {
+    return 'content : $content';
+  }
+}
+
 class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   final int? id;
   int themeColor;
@@ -13,7 +33,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   ImageModel? photo;
   List<Member> members;
   List<ActivityModel> activities;
-  List<String> tags;
+  List<WorkspaceTagModel> tags;
 
   static final WorkspaceModel defaultWorkspace = WorkspaceModel._default();
 
@@ -35,7 +55,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
     ImageModel? photo,
     List<Member>? members,
     List<ActivityModel>? activities,
-    List<String>? tags,
+    List<WorkspaceTagModel>? tags,
   })  : id = id ?? defaultWorkspace.id,
         themeColor = themeColor ?? defaultWorkspace.themeColor,
         name = name ?? defaultWorkspace.name,
@@ -53,7 +73,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         'photo': photo?.toJson(),
         'members': members.map((member) => member.toJson()).toList(),
         'activities': activities.map((activity) => activity.toJson()).toList(),
-        'tags': tags,
+        'tags': tags.map((tag) => tag.toJson()).toList(),
       };
 
   factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) =>
@@ -69,13 +89,16 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
                 as List<Map<String, dynamic>>)
             .map((member) => Member.fromJson(data: member))
             .toList(),
-        activities: ((data['activities'] ?? [])
-                .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
+        activities: ((data['activities'] ?? []).cast<Map<String, dynamic>>()
+                as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
                 ? EventModel.fromJson(data: activity)
                 : MissionModel.fromJson(data: activity))
             .toList(),
-        tags: (data['tags'] ?? []).cast<String>() as List<String>,
+        tags: ((data['tags'] ?? []).cast<Map<String, dynamic>>()
+                as List<Map<String, dynamic>>)
+            .map((tag) => WorkspaceTagModel.fromJson(data: tag))
+            .toList(),
       );
 
   @override
