@@ -20,8 +20,9 @@ class SettingPageViewModel extends ChangeNotifier {
   MessageService messageService = MessageService();
   // UserEntity? currentUser;
   bool isNightView = false;
-  bool onTagChanging = false;
-  int? indexOfChangingTag;
+  bool isAddingNewTag = false;
+  int indexOfEditingTag = -1;
+
   Color dashboardColor;
 
   String firstEditedFiled = "";
@@ -29,11 +30,41 @@ class SettingPageViewModel extends ChangeNotifier {
 
   UserEntity get currentUser => userDataProvider!.currentUser!;
 
+  UserTagModel getTagByIndex(int index){
+    return userTags[index];
+  }
+
+  List<UserTagModel> get userTags => currentUser.tags;
+
+  bool get isValidToAddNewTag => userTags.length + 1 <= 4;
+  
+  bool get isEditingExistingTag => (indexOfEditingTag != -1); 
+
+  bool tagIsEdited(int index){
+    // int index = currentUser.tags.indexOf(tag);
+    return index != -1 && (index == indexOfEditingTag);
+  }
+  
+
+
   void onEditPressed(int index) {
-    firstEditedFiled = currentUser.tags[index].title;
-    secondEditedFiled = currentUser.tags[index].content;
-    onTagChanging = true;
-    indexOfChangingTag = index;
+    firstEditedFiled = userTags[index].title;
+    secondEditedFiled = userTags[index].content;
+    // isAddingNewTag = true;
+    indexOfEditingTag = index;
+    // debugPrint(firstEditedFiled);
+    // debugPrint(secondEditedFiled);
+
+    notifyListeners();
+  }
+
+  void cancelTagAdding() {
+    isAddingNewTag = false;
+    notifyListeners();
+  }
+  
+  void cancelTagEditing() {
+    indexOfEditingTag = -1;
     notifyListeners();
   }
 
@@ -77,9 +108,8 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onTagAddPressed() async {
-    onTagChanging = true;
-    indexOfChangingTag = currentUser.tags.length;
+  Future<void> onTagAddButtonPressed() async {
+    isAddingNewTag = !isAddingNewTag;
     notifyListeners();
   }
 
@@ -87,8 +117,8 @@ class SettingPageViewModel extends ChangeNotifier {
     debugPrint("add tag $title : $content");
     currentUser.tags.add(UserTagModel(title: title, content: content));
 
-    onTagChanging = false;
-    indexOfChangingTag = null;
+    isAddingNewTag = false;
+    indexOfEditingTag = -1;
 
     UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
         remoteDataSource:
@@ -107,58 +137,56 @@ class SettingPageViewModel extends ChangeNotifier {
   }
 
   Future<void> onTagDelete(int index) async {
-    currentUser.tags.removeAt(index);
-    onTagChanging = false;
-    indexOfChangingTag = null;
-    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
-        remoteDataSource:
-            UserRemoteDataSourceImpl(token:  userDataProvider!.tokenModel.token),
-        localDataSource: UserLocalDataSourceImpl()));
-
-    final failureOrUser = await updateUserUseCase(currentUser);
-
-    failureOrUser.fold(
-        (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
-        (user) {
-      debugPrint("Tag deleted");
-    });
-
+    
+    userTags.removeAt(index);
+    indexOfEditingTag = -1;
+    await updateUser(currentUser);
     notifyListeners();
   }
 
-  void onEditingCancel() {
-    onTagChanging = false;
-    indexOfChangingTag = null;
+  set setFirstEditedFiled(String value) {
+    firstEditedFiled = value;
     notifyListeners();
   }
 
-  Future<void> onEditingDone() async {
-    if (indexOfChangingTag != currentUser.tags.length) {
-      currentUser.tags[indexOfChangingTag!] =
-          UserTagModel(title: firstEditedFiled, content: secondEditedFiled);
-    } else {
-      currentUser.tags.add(
-          UserTagModel(title: firstEditedFiled, content: secondEditedFiled));
-    }
+  set setSecondEditedFiled(String value) {
+    secondEditedFiled = value;
+    notifyListeners();
+  }
 
-    onTagChanging = false;
-    indexOfChangingTag = null;
+  Future<void> createNewTag() async {
     debugPrint("add tag $firstEditedFiled : $secondEditedFiled");
+    isAddingNewTag = false;
+    userTags.add(
+      UserTagModel(title: firstEditedFiled, content: secondEditedFiled)
+    );
+    await updateUser(currentUser);
+    notifyListeners();
+  }
 
+  Future<void> updateUserTag() async {
+    debugPrint("add tag $firstEditedFiled : $secondEditedFiled");
+    userTags[indexOfEditingTag] = UserTagModel(title: firstEditedFiled, content: secondEditedFiled);
+    indexOfEditingTag = -1;
+    await updateUser(currentUser);
+    notifyListeners();
+    
+  }
+
+  Future<void> updateUser(UserEntity userEntity) async{
     UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
         remoteDataSource:UserRemoteDataSourceImpl(token:  userDataProvider!.tokenModel.token),
         localDataSource: UserLocalDataSourceImpl()));
     debugPrint(currentUser.toString());
-    final failureOrUser = await updateUserUseCase(currentUser);
+    final failureOrUser = await updateUserUseCase(userEntity);
 
     failureOrUser.fold(
-        (failure) => messageService
-            .addMessage(MessageData.error(message: failure.toString())),
-        (user) {
-      debugPrint("Tag edited");
-    });
-
-    notifyListeners();
+      (failure) => messageService
+          .addMessage(MessageData.error(message: failure.toString())),
+      (user) {
+        debugPrint("Tag edited");
+      }
+    );
   }
 
   void update(UserDataProvider userDataProvider) {
@@ -166,5 +194,10 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  init() {}
+  init() {
+    firstEditedFiled = "";
+    secondEditedFiled = "";
+    isAddingNewTag = false;
+    indexOfEditingTag = -1;
+  }
 }

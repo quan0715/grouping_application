@@ -25,7 +25,7 @@ class UserActionButton extends ElevatedButton implements WithThemePrimaryColor{
     );
 
   factory UserActionButton.secondary({
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     required String label,
     required Color primaryColor,
     Widget? icon,
@@ -43,7 +43,7 @@ class UserActionButton extends ElevatedButton implements WithThemePrimaryColor{
   );
 
   factory UserActionButton.primary({
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     required String label,
     required Color primaryColor,
     Widget? icon,

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
-import 'package:grouping_project/space/presentation/views/components/two_info_edit_card.dart';
+import 'package:grouping_project/space/presentation/views/components/forms/tage_edit_form.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
@@ -43,14 +43,17 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
           frameHeight: widget.frameHeight,
           frameWidth: widget.frameWidth,
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _getAccountBody(),
-                _getPersonalDataBody(),
-                _getPersonalDashboardBody(),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _getAccountBody(),
+                  _getPersonalDataBody(),
+                  _getPersonalDashboardBody(),
+                ],
+              ),
             ),
           ),
         ),
@@ -69,32 +72,11 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
     debugPrint("This is not yet implemented.");
   }
 
-  Future<void> onTagAddPressed() async {
-    if (Provider.of<SettingPageViewModel>(context, listen: false).currentUser.tags.length < 4) {
-      await Provider.of<SettingPageViewModel>(context, listen: false).onTagAddPressed();
-    } else {
-      debugPrint("You can't add more tags.");
-    }
-  }
-
-  Future<void> onTagDelete(int i) async {
-    await Provider.of<SettingPageViewModel>(context, listen: false)
-        .onTagDelete(i);
-  }
-
-  void onEditPressed(int i) async {
-    Provider.of<SettingPageViewModel>(context, listen: false).onEditPressed(i);
-    debugPrint(Provider.of<SettingPageViewModel>(context, listen: false)
-        .onTagChanging
-        .toString());
-  }
-
-  void onEditingCancel() {
-    Provider.of<SettingPageViewModel>(context, listen: false).onEditingCancel();
-  }
-
-  void onEditingDone() {
-    Provider.of<SettingPageViewModel>(context, listen: false).onEditingDone();
+  Future<void> onTagAddedButtonPressed() async {
+    var vm = Provider.of<SettingPageViewModel>(context, listen: false);
+    vm.isValidToAddNewTag
+      ? vm.onTagAddButtonPressed()
+      : debugPrint("You can't add more tags.");
   }
 
   void onNightViewToggled(bool value) {
@@ -156,114 +138,82 @@ class _SettingViewState extends State<UserSettingFrame> implements WithThemeSett
   }
 
   Widget _getPersonalDataBody() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TitleWithContent(
-            title: "個人資料設定",
-            content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤",
-            child: UserActionButton.secondary(
-                onPressed: () => onTagAddPressed(),
+    return Consumer<SettingPageViewModel>(
+      builder: (context, viewModel, child) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TitleWithContent(
+              title: "個人資料設定",
+              content: "修改頭像、暱稱以及個人標籤，一個人最多建立四個標籤",
+              child: UserActionButton.secondary(
+                onPressed: () async => 
+                  viewModel.isValidToAddNewTag
+                    ? viewModel.onTagAddButtonPressed()
+                    : null,
                 icon: const Icon(Icons.add),
                 label: "創建新標籤",
-                primaryColor: getThemePrimaryColor),
-          ),
-          const Divider(height: 10, thickness: 1),
-          ..._getExistingTags(context)
-        ] 
-      );
+                primaryColor: getThemePrimaryColor
+              ),
+            ),
+            const Divider(height: 10, thickness: 1),
+            ..._getExistingTags(context, viewModel),
+          ] 
+        ),
+    );
   }
 
-  List<Widget> _getExistingTags(BuildContext context) {
-    // UserSpaceViewModel userPageViewModel = Provider.of<UserSpaceViewModel>(context);
-    SettingPageViewModel settingPageViewModel = Provider.of<SettingPageViewModel>(context);
-    if (mounted) {
-      List<Widget> temp = [];
-      for (int i = 0; i < settingPageViewModel.currentUser.tags.length; i++) {
-        temp += [
-          settingPageViewModel.onTagChanging && settingPageViewModel.indexOfChangingTag == i
-              ? TwoInfoEditCardWidget(
+  List<Widget> _getExistingTags(BuildContext context, SettingPageViewModel vm) {
+    return [
+      ...List.generate(
+         vm.userTags.length, 
+         (index) => Padding(
+           padding: const EdgeInsets.symmetric(vertical: 5),
+           child: vm.tagIsEdited(index)
+              ? UserTagEditingFrame(
                   primaryColor: getThemePrimaryColor,
                   firstEditTitle: "標籤名稱",
                   secondEditTitle: "標籤資訊",
-                  firstEditingContent:
-                      settingPageViewModel.currentUser.tags[i].title,
-                  secondEditingContent:
-                      settingPageViewModel.currentUser.tags[i].content,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      UserActionButton.secondary(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () async => await onTagDelete(i),
-                          label: "刪除",
-                          primaryColor: getThemePrimaryColor),
-                      const Gap(10),
-                      UserActionButton.secondary(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => onEditingCancel(),
-                          label: "放棄修改",
-                          primaryColor: getThemePrimaryColor),
-                      const Gap(10),
-                      UserActionButton.primary(
-                          icon: const Icon(Icons.done),
-                          onPressed: () async => onEditingDone(),
-                          label: "儲存",
-                          primaryColor: getThemePrimaryColor)
-                    ],
-                  ),
-                )
+                  firstEditingContent: vm.firstEditedFiled,
+                  secondEditingContent: vm.secondEditedFiled,
+                  onDeleteAction: () async => await vm.onTagDelete(index),
+                  onEditingCancel: vm.cancelTagEditing,
+                  onEditingDone: () async => await vm.updateUserTag(),
+                  onTagKeyChange: (value) => vm.setFirstEditedFiled = value!,
+                  onTagValueChange: (value) => vm.setSecondEditedFiled = value!,
+              )
               : ColorFillingCardWidget(
                   primaryColor: getThemePrimaryColor,
-                  title: settingPageViewModel.currentUser.tags[i].title,
-                  content: settingPageViewModel.currentUser.tags[i].content,
+                  title: vm.getTagByIndex(index).title,
+                  content: vm.getTagByIndex(index).content,
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.create_outlined,
-                    ),
+                    icon: const Icon(Icons.create_outlined),
                     color: getThemePrimaryColor,
-                    onPressed: () => onEditPressed(i),
+                    onPressed: () => vm.onEditPressed(index),
                   ),
                 ),
-          const Gap(10)
-        ];
-      }
-      if (settingPageViewModel.indexOfChangingTag ==
-          settingPageViewModel.currentUser.tags.length) {
-        temp += [
-          TwoInfoEditCardWidget(
-            primaryColor: getThemePrimaryColor,
-            firstEditTitle: "標籤名稱",
-            secondEditTitle: "標籤資訊",
-            firstEditingContent: "",
-            secondEditingContent: "",
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                UserActionButton.secondary(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => onEditingCancel(),
-                    label: "放棄",
-                    primaryColor: getThemePrimaryColor),
-                const Gap(10),
-                UserActionButton.primary(
-                    icon: const Icon(Icons.done),
-                    onPressed: () async => onEditingDone(),
-                    label: "儲存",
-                    primaryColor: getThemePrimaryColor)
-              ],
+         ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Visibility(
+          visible: vm.isAddingNewTag,
+          child: UserTagEditingFrame(
+              primaryColor: getThemePrimaryColor,
+              firstEditTitle: "標籤名稱",
+              secondEditTitle: "標籤資訊",
+              firstEditingContent: "",
+              secondEditingContent: "",
+              enableDelete: false,
+              onEditingCancel: () => vm.cancelTagAdding(),
+              onEditingDone: () async => await vm.createNewTag(),
+              onTagKeyChange: (value) => vm.setFirstEditedFiled = value!,
+              onTagValueChange: (value) => vm.setSecondEditedFiled = value!,
             ),
-          ),
-        ];
-      }
-      if (settingPageViewModel.currentUser.tags.isEmpty) {
-        temp += [const Gap(10)];
-      }
-      return temp;
-    } else {
-      return [const SizedBox()];
-    }
-  }
+        ),
+      ),
+    ];
+  }  
+  
 
   Widget _getPersonalDashboardBody() {
     SettingPageViewModel settingPageViewModel =

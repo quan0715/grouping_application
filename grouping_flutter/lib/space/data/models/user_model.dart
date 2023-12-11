@@ -84,7 +84,7 @@ class UserModel {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': this.id,
         'user_name': this.userName,
-        'introduction': this.introduction ?? '',
+        'introduction': this.introduction,
         'photo': this.photo?.toJson(),
         'tags': this.tags.map((tag) => tag.toJson()).toList(),
         'joined_workspaces': this
@@ -127,7 +127,7 @@ class UserModel {
     return UserModel(
       accountId: entity.id ?? defaultAccount.id,
       userName: entity.name,
-      introduction: entity.introduction,
+      introduction: entity.introduction.isEmpty ? entity.name : entity.introduction,
       photo: entity.photo ?? defaultAccount.photo,
       tags: entity.tags,
       joinedWorkspaces: entity.joinedWorkspaces,

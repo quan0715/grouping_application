@@ -52,7 +52,7 @@ class UserDataProvider extends ChangeNotifier{
       },
       (user) {
         currentUser = user;
-        debugPrint("UserPageViewModel getCurrentUser success: ${user.toString()}");
+        // debugPrint("UserPageViewModel getCurrentUser success: ${user.toString()}");
         // notifyListeners();
       }
     );
