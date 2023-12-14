@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
@@ -95,11 +96,14 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
-
+    debugPrint(workspaceBody.toString());
+    
     final response = await _client.post(
-        Uri.parse("${Config.baseUriWeb}/workspaces"),
+        Uri.parse("${Config.baseUriWeb}/api/workspaces/"),
         headers: headers,
         body: jsonEncode(workspaceBody));
+
+    debugPrint(response.body);
 
     switch (response.statusCode) {
       case 200:

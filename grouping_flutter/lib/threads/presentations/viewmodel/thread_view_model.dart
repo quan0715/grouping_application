@@ -23,7 +23,7 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   set isWaiting(bool value) {
-    debugPrint("ThreadViewModel isWaiting $value");
+    // debugPrint("ThreadViewModel isWaiting $value");
     _isWaiting = value;
     notifyListeners();
   }

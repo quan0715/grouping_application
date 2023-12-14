@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
@@ -22,7 +23,7 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, UserEntity>> getUser(int userID) async {
     try {
       final userModel = await remoteDataSource.getUserData(uid: userID);
-      // debugPrint(user.toString());
+      // debugPrint(userModel.toString());
       return Right(UserEntity.fromModel(userModel));
     } on ServerException catch (error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));

@@ -38,6 +38,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
 
   Widget _getTitleWidget(BuildContext context){
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ProfileAvatar(
           themePrimaryColor: getThemePrimaryColor,
@@ -47,7 +48,10 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
         const SizedBox(width: 10,),
         Text(
           getTitle(profile.spaceName,),
-          style: TextStyle(color: getThemePrimaryColor, fontSize: 16, fontWeight: FontWeight.bold)
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+            color: getThemePrimaryColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

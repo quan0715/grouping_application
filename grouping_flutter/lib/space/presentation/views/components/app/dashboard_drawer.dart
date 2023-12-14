@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
+import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
 import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
@@ -14,7 +15,7 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
   });
 
   final SpaceProfileEntity selectedProfile;
-  final List<SpaceProfileEntity> userProfiles;
+  final SpaceProfileEntity userProfiles;
   final List<SpaceProfileEntity> workspaceProfiles;
 
 
@@ -60,12 +61,12 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
         children: [
           ProfileAvatar(
             themePrimaryColor: getThemePrimaryColor,
-            label: "Quan",
+            label: selectedProfile.spaceName,
           ),
           const SizedBox(width: 10,),
-          const Text(
-            "Quan",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+          Text(
+            selectedProfile.spaceName,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
           ),
         ],
       ),
@@ -80,10 +81,13 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
         children: [
           Text("使用者 User", style: _titleTextStyle),
           const SizedBox(height: 5,),
-          ...userProfiles.map((profile) => Padding(
+          Padding(
             padding: _blockPadding,
-            child: NavigatedProfileInfoCardButton (profile: profile, isSelected: profile == selectedProfile,),
-          )),
+            child: NavigatedProfileInfoCardButton (
+              profile: userProfiles,
+              isSelected: userProfiles == selectedProfile
+            ),
+          ),
         ],
       ),
     );
@@ -97,9 +101,12 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
         children: [
           Text("工作區 Workspace", style: _titleTextStyle),
           const SizedBox(height: 5,),
-          ...workspaceProfiles.map((profile) => Padding(
+          ...workspaceProfiles.map<Widget>((workspaceProfiles) => Padding(
             padding: _blockPadding,
-            child: NavigatedProfileInfoCardButton (profile: profile, isSelected: profile == selectedProfile,),
+            child: NavigatedProfileInfoCardButton (
+              profile: workspaceProfiles,
+              isSelected: workspaceProfiles == selectedProfile
+            ),
           )),
         ],
       ),

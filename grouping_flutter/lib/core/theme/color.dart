@@ -44,6 +44,16 @@ class AppColor{
   static Color onSurfaceColor = const Color(0xFF1E1E1E);
   static Color surfaceColor = const Color(0xFFE5E5E5);
 
+  static getWorkspaceColorByIndex(int themeColor) {
+    return switch(themeColor){
+      1 => spaceColor1,
+      2 => spaceColor2,
+      3 => spaceColor3,
+      4 => spaceColor4,
+      _ => mainSpaceColor,
+    };
+  }
+
 
 
   // static ColorScheme lightColorScheme = ColorScheme(

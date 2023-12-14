@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
@@ -11,26 +12,59 @@ import 'package:grouping_project/space/domain/usecases/update_current_user.dart'
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 
 class SettingPageViewModel extends ChangeNotifier {
-  SettingPageViewModel(
-      {required this.currentUser, this.dashboardColor = Colors.white});
+  SettingPageViewModel({this.dashboardColor = Colors.white});
 
   // This is prepared for future update of color changes
-  late final UserPageViewModel _viewModel;
-  UserEntity? currentUser;
+  // UserSpaceViewModel _viewModel = UserSpaceViewModel();
+  UserDataProvider? userDataProvider;
+  MessageService messageService = MessageService();
+  // UserEntity? currentUser;
   bool isNightView = false;
-  bool onTagChanging = false;
-  int? indexOfChangingTag;
+  bool isAddingNewTag = false;
+  int indexOfEditingTag = -1;
+
   Color dashboardColor;
 
   String firstEditedFiled = "";
   String secondEditedFiled = "";
 
-  void onEditPressed(int index) {
-    firstEditedFiled = currentUser!.tags[index].title;
-    secondEditedFiled = currentUser!.tags[index].content;
+  UserEntity get currentUser => userDataProvider!.currentUser!;
 
-    onTagChanging = true;
-    indexOfChangingTag = index;
+  UserTagModel getTagByIndex(int index){
+    return userTags[index];
+  }
+
+  List<UserTagModel> get userTags => currentUser.tags;
+
+  bool get isValidToAddNewTag => userTags.length + 1 <= 4;
+  
+  bool get isEditingExistingTag => (indexOfEditingTag != -1); 
+
+  bool tagIsEdited(int index){
+    // int index = currentUser.tags.indexOf(tag);
+    return index != -1 && (index == indexOfEditingTag);
+  }
+  
+
+
+  void onEditPressed(int index) {
+    firstEditedFiled = userTags[index].title;
+    secondEditedFiled = userTags[index].content;
+    // isAddingNewTag = true;
+    indexOfEditingTag = index;
+    // debugPrint(firstEditedFiled);
+    // debugPrint(secondEditedFiled);
+
+    notifyListeners();
+  }
+
+  void cancelTagAdding() {
+    isAddingNewTag = false;
+    notifyListeners();
+  }
+  
+  void cancelTagEditing() {
+    indexOfEditingTag = -1;
     notifyListeners();
   }
 
@@ -39,15 +73,14 @@ class SettingPageViewModel extends ChangeNotifier {
     UpdateSettingUseCase updateSettingUseCase = UpdateSettingUseCase(
         UserRepositoryImpl(
             remoteDataSource:
-                UserRemoteDataSourceImpl(token: _viewModel.tokenModel.token),
+                UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
             localDataSource: UserLocalDataSourceImpl()));
 
     final failureOrNull = await updateSettingUseCase(SettingEntity(
         isNightView: isNightView, dashboardColor: dashboardColor));
 
     failureOrNull.fold(
-        (failure) => _viewModel.messageService
-            .addMessage(MessageData.error(message: failure.toString())),
+        (failure) => MessageService().addMessage(MessageData.error(message: failure.toString())),
         (void _r) {
       //TODO: change day view/ night view
     });
@@ -60,15 +93,14 @@ class SettingPageViewModel extends ChangeNotifier {
     UpdateSettingUseCase updateSettingUseCase = UpdateSettingUseCase(
         UserRepositoryImpl(
             remoteDataSource:
-                UserRemoteDataSourceImpl(token: _viewModel.tokenModel.token),
+                UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
             localDataSource: UserLocalDataSourceImpl()));
 
     final failureOrNull = await updateSettingUseCase(SettingEntity(
         isNightView: isNightView, dashboardColor: dashboardColor));
 
     failureOrNull.fold(
-        (failure) => _viewModel.messageService
-            .addMessage(MessageData.error(message: failure.toString())),
+        (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
         (void _r) {
       //TODO: change the background color
     });
@@ -76,28 +108,27 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onTagAddPressed() async {
-    onTagChanging = true;
-    indexOfChangingTag = currentUser!.tags.length;
+  Future<void> onTagAddButtonPressed() async {
+    isAddingNewTag = !isAddingNewTag;
     notifyListeners();
   }
 
   Future<void> onTagAddDone(String title, String content) async {
-    currentUser!.tags.add(UserTagModel(title: title, content: content));
+    debugPrint("add tag $title : $content");
+    currentUser.tags.add(UserTagModel(title: title, content: content));
 
-    onTagChanging = false;
-    indexOfChangingTag = null;
+    isAddingNewTag = false;
+    indexOfEditingTag = -1;
 
     UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
         remoteDataSource:
-            UserRemoteDataSourceImpl(token: _viewModel.tokenModel.token),
+            UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
         localDataSource: UserLocalDataSourceImpl()));
 
-    final failureOrUser = await updateUserUseCase(currentUser!);
+    final failureOrUser = await updateUserUseCase(currentUser);
 
     failureOrUser.fold(
-        (failure) => _viewModel.messageService
-            .addMessage(MessageData.error(message: failure.toString())),
+        (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
         (user) {
       debugPrint("Tag added to database");
     });
@@ -106,64 +137,67 @@ class SettingPageViewModel extends ChangeNotifier {
   }
 
   Future<void> onTagDelete(int index) async {
-    currentUser!.tags.removeAt(index);
-    onTagChanging = false;
-    indexOfChangingTag = null;
-    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
-        remoteDataSource:
-            UserRemoteDataSourceImpl(token: _viewModel.tokenModel.token),
-        localDataSource: UserLocalDataSourceImpl()));
+    
+    userTags.removeAt(index);
+    indexOfEditingTag = -1;
+    await updateUser(currentUser);
+    notifyListeners();
+  }
 
-    final failureOrUser = await updateUserUseCase(currentUser!);
+  set setFirstEditedFiled(String value) {
+    firstEditedFiled = value;
+    notifyListeners();
+  }
+
+  set setSecondEditedFiled(String value) {
+    secondEditedFiled = value;
+    notifyListeners();
+  }
+
+  Future<void> createNewTag() async {
+    debugPrint("add tag $firstEditedFiled : $secondEditedFiled");
+    isAddingNewTag = false;
+    userTags.add(
+      UserTagModel(title: firstEditedFiled, content: secondEditedFiled)
+    );
+    await updateUser(currentUser);
+    notifyListeners();
+  }
+
+  Future<void> updateUserTag() async {
+    debugPrint("add tag $firstEditedFiled : $secondEditedFiled");
+    userTags[indexOfEditingTag] = UserTagModel(title: firstEditedFiled, content: secondEditedFiled);
+    indexOfEditingTag = -1;
+    await updateUser(currentUser);
+    notifyListeners();
+    
+  }
+
+  Future<void> updateUser(UserEntity userEntity) async{
+    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
+        remoteDataSource:UserRemoteDataSourceImpl(token:  userDataProvider!.tokenModel.token),
+        localDataSource: UserLocalDataSourceImpl()));
+    debugPrint(currentUser.toString());
+    final failureOrUser = await updateUserUseCase(userEntity);
 
     failureOrUser.fold(
-        (failure) => _viewModel.messageService
-            .addMessage(MessageData.error(message: failure.toString())),
-        (user) {
-      debugPrint("Tag deleted");
-    });
+      (failure) => messageService
+          .addMessage(MessageData.error(message: failure.toString())),
+      (user) {
+        debugPrint("Tag edited");
+      }
+    );
+  }
 
+  void update(UserDataProvider userDataProvider) {
+    this.userDataProvider = userDataProvider;
     notifyListeners();
   }
 
-  void onEditingCancel() {
-    onTagChanging = false;
-    indexOfChangingTag = null;
-    notifyListeners();
-  }
-
-  Future<void> onEditingDone() async {
-    if (indexOfChangingTag != currentUser!.tags.length) {
-      currentUser!.tags[indexOfChangingTag!] =
-          UserTagModel(title: firstEditedFiled, content: secondEditedFiled);
-    } else {
-      currentUser!.tags.add(
-          UserTagModel(title: firstEditedFiled, content: secondEditedFiled));
-    }
-
-    onTagChanging = false;
-    indexOfChangingTag = null;
-
-    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
-        remoteDataSource:
-            UserRemoteDataSourceImpl(token: _viewModel.tokenModel.token),
-        localDataSource: UserLocalDataSourceImpl()));
-
-    final failureOrUser = await updateUserUseCase(currentUser!);
-
-    failureOrUser.fold(
-        (failure) => _viewModel.messageService
-            .addMessage(MessageData.error(message: failure.toString())),
-        (user) {
-      debugPrint("Tag edited");
-    });
-
-    notifyListeners();
-  }
-
-  void init(UserPageViewModel model) {
-    _viewModel = model;
-    currentUser = model.currentUser;
-    notifyListeners();
+  init() {
+    firstEditedFiled = "";
+    secondEditedFiled = "";
+    isAddingNewTag = false;
+    indexOfEditingTag = -1;
   }
 }

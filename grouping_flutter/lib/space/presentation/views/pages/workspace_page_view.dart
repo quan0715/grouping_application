@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
+import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
-import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
+import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
+import 'package:grouping_project/space/presentation/views/components/app/mobile_bottom_navigation_bar.dart';
 import 'package:grouping_project/space/presentation/views/frames/workspace_info_and_navigator_frame.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +39,6 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
       builder: (context, viewModel, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         child: SizedBox(
-          // color: viewModel.selectedProfile.spaceColor,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Row(
@@ -51,7 +50,7 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
   }
 
   Widget _buildBody(){
-    return Consumer2<UserPageViewModel, WorkspaceViewModel>(
+    return Consumer2<UserSpaceViewModel, WorkspaceViewModel>(
       builder: (context, userVM, workspaceVM, child) => Scaffold(
         backgroundColor: Colors.white,
         appBar: _getAppBar(context, workspaceVM),
@@ -71,9 +70,9 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
         ),
         bottomNavigationBar: _getNavigationBar(context, workspaceVM),
         drawer: DashboardDrawer(
-          selectedProfile: userVM.selectedProfile,
-          userProfiles: userVM.userProfiles,
-          workspaceProfiles: userVM.workspaceProfiles,
+          selectedProfile: userVM.userDataProvider!.getUserProfile(),
+          userProfiles: userVM.userDataProvider!.getUserProfile(),
+          workspaceProfiles: userVM.userDataProvider!.getWorkspaceList(),
         ),
       ),
     );
