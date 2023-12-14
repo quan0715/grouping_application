@@ -1,5 +1,4 @@
 import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 abstract class ActivityEntity {
   final int? id;
@@ -7,8 +6,8 @@ abstract class ActivityEntity {
   String introduction;
   List<int> contributors;
   List<DateTime> notifications;
-  late UserModel creatorAccount;
-  late UserEntity creator;
+  UserModel creatorAccount;
+  // late UserEntity creator;
 
   ActivityEntity(
       {required this.id,
@@ -16,12 +15,6 @@ abstract class ActivityEntity {
       required this.introduction,
       required this.contributors,
       required this.notifications,
-      UserModel? creatorAccount,
-      UserEntity? creator}) {
-        if (creatorAccount != null) {
-          creator = UserEntity.fromModel(creatorAccount);
-        } else if (creator != null) {
-          creatorAccount = UserModel.fromEntity(creator);
-        }
-  }
+      required this.creatorAccount,
+      });
 }

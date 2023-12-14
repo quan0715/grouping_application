@@ -4,6 +4,7 @@ import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 // import 'package:grouping_project/space/data/datasources/activity_repo.dart';
 import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
@@ -57,7 +58,7 @@ class MissionSettingViewModel extends ChangeNotifier {
         (failure) => messageService.addMessage(
             MessageData.error(message: failure.toString())), (mission) {
       _mission = mission;
-      creator = _mission!.creator;
+      creator = UserEntity.fromModel(_mission!.creatorAccount);
     });
   }
 
@@ -76,7 +77,7 @@ class MissionSettingViewModel extends ChangeNotifier {
         (failure) => messageService.addMessage(
             MessageData.error(message: failure.toString())), (mission) {
       _mission = mission;
-      creator = _mission!.creator;
+      creator = UserEntity.fromModel(_mission!.creatorAccount);
     });
   }
 
@@ -95,7 +96,7 @@ class MissionSettingViewModel extends ChangeNotifier {
         (failure) => messageService.addMessage(
             MessageData.error(message: failure.toString())), (mission) {
       _mission = mission;
-      creator = _mission!.creator;
+      creator = UserEntity.fromModel(_mission!.creatorAccount);
     });
   }
 
@@ -187,7 +188,7 @@ class MissionSettingViewModel extends ChangeNotifier {
         state: MissionStateModel.defaultProgressState,
         parentMissionIds: [],
         childMissionIds: [],
-        creator: creator);
+        creatorAccount: UserModel.fromEntity(creator));
 
     notifyListeners();
   }
