@@ -6,6 +6,7 @@ import 'package:grouping_project/space/presentation/view_models/user_page_view_m
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
+import 'package:grouping_project/space/presentation/views/frames/activity_list_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_space_info_and_navigator_frame.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
@@ -63,7 +64,7 @@ class _UserPageViewState extends State<UserPageView> {
   List<Widget> _getFrames(){
     var spaceInfoAndNavigatorFrame = SpaceInfoAndNavigatorFrame(
       frameColor: userPageViewModel.selectedProfile.spaceColor,
-      frameWidth: MediaQuery.of(context).size.width * 0.18,
+      frameWidth: MediaQuery.of(context).size.width * 0.25,
     );
     var userSettingFrame = UserSettingFrame(
       frameColor: userPageViewModel.selectedProfile.spaceColor,
@@ -91,9 +92,7 @@ class _UserPageViewState extends State<UserPageView> {
           flex: 2,
           child: DashboardFrameLayout(
           frameColor: userPageViewModel.selectedProfile.spaceColor,
-          child: const Center(
-            child: Text("Calendar"),
-          )
+          child: const ActivityListFrame()
         )),
         gap,
         Expanded(
