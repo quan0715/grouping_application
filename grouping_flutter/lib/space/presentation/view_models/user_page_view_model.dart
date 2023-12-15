@@ -118,7 +118,7 @@ class UserSpaceViewModel extends ChangeNotifier {
   
   UserEntity? get currentUser => userDataProvider!.currentUser;
 
-  final Color spaceColor = AppColor.spaceColor2;
+  final Color spaceColor = AppColor.mainSpaceColor;
 
   Future<void> init() async {
     debugPrint("UserPageViewModel init");

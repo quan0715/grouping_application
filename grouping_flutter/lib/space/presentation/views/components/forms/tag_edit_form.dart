@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
+import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 
 class UserTagEditingForm extends StatelessWidget implements WithThemePrimaryColor {

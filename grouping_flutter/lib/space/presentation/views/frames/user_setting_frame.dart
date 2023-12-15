@@ -8,7 +8,7 @@ import 'package:grouping_project/space/presentation/views/components/forms/tag_e
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
+import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 import 'package:image_picker/image_picker.dart';

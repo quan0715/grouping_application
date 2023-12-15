@@ -4,7 +4,7 @@ import 'package:grouping_project/app/presentation/components/data_display/title_
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/create_worksapce_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
+import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 import 'package:provider/provider.dart';

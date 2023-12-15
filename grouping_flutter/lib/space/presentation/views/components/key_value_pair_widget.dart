@@ -11,30 +11,32 @@ class KeyValuePairWidget<K, V> extends StatelessWidget{
   final double borderRadius;
   final EdgeInsets padding;
   final Widget? child;
-  
+  final double gap; 
   const KeyValuePairWidget({
     super.key,
     this.primaryColor = Colors.white,
     required this.keyChild,
     required this.valueChild,
     this.action,
+    this.gap = 5,
     this.borderRadius = 5,
     this.padding = const EdgeInsets.symmetric(
       horizontal: 20,
       vertical: 10,
     ), 
+    
     this.child,
   });
 
   TextStyle keyTextStyle(BuildContext context) => 
-    Theme.of(context).textTheme.labelLarge!.copyWith(
+    Theme.of(context).textTheme.titleSmall!.copyWith(
       color: primaryColor, 
       fontWeight: FontWeight.bold
     );
 
   TextStyle valueTextStyle(BuildContext context) => 
-    Theme.of(context).textTheme.labelLarge!.copyWith(
-      color: AppColor.onSurfaceColor.withOpacity(0.9)
+    Theme.of(context).textTheme.bodyMedium!.copyWith(
+      color: AppColor.onSurfaceColor
     );
 
   Widget getKeyWidget(BuildContext context){
@@ -64,21 +66,24 @@ class KeyValuePairWidget<K, V> extends StatelessWidget{
   Widget build(BuildContext context) => _buildBody(context);
 
   Widget _buildBody(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getKeyWidget(context),
-              const Gap(5),
-              getValueWidget(context),
-            ]
+    return Padding(
+      padding: padding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                getKeyWidget(context),
+                Gap(gap),
+                getValueWidget(context),
+              ]
+            ),
           ),
-        ),
-        action ?? const SizedBox(),
-      ]
+          action ?? const SizedBox(),
+        ]
+      ),
     );
   }
 }

@@ -44,6 +44,7 @@ class DashboardDrawer extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.white,
       elevation: 0,
       child: Padding(
         padding: _outerPadding,

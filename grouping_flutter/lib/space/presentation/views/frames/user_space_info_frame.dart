@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
@@ -44,20 +45,41 @@ class SpaceInfoFrame extends StatelessWidget{
           ProfileAvatar(
             themePrimaryColor: frameColor,
             label: userData.currentUser?.name ?? "",
-            avatarSize: 72,
+            avatarSize: 64,
             labelFontSize: 20,
           ),
-          const Gap(10),
-          Text("@user-5-${userData.currentUser?.name ?? ""}", style: Theme.of(context).textTheme.labelLarge!.copyWith(
-            color: frameColor,
-            fontWeight: FontWeight.bold,
-          )),
-          const Gap(10),
-          Text(userData.currentUser?.name ?? "", style: Theme.of(context).textTheme.titleLarge!.copyWith(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-          )),
+          // const Gap(10),
+          KeyValuePairWidget<String, Widget>(
+            gap: 3,
+            primaryColor: frameColor,
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+            keyChild: "@user-${userData.currentUser?.id ?? ""}", 
+            valueChild: Text(userData.currentUser?.name ?? "", style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+            )),
+          ),
+          // const Gap(10),
           Divider(color: frameColor.withOpacity(0.2), thickness: 2,),
+          KeyValuePairWidget(
+            gap: 3,
+            primaryColor: frameColor,
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+            keyChild: "自我介紹", 
+            valueChild: userData.currentUser?.introduction ?? "",
+          ),
+          
+          ...userData.currentUser!.tags.map((tag) => KeyValuePairWidget(
+            gap: 3,
+            primaryColor: frameColor,
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+            keyChild: tag.title, 
+            valueChild: tag.content,
+          )),
+
+          Divider(color: frameColor.withOpacity(0.2), thickness: 2,),
+          const Gap(10),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -70,7 +92,18 @@ class SpaceInfoFrame extends StatelessWidget{
             ],
           ),
           const Gap(10),
-          Row(
+         
+          ...userData.currentUser!.joinedWorkspaces.map((workspace) => Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: NavigatedProfileInfoCardButton(
+              primaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
+              profileName: workspace.name,
+              routerPath: "/app/workspace/${workspace.id}/home",
+              profileImageURL: "",
+            ),
+          )),
+          const Gap(10),
+          Row(            
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
@@ -93,16 +126,8 @@ class SpaceInfoFrame extends StatelessWidget{
             ],
           ),
           const Gap(10),
-          ...userData.currentUser!.joinedWorkspaces.map((workspace) => Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: NavigatedProfileInfoCardButton(
-              primaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
-              profileName: workspace.name,
-              routerPath: "/app/workspace/${workspace.id}/home",
-              profileImageURL: "",
-            ),
-          )),
-        ],
+        ]
+        // add gap,
       ),
     );
   }
