@@ -14,6 +14,7 @@ import 'package:grouping_project/space/data/repositories/user_repository_impl.da
 import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/usecases/get_current_user_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/update_current_user.dart';
 
 
 class UserDataProvider extends ChangeNotifier{
@@ -53,14 +54,15 @@ class UserDataProvider extends ChangeNotifier{
       (user) {
         currentUser = user;
         // debugPrint("UserPageViewModel getCurrentUser success: ${user.toString()}");
-        // notifyListeners();
+        //
       }
     );
+    notifyListeners();
   }
 
   Future<void> userLogout() async {
     final logOutUseCase = LogOutUseCase(authRepositoryImpl);
-    await logOutUseCase.call();
+    await logOutUseCase();
   } 
 
   SpaceProfileEntity getUserProfile(){
@@ -71,15 +73,28 @@ class UserDataProvider extends ChangeNotifier{
     );
   }
 
-  List<SpaceProfileEntity> getWorkspaceList() {
-    // display workspace list in drawer and switch workspace frame
-    // return await userRepositoryImpl.getWorkspaceList();
-    return (currentUser?.joinedWorkspaces ?? []).map<SpaceProfileEntity>(
-      (workspace) => GroupSpaceProfileEntity(
-        spaceName: workspace.name,
-        spacePhotoPicPath: "",
-        spaceColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor)
-    )).toList();
+  
+
+  Future<void> updateUser() async{
+
+    var updateUserUseCase = UpdateUserUseCase(userRepositoryImpl);
+    isLoading = true;
+
+    final failureOrUser = await updateUserUseCase(currentUser!);
+
+    failureOrUser.fold(
+      (failure){
+        debugPrint(failure.toString());
+      },
+      (user) {
+        debugPrint("update user success");
+        debugPrint(user.toString());
+        currentUser = user;
+      }
+    );
+    isLoading = false;
+    notifyListeners();
+
   }
 
   Future<void> init() async {
@@ -90,7 +105,6 @@ class UserDataProvider extends ChangeNotifier{
     // notifyListeners();
     // debugPrint("UserData init, ${currentUser?.toString()}");
   }
-
 }
 
 class UserSpaceViewModel extends ChangeNotifier {
@@ -100,16 +114,11 @@ class UserSpaceViewModel extends ChangeNotifier {
   
   bool _isLoading = true;
 
-  bool get isLoading => _isLoading;
+  bool get isLoading => _isLoading || userDataProvider!.isLoading;
   
   UserEntity? get currentUser => userDataProvider!.currentUser;
 
-  List<SpaceProfileEntity> get userProfiles => [
-    userDataProvider!.getUserProfile()
-  ];
-  
-
-  SpaceProfileEntity get selectedProfile => userProfiles.first;
+  final Color spaceColor = AppColor.spaceColor2;
 
   Future<void> init() async {
     debugPrint("UserPageViewModel init");
@@ -123,8 +132,7 @@ class UserSpaceViewModel extends ChangeNotifier {
   void update(UserDataProvider userProvider) {
     debugPrint("UserViewModel update userData");
     userDataProvider = userProvider;
-    // debugPrint(userDataProvider!.currentUser.toString());
-    // notifyListeners();
+    notifyListeners();
   }
 
 }

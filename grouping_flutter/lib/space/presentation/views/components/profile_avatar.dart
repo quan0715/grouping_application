@@ -20,7 +20,11 @@ class ProfileAvatar extends StatelessWidget{
 
   Widget _getAvatar(BuildContext context) {
     if (avatar != null) {
-      return avatar!;
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+        child: avatar!);
     }
     return Center(
       child: Text(
@@ -39,10 +43,13 @@ class ProfileAvatar extends StatelessWidget{
       height: avatarSize,
       decoration: BoxDecoration(
         color: themePrimaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(5),
         border: Border.all(color: themePrimaryColor.withOpacity(0.3), width: 2),
       ),
-      child: _getAvatar(context),
+      child: Padding(
+        padding: const EdgeInsets.all(0),
+        child: _getAvatar(context),
+      ),
     );
   }
 

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
@@ -52,8 +51,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateSetting(
-      SettingEntity settingEntity) async {
+  Future<Either<Failure, void>> updateSetting(SettingEntity settingEntity) async {
     try {
       await localDataSource
           .cacheSetting(SettingModel.fromEntity(settingEntity));
@@ -61,5 +59,11 @@ class UserRepositoryImpl implements UserRepository {
     } on CacheException catch (error) {
       return Left(CacheFailure(errorMessage: error.exceptionMessage));
     }
+  }
+  
+  @override
+  Future<Either<Failure, void>> updateProfilePhoto(int userId, String photoUrl) {
+    // TODO: implement updateProfilePhoto
+    throw UnimplementedError();
   }
 }

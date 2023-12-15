@@ -8,4 +8,5 @@ abstract class UserRepository {
   Future<Either<Failure, UserEntity>> updateUser(UserEntity user);
   Future<Either<Failure, SettingEntity>> getSetting();
   Future<Either<Failure, void>> updateSetting(SettingEntity settingEntity);
+  Future<Either<Failure, void>> updateProfilePhoto(int userId, String photoUrl);
 }
