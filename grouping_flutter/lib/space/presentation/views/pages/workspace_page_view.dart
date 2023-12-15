@@ -70,18 +70,21 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
         ),
         bottomNavigationBar: _getNavigationBar(context, workspaceVM),
         drawer: DashboardDrawer(
-          selectedProfile: userVM.userDataProvider!.getUserProfile(),
-          userProfiles: userVM.userDataProvider!.getUserProfile(),
-          workspaceProfiles: userVM.userDataProvider!.getWorkspaceList(),
+          primaryColor: workspaceVM.workspaceProfile.spaceColor,
+          userProfiles: userVM.currentUser!,
+          isSelectedUserSpace: false,
+          selectedProfileId: 0,
+          workspaceProfiles: userVM.currentUser!.joinedWorkspaces,
         ),
       ),
     );
   }
 
-  DashboardAppBar _getAppBar(BuildContext context, WorkspaceViewModel viewModel){
-    return DashboardAppBar(
-      // color: viewModel.selectedProfile.spaceColor,
-      profile: viewModel.workspaceProfile,
+  SpaceAppBar _getAppBar(BuildContext context, WorkspaceViewModel viewModel){
+    return SpaceAppBar(
+      color: viewModel.workspaceProfile.spaceColor,
+      spaceName: viewModel.workspaceProfile.spaceName,
+      spaceProfilePicURL: "",
     );
   }
   

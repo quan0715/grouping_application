@@ -85,7 +85,7 @@ class UserModel {
         'id': this.id,
         'user_name': this.userName,
         'introduction': this.introduction,
-        'photo': this.photo?.toJson(),
+        // 'photo': this.photo?.toJson(),
         'tags': this.tags.map((tag) => tag.toJson()).toList(),
         'joined_workspaces': this
             .joinedWorkspaces
@@ -113,8 +113,6 @@ class UserModel {
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((workspace) => WorkspaceModel.fromJson(data: workspace))
             .toList(),
-        // joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
-        //     as List<WorkspaceModel>,
         contributingActivities: ((data['contributing_activities'] ?? [])
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
@@ -129,7 +127,7 @@ class UserModel {
       userName: entity.name,
       introduction: entity.introduction.isEmpty ? entity.name : entity.introduction,
       photo: entity.photo ?? defaultAccount.photo,
-      tags: entity.tags,
+      tags: entity.tags.map((tag) => UserTagModel(title: tag.title, content: tag.content)).toList(),
       joinedWorkspaces: entity.joinedWorkspaces,
       contributingActivities: entity.contributingActivities,
     );

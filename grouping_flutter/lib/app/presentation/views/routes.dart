@@ -14,10 +14,10 @@ class AppRouter {
   GoRouter get goRoute => _goRouter;
 
   UserDataProvider getUserDataProvider(BuildContext context) {
-    debugPrint('create user data provider');
+    // debugPrint('create user data provider');
     return UserDataProvider(
       tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
-    );
+    )..init();
   }
 
   DashboardPageType getDashboardPath(String pageType) {
@@ -83,7 +83,7 @@ class AppRouter {
         )
       ],
       redirect: (BuildContext context, GoRouterState state) async {
-        debugPrint(state.matchedLocation);
+        // debugPrint(state.matchedLocation);
         // await tokenManager.updateToken();
         bool isInLoginPage = state.matchedLocation == '/login';
         bool isInRegisterPage = state.matchedLocation == '/register';
@@ -93,17 +93,17 @@ class AppRouter {
 
         if (isInLoginPage || isInRegisterPage) {
           if (isLogin) {
-            debugPrint("redirect to user page");
+            // debugPrint("redirect to user page");
             return '/app/user/${tokenManager.tokenModel.userId}/home';
           }
           return null;
         } else {
           if (!isLogin) {
-            debugPrint("redirect to login page");
+            // debugPrint("redirect to login page");
             return '/login';
           }
         }
-        debugPrint('by pass token check, no need to redirect');
+        // debugPrint('by pass token check, no need to redirect');
         return null;
       });
 }

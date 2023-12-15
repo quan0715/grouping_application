@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
@@ -8,7 +8,7 @@ import 'package:grouping_project/space/presentation/views/components/layout/dash
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
 import 'package:grouping_project/space/presentation/views/frames/activity_list_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
-import 'package:grouping_project/space/presentation/views/frames/user_space_info_and_navigator_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/user_space_info_frame.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
 
@@ -36,18 +36,19 @@ class _UserPageViewState extends State<UserPageView> {
   @override
   void initState() {
     super.initState();
-    userPageViewModel = UserSpaceViewModel();
     var userData = Provider.of<UserDataProvider>(context, listen: false);
-    userPageViewModel.userDataProvider = userData;
-    settingPageViewModel = SettingPageViewModel();
-    settingPageViewModel.userDataProvider = userData;
+    userPageViewModel = UserSpaceViewModel()
+      ..userDataProvider = userData;
+    
+    settingPageViewModel = SettingPageViewModel()
+      ..userDataProvider = userData;
   }
 
   @override
   Widget build(BuildContext context){
     return MultiProvider(
       providers: [
-       ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
+        ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
           create: (context) => userPageViewModel..init(),
           update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..update(userDataProvider),
         ),
@@ -61,111 +62,173 @@ class _UserPageViewState extends State<UserPageView> {
   }
 
 
+  int getPageIndex(BuildContext context) {
+    // get current page index from path
+    final RouteMatch lastMatch = GoRouter.of(context).routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch 
+      ? lastMatch.matches 
+      : GoRouter.of(context).routerDelegate.currentConfiguration;
+    final String location = matchList.uri.toString();
+    for(var data in pageData){
+      if(location.endsWith(data['path'] as String)){
+        return data['index'] as int ;
+      }
+    }
+    return 0;
+  }
+
+  final pageData = [
+    {"path": "home", "index": 0, "title": "主頁", "iconData": Icons.home},
+    {"path": "activities", "index": 1, "title": "活動", "iconData": Icons.local_activity},
+    {"path": "threads", "index": 2, "title": "訊息", "iconData": Icons.chat_bubble_outline},
+    {"path": "settings", "index": 3, "title": "設定", "iconData": Icons.settings},
+  ];
+
+  Widget _tempFrame(String title, int flex){
+    return Expanded(
+      flex: flex,
+      child: DashboardFrameLayout(
+        frameColor: userPageViewModel.spaceColor,
+        child: Center(
+          child: Text(title),
+        )
+      ),
+    );
+  }
+
+  Widget navigationRailFrame(){
+   return DashboardFrameLayout(
+      frameColor: userPageViewModel.spaceColor,
+      child: NavigationRail(
+        labelType: NavigationRailLabelType.all,
+        backgroundColor: Colors.transparent,
+        indicatorColor: userPageViewModel.spaceColor,
+        selectedIconTheme: const IconThemeData(color: Colors.white),
+        onDestinationSelected: (index) {
+            int? userIndex = Provider.of<UserDataProvider>(context, listen: false).currentUser!.id;
+            String path = '/app/user/$userIndex/${pageData[index]['path'] as String}';
+            GoRouter.of(context).go(path);
+          },
+        destinations: pageData.map((data) => NavigationRailDestination(
+          icon: Icon(data['iconData'] as IconData),
+          label: Text(data['title'] as String),
+        )).toList(),
+        selectedIndex: getPageIndex(context),
+      ),
+    );
+  }
+
   List<Widget> _getFrames(){
-    var spaceInfoAndNavigatorFrame = SpaceInfoAndNavigatorFrame(
-      frameColor: userPageViewModel.selectedProfile.spaceColor,
-      frameWidth: MediaQuery.of(context).size.width * 0.25,
-    );
-    var userSettingFrame = UserSettingFrame(
-      frameColor: userPageViewModel.selectedProfile.spaceColor,
-      frameHeight: MediaQuery.of(context).size.height,
-    );
-    var threadFrame = const ChatThreadBody(
-      threadTitle: "Test Thread",
-    );
-    Widget gap = const Gap(10);
+    // var spaceInfoAndNavigatorFrame = SpaceInfoAndNavigatorFrame(
+    //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+    //   frameWidth: MediaQuery.of(context).size.width * 0.25,
+    // );
+    // var userSettingFrame = UserSettingFrame(
+    //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+    //   frameHeight: MediaQuery.of(context).size.height,
+    // );
+    // var threadFrame = const ChatThreadBody(
+    //   threadTitle: "Test Thread",
+    // );
+    // Widget gap = const Gap(10);
+    var color = userPageViewModel.spaceColor;
     return switch (widget.pageType) {
       DashboardPageType.home => [
-        spaceInfoAndNavigatorFrame,
-        gap,
-        Expanded(child: DashboardFrameLayout(
-          frameColor: userPageViewModel.selectedProfile.spaceColor,
-          child: const Center(
-            child: Text("Home"),
-          )
-        ))
+        SpaceInfoFrame(
+          frameColor: color,
+          frameHeight: MediaQuery.of(context).size.height,
+          frameWidth: MediaQuery.of(context).size.width * 0.25,
+        ),
+        _tempFrame("home", 1),
       ],
       DashboardPageType.activities => [
-        spaceInfoAndNavigatorFrame,
-        gap,
+        // spaceInfoAndNavigatorFrame,
+        // gap,
+        // Expanded(
+        //   flex: 2,
+        //   child: DashboardFrameLayout(
+        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+        //   child: const ActivityListFrame()
+        // )),
+        // gap,
+        // Expanded(
+        //   flex: 3,
+        //   child: DashboardFrameLayout(
+        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+        //   child: const Center(
+        //     child: Text("Activities Detail"),
+        //   )
+        // )),
+        // _tempFrame("Calendar", 2),
         Expanded(
           flex: 2,
           child: DashboardFrameLayout(
-          frameColor: userPageViewModel.selectedProfile.spaceColor,
+          frameColor: color,
           child: const ActivityListFrame()
         )),
-        gap,
-        Expanded(
-          flex: 3,
-          child: DashboardFrameLayout(
-          frameColor: userPageViewModel.selectedProfile.spaceColor,
-          child: const Center(
-            child: Text("Activities Detail"),
-          )
-        )),
+        _tempFrame("Activities Detail", 3),
       ],
       DashboardPageType.threads => [
-        spaceInfoAndNavigatorFrame,
-        gap,
-        Expanded(
-          flex: 1,
-          child: DashboardFrameLayout(
-          frameColor: userPageViewModel.selectedProfile.spaceColor,
-          child: const Center(
-            child: Text("thread list"),
-          )
-        )),
-        gap,
+        _tempFrame("thread list", 1),
         Expanded(
           flex: 3,
           child: DashboardFrameLayout(
-            frameColor: userPageViewModel.selectedProfile.spaceColor,
-            child: threadFrame)),
+            frameColor: userPageViewModel.spaceColor,
+            child: const ChatThreadBody(
+            threadTitle: "Test Thread",
+          ))),
       ],
       DashboardPageType.settings => [
-        spaceInfoAndNavigatorFrame,
-        gap,
-        Expanded(child: userSettingFrame)
+        Expanded(child: UserSettingFrame(
+          frameColor: color,
+          frameHeight: MediaQuery.of(context).size.height,
+          frameWidth: MediaQuery.of(context).size.width,
+        ))
       ],
       DashboardPageType.none => [
-        spaceInfoAndNavigatorFrame,
-        gap,
-        const Expanded(child: Placeholder())
+        _tempFrame("error", 1)
       ],
     };
   }
 
   Widget _buildBody() {
     return Consumer<UserSpaceViewModel>(
-      builder: (context, userSpaceViewModel, child) => 
-        userSpaceViewModel.isLoading 
-          ? const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
-          : DashboardView(
-            backgroundColor: Colors.white,
-            appBar: _getAppBar(),
-            frames: _getFrames(),
-            drawer: _getDrawer(context)
-      ),
+        builder: (context, userSpaceViewModel, child) => 
+          userSpaceViewModel.isLoading
+            ? const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+            : DashboardView(
+              backgroundColor: Colors.white,
+              appBar: _getAppBar(),
+              frames: [
+                navigationRailFrame(),
+                ..._getFrames(),
+              ],
+              drawer: _getDrawer(context),
+              direction: Axis.horizontal,
+        ),
     );
   }
 
   Widget _getDrawer(BuildContext context){
     var user = Provider.of<UserDataProvider>(context, listen: false);
     return DashboardDrawer(
-      selectedProfile: user.getUserProfile(),
-      userProfiles: user.getUserProfile(),
-      workspaceProfiles: user.getWorkspaceList(),
+      primaryColor: userPageViewModel.spaceColor,
+      userProfiles: user.currentUser!,
+      workspaceProfiles: user.currentUser!.joinedWorkspaces,
+      selectedProfileId: user.currentUser!.id,
     );
   }
 
-  DashboardAppBar _getAppBar() {
-    return DashboardAppBar(
-      // color: viewModel.selectedProfile.spaceColor,
-      profile: userPageViewModel.selectedProfile,
+  SpaceAppBar _getAppBar() {
+    var user = Provider.of<UserDataProvider>(context, listen: false);
+    return SpaceAppBar(
+      color: userPageViewModel.spaceColor,
+      spaceName:  user.currentUser?.name ?? "",
+      spaceProfilePicURL: user.currentUser?.photo != null ? userPageViewModel.currentUser!.photo!.data : "",
     );
   }
 
@@ -181,5 +244,4 @@ class _UserPageViewState extends State<UserPageView> {
   //     );
   //   }
   // }
-
 }

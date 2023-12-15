@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
@@ -8,103 +10,87 @@ import 'package:grouping_project/space/data/repositories/user_repository_impl.da
 import 'package:grouping_project/space/domain/entities/setting_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/usecases/setting_usecases/update_setting_usercase.dart';
-import 'package:grouping_project/space/domain/usecases/update_current_user.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:image_picker/image_picker.dart';
+
+
 
 class SettingPageViewModel extends ChangeNotifier {
-  SettingPageViewModel({this.dashboardColor = Colors.white});
 
-  // This is prepared for future update of color changes
-  // UserSpaceViewModel _viewModel = UserSpaceViewModel();
+  // user data for render this page
+  // it will be auto update since it comes from proxyProvider
   UserDataProvider? userDataProvider;
-  MessageService messageService = MessageService();
-  // UserEntity? currentUser;
-  bool isNightView = false;
-  bool isAddingNewTag = false;
-  int indexOfEditingTag = -1;
-
-  Color dashboardColor;
-
-  String firstEditedFiled = "";
-  String secondEditedFiled = "";
 
   UserEntity get currentUser => userDataProvider!.currentUser!;
 
-  UserTagModel getTagByIndex(int index){
-    return userTags[index];
-  }
+  List<UserTagEntity> get userTags => userDataProvider!.currentUser!.tags;
 
-  List<UserTagModel> get userTags => currentUser.tags;
+  UserTagEntity getTagByIndex(int index) => userTags[index];
 
-  bool get isValidToAddNewTag => userTags.length + 1 <= 4;
+  bool get isValidToAddNewTag 
+    => userDataProvider!.currentUser!.tags.length + 1 <= 4;
   
-  bool get isEditingExistingTag => (indexOfEditingTag != -1); 
+  MessageService messageService = MessageService();
+  
+  UpdateSettingUseCase? updateSettingUseCase;
+  
+  int currentSectionIndex = 0;
+
+  SettingEntity settingEntity = SettingEntity(isNightView: false, dashboardColor: Colors.white,);
+  
+  bool isAddingNewTag = false;
+  bool isLoading = false;
+  int indexOfEditingTag = -1;
+  
+  Uint8List? tempAvatarData;
+
+  
+  
+  void onSectionChange(int index) {
+    // when user tap on navigationRail, change current section index by destination index
+    currentSectionIndex = index;
+    notifyListeners();
+  }
 
   bool tagIsEdited(int index){
-    // int index = currentUser.tags.indexOf(tag);
+    // only one tag can be edited at a time
     return index != -1 && (index == indexOfEditingTag);
   }
-  
 
-
-  void onEditPressed(int index) {
-    firstEditedFiled = userTags[index].title;
-    secondEditedFiled = userTags[index].content;
-    // isAddingNewTag = true;
-    indexOfEditingTag = index;
-    // debugPrint(firstEditedFiled);
-    // debugPrint(secondEditedFiled);
-
-    notifyListeners();
-  }
-
-  void cancelTagAdding() {
+  void clearFormState(){
+    // clear either you are adding new tag or editing tag
     isAddingNewTag = false;
-    notifyListeners();
-  }
-  
-  void cancelTagEditing() {
     indexOfEditingTag = -1;
     notifyListeners();
   }
+  
+  void onTagEdited(int index) {
+    indexOfEditingTag = index;
+    isAddingNewTag = false;
+    notifyListeners();
+  }
+
 
   Future<void> onNightViewToggled(bool value) async {
-    isNightView = value;
-    UpdateSettingUseCase updateSettingUseCase = UpdateSettingUseCase(
-        UserRepositoryImpl(
-            remoteDataSource:
-                UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
-            localDataSource: UserLocalDataSourceImpl()));
 
-    final failureOrNull = await updateSettingUseCase(SettingEntity(
-        isNightView: isNightView, dashboardColor: dashboardColor));
+    final failureOrNull = await updateSettingUseCase!(settingEntity);
 
     failureOrNull.fold(
         (failure) => MessageService().addMessage(MessageData.error(message: failure.toString())),
-        (void _r) {
-      //TODO: change day view/ night view
-    });
+        (void r) => debugPrint("night view changed, unimplemented"));
 
     notifyListeners();
   }
 
   Future<void> onColorSelected(Color color) async {
-    dashboardColor = color;
-    UpdateSettingUseCase updateSettingUseCase = UpdateSettingUseCase(
-        UserRepositoryImpl(
-            remoteDataSource:
-                UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
-            localDataSource: UserLocalDataSourceImpl()));
-
-    final failureOrNull = await updateSettingUseCase(SettingEntity(
-        isNightView: isNightView, dashboardColor: dashboardColor));
+    // dashboardColor = color;
+    final failureOrNull = await updateSettingUseCase!(settingEntity);
 
     failureOrNull.fold(
-        (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
-        (void _r) {
-      //TODO: change the background color
-    });
-
+      (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
+      (void r) => debugPrint("color changed, unimplemented")
+    );
+    
     notifyListeners();
   }
 
@@ -113,91 +99,88 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onTagAddDone(String title, String content) async {
-    debugPrint("add tag $title : $content");
-    currentUser.tags.add(UserTagModel(title: title, content: content));
+  Future<void> deleteUserTagByIndex(int index) async {
+    // debugPrint("delete tag $index");
+    userDataProvider!.currentUser!.tags.removeAt(index);
+    await userDataProvider!.updateUser();
+    clearFormState();
+    // debugPrint("delete tag $tag done");
+    notifyListeners();
+  }
 
+  Future<void> updateExistingTag(UserTagEntity tag, int index) async {
+    // debugPrint("update tag $tag");
+    userTags[index] = tag;
+    await userDataProvider!.updateUser();
+    indexOfEditingTag = -1;
+    notifyListeners();
+  }
+
+  Future<void> createNewTag(UserTagEntity tag) async {
+    // debugPrint("add tag $tag");
+    if(userTags.length < 4){
+      userTags.add(tag);
+      await userDataProvider!.updateUser();
+    } 
     isAddingNewTag = false;
-    indexOfEditingTag = -1;
-
-    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
-        remoteDataSource:
-            UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
-        localDataSource: UserLocalDataSourceImpl()));
-
-    final failureOrUser = await updateUserUseCase(currentUser);
-
-    failureOrUser.fold(
-        (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
-        (user) {
-      debugPrint("Tag added to database");
-    });
-
     notifyListeners();
-  }
-
-  Future<void> onTagDelete(int index) async {
-    
-    userTags.removeAt(index);
-    indexOfEditingTag = -1;
-    await updateUser(currentUser);
-    notifyListeners();
-  }
-
-  set setFirstEditedFiled(String value) {
-    firstEditedFiled = value;
-    notifyListeners();
-  }
-
-  set setSecondEditedFiled(String value) {
-    secondEditedFiled = value;
-    notifyListeners();
-  }
-
-  Future<void> createNewTag() async {
-    debugPrint("add tag $firstEditedFiled : $secondEditedFiled");
-    isAddingNewTag = false;
-    userTags.add(
-      UserTagModel(title: firstEditedFiled, content: secondEditedFiled)
-    );
-    await updateUser(currentUser);
-    notifyListeners();
-  }
-
-  Future<void> updateUserTag() async {
-    debugPrint("add tag $firstEditedFiled : $secondEditedFiled");
-    userTags[indexOfEditingTag] = UserTagModel(title: firstEditedFiled, content: secondEditedFiled);
-    indexOfEditingTag = -1;
-    await updateUser(currentUser);
-    notifyListeners();
-    
   }
 
   Future<void> updateUser(UserEntity userEntity) async{
-    UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(UserRepositoryImpl(
-        remoteDataSource:UserRemoteDataSourceImpl(token:  userDataProvider!.tokenModel.token),
-        localDataSource: UserLocalDataSourceImpl()));
-    debugPrint(currentUser.toString());
-    final failureOrUser = await updateUserUseCase(userEntity);
-
-    failureOrUser.fold(
-      (failure) => messageService
-          .addMessage(MessageData.error(message: failure.toString())),
-      (user) {
-        debugPrint("Tag edited");
-      }
-    );
+    isLoading = true;
+    notifyListeners();
+    await userDataProvider!.updateUser();
+    isLoading = false;
+    notifyListeners();
   }
 
   void update(UserDataProvider userDataProvider) {
     this.userDataProvider = userDataProvider;
+    updateSettingUseCase = UpdateSettingUseCase(
+      UserRepositoryImpl(
+          remoteDataSource:UserRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+          localDataSource: UserLocalDataSourceImpl()
+      )
+    );
     notifyListeners();
   }
 
   init() {
-    firstEditedFiled = "";
-    secondEditedFiled = "";
     isAddingNewTag = false;
-    indexOfEditingTag = -1;
   }
+
+  void uploadAvatar(XFile file) async {
+    debugPrint("upload avatar");
+    debugPrint(file.path);
+    // currentUser.photo!.data = file.path;
+    // await UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token)
+    //   .updateUserProfileImage(
+    //     account: UserModel.fromEntity(currentUser)
+    //   , imageURL: file.path);
+    updateAvatar(await file.readAsBytes());
+  }
+  
+  set userName(String value) {
+    currentUser.name = value;
+    notifyListeners();
+  }
+
+  set introduction(String value) {
+    currentUser.introduction = value;
+    notifyListeners();
+  }
+
+  void updateAvatar(Uint8List data) async {
+    tempAvatarData = data;
+    notifyListeners();
+  }
+
+  void updateCurrentUserTag(UserTagEntity tag, int index) {
+    userTags[index] = tag;
+    notifyListeners();
+  }
+
+  void updateNewUserTag(UserTagEntity tag) {
+    debugPrint("update new tag");
+  }  
 }

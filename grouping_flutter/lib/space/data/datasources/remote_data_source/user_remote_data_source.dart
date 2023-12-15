@@ -15,6 +15,7 @@ abstract class UserRemoteDataSource {
   UserRemoteDataSource({String token = ""});
   Future<UserModel> getUserData({required int uid});
   Future<UserModel> updateUserData({required UserModel account});
+  Future<UserModel> updateUserProfileImage({required UserModel account, required String imageURL});
 }
 
 class UserRemoteDataSourceImpl extends UserRemoteDataSource {
@@ -73,7 +74,6 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     switch (response.statusCode) {
       case 200:
         // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
-          // debugPrint(utf8.decode(response.bodyBytes));
           return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
         case 400:
           throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -99,11 +99,38 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   @override
   Future<UserModel> updateUserData({required UserModel account}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
-    final response = await _client.patch(apiUri,
-        headers: headers, body: jsonEncode(account.toJson()));
+    // debugPrint("before update---------------------------");
+    // debugPrint(jsonEncode(account.toJson()).toString());
+    final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account.toJson()));
+    // debugPrint("after update---------------------------");
+    // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
     switch (response.statusCode) {
       case 200:
-        return UserModel.fromJson(data: jsonDecode(response.body));
+        return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+      case 400:
+        throw ServerException(exceptionMessage: "Invalid Syntax");
+      case 404:
+        throw ServerException(
+            exceptionMessage: "The requesting data was not found");
+      default:
+        return UserModel.defaultAccount;
+    }
+  }
+
+  @override
+  Future<UserModel> updateUserProfileImage({required UserModel account,required String imageURL}) async {
+    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
+    
+    var request = http.MultipartRequest("POST", apiUri);
+    // request.fields[] = productId.toString();
+    request.files.add(await http.MultipartFile.fromPath('photo_data', imageURL));
+    // final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account.toJson()));
+    // debugPrint("after update---------------------------");
+    // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
+    var response = await request.send();
+    switch (response.statusCode) {
+      case 200:
+        return UserModel.fromJson(data: jsonDecode(await response.stream.bytesToString()));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
