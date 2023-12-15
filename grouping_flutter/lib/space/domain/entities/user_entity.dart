@@ -12,7 +12,7 @@ class UserEntity {
   // String slogan;
   String introduction;
   ImageModel? photo;
-  List<UserTagModel> tags;
+  List<UserTagEntity> tags;
   List<WorkspaceModel> joinedWorkspaces;
   List<ActivityModel> contributingActivities;
   final spaceColor = AppColor.mainSpaceColor;
@@ -39,7 +39,7 @@ class UserEntity {
       introduction: account.introduction,
       // photoId: account.photoId,
       photo: account.photo,
-      tags: account.tags,
+      tags: account.tags.map((tag) => UserTagEntity.fromModel(tag)).toList(),
       joinedWorkspaces: account.joinedWorkspaces,
       // joinedWorkspaceIds: account.joinedWorkspaceIds,
       contributingActivities: account.contributingActivities,
@@ -52,4 +52,29 @@ class UserEntity {
     // print each line with break line
     return 'UserEntity: id: $id\naccount: $account\nname: $name\nintroduction: $introduction\nphoto: $photo\ntags: $tags\njoinedWorkspaces: $joinedWorkspaces\ncontributingActivities: $contributingActivities';
   }
+}
+
+class UserTagEntity extends UserTagModel{
+  UserTagEntity({
+    required super.title, 
+    required super.content
+  });
+
+  factory UserTagEntity.emptyTag() 
+    => UserTagEntity(title: "", content: "");
+
+  factory UserTagEntity.fromModel(UserTagModel tag)
+    => UserTagEntity(title: tag.title, content: tag.content);
+
+  factory UserTagEntity.exampleTag() 
+    => UserTagEntity(title: "生日", content: "1999/99/99"); 
+
+  @override
+  String toString() {
+    return 'UserTagEntity: title: $title, content: $content';
+  }
+
+  UserTagModel toModel() => UserTagModel(title: title, content: content);
+
+  UserTagEntity copy() => UserTagEntity(title: title, content: content);
 }

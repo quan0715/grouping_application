@@ -49,7 +49,7 @@ class CreateWorkspaceDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TitleWithContent(
+                const TitleWithContent(
                   title: "建立新小組", 
                   content: "建立你的團隊，並邀請成員加入",
                 ),
@@ -148,30 +148,9 @@ class CreateWorkspaceDialog extends StatelessWidget {
                 ],
               ),
               const Gap(10),
-              Text("小組介紹", style: labelTextStyle(context)),
-              const Gap(5),
-              Row(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: TextField(
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: AppColor.onSurfaceColor,
-                                ),
-                        decoration: InputDecoration(
-                          hintText: "請輸入小組介紹",
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              const AppTextFormField(
+                // title: "小組介紹",
+                hintText: "請輸入小組介紹"
               ),
               const Gap(10),
               Text("小組標籤", style: labelTextStyle(context)),
@@ -223,11 +202,11 @@ class CreateWorkspaceDialog extends StatelessWidget {
   }
 
   Widget _buildGroupAdditionalInfoInputSection(BuildContext context) {
-    return ColorFillingCardWidget(
+    return KeyValuePairWidget(
         primaryColor: AppColor.mainSpaceColor,
-        title: "佈景主題顏色",
-        content: "更改佈景主題顏色",
-        child: DropdownButton(
+        keyChild: "佈景主題顏色",
+        valueChild: "更改佈景主題顏色",
+        action: DropdownButton(
           isDense: true,
           underline: const SizedBox(),
           value: 1,

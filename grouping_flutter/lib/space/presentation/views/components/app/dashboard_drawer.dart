@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/core/shared/color_widget_interface.dart';
+import 'package:gap/gap.dart';
 import 'package:grouping_project/core/theme/color.dart';
-import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 
-class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
+class DashboardDrawer extends StatelessWidget {
 
   const DashboardDrawer({
     super.key,
-    required this.selectedProfile,
+    required this.primaryColor,
     required this.userProfiles,
+    this.isSelectedUserSpace = true,
+    this.selectedProfileId,
     required this.workspaceProfiles,
-  });
+  }) : 
+    assert(selectedProfileId != null || isSelectedUserSpace == true),
+    assert(selectedProfileId == null || isSelectedUserSpace != false);
+  // assert when  the selected profile is user profile selectedProfileId == null
 
-  final SpaceProfileEntity selectedProfile;
-  final SpaceProfileEntity userProfiles;
-  final List<SpaceProfileEntity> workspaceProfiles;
-
-
-  @override
-  Color get getThemePrimaryColor => const Color(0xFF7D5800);
+  final Color primaryColor;
+  final bool isSelectedUserSpace ;
+  final int? selectedProfileId;
+  final List<WorkspaceModel> workspaceProfiles;
+  final UserEntity userProfiles;
 
   TextStyle get _titleTextStyle 
     => const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
@@ -60,13 +64,16 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
       child: Row(
         children: [
           ProfileAvatar(
-            themePrimaryColor: getThemePrimaryColor,
-            label: selectedProfile.spaceName,
+            themePrimaryColor: primaryColor,
+            label: userProfiles.name,
+            avatar: userProfiles.photo != null && userProfiles.photo!.data.isNotEmpty 
+              ? Image.network(userProfiles.photo!.data) : null,
+            avatarSize: 35,
           ),
-          const SizedBox(width: 10,),
+          const Gap(5),
           Text(
-            selectedProfile.spaceName,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+            userProfiles.name,
+            style: _titleTextStyle,
           ),
         ],
       ),
@@ -79,13 +86,17 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("使用者 User", style: _titleTextStyle),
-          const SizedBox(height: 5,),
+          Text("個人儀表板", style: _titleTextStyle),
+          const Gap(5),
           Padding(
             padding: _blockPadding,
             child: NavigatedProfileInfoCardButton (
-              profile: userProfiles,
-              isSelected: userProfiles == selectedProfile
+              primaryColor:  primaryColor,
+              profileName: userProfiles.name,
+              routerPath: "/app/user/${userProfiles.id}/home",
+              profileImageURL: userProfiles.photo != null && userProfiles.photo!.data.isNotEmpty 
+                ? userProfiles.photo!.data : null,
+              isSelected: isSelectedUserSpace,
             ),
           ),
         ],
@@ -99,13 +110,17 @@ class DashboardDrawer extends StatelessWidget implements WithThemePrimaryColor{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("工作區 Workspace", style: _titleTextStyle),
+          Text("小組工作區", style: _titleTextStyle),
           const SizedBox(height: 5,),
           ...workspaceProfiles.map<Widget>((workspaceProfiles) => Padding(
             padding: _blockPadding,
             child: NavigatedProfileInfoCardButton (
-              profile: workspaceProfiles,
-              isSelected: workspaceProfiles == selectedProfile
+              primaryColor: AppColor.getWorkspaceColorByIndex(workspaceProfiles.themeColor),
+              profileName: workspaceProfiles.name,
+              routerPath: "/app/workspace/${workspaceProfiles.id}/home",
+              profileImageURL: workspaceProfiles.photo != null && workspaceProfiles.photo!.data.isNotEmpty 
+                ? workspaceProfiles.photo!.data : null,
+              isSelected: !isSelectedUserSpace || selectedProfileId == workspaceProfiles.id,
             ),
           )),
         ],

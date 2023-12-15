@@ -5,8 +5,8 @@ class TitleWithContent extends StatelessWidget {
   final String title;
   final String content;
   final Color? color;
-  Widget? child;
-  TitleWithContent(
+  final Widget? child;
+  const TitleWithContent(
       {super.key,
       required this.title,
       required this.content,

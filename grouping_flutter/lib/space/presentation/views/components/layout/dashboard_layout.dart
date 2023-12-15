@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
 
 class DashboardView extends StatelessWidget{
 
-  // final String dashboardTitle;
   final List<Widget> frames;
-  // final Color themePrimaryColor;
   final Color backgroundColor;
-  final DashboardAppBar appBar;
+  final SpaceAppBar appBar;
   final Widget drawer;
-  // this for mobile
-  // final Widget bottomNavigationBar;
-  
+  final Axis direction;
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
 
   const DashboardView({
-    super.key,
-    // required this.dashboardTitle,
+    super.key,    
     this.frames = const [],
     required this.appBar,
     required this.drawer,
-    this.backgroundColor = Colors.white,
-    // this.bottomNavigationBar,
-    // this.themePrimaryColor = Colors.blue,
+    this.backgroundColor = Colors.transparent,
+    this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.direction = Axis.horizontal,
   });
 
   @override
@@ -37,6 +36,19 @@ class DashboardView extends StatelessWidget{
       ),
     );
   }
+  final gap = const Gap(10);
+  
+  List<Widget> _buildFrames(BuildContext context) {
+    // add gap between each frame
+    List<Widget> framesWithGap = [];
+    for(int i = 0; i < frames.length; i++){
+      framesWithGap.add(frames[i]);
+      if(i < frames.length - 1){
+        framesWithGap.add(gap);
+      }
+    }
+    return framesWithGap;
+  }
 
   Widget _buildDashBoard(BuildContext context, List<Widget> frames) {
     return Padding(
@@ -45,9 +57,16 @@ class DashboardView extends StatelessWidget{
         // color: viewModel.selectedProfile.spaceColor,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: Row(
+        child: 
+        direction == Axis.vertical
+        ? Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: frames,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _buildFrames(context),
+        ): Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _buildFrames(context),
         ),
       ),
     );
