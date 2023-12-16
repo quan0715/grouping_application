@@ -49,7 +49,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-              flex: 2,
+              flex: 5,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SfCalendar(
@@ -62,12 +62,13 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                       const MonthViewSettings(numberOfWeeksInView: 2, dayFormat: 'EEE'),
                   showDatePickerButton: true,
                   showTodayButton: true,
+                  dataSource: ActivityDataSource(activityListViewModel.activities!),
                 ),
               )),
           const Divider(),
           Text(dateFormat.format(DateTime.now()), style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: widget.color),),
           Expanded(
-              flex: 3,
+              flex: 6,
               child: ActivityLayOut(
                 title: "事件",
                 isWorkspace: false,
@@ -75,7 +76,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                 color: widget.color,
               )),
           Expanded(
-              flex: 4,
+              flex: 8,
               child: ActivityLayOut(
                 title: "任務",
                 isWorkspace: false,

@@ -8,6 +8,7 @@ import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ActivityListViewModel extends ChangeNotifier {
   UserDataProvider userDataProvider;
@@ -67,8 +68,8 @@ class ActivityListViewModel extends ChangeNotifier {
         creatorAccount: UserModel.defaultAccount,
         belongWorkspace:
             WorkspaceModel(id: -1, name: "軟工小組", themeColor: 0xFF206FCC),
-        startTime: DateTime.now(),
-        endTime: DateTime.now().add(const Duration(hours: 1)),
+        startTime: DateTime.now().add(const Duration(days: 1)),
+        endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
         relatedMissionIds: []),
     EventEntity(
         id: -1,
@@ -161,5 +162,41 @@ class ActivityListViewModel extends ChangeNotifier {
 
   int getMissionTypePage() {
     return _missionTypePage;
+  }
+}
+
+class ActivityDataSource extends CalendarDataSource {
+
+  ActivityDataSource(List<ActivityEntity> source) {
+    // appointments = source;
+    // appointments = source.map((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
+    appointments = source.where((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return (appointments![index] is EventEntity) ? appointments![index].startTime : appointments![index].deadline;
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return (appointments![index] is EventEntity) ? appointments![index].endTime : appointments![index].deadline;
+    // return appointments![index].to;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].title;
+  }
+
+  @override
+  Color getColor(int index) {
+    return Color(appointments![index].belongWorkspace.themeColor);
+  }
+
+  @override
+  bool isAllDay(int index) {
+    // return appointments![index].isAllDay;
+    return false;
   }
 }
