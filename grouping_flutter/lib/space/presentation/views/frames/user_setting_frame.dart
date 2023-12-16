@@ -132,14 +132,6 @@ class PublicProfileSettingSection extends StatelessWidget{
     required this.primaryColor,
   });
 
-  Future<void> onTagAddedButtonPressed(BuildContext context) async {
-    var vm = Provider.of<SettingPageViewModel>(context, listen: false);
-    vm.isValidToAddNewTag
-      ? vm.onTagAddButtonPressed()
-      : debugPrint("You can't add more tags.");
-  }
-
-
   @override
   Widget build(BuildContext context) => _buildBody(context);
 

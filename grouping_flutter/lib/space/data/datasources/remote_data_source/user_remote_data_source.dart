@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 // import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// The server backend IP of the database
 /// ## 這個 UserService 主要是負責處理 user 的功能操作
@@ -15,7 +17,7 @@ abstract class UserRemoteDataSource {
   UserRemoteDataSource({String token = ""});
   Future<UserModel> getUserData({required int uid});
   Future<UserModel> updateUserData({required UserModel account});
-  Future<UserModel> updateUserProfileImage({required UserModel account, required String imageURL});
+  Future<UserModel> updateUserProfileImage({required UserModel account, required XFile image});
 }
 
 class UserRemoteDataSourceImpl extends UserRemoteDataSource {
@@ -106,6 +108,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
     switch (response.statusCode) {
       case 200:
+
         return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -118,19 +121,28 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   }
 
   @override
-  Future<UserModel> updateUserProfileImage({required UserModel account,required String imageURL}) async {
+  Future<UserModel> updateUserProfileImage({required UserModel account,required XFile image}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
     
-    var request = http.MultipartRequest("POST", apiUri);
     // request.fields[] = productId.toString();
-    request.files.add(await http.MultipartFile.fromPath('photo_data', imageURL));
-    // final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account.toJson()));
-    // debugPrint("after update---------------------------");
-    // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
-    var response = await request.send();
+    // request.files.add(await http.MultipartFile.fromPath('photo_data', imageURL));
+    var multipartFile = http.MultipartFile.fromBytes(
+      "photo_data", 
+      await image.readAsBytes(),
+    );
+    var h = headers..update('Content-Type', (value) => 'application/x-www-form-urlencoded');
+    // var photo_data = (await image.readAsBytes()).toString();
+    final response = await _client.patch(
+        apiUri, 
+        headers: headers,
+        body: await multipartFile.finalize().bytesToString(),
+      );
+    //debugPrint(response.body.toString());
+    // 
     switch (response.statusCode) {
       case 200:
-        return UserModel.fromJson(data: jsonDecode(await response.stream.bytesToString()));
+        debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
+        return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:

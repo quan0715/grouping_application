@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
@@ -67,7 +66,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   /// 
   @override
   Future<WorkspaceModel> getWorkspaceData({required int workspaceId}) async {
-    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/workspaces/$workspaceId"), headers: headers);
+    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/workspaces/$workspaceId"), headers: headers);
 
     switch (response.statusCode){
       case 200:
@@ -96,22 +95,29 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
-    debugPrint(workspaceBody.toString());
+    // workspaceBody..remove('photo');
+    // get File Data
+    // var asset = XFile('assets/images/cover.png',);
+    // workspaceBody.remove('photo_data');
+    // workspaceBody.remove('id');
+    // workspaceBody['photo_data'] = base64.encode(await asset.readAsBytes());
+    // debugPrint(workspaceBody['photo_data']);
+    // debugPrint(workspaceBody.toString());
     
     final response = await _client.post(
         Uri.parse("${Config.baseUriWeb}/api/workspaces/"),
         headers: headers,
         body: jsonEncode(workspaceBody));
 
-    debugPrint(response.body);
+    //debugPrint(utf8.decode(response.bodyBytes));
 
     switch (response.statusCode) {
-      case 200:
-        return WorkspaceModel.fromJson(data: jsonDecode(response.body));
+      case 201:
+        return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
-        return WorkspaceModel.defaultWorkspace;
+        throw ServerException(exceptionMessage: utf8.decode(response.bodyBytes));
     }
   }
 
@@ -131,9 +137,11 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<WorkspaceModel> updateWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
+    // workspaceBody.remove('photo_data');
+    debugPrint(workspaceBody.toString());
 
     final response = await _client.patch(
-        Uri.parse("${Config.baseUriWeb}/workspaces/${workspace.id}"),
+        Uri.parse("${Config.baseUriWeb}/api/workspaces/${workspace.id}/"),
         headers: headers,
         body: jsonEncode(workspaceBody));
 
@@ -141,11 +149,12 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
       case 200:
         return WorkspaceModel.fromJson(data: jsonDecode(response.body));
       case 400:
+        // debugPrint(response.body);
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
-        throw ServerException(exceptionMessage: "The requesting data was not found");
+        throw ServerException(exceptionMessage: "The requesting data was not found, ${response.body}");
       default:
-        return WorkspaceModel.defaultWorkspace;
+         throw ServerException(exceptionMessage: "unKnown Error, ${response.body}");
     }
   }
 

@@ -88,7 +88,7 @@ class UserDataProvider extends ChangeNotifier{
       },
       (user) {
         debugPrint("update user success");
-        debugPrint(user.toString());
+        // debugPrint(user.toString());
         currentUser = user;
       }
     );
@@ -132,6 +132,7 @@ class UserSpaceViewModel extends ChangeNotifier {
   void update(UserDataProvider userProvider) {
     debugPrint("UserViewModel update userData");
     userDataProvider = userProvider;
+    debugPrint(userProvider.currentUser.toString());
     notifyListeners();
   }
 

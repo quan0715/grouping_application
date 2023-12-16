@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
-import 'package:grouping_project/space/presentation/views/components/navigated_profile_info_card.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
-import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
-import 'package:grouping_project/space/presentation/views/frames/create_workspace_dialog.dart';
 import 'package:provider/provider.dart';
 
 class SpaceInfoFrame extends StatelessWidget{
@@ -76,67 +71,9 @@ class SpaceInfoFrame extends StatelessWidget{
             keyChild: tag.title, 
             valueChild: tag.content,
           )),
-
-          Divider(color: frameColor.withOpacity(0.2), thickness: 2,),
-          const Gap(10),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text("工作小組 (${userData.currentUser!.joinedWorkspaces.length})",
-                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  color: frameColor,
-                  fontWeight: FontWeight.bold,
-              )),
-              const Spacer(),
-            ],
-          ),
-          const Gap(10),
-         
-          ...userData.currentUser!.joinedWorkspaces.map((workspace) => Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: NavigatedProfileInfoCardButton(
-              primaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
-              profileName: workspace.name,
-              routerPath: "/app/workspace/${workspace.id}/home",
-              profileImageURL: "",
-            ),
-          )),
-          const Gap(10),
-          Row(            
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: UserActionButton.secondary(
-                  onPressed: () => _onCreateGroup(context),
-                  label: "創建小組",
-                  primaryColor: frameColor,
-                  icon: const Icon(Icons.add),
-                ),
-              ),
-              const Gap(5),
-              Expanded(
-                child: UserActionButton.secondary(
-                  onPressed: (){},
-                  label: "加入小組",
-                  primaryColor: frameColor,
-                  icon: const Icon(Icons.group_add),
-                ),
-              ),
-            ],
-          ),
-          const Gap(10),
         ]
         // add gap,
       ),
-    );
-  }
-  
-  _onCreateGroup(BuildContext context) async {
-    // open create group dialog
-    await showDialog(
-      context: context,
-      builder: (context) => const CreateWorkspaceDialog()
     );
   }
 }

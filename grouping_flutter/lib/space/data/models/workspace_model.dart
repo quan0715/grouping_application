@@ -70,8 +70,8 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         'theme_color': themeColor,
         'workspace_name': name,
         'description': description,
-        'photo': photo?.toJson(),
-        'members': members.map((member) => member.toJson()).toList(),
+         // 'photo_data': photo?.toJson(),
+        'members': members.map((member) => member.id).toList(),
         'activities': activities.map((activity) => activity.toJson()).toList(),
         'tags': tags.map((tag) => tag.toJson()).toList(),
       };

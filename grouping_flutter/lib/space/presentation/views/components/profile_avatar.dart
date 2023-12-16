@@ -42,7 +42,7 @@ class ProfileAvatar extends StatelessWidget{
       width: avatarSize,
       height: avatarSize,
       decoration: BoxDecoration(
-        color: themePrimaryColor.withOpacity(0.1),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(color: themePrimaryColor.withOpacity(0.3), width: 2),
       ),

@@ -21,8 +21,8 @@ class KeyValuePairWidget<K, V> extends StatelessWidget{
     this.gap = 5,
     this.borderRadius = 5,
     this.padding = const EdgeInsets.symmetric(
-      horizontal: 20,
-      vertical: 10,
+      horizontal: 16,
+      vertical: 5,
     ), 
     
     this.child,
@@ -144,6 +144,8 @@ class AppTextFormField extends StatelessWidget{
   final Color fillColor;
   final TextStyle? textStyle;
   final TextStyle? contentStyle;
+  final Widget? prefixWidget;
+  final TextEditingController? controller;
 
   const AppTextFormField({
     Key? key,
@@ -159,9 +161,10 @@ class AppTextFormField extends StatelessWidget{
     this.enabled = true,
     this.filled = true,
     this.fillColor = Colors.white,
+    this.prefixWidget,
     this.textStyle,
     this.contentStyle,
-
+    this.controller,
   }) : super(key: key);
 
   final gap = const Gap(5);
@@ -186,6 +189,7 @@ class AppTextFormField extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       initialValue: initialValue,
       style: getContentStyle(context),
       onChanged: onChanged,
@@ -197,6 +201,7 @@ class AppTextFormField extends StatelessWidget{
         onSaved != null ? onSaved!(initialValue) : null;
       },
       decoration: InputDecoration(
+        prefix: prefixWidget,
         hintText: hintText,
         filled: filled,
         fillColor: fillColor,

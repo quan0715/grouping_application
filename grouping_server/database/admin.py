@@ -6,6 +6,8 @@ from django.apps import apps
 
 User = apps.get_model('database', 'User')
 
+workspaces = apps.get_model('database', 'Workspace')
+
 
 class CustomUserAdmin(UserAdmin):
 
@@ -26,4 +28,4 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.unregister(Group)
+admin.site.register(workspaces)
