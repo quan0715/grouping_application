@@ -1,6 +1,7 @@
 // create event & mission super class or activity parent class?
 import 'package:grouping_project/core/util/data_mapper.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 // import 'package:grouping_project/model/workspace/data_model.dart';
 
 abstract class ActivityModel extends DataMapper{
@@ -11,6 +12,7 @@ abstract class ActivityModel extends DataMapper{
   // List<String> tags;
   List<DateTime> notifications;
   UserModel creatorAccount;
+  WorkspaceModel belongWorkspace;
 
   ActivityModel(
       {required this.id,
@@ -19,7 +21,8 @@ abstract class ActivityModel extends DataMapper{
       required this.contributors,
       required this.creatorAccount,
       // required this.tags,
-      required this.notifications});
+      required this.notifications,
+      required this.belongWorkspace});
   // EditableCardModel(
   //     {this.title = 'default',
   //     this.contributorIds = const [],

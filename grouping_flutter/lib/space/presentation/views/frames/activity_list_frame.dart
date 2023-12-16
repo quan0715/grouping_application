@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ActivityListFrame extends StatefulWidget {
-  const ActivityListFrame({super.key});
+  const ActivityListFrame({super.key, required this.color});
+
+  final Color color;
 
   @override
   State<ActivityListFrame> createState() => _ActivityListFrameState();
@@ -54,8 +56,8 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                   view: CalendarView.month,
                   headerDateFormat: "y 年 MM 月",
                   headerHeight: 25,
-                  headerStyle: const CalendarHeaderStyle(
-                      textStyle: TextStyle(fontSize: 15)),
+                  headerStyle: CalendarHeaderStyle(
+                      textStyle: TextStyle(fontSize: 15, color: widget.color)),
                   monthViewSettings:
                       const MonthViewSettings(numberOfWeeksInView: 2),
                   showDatePickerButton: true,
@@ -63,7 +65,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                 ),
               )),
           const Divider(),
-          Text(dateFormat.format(DateTime.now())),
+          Text(dateFormat.format(DateTime.now()), style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: widget.color),),
           Expanded(
               flex: 3,
               child: ActivityLayOut(
@@ -71,6 +73,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                 title: "事件",
                 isWorkspace: false,
                 type: ActivityType.event,
+                color: widget.color,
               )),
           Expanded(
               flex: 4,
@@ -79,6 +82,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                 title: "任務",
                 isWorkspace: false,
                 type: ActivityType.mission,
+                color: widget.color,
               ))
         ],
       ),

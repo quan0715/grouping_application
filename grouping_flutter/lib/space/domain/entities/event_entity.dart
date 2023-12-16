@@ -12,6 +12,7 @@ class EventEntity extends ActivityEntity{
       required super.contributors,
       required super.notifications,
       required super.creatorAccount,
+      required super.belongWorkspace,
       required this.startTime,
       required this.endTime,
       required this.relatedMissionIds,});

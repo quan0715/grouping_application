@@ -1,4 +1,5 @@
 import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 
 abstract class ActivityEntity {
   final int? id;
@@ -7,6 +8,7 @@ abstract class ActivityEntity {
   List<int> contributors;
   List<DateTime> notifications;
   UserModel creatorAccount;
+  WorkspaceModel belongWorkspace;
   // late UserEntity creator;
 
   ActivityEntity(
@@ -16,5 +18,6 @@ abstract class ActivityEntity {
       required this.contributors,
       required this.notifications,
       required this.creatorAccount,
+      required this.belongWorkspace,
       });
 }

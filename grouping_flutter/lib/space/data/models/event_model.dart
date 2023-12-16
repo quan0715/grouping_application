@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_this
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
 // import 'account_model.dart';
@@ -31,6 +32,7 @@ class EventModel extends ActivityModel {
           notifications: [],
           creatorAccount: UserModel.defaultAccount,
           id: 0,
+          belongWorkspace: WorkspaceModel.defaultWorkspace,
         );
 
   /// ## a data model for event
@@ -44,7 +46,8 @@ class EventModel extends ActivityModel {
       String? introduction,
       UserModel? creatorAccount,
       List<String>? relatedMissionIds,
-      List<DateTime>? notifications})
+      List<DateTime>? notifications,
+      WorkspaceModel? belongWorkspace,})
       : this.startTime = startTime ?? defaultEvent.startTime,
         this.endTime = endTime ?? defaultEvent.endTime,
         this.relatedMissionIds =
@@ -55,20 +58,22 @@ class EventModel extends ActivityModel {
           introduction: introduction ?? defaultEvent.introduction,
           notifications: notifications ?? List.from(defaultEvent.notifications),
           creatorAccount: creatorAccount ?? defaultEvent.creatorAccount,
+          belongWorkspace: belongWorkspace ?? defaultEvent.belongWorkspace,
         );
 
   factory EventModel.fromJson({required Map<String, dynamic> data}) =>
       EventModel(
           id: data['id'] as int,
-          title: data['title'] as String,
-          introduction: data['description'] as String,
+          title: (data['title'] ?? defaultEvent.title) as String,
+          introduction: (data['description'] ?? defaultEvent.introduction) as String,
           startTime: DateTime.parse(data['event']['start_time']),
           endTime: DateTime.parse(data['event']['end_time']),
           contributors: (data['contributors'] ?? []).cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
           relatedMissionIds: (data['children'] ?? []).cast<String>() as List<String>,
           notifications: _notificationFromJson(
-              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>));
+              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),
+          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -83,7 +88,8 @@ class EventModel extends ActivityModel {
         'contributors': this.contributors,
         // 'tags': this.tags,
         'children': this.relatedMissionIds,
-        'notifications': _notificationsToJson()
+        'notifications': _notificationsToJson(),
+        'belong_workspace': belongWorkspace.toJson(),
       };
 
   @override
@@ -97,7 +103,8 @@ class EventModel extends ActivityModel {
         creatorAccount: creatorAccount,
         startTime: startTime,
         endTime: endTime,
-        relatedMissionIds: relatedMissionIds);
+        relatedMissionIds: relatedMissionIds,
+        belongWorkspace: belongWorkspace);
   }
 
   factory EventModel.fromEntity(EventEntity entity){
@@ -111,6 +118,7 @@ class EventModel extends ActivityModel {
       startTime: entity.startTime,
       endTime: entity.endTime,
       relatedMissionIds: entity.relatedMissionIds,
+      belongWorkspace: entity.belongWorkspace
     );
   }
 

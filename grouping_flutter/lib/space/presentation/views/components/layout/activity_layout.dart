@@ -15,11 +15,13 @@ class ActivityLayOut extends StatelessWidget {
   final String title;
   final bool isWorkspace;
   final ActivityType type;
+  final Color color;
 
   const ActivityLayOut({
     super.key,
     required this.activities,
     required this.title,
+    required this.color,
     this.isWorkspace = true,
     this.type = ActivityType.event,
   });
@@ -35,7 +37,7 @@ class ActivityLayOut extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text("$title (${activities.length})"),
+            Text("$title (${activities.length})", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: color),),
             const Spacer(),
             _createButton(),
           ],
@@ -51,19 +53,23 @@ class ActivityLayOut extends StatelessWidget {
   Widget _typeNavigatorTitle(
       {required String typeTitle,
       MissionStage? stage,
-      required bool isSeleted}) {
+      required bool isSeleted,
+      required double width}) {
     int length = stage != null
         ? (activities as List<MissionEntity>)
             .where((mission) => mission.state.stage == stage)
             .length
         : activities.length;
 
+    Color displayColor = isSeleted ? color : Colors.black45;
+
     return Container(
+      width: width,
       decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(
-                  color: isSeleted ? Colors.amber : Colors.black45))),
-      child: Center(child: Text("$typeTitle ($length)")),
+                  color: displayColor, width: 2))),
+      child: Center(child: Text("$typeTitle ($length)", style: TextStyle(fontSize: 15, color: displayColor),)),
     );
   }
 
@@ -71,6 +77,7 @@ class ActivityLayOut extends StatelessWidget {
     ActivityListViewModel activityListViewModel =
         Provider.of<ActivityListViewModel>(context, listen: false);
 
+    // TODO: use another way
     final List<Map<String, dynamic>> typeTitle = [
       {"title": "ALL", "stage": null},
       {"title": "未開始", "stage": MissionStage.pending},
@@ -91,19 +98,25 @@ class ActivityLayOut extends StatelessWidget {
     //         isSeleted: selectPage == 3), // TODO: need new stage
     //     _typeNavigatorTitle(typeTitle: "已完成", stage: MissionStage.close, isSeleted: selectPage == 4),
     //   ]);
-    return ListView.builder(
-        itemCount: 5,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) => InkWell(
-              onTap: () {
-                activityListViewModel.setMissionTypePage(index);
-              },
-              child: _typeNavigatorTitle(
-                  typeTitle: typeTitle[index]["title"],
-                  isSeleted:
-                      index == activityListViewModel.getMissionTypePage(),
-                  stage: typeTitle[index]["stage"]),
-            ));
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double width = constraints.maxWidth * 0.2;
+        return ListView.builder(
+            itemCount: 5,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => InkWell(
+                  onTap: () {
+                    activityListViewModel.setMissionTypePage(index);
+                  },
+                  child: _typeNavigatorTitle(
+                      typeTitle: typeTitle[index]["title"],
+                      isSeleted:
+                          index == activityListViewModel.getMissionTypePage(),
+                      stage: typeTitle[index]["stage"],
+                      width: width),
+                ));
+      }
+    );
   }
 
   Widget _createButton() {

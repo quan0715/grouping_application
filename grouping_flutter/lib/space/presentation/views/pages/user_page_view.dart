@@ -164,7 +164,7 @@ class _UserPageViewState extends State<UserPageView> {
           flex: 2,
           child: DashboardFrameLayout(
           frameColor: color,
-          child: const ActivityListFrame()
+          child: ActivityListFrame(color: color,)
         )),
         _tempFrame("Activities Detail", 3),
       ],

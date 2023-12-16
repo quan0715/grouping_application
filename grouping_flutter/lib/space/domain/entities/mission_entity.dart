@@ -15,6 +15,7 @@ class MissionEntity extends ActivityEntity{
       required super.contributors,
       required super.notifications,
       required super.creatorAccount,
+      required super.belongWorkspace,
       required this.deadline,
       required this.stateId,
       required this.state,
