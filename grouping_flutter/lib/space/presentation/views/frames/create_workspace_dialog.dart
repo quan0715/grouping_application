@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
@@ -6,6 +8,7 @@ import 'package:grouping_project/space/presentation/view_models/create_workspace
 import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class CreateWorkspaceDialog extends StatelessWidget {
@@ -97,6 +100,31 @@ class CreateWorkspaceDialog extends StatelessWidget {
     );
   }
 
+  Widget getProfileAvatar(BuildContext context, CreateWorkspaceViewModel viewModel){
+    if(viewModel.newWorkspaceData.photo != null){
+      return ProfileAvatar(
+        themePrimaryColor: viewModel.spaceColor,
+        label: "小組照片",
+        avatarSize: 96,
+        imageUrl: viewModel.newWorkspaceData.photo!.imageUri,
+      );
+    }
+    if(viewModel.tempAvatarBytes != null){
+      return ProfileAvatar(
+        themePrimaryColor: viewModel.spaceColor,
+        label: "小組照片",
+        imageUrl: File(viewModel.tempAvatarFile!.path,).path,
+        avatarSize: 96,
+      );
+    }
+    return ProfileAvatar(
+      themePrimaryColor: viewModel.spaceColor,
+      label: "小組照片",
+      avatarSize: 96,
+      avatar: Icon(Icons.add_a_photo, size: 32, color: viewModel.spaceColor),
+    );
+  }
+
   Widget _buildGroupBasicInfoInputSection(BuildContext context) {
     return Consumer<CreateWorkspaceViewModel>(
       builder: (context, vm, child) => Column(
@@ -106,17 +134,18 @@ class CreateWorkspaceDialog extends StatelessWidget {
           children: [
             KeyValuePairWidget<String, Widget>(
               primaryColor: vm.spaceColor,
-              keyChild: "小組照片", 
-              valueChild: ProfileAvatar(
-              themePrimaryColor: vm.spaceColor,
-              label: "label",
-              avatarSize: 54,
-              avatar: Icon(
-                Icons.add_a_photo,
-                color: AppColor.onSurfaceColor,
-                size: 20,
-              ),
-            ),), 
+              keyChild: "小組照片",
+              valueChild:  InkWell(
+                child: getProfileAvatar(context, vm),
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+                  if(context.mounted && file != null){
+                    await vm.updateProfileData(file);
+                  }
+                }
+              ), 
+            ),
             KeyValuePairWidget<String, Widget>(
               primaryColor: vm.spaceColor,
               keyChild: "小組名稱", 
@@ -134,7 +163,7 @@ class CreateWorkspaceDialog extends StatelessWidget {
                 hintText: "請輸入小組介紹",
                 initialValue: vm.newWorkspaceData.description,
                 onChanged: (value){
-                  vm.spaceName = value!;
+                  vm.spaceDescription = value!;
                 },
             ),), 
             KeyValuePairWidget<String, Widget>(

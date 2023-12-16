@@ -142,10 +142,6 @@ class _UserPageViewState extends State<UserPageView> {
               selectedIndex: getPageIndex(context),
             ),
           ),
-          // Icon(
-          //   Icons.group,
-          //   color: userPageViewModel.spaceColor,
-          // ),
           ...userPageViewModel.currentUser!.joinedWorkspaces.map((workspace) => Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Tooltip(
@@ -156,6 +152,9 @@ class _UserPageViewState extends State<UserPageView> {
                     },
                     child: ProfileAvatar(
                       themePrimaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
+                      imageUrl: workspace.photo != null && workspace.photo!.imageUri.isNotEmpty 
+                        ? workspace.photo!.imageUri
+                        : "",
                       label: workspace.name,
                       avatarSize: 54,
                     ),
@@ -259,7 +258,7 @@ class _UserPageViewState extends State<UserPageView> {
     return SpaceAppBar(
       color: userPageViewModel.spaceColor,
       spaceName:  user.currentUser?.name ?? "",
-      spaceProfilePicURL: user.currentUser?.photo != null ? userPageViewModel.currentUser!.photo!.data : "",
+      spaceProfilePicURL: user.currentUser?.photo != null ? userPageViewModel.currentUser!.photo!.imageUri : "",
     );
   }
 

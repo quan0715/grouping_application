@@ -11,10 +11,10 @@ import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
 import 'package:grouping_project/space/data/repositories/user_repository_impl.dart';
-import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/usecases/get_current_user_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/update_current_user.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 class UserDataProvider extends ChangeNotifier{
@@ -53,8 +53,6 @@ class UserDataProvider extends ChangeNotifier{
       },
       (user) {
         currentUser = user;
-        // debugPrint("UserPageViewModel getCurrentUser success: ${user.toString()}");
-        //
       }
     );
     notifyListeners();
@@ -64,17 +62,7 @@ class UserDataProvider extends ChangeNotifier{
     final logOutUseCase = LogOutUseCase(authRepositoryImpl);
     await logOutUseCase();
   } 
-
-  SpaceProfileEntity getUserProfile(){
-    return UserSpaceProfileEntity(
-      spaceName: currentUser?.name ?? "name",
-      spacePhotoPicPath: "",
-      spaceColor: AppColor.mainSpaceColor
-    );
-  }
-
   
-
   Future<void> updateUser() async{
 
     var updateUserUseCase = UpdateUserUseCase(userRepositoryImpl);
@@ -94,7 +82,27 @@ class UserDataProvider extends ChangeNotifier{
     );
     isLoading = false;
     notifyListeners();
+  }
 
+  Future<void> updateUserProfile(XFile image) async{
+
+    var updateUserUseCase = UpdateUserProfilePhotoUseCase(userRepositoryImpl);
+    isLoading = true;
+
+    final failureOrUser = await updateUserUseCase(currentUser!, image);
+
+    failureOrUser.fold(
+      (failure){
+        debugPrint(failure.toString());
+      },
+      (user) {
+        debugPrint("update user success");
+        // debugPrint(user.toString());
+        currentUser = user;
+      }
+    );
+    isLoading = false;
+    notifyListeners();
   }
 
   Future<void> init() async {
@@ -132,7 +140,6 @@ class UserSpaceViewModel extends ChangeNotifier {
   void update(UserDataProvider userProvider) {
     debugPrint("UserViewModel update userData");
     userDataProvider = userProvider;
-    debugPrint(userProvider.currentUser.toString());
     notifyListeners();
   }
 

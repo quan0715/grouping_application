@@ -4,11 +4,12 @@ import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 abstract class WorkspaceRemoteDataSource{
   WorkspaceRemoteDataSource();
   Future<WorkspaceModel> getWorkspaceData({required int workspaceId});
-  Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace});
+  Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace, XFile? image});
   Future<WorkspaceModel> updateWorkspaceData({required WorkspaceModel workspace});
   Future<void> deleteWorkspaceData({required int workspaceId});
 }
@@ -93,24 +94,39 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   /// ```
   /// 
   @override
-  Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace}) async {
+  Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace, XFile? image}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
-    // workspaceBody..remove('photo');
-    // get File Data
-    // var asset = XFile('assets/images/cover.png',);
-    // workspaceBody.remove('photo_data');
-    // workspaceBody.remove('id');
-    // workspaceBody['photo_data'] = base64.encode(await asset.readAsBytes());
-    // debugPrint(workspaceBody['photo_data']);
-    // debugPrint(workspaceBody.toString());
+    final api = Uri.parse("${Config.baseUriWeb}/api/workspaces/");
     
-    final response = await _client.post(
-        Uri.parse("${Config.baseUriWeb}/api/workspaces/"),
+    var response;
+    if(image != null){
+      var request = http.MultipartRequest("POST", api);
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'photo_data',
+          await image.readAsBytes(),
+          filename: '${image.path.split("/").last}.jpg',
+        ),
+      );
+      request.fields['theme_color'] = workspaceBody['theme_color'].toString();
+      request.fields['workspace_name'] = workspaceBody['workspace_name'].toString();
+      request.fields['description'] = workspaceBody['description'].toString();
+      request.fields['tags'] = workspaceBody['tags'].toString();
+
+      workspaceBody.remove('photo_data');
+      request.headers.addAll(headers);
+      var streamedResponse = await request.send();
+      response = await http.Response.fromStream(streamedResponse);
+
+    }else{
+      response = await _client.post(
+        api,
         headers: headers,
-        body: jsonEncode(workspaceBody));
-
-    //debugPrint(utf8.decode(response.bodyBytes));
-
+        body: jsonEncode(workspaceBody)
+      );
+    }
+    debugPrint(response.body);
     switch (response.statusCode) {
       case 201:
         return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
@@ -138,7 +154,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   Future<WorkspaceModel> updateWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
     // workspaceBody.remove('photo_data');
-    debugPrint(workspaceBody.toString());
+  // debugPrint(workspaceBody.toString());
 
     final response = await _client.patch(
         Uri.parse("${Config.baseUriWeb}/api/workspaces/${workspace.id}/"),

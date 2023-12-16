@@ -67,8 +67,8 @@ class DashboardDrawer extends StatelessWidget {
           ProfileAvatar(
             themePrimaryColor: primaryColor,
             label: userProfiles.name,
-            avatar: userProfiles.photo != null && userProfiles.photo!.data.isNotEmpty 
-              ? Image.network(userProfiles.photo!.data) : null,
+            imageUrl: userProfiles.photo != null && userProfiles.photo!.imageUri.isNotEmpty 
+              ? userProfiles.photo!.imageUri : "",
             avatarSize: 35,
           ),
           const Gap(5),
@@ -95,8 +95,8 @@ class DashboardDrawer extends StatelessWidget {
               primaryColor:  primaryColor,
               profileName: userProfiles.name,
               routerPath: "/app/user/${userProfiles.id}/home",
-              profileImageURL: userProfiles.photo != null && userProfiles.photo!.data.isNotEmpty 
-                ? userProfiles.photo!.data : null,
+              profileImageURL: userProfiles.photo != null && userProfiles.photo!.imageUri.isNotEmpty 
+                ? userProfiles.photo!.imageUri : null,
               isSelected: isSelectedUserSpace,
             ),
           ),
@@ -119,8 +119,8 @@ class DashboardDrawer extends StatelessWidget {
               primaryColor: AppColor.getWorkspaceColorByIndex(workspaceProfiles.themeColor),
               profileName: workspaceProfiles.name,
               routerPath: "/app/workspace/${workspaceProfiles.id}/home",
-              profileImageURL: workspaceProfiles.photo != null && workspaceProfiles.photo!.data.isNotEmpty 
-                ? workspaceProfiles.photo!.data : null,
+              profileImageURL: workspaceProfiles.photo != null && workspaceProfiles.photo!.imageUri.isNotEmpty 
+                ? workspaceProfiles.photo!.imageUri : null,
               isSelected: !isSelectedUserSpace || selectedProfileId == workspaceProfiles.id,
             ),
           )),

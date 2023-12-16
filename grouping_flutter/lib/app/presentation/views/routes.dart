@@ -73,10 +73,14 @@ class AppRouter {
               },
             ),
             GoRoute(
-              path: 'workspace/:workspaceId',
-              builder: (BuildContext context, GoRouterState state) {
-                // debugPrint(state.pathParameters['workspaceId'].toString());
-                return const WorkspacePageView();
+              path: 'workspace/:workspaceId/:pageType',
+              builder: (context, state){
+                debugPrint('build user page');
+                DashboardPageType pageType = getDashboardPath(state.pathParameters['pageType']!);
+                return ChangeNotifierProvider<UserDataProvider>(
+                  create: (context) => getUserDataProvider(context)..init(),
+                  child: WorkspacePageView(pageType: pageType),
+                );
               },
             ),
           ]

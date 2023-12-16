@@ -40,7 +40,12 @@ class SpaceInfoFrame extends StatelessWidget{
           ProfileAvatar(
             themePrimaryColor: frameColor,
             label: userData.currentUser?.name ?? "",
-            avatarSize: 64,
+            avatar: userData.currentUser?.photo != null && userData.currentUser!.photo!.imageUri.isNotEmpty 
+              ? Image.network(
+                userData.currentUser!.photo!.imageUri, 
+                fit: BoxFit.fitWidth, 
+              ) : null,
+            avatarSize: 72,
             labelFontSize: 20,
           ),
           // const Gap(10),

@@ -223,7 +223,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // MessagesList(messageService: loginManager.messageService),
-                  TitleWithContent(
+                  const TitleWithContent(
                       title: "登入 Login", content: "利用Email 登入或第三方登入"),
                   const Divider(thickness: 2),
                   _getInputForm(),

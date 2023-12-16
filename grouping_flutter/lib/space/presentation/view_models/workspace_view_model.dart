@@ -11,28 +11,54 @@ import 'package:grouping_project/space/data/repositories/workspace_repository_im
 import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/workspace_usecaes_lib.dart';
+import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+
+class WorkspaceDataProvider extends ChangeNotifier {
+  WorkspaceDataProvider(
+    this.messageService, {required this.tokenModel});
+
+  final AuthTokenModel tokenModel;
+  WorkspaceEntity? currentWorkspace;
+  final MessageService? messageService;
+
+  Future updateWorkspace() async {
+    debugPrint("WorkspaceViewModel getCurrentWorkspace");
+
+    GetCurrentWorkspaceUseCase getCurrentWorkspaceUseCase =
+        GetCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
+      remoteDataSource:
+          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
+      localDataSource: WorkspaceLocalDataSourceImpl(),
+    ));
+
+    final failureOrWorkspace = await getCurrentWorkspaceUseCase(currentWorkspace!.id);
+
+    failureOrWorkspace.fold(
+        (failure) => messageService!.addMessage(
+            MessageData.error(message: failure.toString())), (workspace) {
+      currentWorkspace = workspace;
+      debugPrint("WorkspaceViewModel getCurrentWorkspace success");
+      // print user data
+      debugPrint(workspace.toString());
+    });
+  }
+
+  void update() {
+    // workspaceViewModel.update(this);
+  }
+}
 
 class WorkspaceViewModel extends ChangeNotifier {
-
-  WorkspaceViewModel({required this.tokenModel});
 
   int _pages = 0;
 
   int get currentPageIndex => _pages;
 
-  WorkspaceEntity? _workspace;
-  AuthTokenModel tokenModel = AuthTokenModel(token: "", refresh: "");
+  // final MessageService _messageService = MessageService();
+  // MessageService get messageService => _messageService;
+  UserDataProvider? userDataProvider;
+  WorkspaceDataProvider? workspaceDataProvider;
 
-  SpaceProfileEntity get workspaceProfile => GroupSpaceProfileEntity(spaceName: "張百寬 的 workspace", spacePhotoPicPath: "", spaceColor: const Color(0xFFBF5F07));
-
-  final MessageService _messageService = MessageService();
-  MessageService get messageService => _messageService;
-
-  // void initialState(WorkspaceModel workspace, AccountModel user){
-  //   _workspace = workspace;
-  //   _user = user;
-  //   _databaseService = ActivityDatabaseService(workSpaceUid: _workspace.id!, token: 'token');
-  // }
   void updateCurrentIndex(int index){
     _pages = index;
     notifyListeners();
@@ -40,7 +66,7 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   Future<void> init() async {
     // TODO: how do i know the workspaceID of this id?
-    await getCurrentWorkspace(0);
+    // await getCurrentWorkspace(0);
   }
 
   // TODO: this use case in user viewmodel? since workspace shouldn't create workspace
@@ -63,83 +89,43 @@ class WorkspaceViewModel extends ChangeNotifier {
   //   });
   // }
 
-  Future getCurrentWorkspace(int workspaceID) async {
-    debugPrint("WorkspaceViewModel getCurrentWorkspace");
-    GetCurrentWorkspaceUseCase getCurrentWorkspaceUseCase =
-        GetCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
-      remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
-      localDataSource: WorkspaceLocalDataSourceImpl(),
-    ));
+  // Future deleteCurrentWorkspace(int workspaceID) async {
+  //   debugPrint("WorkspaceViewModel getCurrentWorkspace");
+  //   DeleteCurrentWorkspaceUseCase deleteCurrentWorkspaceUseCase =
+  //       DeleteCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
+  //     remoteDataSource:
+  //         WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
+  //     localDataSource: WorkspaceLocalDataSourceImpl(),
+  //   ));
 
-    final failureOrWorkspace = await getCurrentWorkspaceUseCase(workspaceID);
+  //   final failureOrWorkspace = await deleteCurrentWorkspaceUseCase(workspaceID);
 
-    failureOrWorkspace.fold(
-        (failure) => messageService.addMessage(
-            MessageData.error(message: failure.toString())), (workspace) {
-      _workspace = workspace;
-      debugPrint("WorkspaceViewModel getCurrentWorkspace success");
-      // print user data
-      debugPrint(workspace.toString());
-    });
-  }
-
-  Future updateCurrentWorkspace(WorkspaceEntity entity) async {
-    debugPrint("WorkspaceViewModel updateCurrentWorkspace");
-    UpdateCurrentWorkspaceUseCase updateCurrentWorkspaceUseCase =
-        UpdateCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
-      remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
-      localDataSource: WorkspaceLocalDataSourceImpl(),
-    ));
-
-    final failureOrWorkspace = await updateCurrentWorkspaceUseCase(entity);
-
-    failureOrWorkspace.fold((failure) {
-      messageService.addMessage(MessageData.error(message: failure.toString()));
-    }, (workspace) {
-      _workspace = workspace;
-      debugPrint("WorkspaceViewmodel updateWorkspace success");
-    });
-  }
-
-  Future deleteCurrentWorkspace(int workspaceID) async {
-    debugPrint("WorkspaceViewModel getCurrentWorkspace");
-    DeleteCurrentWorkspaceUseCase deleteCurrentWorkspaceUseCase =
-        DeleteCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
-      remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
-      localDataSource: WorkspaceLocalDataSourceImpl(),
-    ));
-
-    final failureOrWorkspace = await deleteCurrentWorkspaceUseCase(workspaceID);
-
-    failureOrWorkspace.fold(
-        (failure) => messageService.addMessage(
-            MessageData.error(message: failure.toString())), (empty) {
-      debugPrint("WorkspaceViewModel DeleteCurrentWorkspace success");
-    });
-  }
+  //   failureOrWorkspace.fold(
+  //       (failure) => messageService.addMessage(
+  //           MessageData.error(message: failure.toString())), (empty) {
+  //     debugPrint("WorkspaceViewModel DeleteCurrentWorkspace success");
+  //   });
+  // }
 
   // List<EventModel> get events => _user.joinedWorkspaces.whereType<EventModel>().toList();
-  List<EventModel> getEvents() =>
-      _workspace!.activities.whereType<EventModel>().toList();
-  // int get eventNumber => _user.contributingActivities.whereType<EventModel>().length;
-  int getEventLength() => _workspace!.activities
-      .whereType<EventModel>()
-      .toList()
-      .length;
+  // List<EventModel> getEvents() =>
+  //     _workspace!.activities.whereType<EventModel>().toList();
+  // // int get eventNumber => _user.contributingActivities.whereType<EventModel>().length;
+  // int getEventLength() => _workspace!.activities
+  //     .whereType<EventModel>()
+  //     .toList()
+  //     .length;
 
-  // List<MissionModel> get missions => _user.joinedWorkspaces.whereType<MissionModel>().toList();
-  List<MissionModel> getMissions() =>
-      _workspace!.activities.whereType<MissionModel>().toList();
-  // int get missionNumber => _user.contributingActivities.whereType<MissionModel>().length;
-  int getMissionLength() => _workspace!.activities
-      .whereType<MissionModel>()
-      .toList()
-      .length;
+  // // List<MissionModel> get missions => _user.joinedWorkspaces.whereType<MissionModel>().toList();
+  // List<MissionModel> getMissions() =>
+  //     _workspace!.activities.whereType<MissionModel>().toList();
+  // // int get missionNumber => _user.contributingActivities.whereType<MissionModel>().length;
+  // int getMissionLength() => _workspace!.activities
+  //     .whereType<MissionModel>()
+  //     .toList()
+  //     .length;
 
-  WorkspaceEntity getEntity() => _workspace!;
+  // WorkspaceEntity getEntity() => _workspace!;
   
 
   // WorkspaceChip get ownWorkspace => WorkspaceChip(workspace: _workspace);
@@ -155,7 +141,7 @@ class WorkspaceViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _messageService.dispose();
+    // _messageService.dispose();
     super.dispose();
   }
 
@@ -168,6 +154,11 @@ class WorkspaceViewModel extends ChangeNotifier {
       MessageData.warning(),
     ];
     final index = Random().nextInt(messages.length);
-    _messageService.addMessage(messages[index]);
+    // _messageService.addMessage(messages[index]);
+  }
+
+  update(UserDataProvider userDataProvider) {
+    this.userDataProvider = userDataProvider;
+    notifyListeners();
   }
 }

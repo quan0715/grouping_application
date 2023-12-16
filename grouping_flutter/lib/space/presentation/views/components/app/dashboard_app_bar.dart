@@ -49,8 +49,8 @@ class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget{
         ProfileAvatar(
           themePrimaryColor: color,
           label: spaceName,
-          avatar: spaceProfilePicURL != null && spaceProfilePicURL!.isNotEmpty 
-            ? Image.network(spaceProfilePicURL!) : null,
+          imageUrl: spaceProfilePicURL != null && spaceProfilePicURL!.isNotEmpty  
+            ? spaceProfilePicURL! : "",
           avatarSize: 35,
         ),
         const SizedBox(width: 10,),

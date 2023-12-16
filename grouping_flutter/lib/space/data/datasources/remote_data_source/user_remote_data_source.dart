@@ -126,22 +126,25 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     
     // request.fields[] = productId.toString();
     // request.files.add(await http.MultipartFile.fromPath('photo_data', imageURL));
-    var multipartFile = http.MultipartFile.fromBytes(
-      "photo_data", 
-      await image.readAsBytes(),
+    var request = http.MultipartRequest("PATCH", apiUri);
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'photo_data',
+        await image.readAsBytes(),
+    //  contentType: MediaType('application', 'octet-stream'),
+        filename: '${image.path.split("/").last}.jpg',
+      ),
     );
-    var h = headers..update('Content-Type', (value) => 'application/x-www-form-urlencoded');
-    // var photo_data = (await image.readAsBytes()).toString();
-    final response = await _client.patch(
-        apiUri, 
-        headers: headers,
-        body: await multipartFile.finalize().bytesToString(),
-      );
-    //debugPrint(response.body.toString());
-    // 
+    // fields.forEach((k, v) => request.fields[k] = v);
+    request.headers.addAll(headers);
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+    // debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
-        debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
+        // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
         return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");

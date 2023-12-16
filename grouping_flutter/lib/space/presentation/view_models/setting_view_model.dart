@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
+import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/repositories/user_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/setting_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
@@ -41,7 +43,7 @@ class SettingPageViewModel extends ChangeNotifier {
   bool isLoading = false;
   int indexOfEditingTag = -1;
   
-  Uint8List? tempAvatarData;
+  // Uint8List? tempAvatarData;
 
   
   
@@ -152,9 +154,11 @@ class SettingPageViewModel extends ChangeNotifier {
     debugPrint("upload avatar");
     debugPrint(file.path);
     // currentUser.photo!.data = file.path;
-    // var testRemote = UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token);
-    // await testRemote.updateUserProfileImage(account: UserModel.fromEntity(currentUser),image: file);
-    updateAvatar(await file.readAsBytes());
+    var testRemote = UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token);
+    await testRemote.updateUserProfileImage(account: UserModel.fromEntity(currentUser),image: file);
+    
+    await updateUser(currentUser);
+    // updateAvatar(await file.readAsBytes());
   }
   
   set userName(String value) {
@@ -167,17 +171,8 @@ class SettingPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAvatar(Uint8List data) async {
-    tempAvatarData = data;
-    notifyListeners();
-  }
-
   void updateCurrentUserTag(UserTagEntity tag, int index) {
     userTags[index] = tag;
     notifyListeners();
   }
-
-  void updateNewUserTag(UserTagEntity tag) {
-    debugPrint("update new tag");
-  }  
 }

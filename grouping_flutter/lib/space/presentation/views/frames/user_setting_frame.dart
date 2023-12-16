@@ -168,11 +168,8 @@ class PublicProfileSettingSection extends StatelessWidget{
               valueChild:  InkWell(
                 child: ProfileAvatar(
                   themePrimaryColor: primaryColor, 
-                  avatar: vm.tempAvatarData != null
-                    ? Image.memory( 
-                      vm.tempAvatarData!,
-                      fit: BoxFit.fill) 
-                    : null,
+                  imageUrl: vm.currentUser.photo != null
+                    ? vm.currentUser.photo!.imageUri : "" ,
                   avatarSize: 128,
                   label: "更換頭像",
                 ),
