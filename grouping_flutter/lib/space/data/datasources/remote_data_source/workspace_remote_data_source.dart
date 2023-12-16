@@ -154,7 +154,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   Future<WorkspaceModel> updateWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
     // workspaceBody.remove('photo_data');
-  // debugPrint(workspaceBody.toString());
+    // debugPrint(workspaceBody.toString());
 
     final response = await _client.patch(
         Uri.parse("${Config.baseUriWeb}/api/workspaces/${workspace.id}/"),

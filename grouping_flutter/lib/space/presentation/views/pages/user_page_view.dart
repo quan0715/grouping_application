@@ -145,6 +145,9 @@ class _UserPageViewState extends State<UserPageView> {
           ...userPageViewModel.currentUser!.joinedWorkspaces.map((workspace) => Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Tooltip(
+                  preferBelow: false,
+                  verticalOffset: - (54 / 4),
+                  margin: const EdgeInsets.only(left: 54 * 1.8),
                   message: workspace.name,
                   child: InkWell(
                     onTap: () {
@@ -163,6 +166,9 @@ class _UserPageViewState extends State<UserPageView> {
               )),
           Tooltip(
             message: "新增工作小組",
+            preferBelow: false,
+            verticalOffset: - (28 / 4),
+            margin: const EdgeInsets.only(left: 28 * 3),
             child: IconButton(
               color: userPageViewModel.spaceColor,
               onPressed: () => _onCreateGroup(
@@ -172,6 +178,9 @@ class _UserPageViewState extends State<UserPageView> {
             ),
           ),
           Tooltip(
+            verticalOffset: - (28 / 4),
+            preferBelow: false,
+            margin: const EdgeInsets.only(left: 28 * 3),
             message: "加入工作小組",
             child: IconButton(
               color: userPageViewModel.spaceColor,
