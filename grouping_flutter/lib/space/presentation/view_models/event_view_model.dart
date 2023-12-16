@@ -5,6 +5,7 @@ import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 // import 'package:grouping_project/space/data/datasources/activity_repo.dart';
 import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
@@ -203,7 +204,8 @@ class EventSettingViewModel extends ChangeNotifier {
         startTime: DateTime.now(),
         endTime: DateTime.now().add(const Duration(hours: 1)),
         relatedMissionIds: [],
-        creatorAccount: UserModel.fromEntity(creator));
+        creatorAccount: UserModel.fromEntity(creator),
+        belongWorkspace: WorkspaceModel.defaultWorkspace);
 
     notifyListeners();
   }
