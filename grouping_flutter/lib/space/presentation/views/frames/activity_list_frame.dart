@@ -59,7 +59,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                   headerStyle: CalendarHeaderStyle(
                       textStyle: TextStyle(fontSize: 15, color: widget.color)),
                   monthViewSettings:
-                      const MonthViewSettings(numberOfWeeksInView: 2),
+                      const MonthViewSettings(numberOfWeeksInView: 2, dayFormat: 'EEE'),
                   showDatePickerButton: true,
                   showTodayButton: true,
                 ),
@@ -69,7 +69,6 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
           Expanded(
               flex: 3,
               child: ActivityLayOut(
-                activities: activityListViewModel.events,
                 title: "事件",
                 isWorkspace: false,
                 type: ActivityType.event,
@@ -78,7 +77,6 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
           Expanded(
               flex: 4,
               child: ActivityLayOut(
-                activities: activityListViewModel.missions,
                 title: "任務",
                 isWorkspace: false,
                 type: ActivityType.mission,
