@@ -2,6 +2,7 @@
 // import 'package:grouping_project/core/exceptions/exception.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
 import 'mission_state_model.dart';
@@ -33,6 +34,7 @@ class MissionModel extends ActivityModel {
           notifications: [],
           creatorAccount: UserModel.defaultAccount,
           id: 0,
+          belongWorkspace: WorkspaceModel.defaultWorkspace,
         );
 
   /// ## a data model for mission
@@ -53,6 +55,8 @@ class MissionModel extends ActivityModel {
     List<DateTime>? notifications,
     List<String>? parentMissionIds,
     List<String>? childMissionIds,
+    UserModel? creatorAccount,
+    WorkspaceModel? belongWorkspace,
     // AccountModel? ownerAccount,
   })  : this.deadline = deadline ?? defaultMission.deadline,
         // this.contributorIds = contributorIds ?? defaultMission.contributorIds,
@@ -73,7 +77,8 @@ class MissionModel extends ActivityModel {
           // tags: tags ?? List.from(defaultMission.tags),
           notifications:
               notifications ?? List.from(defaultMission.notifications),
-          creatorAccount: defaultMission.creatorAccount,
+          creatorAccount: creatorAccount ?? defaultMission.creatorAccount,
+          belongWorkspace: belongWorkspace ?? defaultMission.belongWorkspace,
           // databasePath: defaultMission.databasePath,
           // storageRequired: defaultMission.storageRequired,
           // setOwnerRequired: true
@@ -100,8 +105,8 @@ class MissionModel extends ActivityModel {
   factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
       MissionModel(
           id: data['id'] as int,
-          title: data['title'] as String,
-          introduction: data['description'] as String,
+          title: (data['title'] ?? defaultMission.title) as String,
+          introduction: (data['description'] ?? defaultMission.introduction) as String,
           deadline: DateTime.parse(data['mission']['deadline']),
           // state: MissionStateModel.fromJson(data: data['state']),
           stateId: data['mission']['state'],
@@ -110,7 +115,8 @@ class MissionModel extends ActivityModel {
           parentMissionIds: (data['parents'] ?? []).cast<String>() as List<String>,
           childMissionIds: (data['children'] ?? []).cast<String>() as List<String>,
           notifications: _notificationFromJson(
-              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>));
+              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),
+          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -127,6 +133,7 @@ class MissionModel extends ActivityModel {
         'parents': this.parentMissionIds,
         'children': this.childMissionIds,
         'notifications': _notificationsToJson(),
+        'belong_workspace': belongWorkspace.toJson(),
       };
 
   @override
@@ -142,7 +149,8 @@ class MissionModel extends ActivityModel {
         stateId: stateId,
         state: state,
         parentMissionIds: parentMissionIds,
-        childMissionIds: childMissionIds);
+        childMissionIds: childMissionIds,
+        belongWorkspace: belongWorkspace,);
   }
 
   factory MissionModel.fromEntity(MissionEntity entity){
@@ -157,7 +165,8 @@ class MissionModel extends ActivityModel {
       stateId: entity.stateId,
       state: entity.state,
       parentMissionIds: entity.parentMissionIds,
-      childMissionIds: entity.childMissionIds
+      childMissionIds: entity.childMissionIds,
+      belongWorkspace: entity.belongWorkspace,
     );
   }
 

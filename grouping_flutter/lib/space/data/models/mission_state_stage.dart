@@ -3,6 +3,7 @@
 /// Stage of mission 
 /// print(MissionStage.progress.label) => progress
 enum MissionStage {
+  
   progress(label: 'progress'),
   pending(label: 'pending'),
   close(label: 'close');

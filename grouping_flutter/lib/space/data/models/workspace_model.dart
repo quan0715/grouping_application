@@ -29,11 +29,11 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
   final int? id;
   int themeColor;
   String name;
-  String description;
+  String? description;
   ImageModel? photo;
-  List<Member> members;
-  List<ActivityModel> activities;
-  List<WorkspaceTagModel> tags;
+  List<Member>? members;
+  List<ActivityModel>? activities;
+  List<WorkspaceTagModel>? tags;
 
   static final WorkspaceModel defaultWorkspace = WorkspaceModel._default();
 
@@ -70,10 +70,10 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         'theme_color': themeColor,
         'workspace_name': name,
         'description': description,
-         // 'photo_data': photo?.toJson(),
-        'members': members.map((member) => member.id).toList(),
-        'activities': activities.map((activity) => activity.toJson()).toList(),
-        'tags': tags.map((tag) => tag.toJson()).toList(),
+        'photo': photo?.toJson(),
+        'members': members?.map((member) => member.toJson()).toList(),
+        'activities': activities?.map((activity) => activity.toJson()).toList(),
+        'tags': tags?.map((tag) => tag.toJson()).toList(),
       };
 
   /// I change the member cast to make it tempary correct,
@@ -130,11 +130,11 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
       id: id ?? -1,
       themeColor: themeColor,
       name: name,
-      description: description,
+      description: description ?? defaultWorkspace.description!,
       photo: photo,
-      members: members,
-      activities: activities,
-      tags: tags,
+      members: members ?? [],
+      activities: activities ?? [],
+      tags: tags ?? [],
     );
   }
 
