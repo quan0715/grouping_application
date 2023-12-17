@@ -51,40 +51,38 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
       builder: (context, activityListViewModel, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-              flex: 5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SfCalendar(
-                  view: CalendarView.month,
-                  headerDateFormat: "y 年 MM 月",
-                  headerHeight: 25,
-                  headerStyle: CalendarHeaderStyle(
-                      textStyle: TextStyle(fontSize: 15, color: widget.color)),
-                  monthViewSettings: const MonthViewSettings(
-                      numberOfWeeksInView: 2, dayFormat: 'EEE'),
-                  showDatePickerButton: true,
-                  showTodayButton: true,
-                  dataSource:
-                      ActivityDataSource(activityListViewModel.activities!),
-                  onTap: (calendarTapDetails) {
-                    activityListViewModel.setSeletedDay(
-                        calendarTapDetails.date ?? DateTime.now());
-                    // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
-
-
-
-
-                    setState(() {
-                      // TODO: I can't find out what happen here
-                      // activityListViewModel should refresh the screen
-                    });
-
-
-
-                  },
-                ),
-              )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SfCalendar(
+              view: CalendarView.month,
+              headerDateFormat: "y 年 MM 月",
+              // headerHeight: 25,
+              headerStyle: CalendarHeaderStyle(
+                  textStyle: TextStyle(fontSize: 15, color: widget.color)),
+              monthViewSettings: const MonthViewSettings(
+                  numberOfWeeksInView: 4, dayFormat: 'EEE'),
+              showDatePickerButton: true,
+              showTodayButton: true,
+              dataSource:
+                  ActivityDataSource(activityListViewModel.activities!),
+              onTap: (calendarTapDetails) {
+                activityListViewModel.setSeletedDay(
+                    calendarTapDetails.date ?? DateTime.now());
+                // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
+          
+          
+          
+          
+                setState(() {
+                  // TODO: I can't find out what happen here
+                  // activityListViewModel should refresh the screen
+                });
+          
+          
+          
+              },
+            ),
+          ),
           const Divider(),
           Text(
             dateFormat.format(activityListViewModel.getSeletedDay()),

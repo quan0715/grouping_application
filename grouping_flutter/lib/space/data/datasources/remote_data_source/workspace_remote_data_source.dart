@@ -111,6 +111,9 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     switch (response.statusCode) {
       case 201:
         temp =  WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        if(image == null){
+          return temp;
+        }
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
@@ -131,10 +134,8 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
       request.headers.addAll(headers);
       var streamedResponse = await request.send();
       response = await http.Response.fromStream(streamedResponse);
-
+      
     }
-    
-    // debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
         return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
@@ -142,7 +143,9 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
         throw ServerException(exceptionMessage: utf8.decode(response.bodyBytes));
-    }
+    } 
+    // debugPrint(response.body);
+    
   }
 
   /// ## 更新 workspace 的資訊
@@ -161,19 +164,19 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<WorkspaceModel> updateWorkspaceData({required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
-    // workspaceBody.remove('photo_data');
+    workspaceBody.remove('photo_data');
     // debugPrint(workspaceBody.toString());
 
     final response = await _client.patch(
         Uri.parse("${Config.baseUriWeb}/api/workspaces/${workspace.id}/"),
         headers: headers,
         body: jsonEncode(workspaceBody));
-
+    
     switch (response.statusCode){
       case 200:
         return WorkspaceModel.fromJson(data: jsonDecode(response.body));
       case 400:
-        // debugPrint(response.body);
+        debugPrint(response.body);
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
         throw ServerException(exceptionMessage: "The requesting data was not found, ${response.body}");
