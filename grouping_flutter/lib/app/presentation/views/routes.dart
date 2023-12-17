@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
 import 'package:grouping_project/space/presentation/views/pages/workspace_page_view.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,15 @@ class AppRouter {
     // debugPrint('create user data provider');
     return UserDataProvider(
       tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
-    )..init();
+    );
+  }
+
+  GroupDataProvider getGroupDataProvider(BuildContext context, int workspaceId) {
+    // debugPrint('create group data provider');
+    return GroupDataProvider(
+      tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
+      workspaceIndex: workspaceId
+    );
   }
 
   DashboardPageType getDashboardPath(String pageType) {
@@ -77,10 +86,15 @@ class AppRouter {
               builder: (context, state){
                 debugPrint('build user page');
                 DashboardPageType pageType = getDashboardPath(state.pathParameters['pageType']!);
-                return ChangeNotifierProvider<UserDataProvider>(
-                  create: (context) => getUserDataProvider(context)..init(),
-                  child: WorkspacePageView(pageType: pageType),
-                );
+                int workspaceId = int.parse(state.pathParameters['workspaceId']!);
+                return MultiProvider(providers: [
+                  ChangeNotifierProvider<GroupDataProvider>(
+                    create: (context) => getGroupDataProvider(context, workspaceId)..init(),
+                  ),
+                  ChangeNotifierProvider<UserDataProvider>(
+                    create: (context) => getUserDataProvider(context)..init(),
+                  ),
+                ], child: WorkspacePageView(pageType: pageType));
               },
             ),
           ]

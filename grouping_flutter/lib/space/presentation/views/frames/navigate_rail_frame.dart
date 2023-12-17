@@ -28,6 +28,7 @@ class NavigateRailFrame extends StatefulWidget{
 }
 
 class _NavigateRailFrameState extends State<NavigateRailFrame> {
+
   final pageData = [
     {"path": "home", "index": 0, "title": "主頁", "iconData": Icons.home},
     {"path": "activities", "index": 1, "title": "活動", "iconData": Icons.local_activity},
@@ -108,20 +109,20 @@ class _NavigateRailFrameState extends State<NavigateRailFrame> {
     child: _buildBody(context));
 
   Widget _buildBody(BuildContext context){
-   return Consumer<UserSpaceViewModel>(
-      builder: (context, userPageViewModel, child) => DashboardFrameLayout(
-        frameColor: userPageViewModel.spaceColor,
+   return Consumer<SpaceViewModel>(
+      builder: (context, spaceViewModel, child) => DashboardFrameLayout(
+        frameColor: spaceViewModel.spaceColor,
         child: Column(
           children: [
             Expanded(
               child: NavigationRail(
                 labelType: NavigationRailLabelType.all,
                 backgroundColor: Colors.transparent,
-                indicatorColor: userPageViewModel.spaceColor,
+                indicatorColor: spaceViewModel.spaceColor,
                 selectedIconTheme: const IconThemeData(color: Colors.white),
                 onDestinationSelected: (index) {
                     int? userIndex = Provider.of<UserDataProvider>(context, listen: false).currentUser!.id;
-                    String path = '/app/user/$userIndex/${pageData[index]['path'] as String}';
+                    String path = '/app/${spaceViewModel.rootPath}/$userIndex/${pageData[index]['path'] as String}';
                     GoRouter.of(context).go(path);
                   },
                 destinations: pageData.map((data) => NavigationRailDestination(
@@ -136,20 +137,20 @@ class _NavigateRailFrameState extends State<NavigateRailFrame> {
               padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
               child: InkWell(
                 onTap: () {
-                  GoRouter.of(context).push('/app/user/${userPageViewModel.currentUser!.id}/home');
+                  GoRouter.of(context).go('/app/user/${spaceViewModel.currentUser!.id}/home');
                 },
                 child: ProfileAvatar(
-                  themePrimaryColor: userPageViewModel.spaceColor,
-                  imageUrl: userPageViewModel.currentUser!.photo != null && userPageViewModel.currentUser!.photo!.imageUri.isNotEmpty 
-                    ? userPageViewModel.currentUser!.photo!.imageUri
+                  themePrimaryColor: spaceViewModel.userColor,
+                  imageUrl: spaceViewModel.currentUser!.photo != null && spaceViewModel.currentUser!.photo!.imageUri.isNotEmpty 
+                    ? spaceViewModel.currentUser!.photo!.imageUri
                     : "",
-                  label: userPageViewModel.currentUser!.name,
+                  label: spaceViewModel.currentUser!.name,
                   avatarSize: 72,
                 ),
               ),
             ),
 
-            ...userPageViewModel.currentUser!.joinedWorkspaces.map((workspace) => Padding(
+            ...spaceViewModel.currentUser!.joinedWorkspaces.map((workspace) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                   child: InkWell(
                     onTap: () {
@@ -171,11 +172,11 @@ class _NavigateRailFrameState extends State<NavigateRailFrame> {
               child: MaterialButton(
                 shape: RoundedRectangleBorder(
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  side: BorderSide(color: userPageViewModel.spaceColor.withOpacity(0.3)),
+                  side: BorderSide(color: spaceViewModel.spaceColor.withOpacity(0.3)),
                 ),
                 color: Colors.white,
                 onPressed: () => _onCreateGroup(context), 
-                child: Icon(Icons.add, size: 28, color: userPageViewModel.spaceColor),
+                child: Icon(Icons.add, size: 28, color: spaceViewModel.spaceColor),
               ),
             ),
             const Gap(5),
@@ -185,11 +186,11 @@ class _NavigateRailFrameState extends State<NavigateRailFrame> {
               child: MaterialButton(
                 shape: RoundedRectangleBorder(
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  side: BorderSide(color: userPageViewModel.spaceColor.withOpacity(0.3)),
+                  side: BorderSide(color: spaceViewModel.spaceColor.withOpacity(0.3)),
                 ),
                 color: Colors.white, 
                 onPressed: () => _onJoinWorkspace(context), 
-                child: Icon(Icons.group_add, size: 28, color: userPageViewModel.spaceColor,),
+                child: Icon(Icons.group_add, size: 28, color: spaceViewModel.spaceColor,),
               ),
             ),
           ],

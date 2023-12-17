@@ -29,7 +29,7 @@ class UserPageView extends StatefulWidget  {
 
 class _UserPageViewState extends State<UserPageView> {
   
-  late final UserSpaceViewModel userPageViewModel;
+  late final SpaceViewModel userPageViewModel;
   late final SettingPageViewModel settingPageViewModel;
   late final CreateWorkspaceViewModel createWorkspaceViewModel;
   late final JoinWorkspaceViewModel joinWorkspaceViewModel;
@@ -38,27 +38,27 @@ class _UserPageViewState extends State<UserPageView> {
   void initState() {
     super.initState();
     var userData = Provider.of<UserDataProvider>(context, listen: false);
-    userPageViewModel = UserSpaceViewModel()
+    userPageViewModel = SpaceViewModel()
       ..userDataProvider = userData;
     
     settingPageViewModel = SettingPageViewModel()
       ..userDataProvider = userData;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    userPageViewModel.dispose();
-    settingPageViewModel.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   userPageViewModel.dispose();
+  //   settingPageViewModel.dispose();
+  // }
 
   @override
   Widget build(BuildContext context){
     return MultiProvider(
       providers: [
-        ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
+        ChangeNotifierProxyProvider<UserDataProvider, SpaceViewModel>(
           create: (context) => userPageViewModel..init(),
-          update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..update(userDataProvider),
+          update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..updateUser(userDataProvider),
         ),
         ChangeNotifierProxyProvider<UserDataProvider, SettingPageViewModel>(
           create: (context) => settingPageViewModel,
@@ -120,7 +120,7 @@ class _UserPageViewState extends State<UserPageView> {
   }
 
   Widget _buildBody() {
-    return Consumer<UserSpaceViewModel>(
+    return Consumer<SpaceViewModel>(
         builder: (context, userSpaceViewModel, child) => 
           userSpaceViewModel.isLoading
             ? const Scaffold(

@@ -1,24 +1,30 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
+import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/workspace_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/workspace_remote_data_source.dart';
 import 'package:grouping_project/space/data/repositories/workspace_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/workspace_usecaes_lib.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 
-class WorkspaceDataProvider extends ChangeNotifier {
-  WorkspaceDataProvider(
-    this.messageService, {required this.tokenModel});
+class GroupDataProvider extends ChangeNotifier {
+  GroupDataProvider({required this.tokenModel, required this.workspaceIndex});
 
   final AuthTokenModel tokenModel;
-  WorkspaceEntity? currentWorkspace;
-  final MessageService? messageService;
 
-  Future updateWorkspace() async {
+  int workspaceIndex = -1;
+  WorkspaceEntity? currentWorkspace;
+
+  bool isLoading = false;
+
+  // final MessageService? messageService;
+
+  Color get color => AppColor.getWorkspaceColorByIndex(
+    currentWorkspace!.themeColor,
+  );
+
+  Future getWorkspace() async {
     debugPrint("WorkspaceViewModel getCurrentWorkspace");
 
     GetWorkspaceUseCase getCurrentWorkspaceUseCase =
@@ -28,43 +34,54 @@ class WorkspaceDataProvider extends ChangeNotifier {
       localDataSource: WorkspaceLocalDataSourceImpl(),
     ));
 
-    final failureOrWorkspace = await getCurrentWorkspaceUseCase(currentWorkspace!.id);
+    if(workspaceIndex == -1){
+      throw Exception("workspaceIndex is not set");
+    }
+    final failureOrWorkspace = await getCurrentWorkspaceUseCase(workspaceIndex);
 
     failureOrWorkspace.fold(
-        (failure) => messageService!.addMessage(
-            MessageData.error(message: failure.toString())), (workspace) {
+      (failure) => {
+        debugPrint("WorkspaceViewModel getCurrentWorkspace failure: ${failure.toString()}")
+      },
+      (workspace) {
       currentWorkspace = workspace;
       debugPrint("WorkspaceViewModel getCurrentWorkspace success");
       // print user data
       debugPrint(workspace.toString());
-    });
-  }
-
-  void update() {
-    // workspaceViewModel.update(this);
-  }
-}
-
-class WorkspaceViewModel extends ChangeNotifier {
-
-  int _pages = 0;
-
-  int get currentPageIndex => _pages;
-
-  // final MessageService _messageService = MessageService();
-  // MessageService get messageService => _messageService;
-  UserDataProvider? userDataProvider;
-  WorkspaceDataProvider? workspaceDataProvider;
-
-  void updateCurrentIndex(int index){
-    _pages = index;
+      }
+    );
     notifyListeners();
   }
 
   Future<void> init() async {
-    // TODO: how do i know the workspaceID of this id?
-    // await getCurrentWorkspace(0);
+    isLoading = true;
+    await getWorkspace();
+    isLoading = false;
+    // debugPrint("UserData init, ${currentUser?.toString()}");
   }
+
+}
+
+// class WorkspaceViewModel extends ChangeNotifier {
+
+//   int _pages = 0;
+
+//   int get currentPageIndex => _pages;
+
+//   // final MessageService _messageService = MessageService();
+//   // MessageService get messageService => _messageService;
+//   UserDataProvider? userDataProvider;
+//   GroupDataProvider? workspaceDataProvider;
+
+//   void updateCurrentIndex(int index){
+//     _pages = index;
+//     notifyListeners();
+//   }
+
+//   Future<void> init() async {
+//     // TODO: how do i know the workspaceID of this id?
+//     // await getCurrentWorkspace(0);
+//   }
 
   // TODO: this use case in user viewmodel? since workspace shouldn't create workspace
   // Future createWorkspace(WorkspaceEntity entity) async {
@@ -136,26 +153,26 @@ class WorkspaceViewModel extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  @override
-  void dispose() {
-    // _messageService.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     // _messageService.dispose();
+//     super.dispose();
+//   }
 
-  void onPress() {
-    // for testing purpose
-    // it will be remove in next version
-    final messages = [
-      MessageData.success(),
-      MessageData.error(),
-      MessageData.warning(),
-    ];
-    Random().nextInt(messages.length);
-    // _messageService.addMessage(messages[index]);
-  }
+//   void onPress() {
+//     // for testing purpose
+//     // it will be remove in next version
+//     final messages = [
+//       MessageData.success(),
+//       MessageData.error(),
+//       MessageData.warning(),
+//     ];
+//     Random().nextInt(messages.length);
+//     // _messageService.addMessage(messages[index]);
+//   }
 
-  update(UserDataProvider userDataProvider) {
-    this.userDataProvider = userDataProvider;
-    notifyListeners();
-  }
-}
+//   update(UserDataProvider userDataProvider) {
+//     this.userDataProvider = userDataProvider;
+//     notifyListeners();
+//   }
+// }

@@ -20,8 +20,8 @@ class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget{
   // @override
   // Color get getThemePrimaryColor => profile.spaceColor;
 
-  UserSpaceViewModel getSpaceViewModel(BuildContext context){
-    return Provider.of<UserSpaceViewModel>(context, listen: false);
+  SpaceViewModel getSpaceViewModel(BuildContext context){
+    return Provider.of<SpaceViewModel>(context, listen: false);
   }
   @override
   Widget build(BuildContext context) => _buildBody(context); 

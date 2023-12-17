@@ -52,7 +52,7 @@ class _SettingViewState extends State<UserSettingFrame>{
 
   Widget _buildBody() {
     return Consumer<SettingPageViewModel>(
-      builder: (context, viewModel, child) => Consumer<UserSpaceViewModel>(
+      builder: (context, viewModel, child) => Consumer<SpaceViewModel>(
         builder: (context, userPageViewModel, child) => DashboardFrameLayout(
           frameColor: getThemePrimaryColor,
           frameHeight: widget.frameHeight,
@@ -272,7 +272,7 @@ class AccountSettingSection extends StatelessWidget{
   });
 
   void onLogout(BuildContext context) async {
-    await Provider.of<UserSpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
+    await Provider.of<SpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
     if (context.mounted) {
       await Provider.of<TokenManager>(context, listen: false).updateToken();
     }
@@ -292,7 +292,7 @@ class AccountSettingSection extends StatelessWidget{
   final objectGap = const Gap(10);
 
   Widget _getAccountBody(BuildContext context) {
-    UserSpaceViewModel userPageViewModel = Provider.of<UserSpaceViewModel>(context);
+    SpaceViewModel userPageViewModel = Provider.of<SpaceViewModel>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, 
       children: [
@@ -358,7 +358,7 @@ class SpaceSettingSection extends StatelessWidget{
   });
 
   void onLogout(BuildContext context) async {
-    await Provider.of<UserSpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
+    await Provider.of<SpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
     if (context.mounted) {
       await Provider.of<TokenManager>(context, listen: false).updateToken();
     }
