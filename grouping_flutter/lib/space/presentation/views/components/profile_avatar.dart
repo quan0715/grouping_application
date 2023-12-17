@@ -40,8 +40,9 @@ class ProfileAvatar extends StatelessWidget{
     
     Widget labelWidget = Center(
       child: Text(
-        label.substring(0, 2),
-        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+        label,
+        softWrap: false,
+        style: Theme.of(context).textTheme.labelLarge!.copyWith(
           color: themePrimaryColor,
           // fontSize: labelFontSize,
           fontWeight: FontWeight.bold

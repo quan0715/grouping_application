@@ -67,11 +67,13 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   /// 
   @override
   Future<WorkspaceModel> getWorkspaceData({required int workspaceId}) async {
-    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/workspaces/$workspaceId"), headers: headers);
-
+    var api = Uri.parse("${Config.baseUriWeb}/api/workspaces/$workspaceId");
+    final response = await _client.get(api, headers: headers);
+    // debugPrint(response.body);
     switch (response.statusCode){
+
       case 200:
-        return WorkspaceModel.fromJson(data: jsonDecode(response.body));
+        return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
@@ -99,9 +101,25 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     final api = Uri.parse("${Config.baseUriWeb}/api/workspaces/");
     
     var response;
-    if(image != null){
-      var request = http.MultipartRequest("POST", api);
+    workspaceBody.remove('photo_data');
+    response = await _client.post(
+      api,
+      headers: headers,
+      body: jsonEncode(workspaceBody)
+    );
+    WorkspaceModel temp;
+    switch (response.statusCode) {
+      case 201:
+        temp =  WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+      case 400:
+        throw ServerException(exceptionMessage: "Invalid Syntax");
+      default:
+        throw ServerException(exceptionMessage: utf8.decode(response.bodyBytes));
+    }
 
+    if(image != null){
+      var api = Uri.parse("${Config.baseUriWeb}/api/workspaces/${temp.id}/");
+      var request = http.MultipartRequest("PATCH", api);
       request.files.add(
         http.MultipartFile.fromBytes(
           'photo_data',
@@ -109,26 +127,16 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
           filename: '${image.path.split("/").last}.jpg',
         ),
       );
-      request.fields['theme_color'] = workspaceBody['theme_color'].toString();
-      request.fields['workspace_name'] = workspaceBody['workspace_name'].toString();
-      request.fields['description'] = workspaceBody['description'].toString();
-      request.fields['tags'] = workspaceBody['tags'].toString();
-
       workspaceBody.remove('photo_data');
       request.headers.addAll(headers);
       var streamedResponse = await request.send();
       response = await http.Response.fromStream(streamedResponse);
 
-    }else{
-      response = await _client.post(
-        api,
-        headers: headers,
-        body: jsonEncode(workspaceBody)
-      );
     }
-    debugPrint(response.body);
+    
+    // debugPrint(response.body);
     switch (response.statusCode) {
-      case 201:
+      case 200:
         return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");

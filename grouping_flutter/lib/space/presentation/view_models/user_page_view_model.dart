@@ -12,8 +12,8 @@ import 'package:grouping_project/space/data/datasources/local_data_source/user_l
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
 import 'package:grouping_project/space/data/repositories/user_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/domain/usecases/get_current_user_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/update_current_user.dart';
+import 'package:grouping_project/space/domain/usecases/user_usecases/get_current_user_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/user_usecases/update_current_user.dart';
 import 'package:image_picker/image_picker.dart';
 
 

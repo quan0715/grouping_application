@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:grouping_project/core/theme/color.dart';
-import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/presentation/view_models/create_workspace_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
+import 'package:grouping_project/space/presentation/view_models/join_workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
-import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
-import 'package:grouping_project/space/presentation/views/frames/create_workspace_dialog.dart';
+import 'package:grouping_project/space/presentation/views/frames/navigate_rail_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_space_info_frame.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
@@ -37,6 +32,7 @@ class _UserPageViewState extends State<UserPageView> {
   late final UserSpaceViewModel userPageViewModel;
   late final SettingPageViewModel settingPageViewModel;
   late final CreateWorkspaceViewModel createWorkspaceViewModel;
+  late final JoinWorkspaceViewModel joinWorkspaceViewModel;
 
   @override
   void initState() {
@@ -47,9 +43,13 @@ class _UserPageViewState extends State<UserPageView> {
     
     settingPageViewModel = SettingPageViewModel()
       ..userDataProvider = userData;
-    
-    createWorkspaceViewModel = CreateWorkspaceViewModel()
-      ..update(userData);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    userPageViewModel.dispose();
+    settingPageViewModel.dispose();
   }
 
   @override
@@ -61,40 +61,14 @@ class _UserPageViewState extends State<UserPageView> {
           update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..update(userDataProvider),
         ),
         ChangeNotifierProxyProvider<UserDataProvider, SettingPageViewModel>(
-          create: (context) => settingPageViewModel..init(),
+          create: (context) => settingPageViewModel,
           update: (context, userDataProvider, userSpaceSettingViewModel) => userSpaceSettingViewModel!..update(userDataProvider),
         ),
-        ChangeNotifierProxyProvider<UserDataProvider, CreateWorkspaceViewModel>(
-          create: (context) => createWorkspaceViewModel,
-          update: (context, userDataProvider, createWorkspaceViewModel) => createWorkspaceViewModel!..update(userDataProvider),
-        ),
+        
       ],
       child: _buildBody(),
     );
   }
-
-
-  int getPageIndex(BuildContext context) {
-    // get current page index from path
-    final RouteMatch lastMatch = GoRouter.of(context).routerDelegate.currentConfiguration.last;
-    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch 
-      ? lastMatch.matches 
-      : GoRouter.of(context).routerDelegate.currentConfiguration;
-    final String location = matchList.uri.toString();
-    for(var data in pageData){
-      if(location.endsWith(data['path'] as String)){
-        return data['index'] as int ;
-      }
-    }
-    return 0;
-  }
-
-  final pageData = [
-    {"path": "home", "index": 0, "title": "主頁", "iconData": Icons.home},
-    {"path": "activities", "index": 1, "title": "活動", "iconData": Icons.local_activity},
-    {"path": "threads", "index": 2, "title": "訊息", "iconData": Icons.chat_bubble_outline},
-    {"path": "settings", "index": 3, "title": "設定", "iconData": Icons.settings},
-  ];
 
   Widget _tempFrame(String title, int flex){
     return Expanded(
@@ -108,97 +82,12 @@ class _UserPageViewState extends State<UserPageView> {
     );
   }
 
-  _onCreateGroup(BuildContext context, UserEntity creator) async {
-    // open create group dialog
-    await showDialog(
-      context: context,
-      builder: (context) => ChangeNotifierProvider.value(
-        value: createWorkspaceViewModel,
-        child: CreateWorkspaceDialog()
-      )
-    );
-
-  }
-  Widget navigationRailFrame(){
-   return DashboardFrameLayout(
-      frameColor: userPageViewModel.spaceColor,
-      child: Column(
-        children: [
-          Expanded(
-            child: NavigationRail(
-              labelType: NavigationRailLabelType.all,
-              backgroundColor: Colors.transparent,
-              indicatorColor: userPageViewModel.spaceColor,
-              selectedIconTheme: const IconThemeData(color: Colors.white),
-              onDestinationSelected: (index) {
-                  int? userIndex = Provider.of<UserDataProvider>(context, listen: false).currentUser!.id;
-                  String path = '/app/user/$userIndex/${pageData[index]['path'] as String}';
-                  GoRouter.of(context).go(path);
-                },
-              destinations: pageData.map((data) => NavigationRailDestination(
-                icon: Icon(data['iconData'] as IconData),
-                label: Text(data['title'] as String),
-              )).toList(),
-              selectedIndex: getPageIndex(context),
-            ),
-          ),
-          ...userPageViewModel.currentUser!.joinedWorkspaces.map((workspace) => Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Tooltip(
-                  preferBelow: false,
-                  verticalOffset: - (54 / 4),
-                  margin: const EdgeInsets.only(left: 54 * 1.8),
-                  message: workspace.name,
-                  child: InkWell(
-                    onTap: () {
-                      GoRouter.of(context).go('/app/workspace/${workspace.id}/home');
-                    },
-                    child: ProfileAvatar(
-                      themePrimaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
-                      imageUrl: workspace.photo != null && workspace.photo!.imageUri.isNotEmpty 
-                        ? workspace.photo!.imageUri
-                        : "",
-                      label: workspace.name,
-                      avatarSize: 54,
-                    ),
-                  ),
-                ),
-              )),
-          Tooltip(
-            message: "新增工作小組",
-            preferBelow: false,
-            verticalOffset: - (28 / 4),
-            margin: const EdgeInsets.only(left: 28 * 3),
-            child: IconButton(
-              color: userPageViewModel.spaceColor,
-              onPressed: () => _onCreateGroup(
-                context, 
-                userPageViewModel.currentUser!), 
-              icon: const Icon(Icons.add, size: 28,),
-            ),
-          ),
-          Tooltip(
-            verticalOffset: - (28 / 4),
-            preferBelow: false,
-            margin: const EdgeInsets.only(left: 28 * 3),
-            message: "加入工作小組",
-            child: IconButton(
-              color: userPageViewModel.spaceColor,
-              onPressed: (){}, icon: const Icon(Icons.group_add, size: 28,),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   List<Widget> _getFrames(){
     var color = userPageViewModel.spaceColor;
     return switch (widget.pageType) {
       DashboardPageType.home => [
         SpaceInfoFrame(
           frameColor: color,
-          frameHeight: MediaQuery.of(context).size.height,
           frameWidth: MediaQuery.of(context).size.width * 0.25,
         ),
         _tempFrame("home", 1),
@@ -241,35 +130,35 @@ class _UserPageViewState extends State<UserPageView> {
             )
             : DashboardView(
               backgroundColor: Colors.white,
-              appBar: _getAppBar(),
+              //appBar: _getAppBar(),
               frames: [
-                navigationRailFrame(),
+                const NavigateRailFrame(),
                 ..._getFrames(),
               ],
-              drawer: _getDrawer(context),
+              // drawer: _getDrawer(context),
               direction: Axis.horizontal,
         ),
     );
   }
 
-  Widget _getDrawer(BuildContext context){
-    var user = Provider.of<UserDataProvider>(context, listen: false);
-    return DashboardDrawer(
-      primaryColor: userPageViewModel.spaceColor,
-      userProfiles: user.currentUser!,
-      workspaceProfiles: user.currentUser!.joinedWorkspaces,
-      selectedProfileId: user.currentUser!.id,
-    );
-  }
+  // Widget _getDrawer(BuildContext context){
+  //   var user = Provider.of<UserDataProvider>(context, listen: false);
+  //   return DashboardDrawer(
+  //     primaryColor: userPageViewModel.spaceColor,
+  //     userProfiles: user.currentUser!,
+  //     workspaceProfiles: user.currentUser!.joinedWorkspaces,
+  //     selectedProfileId: user.currentUser!.id,
+  //   );
+  // }
 
-  SpaceAppBar _getAppBar() {
-    var user = Provider.of<UserDataProvider>(context, listen: false);
-    return SpaceAppBar(
-      color: userPageViewModel.spaceColor,
-      spaceName:  user.currentUser?.name ?? "",
-      spaceProfilePicURL: user.currentUser?.photo != null ? userPageViewModel.currentUser!.photo!.imageUri : "",
-    );
-  }
+  // SpaceAppBar _getAppBar() {
+  //   var user = Provider.of<UserDataProvider>(context, listen: false);
+  //   return SpaceAppBar(
+  //     color: userPageViewModel.spaceColor,
+  //     spaceName:  user.currentUser?.name ?? "",
+  //     spaceProfilePicURL: user.currentUser?.photo != null ? userPageViewModel.currentUser!.photo!.imageUri : "",
+  //   );
+  // }
 
   // Widget? _getNavigationBar(BuildContext context, UserPageViewModel viewModel) {
   //   if (kIsWeb) {
@@ -284,3 +173,4 @@ class _UserPageViewState extends State<UserPageView> {
   //   }
   // }
 }
+

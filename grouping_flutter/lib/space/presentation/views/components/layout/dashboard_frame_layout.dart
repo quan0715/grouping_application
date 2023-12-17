@@ -23,7 +23,7 @@ class DashboardFrameLayout extends StatelessWidget{
       width: frameWidth,
       height: frameHeight,
       decoration: BoxDecoration(
-        color: frameColor!.withOpacity(0.05),
+        color: Color.lerp(Colors.white, frameColor, 0.05), 
         borderRadius: const BorderRadius.all(Radius.circular(10.0),
       )),
       child: Padding(

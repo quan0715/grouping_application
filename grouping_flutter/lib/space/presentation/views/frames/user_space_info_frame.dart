@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
+import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +23,8 @@ class SpaceInfoFrame extends StatelessWidget{
 
   Widget _buildBody(BuildContext context){
     return DashboardFrameLayout(
-      frameWidth: frameWidth,
-      frameHeight: frameHeight,
+      frameWidth: frameWidth ?? MediaQuery.of(context).size.width,
+      frameHeight: frameHeight ?? MediaQuery.of(context).size.height,
       frameColor: frameColor,
       child: _buildSpaceInfo(context),
     );

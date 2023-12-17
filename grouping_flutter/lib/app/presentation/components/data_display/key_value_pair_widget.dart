@@ -114,12 +114,15 @@ class PrimaryInfoFrame extends StatelessWidget implements WithThemePrimaryColor{
   Widget _buildBody(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: Colors.white ,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Padding(
-        padding: padding,
-        child: child ?? const SizedBox.shrink(),
+      child: Container(
+        color: color.withOpacity(0.1),
+        child: Padding(
+          padding: padding,
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }
@@ -134,7 +137,7 @@ class AppTextFormField extends StatelessWidget{
   // final String? title;
   final String? initialValue;
   final String hintText;
-  final String Function(String?)? validator;
+  final String? Function(String?)? validator;
   final void Function(String?)? onSaved;
   final void Function(String?)? onChanged;
   final void Function(String?)? onSubmit;

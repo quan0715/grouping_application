@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_widget.dart';
+import 'package:grouping_project/app/presentation/components/data_display/color_card_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 
 class NavigatedProfileInfoCardButton extends StatelessWidget{

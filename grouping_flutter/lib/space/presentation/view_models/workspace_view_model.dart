@@ -5,10 +5,7 @@ import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/workspace_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/workspace_remote_data_source.dart';
-import 'package:grouping_project/space/data/models/event_model.dart';
-import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/data/repositories/workspace_repository_impl.dart';
-import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/workspace_usecaes_lib.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
@@ -24,8 +21,8 @@ class WorkspaceDataProvider extends ChangeNotifier {
   Future updateWorkspace() async {
     debugPrint("WorkspaceViewModel getCurrentWorkspace");
 
-    GetCurrentWorkspaceUseCase getCurrentWorkspaceUseCase =
-        GetCurrentWorkspaceUseCase(WorkspaceRepositoryImpl(
+    GetWorkspaceUseCase getCurrentWorkspaceUseCase =
+        GetWorkspaceUseCase(WorkspaceRepositoryImpl(
       remoteDataSource:
           WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
       localDataSource: WorkspaceLocalDataSourceImpl(),
@@ -153,7 +150,7 @@ class WorkspaceViewModel extends ChangeNotifier {
       MessageData.error(),
       MessageData.warning(),
     ];
-    final index = Random().nextInt(messages.length);
+    Random().nextInt(messages.length);
     // _messageService.addMessage(messages[index]);
   }
 

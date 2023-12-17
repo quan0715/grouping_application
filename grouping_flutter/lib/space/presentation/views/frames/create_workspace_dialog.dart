@@ -5,9 +5,9 @@ import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/create_workspace_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/key_value_pair_widget.dart';
+import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
-import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
+import 'package:grouping_project/app/presentation/components/buttons/user_action_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -109,7 +109,7 @@ class CreateWorkspaceDialog extends StatelessWidget {
         imageUrl: viewModel.newWorkspaceData.photo!.imageUri,
       );
     }
-    if(viewModel.tempAvatarBytes != null){
+    if(viewModel.tempAvatarFile != null){
       return ProfileAvatar(
         themePrimaryColor: viewModel.spaceColor,
         label: "小組照片",
@@ -119,9 +119,9 @@ class CreateWorkspaceDialog extends StatelessWidget {
     }
     return ProfileAvatar(
       themePrimaryColor: viewModel.spaceColor,
-      label: "小組照片",
+      label: viewModel.newWorkspaceData.name,
       avatarSize: 96,
-      avatar: Icon(Icons.add_a_photo, size: 32, color: viewModel.spaceColor),
+      // avatar: Icon(Icons.add_a_photo, size: 32, color: viewModel.spaceColor),
     );
   }
 
@@ -135,21 +135,37 @@ class CreateWorkspaceDialog extends StatelessWidget {
             KeyValuePairWidget<String, Widget>(
               primaryColor: vm.spaceColor,
               keyChild: "小組照片",
-              valueChild:  InkWell(
-                child: getProfileAvatar(context, vm),
-                onTap: () async {
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? file = await picker.pickImage(source: ImageSource.gallery);
-                  if(context.mounted && file != null){
-                    await vm.updateProfileData(file);
-                  }
-                }
+              valueChild:  Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(
+                    child: getProfileAvatar(context, vm),
+                    onTap: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+                      if(context.mounted && file != null){
+                        vm.updateProfileData = file;
+                      }
+                    }
+                  ),
+                  const Gap(5),
+                  Visibility(
+                    visible: vm.newWorkspaceData.photo != null || vm.tempAvatarFile != null,
+                    child: IconButton(
+                      onPressed: (){
+                        vm.updateProfileData = null;
+                      },
+                      icon: Icon(Icons.delete , color: AppColor.logError,),
+                    ),
+                  )
+                ],
               ), 
             ),
             KeyValuePairWidget<String, Widget>(
               primaryColor: vm.spaceColor,
               keyChild: "小組名稱", 
               valueChild: AppTextFormField(
+                primaryColor: vm.spaceColor,
                 hintText: "請輸入小組名稱",
                 initialValue: vm.newWorkspaceData.name,
                 onChanged: (value){
@@ -160,6 +176,7 @@ class CreateWorkspaceDialog extends StatelessWidget {
               primaryColor: vm.spaceColor,
               keyChild: "小組介紹", 
               valueChild: AppTextFormField(
+                primaryColor: vm.spaceColor,
                 hintText: "請輸入小組介紹",
                 initialValue: vm.newWorkspaceData.description,
                 onChanged: (value){
@@ -175,12 +192,13 @@ class CreateWorkspaceDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20,),
+                  padding: vm.newWorkspaceData.tags.isEmpty ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10,),
                   child: Column(
                     children: [
                       AppTextFormField(
                         controller: _tagEditingController,
                         hintText: "請輸入小組標籤",
+                        primaryColor: vm.spaceColor,
                         // initialValue: vm.tag,
                         onChanged: (value){
                           if(value!=null && value.isNotEmpty){
