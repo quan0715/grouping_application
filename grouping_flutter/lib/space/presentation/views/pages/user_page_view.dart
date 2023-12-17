@@ -6,6 +6,7 @@ import 'package:grouping_project/space/presentation/view_models/user_page_view_m
 import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
+import 'package:grouping_project/space/presentation/views/frames/activity_list_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_space_info_frame.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
@@ -118,6 +119,18 @@ class _UserPageViewState extends State<UserPageView> {
   }
 
   List<Widget> _getFrames(){
+    // var spaceInfoAndNavigatorFrame = SpaceInfoAndNavigatorFrame(
+    //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+    //   frameWidth: MediaQuery.of(context).size.width * 0.25,
+    // );
+    // var userSettingFrame = UserSettingFrame(
+    //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+    //   frameHeight: MediaQuery.of(context).size.height,
+    // );
+    // var threadFrame = const ChatThreadBody(
+    //   threadTitle: "Test Thread",
+    // );
+    // Widget gap = const Gap(10);
     var color = userPageViewModel.spaceColor;
     return switch (widget.pageType) {
       DashboardPageType.home => [
@@ -129,7 +142,30 @@ class _UserPageViewState extends State<UserPageView> {
         _tempFrame("home", 1),
       ],
       DashboardPageType.activities => [
-        _tempFrame("Calendar", 2),
+        // spaceInfoAndNavigatorFrame,
+        // gap,
+        // Expanded(
+        //   flex: 2,
+        //   child: DashboardFrameLayout(
+        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+        //   child: const ActivityListFrame()
+        // )),
+        // gap,
+        // Expanded(
+        //   flex: 3,
+        //   child: DashboardFrameLayout(
+        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+        //   child: const Center(
+        //     child: Text("Activities Detail"),
+        //   )
+        // )),
+        // _tempFrame("Calendar", 2),
+        Expanded(
+          flex: 2,
+          child: DashboardFrameLayout(
+          frameColor: color,
+          child: ActivityListFrame(color: color,)
+        )),
         _tempFrame("Activities Detail", 3),
       ],
       DashboardPageType.threads => [
