@@ -16,6 +16,7 @@ class ActivityListViewModel extends ChangeNotifier {
   List<EventEntity>? events;
   List<MissionEntity>? missions;
   int _missionTypePage = 0;
+  DateTime _selectDate = DateTime.now();
 
 
   List<ActivityEntity> tmpDatas = [
@@ -140,8 +141,12 @@ class ActivityListViewModel extends ChangeNotifier {
     }
   }
 
+  bool _sameAsSelectedDay(DateTime date){
+    return date.year == _selectDate.year && date.month == _selectDate.month && date.day == _selectDate.day;
+  }
+
   List<EventEntity> _sortEvents() {
-    List<EventEntity> allEvents = activities!.whereType<EventEntity>().toList();
+    List<EventEntity> allEvents = activities!.whereType<EventEntity>().where((event) => _sameAsSelectedDay(event.startTime)).toList();
     allEvents.sort(
         (front, rear) => _compareDateTime(front.startTime, rear.startTime));
     return allEvents;
@@ -149,7 +154,7 @@ class ActivityListViewModel extends ChangeNotifier {
 
   List<MissionEntity> _sortMissions() {
     List<MissionEntity> allMissions =
-        activities!.whereType<MissionEntity>().toList();
+        activities!.whereType<MissionEntity>().where((mission) => _sameAsSelectedDay(mission.deadline)).toList();
     allMissions
         .sort((front, rear) => _compareDateTime(front.deadline, rear.deadline));
     return allMissions;
@@ -162,6 +167,15 @@ class ActivityListViewModel extends ChangeNotifier {
 
   int getMissionTypePage() {
     return _missionTypePage;
+  }
+
+  void setSeletedDay(DateTime newDate) {
+    _selectDate = newDate;
+    notifyListeners();
+  }
+
+  DateTime getSeletedDay() {
+    return _selectDate;
   }
 }
 

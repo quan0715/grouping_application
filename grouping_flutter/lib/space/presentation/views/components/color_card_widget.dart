@@ -30,7 +30,7 @@ class ColorCardWidget extends StatelessWidget implements WithThemePrimaryColor{
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        // borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(borderRadius),
         border: Border(
           left: _getFocusedBorder,
           right: _getUnfocusedBorder,

@@ -17,15 +17,15 @@ class ActivityListFrame extends StatefulWidget {
 }
 
 class _ActivityListFrameState extends State<ActivityListFrame> {
-  late final UserSpaceViewModel userPageViewModel;
+  // late final UserSpaceViewModel userPageViewModel;
   late final ActivityListViewModel activityListViewModel;
 
   @override
   void initState() {
     super.initState();
-    userPageViewModel = UserSpaceViewModel();
+    // userPageViewModel = UserSpaceViewModel();
     var userData = Provider.of<UserDataProvider>(context, listen: false);
-    userPageViewModel.userDataProvider = userData;
+    // userPageViewModel.userDataProvider = userData;
     activityListViewModel = ActivityListViewModel(userDataProvider: userData);
     initializeDateFormatting();
   }
@@ -37,8 +37,11 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
         create: (context) => activityListViewModel..init(),
         update: (context, userDataProvider, activityListViewModel) =>
             activityListViewModel!..update(userDataProvider),
-      )
+      ),
     ], child: _buildBody());
+    // return ChangeNotifierProvider<ActivityListViewModel>(
+    //       create: (context) => activityListViewModel..init(),
+    //       child: _buildBody(),);
   }
 
   Widget _buildBody() {
@@ -58,15 +61,36 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                   headerHeight: 25,
                   headerStyle: CalendarHeaderStyle(
                       textStyle: TextStyle(fontSize: 15, color: widget.color)),
-                  monthViewSettings:
-                      const MonthViewSettings(numberOfWeeksInView: 2, dayFormat: 'EEE'),
+                  monthViewSettings: const MonthViewSettings(
+                      numberOfWeeksInView: 2, dayFormat: 'EEE'),
                   showDatePickerButton: true,
                   showTodayButton: true,
-                  dataSource: ActivityDataSource(activityListViewModel.activities!),
+                  dataSource:
+                      ActivityDataSource(activityListViewModel.activities!),
+                  onTap: (calendarTapDetails) {
+                    activityListViewModel.setSeletedDay(
+                        calendarTapDetails.date ?? DateTime.now());
+                    // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
+
+
+
+
+                    setState(() {
+                      // TODO: I can't find out what happen here
+                      // activityListViewModel should refresh the screen
+                    });
+
+
+
+                  },
                 ),
               )),
           const Divider(),
-          Text(dateFormat.format(DateTime.now()), style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: widget.color),),
+          Text(
+            dateFormat.format(activityListViewModel.getSeletedDay()),
+            style: TextStyle(
+                fontSize: 17, fontWeight: FontWeight.bold, color: widget.color),
+          ),
           Expanded(
               flex: 6,
               child: ActivityLayOut(
