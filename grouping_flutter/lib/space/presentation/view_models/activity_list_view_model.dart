@@ -179,9 +179,9 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 }
 
-class ActivityDataSource extends CalendarDataSource {
+class ActivityData extends CalendarDataSource {
 
-  ActivityDataSource(List<ActivityEntity> source) {
+  ActivityData(List<ActivityEntity> source) {
     // appointments = source;
     // appointments = source.map((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
     appointments = source.where((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();

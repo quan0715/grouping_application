@@ -113,7 +113,7 @@ class LogMessageCard extends StatelessWidget{
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: borderRadius,
+            // borderRadius: borderRadius,
             border: border
           ),
           child: Padding(

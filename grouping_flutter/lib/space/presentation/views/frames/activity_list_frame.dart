@@ -66,7 +66,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                   showDatePickerButton: true,
                   showTodayButton: true,
                   dataSource:
-                      ActivityDataSource(activityListViewModel.activities!),
+                      ActivityData(activityListViewModel.activities!),
                   onTap: (calendarTapDetails) {
                     activityListViewModel.setSeletedDay(
                         calendarTapDetails.date ?? DateTime.now());
