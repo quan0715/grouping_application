@@ -11,6 +11,8 @@ import 'package:grouping_project/space/presentation/views/components/profile_ava
 import 'package:grouping_project/app/presentation/components/buttons/user_action_button.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../app/presentation/components/components.dart';
+
 class JoinWorkspaceDialog extends StatelessWidget {
   JoinWorkspaceDialog({super.key});
 

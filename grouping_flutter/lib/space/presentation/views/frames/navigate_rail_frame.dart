@@ -7,8 +7,8 @@ import 'package:grouping_project/space/presentation/view_models/join_workspace_v
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
-import 'package:grouping_project/space/presentation/views/frames/create_workspace_dialog.dart';
-import 'package:grouping_project/space/presentation/views/frames/join_worksapce_dialog.dart';
+import 'package:grouping_project/space/presentation/views/components/dialogs/create_workspace_dialog.dart';
+import 'package:grouping_project/space/presentation/views/components/dialogs/join_worksapce_dialog.dart';
 import 'package:provider/provider.dart';
 
 class NavigateRailFrame extends StatefulWidget{

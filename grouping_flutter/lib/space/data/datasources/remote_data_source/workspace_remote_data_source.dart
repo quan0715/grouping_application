@@ -98,11 +98,10 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<WorkspaceModel> createWorkspaceData({required WorkspaceModel workspace, XFile? image}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
-    final api = Uri.parse("${Config.baseUriWeb}/api/workspaces/");
+    var api = Uri.parse("${Config.baseUriWeb}/api/workspaces/");
     
-    var response;
     workspaceBody.remove('photo_data');
-    response = await _client.post(
+    var response = await _client.post(
       api,
       headers: headers,
       body: jsonEncode(workspaceBody)
@@ -120,23 +119,21 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         throw ServerException(exceptionMessage: utf8.decode(response.bodyBytes));
     }
 
-    if(image != null){
-      var api = Uri.parse("${Config.baseUriWeb}/api/workspaces/${temp.id}/");
-      var request = http.MultipartRequest("PATCH", api);
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'photo_data',
-          await image.readAsBytes(),
-          filename: '${image.path.split("/").last}.jpg',
-        ),
-      );
-      workspaceBody.remove('photo_data');
-      request.headers.addAll(headers);
-      var streamedResponse = await request.send();
-      response = await http.Response.fromStream(streamedResponse);
-      
-    }
-    switch (response.statusCode) {
+    api = Uri.parse("${Config.baseUriWeb}/api/workspaces/${temp.id}/");
+    var request = http.MultipartRequest("PATCH", api);
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'photo_data',
+        await image.readAsBytes(),
+        filename: '${image.path.split("/").last}.jpg',
+      ),
+    );
+    workspaceBody.remove('photo_data');
+    request.headers.addAll(headers);
+    var streamedResponse = await request.send();
+    response = await http.Response.fromStream(streamedResponse);
+    
+      switch (response.statusCode) {
       case 200:
         return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:

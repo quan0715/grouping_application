@@ -30,8 +30,8 @@ class WorkspaceEntity {
     return WorkspaceEntity(
       id: -1,
       themeColor: 0,
-      name: '我的小組',
-      description: '這是我的小組',
+      name: '',
+      description: '',
       photo: null,
       members: [],
       activities: [],
