@@ -28,7 +28,6 @@ class LoginViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-
   // LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
@@ -52,7 +51,8 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onPasswordLogin() async {
     debugPrint("Login with: Email: $email , Password: $password");
 
-    PasswordLoginUseCase passwordLoginUseCase = PasswordLoginUseCase(repository: repo);
+    PasswordLoginUseCase passwordLoginUseCase =
+        PasswordLoginUseCase(repository: repo);
     userAccessToken = "";
     isLoading = true;
     notifyListeners();
@@ -60,12 +60,13 @@ class LoginViewModel extends ChangeNotifier {
 
     failureOrAuthToken.fold((failure) {
       debugPrint(failure.errorMessage);
-      messageService.addMessage(MessageData.error(title: "登入失敗", message: failure.errorMessage));
+      messageService.addMessage(
+          MessageData.error(title: "登入失敗", message: failure.errorMessage));
     }, (authToken) {
       userAccessToken = authToken.token;
       debugPrint("access token : $userAccessToken");
     });
-    
+
     isLoading = false;
     notifyListeners();
   }
@@ -151,7 +152,9 @@ class LoginViewModel extends ChangeNotifier {
       } else {
         authService = getOAuthService(AuthProvider.github);
       }
-      await authService.getAccessToken();
+      userAccessToken =
+          (await authService.getAccessToken(AuthLocalDataSourceImpl())).token;
+      debugPrint("access token : $userAccessToken");
     }
     return;
   }
