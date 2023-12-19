@@ -133,7 +133,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
         'photo_data',
         await image.readAsBytes(),
     //  contentType: MediaType('application', 'octet-stream'),
-        filename: '${image.path.split("/").last}.jpg',
+        filename: '${account.id}_profile.jpg',
       ),
     );
     // fields.forEach((k, v) => request.fields[k] = v);

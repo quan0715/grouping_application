@@ -174,7 +174,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     
     switch (response.statusCode){
       case 200:
-        return WorkspaceModel.fromJson(data: jsonDecode(response.body));
+        return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes) ));
       case 400:
         debugPrint(response.body);
         throw ServerException(exceptionMessage: "Invalid Syntax");

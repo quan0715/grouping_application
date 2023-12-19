@@ -11,9 +11,14 @@ import 'package:grouping_project/app/presentation/components/buttons/user_action
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class CreateWorkspaceDialog extends StatelessWidget {
+class CreateWorkspaceDialog extends StatefulWidget {
   CreateWorkspaceDialog({super.key});
 
+  @override
+  State<CreateWorkspaceDialog> createState() => _CreateWorkspaceDialogState();
+}
+
+class _CreateWorkspaceDialogState extends State<CreateWorkspaceDialog> {
   @override
   Widget build(BuildContext context) => _buildBody(context);
 
@@ -32,6 +37,12 @@ class CreateWorkspaceDialog extends StatelessWidget {
   EdgeInsets get _innerPadding => const EdgeInsets.all(20.0);
 
   final _tagEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    _tagEditingController.dispose();
+    super.dispose();
+  }
 
   Widget _buildBody(BuildContext context){
     return Consumer<CreateWorkspaceViewModel>(
