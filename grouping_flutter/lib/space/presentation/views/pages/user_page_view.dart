@@ -1,113 +1,247 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:grouping_project/app/presentation/providers/token_manager.dart';
+import 'package:go_router/go_router.dart';
+import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/dashboard_app_bar.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/dashboard_drawer.dart';
-import 'package:grouping_project/space/presentation/views/components/mobile_bottom_navigation_bar.dart';
+import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
+import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
+import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
+import 'package:grouping_project/space/presentation/views/frames/activity_list_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
-import 'package:grouping_project/space/presentation/views/frames/user_space_info_and_navigator_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/user_space_info_frame.dart';
+import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
 
-class UserPageView extends StatefulWidget {
-  const UserPageView({super.key});
+enum DashboardPageType { 
+  home,
+  activities,
+  threads,
+  settings,
+  none,
+ }
+
+class UserPageView extends StatefulWidget  {
+  const UserPageView({super.key, required this.pageType});
+  final DashboardPageType pageType;
 
   @override
   State<UserPageView> createState() => _UserPageViewState();
 }
 
 class _UserPageViewState extends State<UserPageView> {
-  late final UserPageViewModel viewModel;
+  
+  late final UserSpaceViewModel userPageViewModel;
   late final SettingPageViewModel settingPageViewModel;
 
   @override
   void initState() {
     super.initState();
-    viewModel = UserPageViewModel(
-        tokenModel:
-            Provider.of<TokenManager>(context, listen: false).tokenModel);
-    settingPageViewModel = SettingPageViewModel(currentUser: null);
-    viewModel.init().whenComplete(() => settingPageViewModel.init(viewModel));
+    var userData = Provider.of<UserDataProvider>(context, listen: false);
+    userPageViewModel = UserSpaceViewModel()
+      ..userDataProvider = userData;
+    
+    settingPageViewModel = SettingPageViewModel()
+      ..userDataProvider = userData;
   }
 
   @override
-  Widget build(BuildContext context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider<UserPageViewModel>.value(value: viewModel),
-          ChangeNotifierProvider<SettingPageViewModel>.value(
-              value: settingPageViewModel),
-        ],
-        child: _buildBody(),
-      );
-
-  Widget _buildDashBoard(BuildContext context, List<Widget> frames) {
-    return Consumer<UserPageViewModel>(
-        builder: (context, viewModel, child) => Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-              child: SizedBox(
-                // color: viewModel.selectedProfile.spaceColor,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: frames,
-                ),
-              ),
-            ));
+  Widget build(BuildContext context){
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProxyProvider<UserDataProvider, UserSpaceViewModel>(
+          create: (context) => userPageViewModel..init(),
+          update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..update(userDataProvider),
+        ),
+        ChangeNotifierProxyProvider<UserDataProvider, SettingPageViewModel>(
+          create: (context) => settingPageViewModel..init(),
+          update: (context, userDataProvider, userSpaceSettingViewModel) => userSpaceSettingViewModel!..update(userDataProvider),
+        ),
+      ],
+      child: _buildBody(),
+    );
   }
 
-  Widget _buildBody() {
-    return Consumer<SettingPageViewModel>(
-      builder: (context, viewModel, child) => Consumer<UserPageViewModel>(
-        builder: (context, viewModel, child) => Scaffold(
-          backgroundColor: Colors.white,
-          appBar: _getAppBar(context, viewModel),
-          body: Center(
-            child: _buildDashBoard(context, [
-              // TODO: create and add other frame into
-              SpaceInfoAndNavigatorFrame(
-                frameColor: viewModel.selectedProfile.spaceColor,
-                frameWidth: MediaQuery.of(context).size.width * 0.2,
-              ),
-              const Gap(10),
-              Expanded(
-                  child: UserSettingFrame(
-                frameColor: viewModel.selectedProfile.spaceColor,
-              ))
-            ]),
-          ),
-          bottomNavigationBar: _getNavigationBar(context, viewModel),
-          drawer: DashboardDrawer(
-            selectedProfile: viewModel.selectedProfile,
-            userProfiles: viewModel.userProfiles,
-            workspaceProfiles: viewModel.workspaceProfiles,
-          ),
-        ),
+
+  int getPageIndex(BuildContext context) {
+    // get current page index from path
+    final RouteMatch lastMatch = GoRouter.of(context).routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch 
+      ? lastMatch.matches 
+      : GoRouter.of(context).routerDelegate.currentConfiguration;
+    final String location = matchList.uri.toString();
+    for(var data in pageData){
+      if(location.endsWith(data['path'] as String)){
+        return data['index'] as int ;
+      }
+    }
+    return 0;
+  }
+
+  final pageData = [
+    {"path": "home", "index": 0, "title": "主頁", "iconData": Icons.home},
+    {"path": "activities", "index": 1, "title": "活動", "iconData": Icons.local_activity},
+    {"path": "threads", "index": 2, "title": "訊息", "iconData": Icons.chat_bubble_outline},
+    {"path": "settings", "index": 3, "title": "設定", "iconData": Icons.settings},
+  ];
+
+  Widget _tempFrame(String title, int flex){
+    return Expanded(
+      flex: flex,
+      child: DashboardFrameLayout(
+        frameColor: userPageViewModel.spaceColor,
+        child: Center(
+          child: Text(title),
+        )
       ),
     );
   }
 
-  DashboardAppBar _getAppBar(
-      BuildContext context, UserPageViewModel viewModel) {
-    return DashboardAppBar(
-      // color: viewModel.selectedProfile.spaceColor,
-      profile: viewModel.selectedProfile,
+  Widget navigationRailFrame(){
+   return DashboardFrameLayout(
+      frameColor: userPageViewModel.spaceColor,
+      child: NavigationRail(
+        labelType: NavigationRailLabelType.all,
+        backgroundColor: Colors.transparent,
+        indicatorColor: userPageViewModel.spaceColor,
+        selectedIconTheme: const IconThemeData(color: Colors.white),
+        onDestinationSelected: (index) {
+            int? userIndex = Provider.of<UserDataProvider>(context, listen: false).currentUser!.id;
+            String path = '/app/user/$userIndex/${pageData[index]['path'] as String}';
+            GoRouter.of(context).go(path);
+          },
+        destinations: pageData.map((data) => NavigationRailDestination(
+          icon: Icon(data['iconData'] as IconData),
+          label: Text(data['title'] as String),
+        )).toList(),
+        selectedIndex: getPageIndex(context),
+      ),
     );
   }
 
-  Widget? _getNavigationBar(BuildContext context, UserPageViewModel viewModel) {
-    if (kIsWeb) {
-      return null;
-    } else {
-      debugPrint("is not web, return bottom navigation bar");
-      return MobileBottomNavigationBar(
-        currentIndex: viewModel.currentPageIndex,
-        themePrimaryColor: viewModel.selectedProfile.spaceColor,
-        onTap: (index) => viewModel.updateCurrentIndex(index),
-      );
-    }
+  List<Widget> _getFrames(){
+    // var spaceInfoAndNavigatorFrame = SpaceInfoAndNavigatorFrame(
+    //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+    //   frameWidth: MediaQuery.of(context).size.width * 0.25,
+    // );
+    // var userSettingFrame = UserSettingFrame(
+    //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+    //   frameHeight: MediaQuery.of(context).size.height,
+    // );
+    // var threadFrame = const ChatThreadBody(
+    //   threadTitle: "Test Thread",
+    // );
+    // Widget gap = const Gap(10);
+    var color = userPageViewModel.spaceColor;
+    return switch (widget.pageType) {
+      DashboardPageType.home => [
+        SpaceInfoFrame(
+          frameColor: color,
+          frameHeight: MediaQuery.of(context).size.height,
+          frameWidth: MediaQuery.of(context).size.width * 0.25,
+        ),
+        _tempFrame("home", 1),
+      ],
+      DashboardPageType.activities => [
+        // spaceInfoAndNavigatorFrame,
+        // gap,
+        // Expanded(
+        //   flex: 2,
+        //   child: DashboardFrameLayout(
+        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+        //   child: const ActivityListFrame()
+        // )),
+        // gap,
+        // Expanded(
+        //   flex: 3,
+        //   child: DashboardFrameLayout(
+        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
+        //   child: const Center(
+        //     child: Text("Activities Detail"),
+        //   )
+        // )),
+        // _tempFrame("Calendar", 2),
+        Expanded(
+          flex: 2,
+          child: DashboardFrameLayout(
+          frameColor: color,
+          child: ActivityListFrame(color: color,)
+        )),
+        _tempFrame("Activities Detail", 3),
+      ],
+      DashboardPageType.threads => [
+        _tempFrame("thread list", 1),
+        Expanded(
+          flex: 3,
+          child: DashboardFrameLayout(
+            frameColor: userPageViewModel.spaceColor,
+            child: const ChatThreadBody(
+            threadTitle: "Test Thread",
+          ))),
+      ],
+      DashboardPageType.settings => [
+        Expanded(child: UserSettingFrame(
+          frameColor: color,
+          frameHeight: MediaQuery.of(context).size.height,
+          frameWidth: MediaQuery.of(context).size.width,
+        ))
+      ],
+      DashboardPageType.none => [
+        _tempFrame("error", 1)
+      ],
+    };
   }
+
+  Widget _buildBody() {
+    return Consumer<UserSpaceViewModel>(
+        builder: (context, userSpaceViewModel, child) => 
+          userSpaceViewModel.isLoading
+            ? const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+            : DashboardView(
+              backgroundColor: Colors.white,
+              appBar: _getAppBar(),
+              frames: [
+                navigationRailFrame(),
+                ..._getFrames(),
+              ],
+              drawer: _getDrawer(context),
+              direction: Axis.horizontal,
+        ),
+    );
+  }
+
+  Widget _getDrawer(BuildContext context){
+    var user = Provider.of<UserDataProvider>(context, listen: false);
+    return DashboardDrawer(
+      primaryColor: userPageViewModel.spaceColor,
+      userProfiles: user.currentUser!,
+      workspaceProfiles: user.currentUser!.joinedWorkspaces,
+      selectedProfileId: user.currentUser!.id,
+    );
+  }
+
+  SpaceAppBar _getAppBar() {
+    var user = Provider.of<UserDataProvider>(context, listen: false);
+    return SpaceAppBar(
+      color: userPageViewModel.spaceColor,
+      spaceName:  user.currentUser?.name ?? "",
+      spaceProfilePicURL: user.currentUser?.photo != null ? userPageViewModel.currentUser!.photo!.data : "",
+    );
+  }
+
+  // Widget? _getNavigationBar(BuildContext context, UserPageViewModel viewModel) {
+  //   if (kIsWeb) {
+  //     return null;
+  //   } else {
+  //     debugPrint("is not web, return bottom navigation bar");
+  //     return MobileBottomNavigationBar(
+  //       currentIndex: viewModel.currentPageIndex,
+  //       themePrimaryColor: viewModel.selectedProfile.spaceColor,
+  //       onTap: (index) => viewModel.updateCurrentIndex(index),
+  //     );
+  //   }
+  // }
 }

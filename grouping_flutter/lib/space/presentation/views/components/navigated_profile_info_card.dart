@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/core/shared/color_widget_interface.dart';
-import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
+import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:grouping_project/space/presentation/views/components/color_card_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 
-class NavigatedProfileInfoCardButton extends StatelessWidget implements WithThemePrimaryColor{
-  // TODO: will be change at future
-  // it should be SpaceNavigateEntity 
-  final SpaceProfileEntity profile;
+class NavigatedProfileInfoCardButton extends StatelessWidget{
   final bool isSelected;
-  
+  final Color primaryColor;
+  final String? profileImageURL;
+  final String profileName;
+  final String routerPath;
+
   const NavigatedProfileInfoCardButton({
     super.key,
-    required this.profile,
+    required this.primaryColor,
+    required this.profileName,
+    required this.routerPath,
+    this.profileImageURL,
     this.isSelected = false,
   });
 
@@ -21,8 +25,6 @@ class NavigatedProfileInfoCardButton extends StatelessWidget implements WithThem
     vertical: 5,
   );
 
-  @override
-  Color get getThemePrimaryColor => profile.spaceColor;
 
   @override
   Widget build(BuildContext context) => _buildBody(context);
@@ -30,23 +32,24 @@ class NavigatedProfileInfoCardButton extends StatelessWidget implements WithThem
   Widget _buildBody(BuildContext context){
     return InkWell(
       onTap: (){
-        debugPrint("unimplemented yet, move to ${profile.spaceName} page");
+        GoRouter.of(context).go(routerPath);
       },
       child: ColorCardWidget(
         padding: _padding,
-        color: getThemePrimaryColor,
+        color: primaryColor,
         withALLBorder: true,
         child: Row(
           children: [
             ProfileAvatar(
-              themePrimaryColor: getThemePrimaryColor,
-              label: profile.spaceName,
+              themePrimaryColor: primaryColor,
+              label: profileName,
+              avatar: profileImageURL != null && profileImageURL!.isNotEmpty 
+                ? Image.network(profileImageURL!) : null,
               avatarSize: 35,
-              // labelFontSize: 10,
             ),
-            const SizedBox(width: 10,),
+            const Gap(5),
             Text(
-              profile.spaceName,
+              profileName,
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
                 fontWeight: FontWeight.bold
               )
@@ -60,5 +63,5 @@ class NavigatedProfileInfoCardButton extends StatelessWidget implements WithThem
   }
 
   Widget get showSelectedWidget => 
-    isSelected ? Icon(Icons.check, color: getThemePrimaryColor,) : const SizedBox.shrink();
+    isSelected ? Icon(Icons.check, color: primaryColor,) : const SizedBox.shrink();
 }

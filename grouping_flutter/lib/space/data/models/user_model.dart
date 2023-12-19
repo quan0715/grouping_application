@@ -26,7 +26,7 @@ class UserTagModel {
 
   @override
   String toString() {
-    return 'Account Tag: $title : $content';
+    return 'title: $title, content: $content';
   }
 }
 
@@ -36,8 +36,7 @@ class UserTagModel {
 class UserModel {
   final int? id;
   String account;
-  String password;
-  String name;
+  String userName;
   String introduction;
   ImageModel? photo;
   List<UserTagModel> tags;
@@ -51,9 +50,8 @@ class UserModel {
   UserModel._default()
       : this.id = -1,
         this.account = 'unknown',
-        this.password = 'unknown',
-        this.name = 'unknown',
-        this.introduction = 'unknown',
+        this.userName = 'unknown',
+        this.introduction = 'empty',
         this.photo = null,
         this.tags = [],
         this.joinedWorkspaces = [],
@@ -65,8 +63,7 @@ class UserModel {
   UserModel({
     int? accountId,
     String? account,
-    String? password,
-    String? name,
+    String? userName,
     String? introduction,
     ImageModel? photo,
     List<UserTagModel>? tags,
@@ -74,8 +71,7 @@ class UserModel {
     List<ActivityModel>? contributingActivities,
   })  : this.id = accountId ?? defaultAccount.id,
         this.account = account ?? defaultAccount.account,
-        this.password = password ?? defaultAccount.password,
-        this.name = name ?? defaultAccount.name,
+        this.userName = userName ?? defaultAccount.userName,
         this.introduction = introduction ?? defaultAccount.introduction,
         this.photo = photo ?? defaultAccount.photo,
         this.tags = tags ?? List.from(defaultAccount.tags),
@@ -84,43 +80,12 @@ class UserModel {
         this.contributingActivities = contributingActivities ??
             List.from(defaultAccount.contributingActivities);
 
-  /// ### A method to copy an instance from this instance, and change some data with given.
-  // UserModel copyWith({
-  //   int? accountId,
-  //   String? account,
-  //   String? name,
-  //   // int? color,
-  //   String? nickname,
-  //   String? slogan,
-  //   String? introduction,
-  //   ImageModel? photo,
-  //   List<UserTagModel>? tags,
-  //   // String? photoId,
-  //   List<WorkspaceModel>? joinedWorkspaces,
-  //   List<EditableCardModel>? contributingActivities,
-  //   // List<String>? associateEntityId,
-  //   // List<AccountModel>? associateEntityAccount,
-  // }) {
-  //   return UserModel(
-  //     accountId: accountId ?? this.id,
-  //     account: account ?? this.account,
-  //     name: name ?? this.name,
-  //     tags: tags ?? this.tags,
-  //     introduction: introduction ?? this.introduction,
-  //     // photoId: photoId ?? this.photoId,
-  //     photo: photo ?? this.photo,
-  //     joinedWorkspaces: joinedWorkspaces ?? this.joinedWorkspaces,
-  //     contributingActivities:
-  //         contributingActivities ?? this.contributingActivities,
-  //     // associateEntityId: associateEntityId ?? this.associateEntityId,
-  //   );
-  // }
-
+ 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': this.id,
-        'user_name': this.name,
+        'user_name': this.userName,
         'introduction': this.introduction,
-        'photo': this.photo?.toJson(),
+        // 'photo': this.photo?.toJson(),
         'tags': this.tags.map((tag) => tag.toJson()).toList(),
         'joined_workspaces': this
             .joinedWorkspaces
@@ -133,11 +98,10 @@ class UserModel {
       };
 
   factory UserModel.fromJson({required Map<String, dynamic> data}) => UserModel(
-        accountId: data['id'] as int,
-        account: data['account'] as String,
-        // password: data['password'] as String,
-        name: data['user_name'] as String,
-        introduction: data['introduction'] as String,
+        accountId: data['id'],
+        account: data['account'],
+        userName: data['user_name'],
+        introduction: data['introduction'],
         photo: data['photo'] != null
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
@@ -149,8 +113,6 @@ class UserModel {
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((workspace) => WorkspaceModel.fromJson(data: workspace))
             .toList(),
-        // joinedWorkspaces: data['joined_workspaces'].cast<WorkspaceModel>()
-        //     as List<WorkspaceModel>,
         contributingActivities: ((data['contributing_activities'] ?? [])
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
@@ -162,10 +124,10 @@ class UserModel {
   factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
       accountId: entity.id ?? defaultAccount.id,
-      name: entity.name,
-      introduction: entity.introduction,
+      userName: entity.name,
+      introduction: entity.introduction.isEmpty ? entity.name : entity.introduction,
       photo: entity.photo ?? defaultAccount.photo,
-      tags: entity.tags,
+      tags: entity.tags.map((tag) => UserTagModel(title: tag.title, content: tag.content)).toList(),
       joinedWorkspaces: entity.joinedWorkspaces,
       contributingActivities: entity.contributingActivities,
     );
@@ -175,7 +137,7 @@ class UserModel {
   String toString() {
     return {
       'id': this.id,
-      'user_name': this.name,
+      'user_name': this.userName,
       'introduction': this.introduction,
       'tags': this.tags,
       'joined_workspaces': this.joinedWorkspaces,

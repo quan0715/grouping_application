@@ -22,7 +22,7 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, UserEntity>> getUser(int userID) async {
     try {
       final userModel = await remoteDataSource.getUserData(uid: userID);
-      // debugPrint(user.toString());
+      // debugPrint(userModel.toString());
       return Right(UserEntity.fromModel(userModel));
     } on ServerException catch (error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
@@ -51,8 +51,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateSetting(
-      SettingEntity settingEntity) async {
+  Future<Either<Failure, void>> updateSetting(SettingEntity settingEntity) async {
     try {
       await localDataSource
           .cacheSetting(SettingModel.fromEntity(settingEntity));
@@ -60,5 +59,11 @@ class UserRepositoryImpl implements UserRepository {
     } on CacheException catch (error) {
       return Left(CacheFailure(errorMessage: error.exceptionMessage));
     }
+  }
+  
+  @override
+  Future<Either<Failure, void>> updateProfilePhoto(int userId, String photoUrl) {
+    // TODO: implement updateProfilePhoto
+    throw UnimplementedError();
   }
 }

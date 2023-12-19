@@ -76,7 +76,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> init() async {
     messageService.clearMessages();
     await repo.localDataSource.clearCacheToken();
-    passwordLoginEntity.accountEmail = "quan@gmail.com";
+    passwordLoginEntity.accountEmail = "quanquan";
     passwordLoginEntity.accountPassword = "123123123";
     notifyListeners();
     return;
