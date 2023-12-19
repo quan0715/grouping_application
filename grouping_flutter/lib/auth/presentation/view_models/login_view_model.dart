@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:html' as html;
+
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
 import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.dart';
@@ -123,6 +125,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onThirdPartyLogin(AuthProvider provider) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
+    AuthLocalDataSourceImpl().clearCacheToken();
     try {
       isLoading = true;
       BaseOAuthService authService = getOAuthService(provider);
@@ -152,14 +155,15 @@ class LoginViewModel extends ChangeNotifier {
       } else {
         authService = getOAuthService(AuthProvider.github);
       }
-      userAccessToken =
-          (await authService.getAccessToken(AuthLocalDataSourceImpl())).token;
-      debugPrint("access token : $userAccessToken");
+      var authServiceResult = await authService
+          .getAccessToken(AuthLocalDataSourceImpl())
+          .whenComplete(() => html.window.history.replaceState(
+              null, Uri.base.toString(), Uri.base.fragment + Uri.base.path));
+      userAccessToken = authServiceResult.token;
+      isLoading = false;
+
+      notifyListeners();
     }
     return;
-  }
-
-  Future addCodeToStorage({required String code}) async {
-    await StorageMethods.write(key: 'code', value: code);
   }
 }

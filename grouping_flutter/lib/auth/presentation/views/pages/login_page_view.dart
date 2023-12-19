@@ -55,6 +55,13 @@ class WebLoginViewPage extends AuthLayoutInterface {
     }
   }
 
+  Future onThridPartyLogin(BuildContext context, LoginViewModel loginManager,
+      AuthProvider provider) async {
+    if (textFormKey.currentState!.validate()) {
+      await loginManager.onThirdPartyLogin(provider);
+    }
+  }
+
   Widget _getInputForm() {
     return Consumer<LoginViewModel>(
       builder: (context, loginManager, child) => Padding(
@@ -183,9 +190,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
             onUrlChange: (change) async {
               if (change.url!.contains("code")) {
                 await loginManager
-                    .addCodeToStorage(
-                        code: Uri.dataFromString(change.url!)
-                            .queryParameters['code']!)
+                    .isURLContainCode(Uri.parse(change.url!))
                     .then((value) => Navigator.of(context).pop());
               }
             },
@@ -257,7 +262,11 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LoginViewModel>.value(
       value: loginManager
-        ..isURLContainCode(Uri.base)
+        ..isURLContainCode(Uri.base).whenComplete(() {
+          if (loginManager.userAccessToken.isNotEmpty && context.mounted) {
+            moveToHome(context);
+          }
+        })
         ..init(),
       child: super.build(context),
     );
