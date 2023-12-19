@@ -1,22 +1,28 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/core/shared/color_widget_interface.dart';
-import 'package:grouping_project/space/domain/entities/space_profile_entity.dart';
+import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
+import 'package:provider/provider.dart';
 
-class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, WithThemePrimaryColor{
-  // final Color color;
-  final SpaceProfileEntity profile;
+class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget{
 
-  const DashboardAppBar({
+  final Color color;
+  final String spaceName;
+  final String? spaceProfilePicURL;
+
+  const SpaceAppBar({
+    this.color = Colors.white,
+    this.spaceName = "",
+    this.spaceProfilePicURL,
     super.key,
-    // required this.color,
-    required this.profile,
   });
+  
+  // @override
+  // Color get getThemePrimaryColor => profile.spaceColor;
 
-  @override
-  Color get getThemePrimaryColor => profile.spaceColor;
-
+  UserSpaceViewModel getSpaceViewModel(BuildContext context){
+    return Provider.of<UserSpaceViewModel>(context, listen: false);
+  }
   @override
   Widget build(BuildContext context) => _buildBody(context); 
 
@@ -32,22 +38,28 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
   Widget _getMenuButton(BuildContext context){
     return IconButton(
       onPressed: () => Scaffold.maybeOf(context)!.openDrawer(),
-      icon: Icon(Icons.menu, color: getThemePrimaryColor),
+      icon: Icon(Icons.menu, color: color),
     );
   }
 
   Widget _getTitleWidget(BuildContext context){
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ProfileAvatar(
-          themePrimaryColor: getThemePrimaryColor,
-          label: profile.spaceName,
+          themePrimaryColor: color,
+          label: spaceName,
+          avatar: spaceProfilePicURL != null && spaceProfilePicURL!.isNotEmpty 
+            ? Image.network(spaceProfilePicURL!) : null,
           avatarSize: 35,
         ),
         const SizedBox(width: 10,),
         Text(
-          getTitle(profile.spaceName,),
-          style: TextStyle(color: getThemePrimaryColor, fontSize: 16, fontWeight: FontWeight.bold)
+          getTitle(spaceName),
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
@@ -69,7 +81,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
       centerTitle: false,
       leading: IconButton(
         onPressed: () => Scaffold.maybeOf(context)!.openDrawer(),
-        icon: Icon(Icons.menu, color: getThemePrimaryColor),
+        icon: Icon(Icons.menu, color: color),
       ),
       title: _getTitleWidget(context),
       automaticallyImplyLeading: false,
@@ -77,7 +89,6 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget, Wi
         _getMenuButton(context),
       ],
     );
-
   }
 
 }

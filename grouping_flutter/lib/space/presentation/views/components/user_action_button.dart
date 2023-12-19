@@ -20,12 +20,12 @@ class UserActionButton extends ElevatedButton implements WithThemePrimaryColor{
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5),
-        side: BorderSide(color: color.withOpacity(0.3), width:1),
+        // side: BorderSide(color: color.withOpacity(0.3), width:1),
       ),
     );
 
   factory UserActionButton.secondary({
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     required String label,
     required Color primaryColor,
     Widget? icon,
@@ -43,7 +43,7 @@ class UserActionButton extends ElevatedButton implements WithThemePrimaryColor{
   );
 
   factory UserActionButton.primary({
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     required String label,
     required Color primaryColor,
     Widget? icon,

@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_this
-import 'package:grouping_project/core/exceptions/exception.dart';
-import 'package:grouping_project/space/data/models/account_model.dart';
-import 'package:grouping_project/space/data/models/editable_card_model.dart';
+// import 'package:grouping_project/core/exceptions/exception.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
 import 'mission_state_model.dart';
 // import 'package:grouping_project/exception.dart';
@@ -10,44 +12,29 @@ import 'mission_state_model.dart';
 
 /// ## a data model for misison
 /// * to upload/download, use `DataController`
-class MissionModel extends EditableCardModel {
-  // String title;
+class MissionModel extends ActivityModel {
   DateTime deadline;
-  // List<String> contributorIds;
-  // String introduction;
-  String stateId;
+  int stateId;
   MissionStateModel state;
-  // List<String> tags;
-  // List<DateTime> notifications;
   List<String> parentMissionIds;
   List<String> childMissionIds;
-  // AccountModel ownerAccount;
 
   static final MissionModel defaultMission = MissionModel._default();
 
   MissionModel._default()
-      :
-        // : this.title = 'unknown',
-        this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        // this.contributorIds = [],
-        // this.introduction = 'unknown',
-        this.stateId = MissionStateModel.defaultUnknownState.id!,
+      : this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
+        this.stateId = MissionStateModel.defaultUnknownState.id,
         this.state = MissionStateModel.defaultUnknownState,
-        // this.tags = [],
-        // this.notifications = [],
         this.parentMissionIds = [],
         this.childMissionIds = [],
-        // this.ownerAccount = AccountModel.defaultAccount,
         super(
           title: 'unknown',
           contributors: [],
           introduction: 'unknown',
-          // tags: [],
           notifications: [],
-          creatorAccount: AccountModel.defaultAccount,
+          creatorAccount: UserModel.defaultAccount,
           id: 0,
-          // databasePath: 'mission',
-          // storageRequired: false,
+          belongWorkspace: WorkspaceModel.defaultWorkspace,
         );
 
   /// ## a data model for mission
@@ -62,12 +49,14 @@ class MissionModel extends EditableCardModel {
     DateTime? deadline,
     List<int>? contributors,
     String? introduction,
-    String? stateId,
+    int? stateId,
     MissionStateModel? state,
     List<String>? tags,
     List<DateTime>? notifications,
     List<String>? parentMissionIds,
     List<String>? childMissionIds,
+    UserModel? creatorAccount,
+    WorkspaceModel? belongWorkspace,
     // AccountModel? ownerAccount,
   })  : this.deadline = deadline ?? defaultMission.deadline,
         // this.contributorIds = contributorIds ?? defaultMission.contributorIds,
@@ -88,7 +77,8 @@ class MissionModel extends EditableCardModel {
           // tags: tags ?? List.from(defaultMission.tags),
           notifications:
               notifications ?? List.from(defaultMission.notifications),
-          creatorAccount: defaultMission.creatorAccount,
+          creatorAccount: creatorAccount ?? defaultMission.creatorAccount,
+          belongWorkspace: belongWorkspace ?? defaultMission.belongWorkspace,
           // databasePath: defaultMission.databasePath,
           // storageRequired: defaultMission.storageRequired,
           // setOwnerRequired: true
@@ -115,17 +105,18 @@ class MissionModel extends EditableCardModel {
   factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
       MissionModel(
           id: data['id'] as int,
-          title: data['title'] as String,
-          introduction: data['description'] as String,
+          title: (data['title'] ?? defaultMission.title) as String,
+          introduction: (data['description'] ?? defaultMission.introduction) as String,
           deadline: DateTime.parse(data['mission']['deadline']),
           // state: MissionStateModel.fromJson(data: data['state']),
-          stateId: data['mission']['state'].toString(),
-          contributors: data['contributors'].cast<int>() as List<int>,
+          stateId: data['mission']['state'],
+          contributors: (data['contributors'] ?? []).cast<int>() as List<int>,
           // tags: data['tags'].cast<String>() as List<String>,
-          parentMissionIds: data['parents'].cast<String>() as List<String>,
-          childMissionIds: data['children'].cast<String>() as List<String>,
+          parentMissionIds: (data['parents'] ?? []).cast<String>() as List<String>,
+          childMissionIds: (data['children'] ?? []).cast<String>() as List<String>,
           notifications: _notificationFromJson(
-              data['notifications'].cast<Map<String, String>>()));
+              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),
+          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']));
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -142,7 +133,42 @@ class MissionModel extends EditableCardModel {
         'parents': this.parentMissionIds,
         'children': this.childMissionIds,
         'notifications': _notificationsToJson(),
+        'belong_workspace': belongWorkspace.toJson(),
       };
+
+  @override
+  MissionEntity toEntity() {
+    return MissionEntity(
+        id: id,
+        title: title,
+        introduction: introduction,
+        contributors: contributors,
+        notifications: notifications,
+        creatorAccount: creatorAccount,
+        deadline: deadline,
+        stateId: stateId,
+        state: state,
+        parentMissionIds: parentMissionIds,
+        childMissionIds: childMissionIds,
+        belongWorkspace: belongWorkspace,);
+  }
+
+  factory MissionModel.fromEntity(MissionEntity entity){
+    return MissionModel(
+      id: entity.id,
+      title: entity.title,
+      introduction: entity.introduction,
+      contributors: entity.contributors,
+      notifications: entity.notifications,
+      // createAccount: entity.creatorAccount,
+      deadline: entity.deadline,
+      stateId: entity.stateId,
+      state: entity.state,
+      parentMissionIds: entity.parentMissionIds,
+      childMissionIds: entity.childMissionIds,
+      belongWorkspace: entity.belongWorkspace,
+    );
+  }
 
   List<Map<String, String>> _notificationsToJson() {
     List<Map<String, String>> notiMap = [];
@@ -168,15 +194,17 @@ class MissionModel extends EditableCardModel {
   /// ### This is the perfered method to change state of mission
   /// - please make sure the [stateModel] is a correct model in database
   void setStateByStateModel(MissionStateModel stateModel) {
-    if (stateModel.id != null) {
-      stateId = stateModel.id!;
-      state = stateModel;
-    } else {
-      throw GroupingProjectException(
-          message: 'This state model is not from the database.',
-          code: GroupingProjectExceptionCode.wrongParameter,
-          stackTrace: StackTrace.current);
-    }
+    stateId = stateModel.id;
+    state = stateModel;
+    // if (stateModel.id != null) {
+    //   stateId = stateModel.id!;
+    //   state = stateModel;
+    // } else {
+    //   throw GroupingProjectException(
+    //       message: 'This state model is not from the database.',
+    //       code: GroupingProjectExceptionCode.wrongParameter,
+    //       stackTrace: StackTrace.current);
+    // }
   }
 
   @override
@@ -200,7 +228,7 @@ class MissionModel extends EditableCardModel {
   bool operator ==(Object other) {
     return this.toString() == other.toString();
   }
-  
+
   @override
   // TODO: implement hashCode
   int get hashCode => id!;

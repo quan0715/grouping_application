@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:html' as html;
+
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
 import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.dart';
@@ -28,7 +30,6 @@ class LoginViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-
   // LoginState loginState = LoginState.loginFail;
 
   void updateEmail(String value) {
@@ -52,7 +53,8 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onPasswordLogin() async {
     debugPrint("Login with: Email: $email , Password: $password");
 
-    PasswordLoginUseCase passwordLoginUseCase = PasswordLoginUseCase(repository: repo);
+    PasswordLoginUseCase passwordLoginUseCase =
+        PasswordLoginUseCase(repository: repo);
     userAccessToken = "";
     isLoading = true;
     notifyListeners();
@@ -60,12 +62,13 @@ class LoginViewModel extends ChangeNotifier {
 
     failureOrAuthToken.fold((failure) {
       debugPrint(failure.errorMessage);
-      messageService.addMessage(MessageData.error(title: "登入失敗", message: failure.errorMessage));
+      messageService.addMessage(
+          MessageData.error(title: "登入失敗", message: failure.errorMessage));
     }, (authToken) {
       userAccessToken = authToken.token;
       debugPrint("access token : $userAccessToken");
     });
-    
+
     isLoading = false;
     notifyListeners();
   }
@@ -73,7 +76,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> init() async {
     messageService.clearMessages();
     await repo.localDataSource.clearCacheToken();
-    passwordLoginEntity.accountEmail = "quan@gmail.com";
+    passwordLoginEntity.accountEmail = "quanquan";
     passwordLoginEntity.accountPassword = "123123123";
     notifyListeners();
     return;
@@ -122,6 +125,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onThirdPartyLogin(AuthProvider provider) async {
     // debugPrint("登入測試");
     // debugPrint("Email: $email , Password: $password");
+    AuthLocalDataSourceImpl().clearCacheToken();
     try {
       isLoading = true;
       BaseOAuthService authService = getOAuthService(provider);
@@ -151,12 +155,15 @@ class LoginViewModel extends ChangeNotifier {
       } else {
         authService = getOAuthService(AuthProvider.github);
       }
-      await authService.getAccessToken();
+      var authServiceResult = await authService
+          .getAccessToken(AuthLocalDataSourceImpl())
+          .whenComplete(() => html.window.history.replaceState(
+              null, Uri.base.toString(), Uri.base.fragment + Uri.base.path));
+      userAccessToken = authServiceResult.token;
+      isLoading = false;
+
+      notifyListeners();
     }
     return;
-  }
-
-  Future addCodeToStorage({required String code}) async {
-    await StorageMethods.write(key: 'code', value: code);
   }
 }

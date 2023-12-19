@@ -47,4 +47,15 @@ class AuthRepositoryImpl implements AuthRepository {
     await remoteDataSource.logout(authTokenModel);
     await localDataSource.clearCacheToken();
   }
+  
+  @override
+  Future<Either<Failure, AuthTokenModel>> getAccessToken() async {
+    try {
+      final token = await localDataSource.getCacheToken();
+      return Right(token);
+    } on CacheException catch (error) {
+      return Left(CacheFailure(errorMessage: error.exceptionMessage));
+    }
+  }
+
 }

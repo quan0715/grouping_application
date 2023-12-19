@@ -1,24 +1,28 @@
 // create event & mission super class or activity parent class?
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/core/util/data_mapper.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
 // import 'package:grouping_project/model/workspace/data_model.dart';
 
-abstract class EditableCardModel {
+abstract class ActivityModel extends DataMapper{
   final int? id;
   String title;
-  List<int> contributors;
   String introduction;
+  List<int> contributors;
   // List<String> tags;
   List<DateTime> notifications;
-  AccountModel creatorAccount;
+  UserModel creatorAccount;
+  WorkspaceModel belongWorkspace;
 
-  EditableCardModel(
+  ActivityModel(
       {required this.id,
       required this.title,
       required this.introduction,
       required this.contributors,
       required this.creatorAccount,
       // required this.tags,
-      required this.notifications});
+      required this.notifications,
+      required this.belongWorkspace});
   // EditableCardModel(
   //     {this.title = 'default',
   //     this.contributorIds = const [],
@@ -33,4 +37,5 @@ abstract class EditableCardModel {
   // EditableCardModel fromJson({required String id, required Map<String, dynamic> data});
 
   Map<String, dynamic> toJson();
+
 }

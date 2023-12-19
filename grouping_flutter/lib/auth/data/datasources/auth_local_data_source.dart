@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/core/shared/app_shared_data.dart';
@@ -27,6 +28,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         exceptionMessage: 'cache Token is expired',
       );
     } else {
+      debugPrint('token ${tokenModel.token}');
+      debugPrint('refresh ${tokenModel.refresh}');
       await sharedPreferences.setValue(
           "String", 'auth-token', tokenModel.token);
       await sharedPreferences.setValue(

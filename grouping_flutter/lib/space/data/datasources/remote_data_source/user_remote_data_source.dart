@@ -4,19 +4,20 @@ import 'dart:convert';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
-import 'package:grouping_project/space/data/models/account_model.dart';
+import 'package:grouping_project/space/data/models/user_model.dart';
 
 /// The server backend IP of the database
 /// ## 這個 UserService 主要是負責處理 user 的功能操作
-/// 
+///
 /// 此 service 可以 get, update user
 
-abstract class UserRemoteDataSource{
+abstract class UserRemoteDataSource {
   UserRemoteDataSource({String token = ""});
-  Future<AccountModel> getUserData({required int uid});
-  Future<AccountModel> updateUserData({required AccountModel account});
-  
+  Future<UserModel> getUserData({required int uid});
+  Future<UserModel> updateUserData({required UserModel account});
+  Future<UserModel> updateUserProfileImage({required UserModel account, required String imageURL});
 }
+
 class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   late final String _token;
   late final Map<String, String> headers;
@@ -27,7 +28,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   /// 此 service 可以 get, update user
   ///
   /// * [token] : 使用者的認證碼
-  /// 
+  ///
   /// ### Example
   /// ```dart
   /// UserService service = UserService(token: userToken);
@@ -37,11 +38,13 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     _token = token;
     headers = {
       "Content-Type": "application/json",
-      "Authorization":"Bearer $_token",
+      "Authorization": "Bearer $_token",
     };
+    // debugPrint(_token);
+    // debugPrint(headers.toString());
   }
 
-  // / 設定當前 UserService 要對後端傳遞的**客戶(client)** 
+  // / 設定當前 UserService 要對後端傳遞的**客戶(client)**
   void setClient(http.Client client) {
     _client = client;
   }
@@ -52,60 +55,89 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   }
 
   /// ## 獲取想要的 user 的資訊
-  /// 
-  /// 傳入 [uid] 來獲取 [AccountModel]\
-  /// 若未出錯則回傳 [AccountModel]\
+  ///
+  /// 傳入 [uid] 來獲取 [UserModel]\
+  /// 若未出錯則回傳 [UserModel]\
   /// 若 [uid] 有格式錯誤則會丟出 [Exception]\
-  /// 若 [uid] 所對應的 [AccountModel] 不存在則會丟出 [Exception]
-  /// 
+  /// 若 [uid] 所對應的 [UserModel] 不存在則會丟出 [Exception]
+  ///
   /// ### Example
   /// ```dart
   /// AccountModel account = await UserService.getUserData(uid: -1);
   /// ```
-  
+
   @override
-  Future<AccountModel> getUserData({required int uid}) async {
-    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/$uid");
+  Future<UserModel> getUserData({required int uid}) async {
+    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/$uid/");
     final response = await _client.get(apiUri, headers: headers);
+    // debugPrint(response.body);
     switch (response.statusCode) {
-        case 200:
+      case 200:
         // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
-          return AccountModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+          return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
         case 400:
           throw ServerException(exceptionMessage: "Invalid Syntax");
         case 404:
           throw ServerException(exceptionMessage: "The requesting data was not found");
         default:
-          return AccountModel.defaultAccount;
+          return UserModel.defaultAccount;
     }
   }
 
   /// ## 更新 user 的資訊
-  /// 
-  /// 傳入 [AccountModel] 來更新資料\
-  /// 若未出錯則回傳更新後的 [AccountModel]\
+  ///
+  /// 傳入 [UserModel] 來更新資料\
+  /// 若未出錯則回傳更新後的 [UserModel]\
   /// 若 [account] 有格式錯誤則會丟出 [Exception]\
-  /// 若 [account] 所對應的 [AccountModel] 不存在則會丟出 [Exception]
-  /// 
+  /// 若 [account] 所對應的 [UserModel] 不存在則會丟出 [Exception]
+  ///
   /// ### Example
   /// ```dart
   /// AccountModel account = await UserService.updateUserData(account: updateModelOfAccount);
   /// ```
-  /// 
+  ///
   @override
-  Future<AccountModel> updateUserData({required AccountModel account}) async {
-    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}");
-    final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account));
-
+  Future<UserModel> updateUserData({required UserModel account}) async {
+    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
+    // debugPrint("before update---------------------------");
+    // debugPrint(jsonEncode(account.toJson()).toString());
+    final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account.toJson()));
+    // debugPrint("after update---------------------------");
+    // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
     switch (response.statusCode) {
       case 200:
-        return AccountModel.fromJson(data: jsonDecode(response.body));
+        return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
-        throw ServerException(exceptionMessage: "The requesting data was not found");
+        throw ServerException(
+            exceptionMessage: "The requesting data was not found");
       default:
-        return AccountModel.defaultAccount;
+        return UserModel.defaultAccount;
+    }
+  }
+
+  @override
+  Future<UserModel> updateUserProfileImage({required UserModel account,required String imageURL}) async {
+    final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
+    
+    var request = http.MultipartRequest("POST", apiUri);
+    // request.fields[] = productId.toString();
+    request.files.add(await http.MultipartFile.fromPath('photo_data', imageURL));
+    // final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account.toJson()));
+    // debugPrint("after update---------------------------");
+    // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
+    var response = await request.send();
+    switch (response.statusCode) {
+      case 200:
+        return UserModel.fromJson(data: jsonDecode(await response.stream.bytesToString()));
+      case 400:
+        throw ServerException(exceptionMessage: "Invalid Syntax");
+      case 404:
+        throw ServerException(
+            exceptionMessage: "The requesting data was not found");
+      default:
+        return UserModel.defaultAccount;
     }
   }
 }

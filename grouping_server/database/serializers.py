@@ -9,6 +9,9 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ['id', 'image_uri', 'data', 'updated_at']
+        extra_kwargs = {
+            'updated_at': {'read_only': True}
+        }
 
 
 class WorkspaceTagSerializer(serializers.ModelSerializer):
@@ -20,12 +23,13 @@ class WorkspaceTagSerializer(serializers.ModelSerializer):
 class WorkspaceSerializer(serializers.ModelSerializer):
     tags = WorkspaceTagSerializer(
         many=True, required=False, allow_empty=True)
-    photo = ImageSerializer(required=False)
+    photo_data = serializers.ImageField(write_only=True)
+    photo = ImageSerializer(read_only=True)
 
     class Meta:
         model = Workspace
         fields = ['id', 'theme_color', 'workspace_name',
-                  'description', 'is_personal', 'photo', 'members', 'tags', 'activities']
+                  'description', 'photo_data', 'photo', 'members', 'tags', 'activities']
         extra_kwargs = {
             'members': {'many': True, 'required': False, 'allow_empty': True},
             'activities': {'many': True, 'read_only': True}
@@ -33,11 +37,11 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('members', None)
-        photo_data = validated_data.pop('photo', None)
+        photo_data = validated_data.pop('photo_data', None)
         tags_data = validated_data.pop('tags', None)
 
         if photo_data:
-            photo = Image.objects.create(**photo_data)
+            photo = Image.objects.create(data=photo_data)
             workspace = Workspace.objects.create(photo=photo, **validated_data)
         else:
             workspace = Workspace.objects.create(**validated_data)
@@ -50,7 +54,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         return workspace
 
     def update(self, instance, validated_data):
-        photo_data = validated_data.pop('photo', None)
+        photo_data = validated_data.pop('photo_data', None)
         tags_data = validated_data.pop('tags', None)
 
         instance = super().update(instance, validated_data)
@@ -58,7 +62,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         if photo_data:
             if instance.photo:
                 instance.photo.delete()
-            photo = Image.objects.create(**photo_data)
+            photo = Image.objects.create(data=photo_data)
             instance.photo = photo
             instance.save()
 
@@ -71,10 +75,29 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserTagSerializer(serializers.ModelSerializer):
+class WorkspaceSimpleSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+
     class Meta:
-        model = UserTag
-        fields = ['title', 'content']
+        model = Workspace
+        fields = ['id', 'theme_color', 'workspace_name', 'photo']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'theme_color': {'read_only': True},
+            'workspace_name': {'read_only': True}
+        }
+
+
+class UserSimpleSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'user_name', 'photo']
+        extra_kargs = {
+            'id': {'read_only': True},
+            'user_name': {'read_only': True},
+        }
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -88,6 +111,12 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ['start_time', 'end_time']
 
 
+class MissionStateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MissionState
+        fields = ['id', 'stage', 'name', 'belong_workspace']
+
+
 class MissionSerializer(serializers.ModelSerializer):
     deadline = serializers.DateTimeField(
         input_formats=["%Y-%m-%d", "iso-8601"])
@@ -95,7 +124,55 @@ class MissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mission
         fields = ['deadline', 'state']
-        extra_kwargs = {'state': {'required': False}}
+
+
+class MissionSimpleSerializer(serializers.ModelSerializer):
+    state = MissionStateSerializer(read_only=True)
+
+    class Meta:
+        model = Mission
+        fields = ['deadline', 'state']
+        extra_kwargs = {
+            'deadline': {'read_only': True},
+        }
+
+
+class ActivitySimpleSerializer(serializers.ModelSerializer):
+    event = EventSerializer(read_only=True)
+    mission = MissionSimpleSerializer(read_only=True)
+    belong_workspace = WorkspaceSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Activity
+        fields = ['id', 'title', 'event', 'mission', 'belong_workspace']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'title': {'read_only': True},
+        }
+
+
+class WorkspaceGetSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+    members = UserSimpleSerializer(many=True, read_only=True)
+    tags = WorkspaceTagSerializer(many=True, read_only=True)
+    activities = ActivitySimpleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Workspace
+        fields = ['id', 'theme_color', 'workspace_name', 'description',
+                  'photo', 'members', 'tags', 'activities']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'theme_color': {'read_only': True},
+            'workspace_name': {'read_only': True},
+            'description': {'read_only': True},
+        }
+
+
+class UserTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTag
+        fields = ['title', 'content']
 
 
 class ActivityNotificationSerializer(serializers.ModelSerializer):
@@ -200,18 +277,19 @@ class ActivityPatchSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     joined_workspaces = WorkspaceSerializer(many=True, read_only=True)
     tags = UserTagSerializer(many=True, required=False, allow_empty=True)
-    photo = ImageSerializer(required=False)
+    photo_data = serializers.ImageField(write_only=True)
+    photo = ImageSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'account', 'real_name', 'user_name', 'slogan', 'introduction',
+        fields = ['id', 'account', 'user_name', 'introduction', 'photo_data',
                   'photo', 'tags', 'joined_workspaces', 'contributing_activities']
         extra_kargs = {
             'contributing_activities': {'many': True, 'read_only': True}
         }
 
     def update(self, instance, validated_data):
-        photo_data = validated_data.pop('photo', None)
+        photo_data = validated_data.pop('photo_data', None)
         tags_data = validated_data.pop('tags', None)
 
         instance = super().update(instance, validated_data)
@@ -219,7 +297,7 @@ class UserSerializer(serializers.ModelSerializer):
         if photo_data:
             if instance.photo:
                 instance.photo.delete()
-            photo = Image.objects.create(**photo_data)
+            photo = Image.objects.create(data=photo_data)
             instance.photo = photo
             instance.save()
 
@@ -231,7 +309,20 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class MissionStateSerializer(serializers.ModelSerializer):
+class UserGetSerializer(serializers.ModelSerializer):
+    photo = ImageSerializer(read_only=True)
+    tags = UserTagSerializer(many=True, read_only=True)
+    joined_workspaces = WorkspaceSimpleSerializer(many=True, read_only=True)
+    contributing_activities = ActivitySimpleSerializer(
+        many=True, read_only=True)
+
     class Meta:
-        model = MissionState
-        fields = ['id', 'stage', 'name', 'belong_workspace']
+        model = User
+        fields = ['id', 'account', 'user_name', 'introduction',
+                  'photo', 'tags', 'joined_workspaces', 'contributing_activities']
+        extra_kargs = {
+            'id': {'read_only': True},
+            'account': {'read_only': True},
+            'user_name': {'read_only': True},
+            'introduction': {'read_only': True}
+        }

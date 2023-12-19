@@ -36,21 +36,29 @@ class WebLoginViewPage extends AuthLayoutInterface {
     GoRouter.of(context).go('/register');
   }
 
-  void moveToHome(BuildContext context) async{
+  void moveToHome(BuildContext context) async {
     debugPrint("前往主畫面");
     await Provider.of<TokenManager>(context, listen: false).updateToken();
     // GoRouter.of(context).go('/user/$userId');
   }
 
-  Future onPasswordLogin(BuildContext context, LoginViewModel loginManager) async {
+  Future onPasswordLogin(
+      BuildContext context, LoginViewModel loginManager) async {
     if (textFormKey.currentState!.validate()) {
       await loginManager.onPasswordLogin();
       if (loginManager.userAccessToken.isNotEmpty) {
         debugPrint("登入成功, 前往主畫面, token: ${loginManager.userAccessToken}");
-        if(context.mounted){
+        if (context.mounted) {
           moveToHome(context);
         }
       }
+    }
+  }
+
+  Future onThridPartyLogin(BuildContext context, LoginViewModel loginManager,
+      AuthProvider provider) async {
+    if (textFormKey.currentState!.validate()) {
+      await loginManager.onThirdPartyLogin(provider);
     }
   }
 
@@ -87,7 +95,8 @@ class WebLoginViewPage extends AuthLayoutInterface {
               ),
               AppButton(
                 buttonType: AppButtonType.hightLight,
-                onPressed: () async => await onPasswordLogin(context, loginManager),
+                onPressed: () async =>
+                    await onPasswordLogin(context, loginManager),
                 label: '登入',
               ),
               ActionTextButton(
@@ -181,9 +190,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
             onUrlChange: (change) async {
               if (change.url!.contains("code")) {
                 await loginManager
-                    .addCodeToStorage(
-                        code: Uri.dataFromString(change.url!)
-                            .queryParameters['code']!)
+                    .isURLContainCode(Uri.parse(change.url!))
                     .then((value) => Navigator.of(context).pop());
               }
             },
@@ -221,7 +228,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // MessagesList(messageService: loginManager.messageService),
-                  const TitleWithContent(
+                  TitleWithContent(
                       title: "登入 Login", content: "利用Email 登入或第三方登入"),
                   const Divider(thickness: 2),
                   _getInputForm(),
@@ -255,7 +262,11 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LoginViewModel>.value(
       value: loginManager
-        ..isURLContainCode(Uri.base)
+        ..isURLContainCode(Uri.base).whenComplete(() {
+          if (loginManager.userAccessToken.isNotEmpty && context.mounted) {
+            moveToHome(context);
+          }
+        })
         ..init(),
       child: super.build(context),
     );
