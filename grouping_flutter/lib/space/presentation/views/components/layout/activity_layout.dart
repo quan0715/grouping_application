@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
-// import 'package:grouping_project/space/domain/entities/activity_entity.dart';
+// import 'package:gap/gap.dart';
+import 'package:grouping_project/app/presentation/components/data_display/color_card_widget.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -46,18 +45,20 @@ class ActivityLayOut extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              "$title ($len)",
-              style: TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.bold, color: color),
-            ),
+            Text("$title ($len)",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: color, fontWeight: FontWeight.bold)),
             const Spacer(),
             _createButton(),
           ],
         ),
         type == ActivityType.event
-              ? Expanded(flex: 6, child: _displayEventBody(activityListViewModel))
-              : Expanded(flex: 7, child: _displayMissionBody(context, activityListViewModel))
+            ? Expanded(flex: 6, child: _displayEventBody(activityListViewModel))
+            : Expanded(
+                flex: 7,
+                child: _displayMissionBody(context, activityListViewModel))
         //     ? Expanded(
         //         flex: 1,
         //         child: _buildMissionNavigator(context, activityListViewModel))
@@ -78,7 +79,8 @@ class ActivityLayOut extends StatelessWidget {
       {required String typeTitle,
       required List<MissionEntity> missions,
       required bool isSeleted,
-      required double width}) {
+      required double width,
+      required BuildContext context}) {
     int length = missions.length;
 
     Color displayColor = isSeleted ? color : Colors.black45;
@@ -90,7 +92,10 @@ class ActivityLayOut extends StatelessWidget {
       child: Center(
           child: Text(
         "$typeTitle ($length)",
-        style: TextStyle(fontSize: 15, color: displayColor),
+        style: Theme.of(context)
+            .textTheme
+            .labelSmall!
+            .copyWith(color: displayColor, fontWeight: FontWeight.bold),
       )),
     );
   }
@@ -126,23 +131,44 @@ class ActivityLayOut extends StatelessWidget {
           TabBar(
             tabs: [
               Tab(
-                child: Text("ALL ${missionsType[0].length}"),
+                child: Text("ALL ${missionsType[0].length}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold)),
               ),
               Tab(
-                child: Text("未開始 ${missionsType[1].length}"),
+                child: Text("未開始 ${missionsType[1].length}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold)),
               ),
               Tab(
-                child: Text("進行中 ${missionsType[2].length}"),
+                child: Text("進行中 ${missionsType[2].length}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold)),
               ),
               Tab(
-                child: Text("待回覆 ${missionsType[3].length}"),
+                child: Text("待回覆 ${missionsType[3].length}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold)),
               ),
               Tab(
-                child: Text("已完成 ${missionsType[4].length}"),
+                child: Text("已完成 ${missionsType[4].length}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold)),
               )
             ],
           ),
-          Expanded(child: TabBarView(children: [
+          Expanded(
+              child: TabBarView(children: [
             _buildMission(activityListViewModel, missionsType[0]),
             _buildMission(activityListViewModel, missionsType[1]),
             _buildMission(activityListViewModel, missionsType[2]),
@@ -198,15 +224,19 @@ class ActivityLayOut extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            "@ ${belongWorkspace.name}",
-                            style: TextStyle(
-                                color: displayColor,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          Text("@ ${belongWorkspace.name}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall!
+                                  .copyWith(
+                                      color: displayColor,
+                                      fontWeight: FontWeight.bold)),
                           Text(
                             events[index].title,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -214,16 +244,20 @@ class ActivityLayOut extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           const Spacer(),
-                          Text(
-                            format.format(events[index].startTime),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            format.format(events[index].endTime),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black45),
-                          )
+                          Text(format.format(events[index].startTime),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall!
+                                  .copyWith(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
+                          Text(format.format(events[index].endTime),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall!
+                                  .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black45)),
                         ],
                       )
                     ],
@@ -237,7 +271,8 @@ class ActivityLayOut extends StatelessWidget {
     });
   }
 
-  Widget _buildMission(ActivityListViewModel activityListViewModel, List<MissionEntity> missions) {
+  Widget _buildMission(ActivityListViewModel activityListViewModel,
+      List<MissionEntity> missions) {
     // List<List<MissionEntity>> missionsType = [
     //   activityListViewModel.missions!,
     //   activityListViewModel.pengingMissions,
@@ -256,7 +291,7 @@ class ActivityLayOut extends StatelessWidget {
             missions[index].belongWorkspace.toEntity();
         Color displayColor =
             isWorkspace ? color : Color(belongWorkspace.themeColor);
-    
+
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: ColorCardWidget(
@@ -277,13 +312,19 @@ class ActivityLayOut extends StatelessWidget {
                       children: [
                         Text(
                           "@ ${belongWorkspace.name}",
-                          style: TextStyle(
-                              color: displayColor,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(
+                                  color: displayColor,
+                                  fontWeight: FontWeight.bold),
                         ),
                         Text(
                           missions[index].title,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(fontWeight: FontWeight.bold),
                         )
                       ],
                     ),

@@ -38,7 +38,7 @@ class WorkspaceChip extends StatelessWidget {
                   border: Border.all(),
                   image: DecorationImage(
                     image: workspace.photo != null
-                        ? NetworkImage(workspace.photo!.data)
+                        ? NetworkImage(workspace.photo!.imageUri)
                         : const AssetImage('assets/images/404_not_found.png')
                             as ImageProvider,
                     // image: AssetImage('welcome')

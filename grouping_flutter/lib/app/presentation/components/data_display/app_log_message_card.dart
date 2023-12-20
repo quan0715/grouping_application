@@ -87,7 +87,7 @@ class LogMessageCard extends StatelessWidget{
     onDelete: onDelete ?? () => {},
   );
   Color get surface => Colors.white;
-  Color get backgroundColor => color.withOpacity(0.05);
+  Color get backgroundColor => Color.lerp(surface, color, 0.1)!;
   Color get borderColor => color;
   Color get iconColor => color;
   Color get deleteIconColor => color.withOpacity(0.5);
@@ -98,23 +98,26 @@ class LogMessageCard extends StatelessWidget{
    
   BoxBorder get border => Border(
     left: BorderSide(color: borderColor,width: 10.0),
-    bottom: BorderSide(color: borderColor, width: 0.0),
-    right: BorderSide( color: borderColor, width: 0.0),
-    top: BorderSide( color: borderColor, width: 0.0,),
   );
 
   @override
   Widget build(BuildContext context) => _build;
 
-  Widget get _build => Padding(
-      padding: outerPadding,
-      child: Container(
-        color: surface,
+  Widget get _build => Container(
+    decoration: BoxDecoration(
+      color: backgroundColor,
+      borderRadius: borderRadius,
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        clipBehavior: Clip.hardEdge,
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor,
             // borderRadius: borderRadius,
-            border: border
+            // border: border,
           ),
           child: Padding(
             padding: innerPadding,
@@ -128,7 +131,8 @@ class LogMessageCard extends StatelessWidget{
             ),
           ),
           ),
-      )
+      ),
+    ),
   );
   
   Widget get _textArea => Padding(
@@ -173,12 +177,15 @@ class MessagesList extends StatelessWidget{
         return ListView.builder(
           shrinkWrap: true,
           itemCount: messages.length,
-          itemBuilder: (context, index) => LogMessageCard.fromData(
-            messageData: messages[index],
-            onDelete: () => {
-              // debugPrint("delete message ${messages[index].title}"),
-              messageService.clearMessage(messages[index])
-            },
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+            child: LogMessageCard.fromData(
+              messageData: messages[index],
+              onDelete: () => {
+                // debugPrint("delete message ${messages[index].title}"),
+                messageService.clearMessage(messages[index])
+              },
+            ),
           ),
         );
       }

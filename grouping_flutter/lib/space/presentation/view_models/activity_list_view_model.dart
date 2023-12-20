@@ -7,7 +7,7 @@ import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 extension DateTimeExtension on DateTime {

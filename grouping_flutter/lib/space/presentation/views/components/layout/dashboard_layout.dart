@@ -6,8 +6,8 @@ class DashboardView extends StatelessWidget{
 
   final List<Widget> frames;
   final Color backgroundColor;
-  final SpaceAppBar appBar;
-  final Widget drawer;
+  final SpaceAppBar? appBar;
+  final Widget? drawer;
   final Axis direction;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
@@ -15,8 +15,8 @@ class DashboardView extends StatelessWidget{
   const DashboardView({
     super.key,    
     this.frames = const [],
-    required this.appBar,
-    required this.drawer,
+    this.appBar,
+    this.drawer,
     this.backgroundColor = Colors.transparent,
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
     this.crossAxisAlignment = CrossAxisAlignment.start,

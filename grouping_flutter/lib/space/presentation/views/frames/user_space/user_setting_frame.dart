@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:grouping_project/app/presentation/components/components.dart';
+import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:provider/provider.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
 import 'package:grouping_project/space/presentation/views/components/forms/tag_edit_form.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_with_fillings.dart';
+import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
-import 'package:grouping_project/space/presentation/views/components/user_action_button.dart';
 import 'package:image_picker/image_picker.dart';
+
 
 class UserSettingFrame extends StatefulWidget {
   const UserSettingFrame({
@@ -52,7 +53,7 @@ class _SettingViewState extends State<UserSettingFrame>{
 
   Widget _buildBody() {
     return Consumer<SettingPageViewModel>(
-      builder: (context, viewModel, child) => Consumer<UserSpaceViewModel>(
+      builder: (context, viewModel, child) => Consumer<SpaceViewModel>(
         builder: (context, userPageViewModel, child) => DashboardFrameLayout(
           frameColor: getThemePrimaryColor,
           frameHeight: widget.frameHeight,
@@ -132,14 +133,6 @@ class PublicProfileSettingSection extends StatelessWidget{
     required this.primaryColor,
   });
 
-  Future<void> onTagAddedButtonPressed(BuildContext context) async {
-    var vm = Provider.of<SettingPageViewModel>(context, listen: false);
-    vm.isValidToAddNewTag
-      ? vm.onTagAddButtonPressed()
-      : debugPrint("You can't add more tags.");
-  }
-
-
   @override
   Widget build(BuildContext context) => _buildBody(context);
 
@@ -176,11 +169,8 @@ class PublicProfileSettingSection extends StatelessWidget{
               valueChild:  InkWell(
                 child: ProfileAvatar(
                   themePrimaryColor: primaryColor, 
-                  avatar: vm.tempAvatarData != null
-                    ? Image.memory( 
-                      vm.tempAvatarData!,
-                      fit: BoxFit.fill) 
-                    : null,
+                  imageUrl: vm.currentUser.photo != null
+                    ? vm.currentUser.photo!.imageUri : "" ,
                   avatarSize: 128,
                   label: "更換頭像",
                 ),
@@ -283,7 +273,7 @@ class AccountSettingSection extends StatelessWidget{
   });
 
   void onLogout(BuildContext context) async {
-    await Provider.of<UserSpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
+    await Provider.of<SpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
     if (context.mounted) {
       await Provider.of<TokenManager>(context, listen: false).updateToken();
     }
@@ -303,7 +293,7 @@ class AccountSettingSection extends StatelessWidget{
   final objectGap = const Gap(10);
 
   Widget _getAccountBody(BuildContext context) {
-    UserSpaceViewModel userPageViewModel = Provider.of<UserSpaceViewModel>(context);
+    SpaceViewModel userPageViewModel = Provider.of<SpaceViewModel>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, 
       children: [
@@ -369,7 +359,7 @@ class SpaceSettingSection extends StatelessWidget{
   });
 
   void onLogout(BuildContext context) async {
-    await Provider.of<UserSpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
+    await Provider.of<SpaceViewModel>(context, listen: false).userDataProvider!.userLogout();
     if (context.mounted) {
       await Provider.of<TokenManager>(context, listen: false).updateToken();
     }

@@ -23,7 +23,7 @@ class WorkspaceTagSerializer(serializers.ModelSerializer):
 class WorkspaceSerializer(serializers.ModelSerializer):
     tags = WorkspaceTagSerializer(
         many=True, required=False, allow_empty=True)
-    photo_data = serializers.ImageField(write_only=True)
+    photo_data = serializers.ImageField(write_only=True, required=False)
     photo = ImageSerializer(read_only=True)
 
     class Meta:
@@ -76,7 +76,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
 
 class WorkspaceSimpleSerializer(serializers.ModelSerializer):
-    photo = ImageSerializer(read_only=True)
+    photo = ImageSerializer(read_only=True,)
 
     class Meta:
         model = Workspace

@@ -1,25 +1,29 @@
 /// ## the type for [WorkspaceModel.photo]
 /// * [imageId] : the id of the photo
-/// * [data] : the data(url) of the photo
+/// * [imageUri] : the data(url) of the photo
 /// * [updateAt] : the update time of the photo 
 class ImageModel {
   int imageId;
-  String data;
+  String imageUri;
   DateTime updateAt;
 
-  ImageModel({required this.imageId, required this.data, required this.updateAt});
+  ImageModel({required this.imageId, required this.imageUri, required this.updateAt});
 
   factory ImageModel.fromJson(Map<String, dynamic> data) =>
-    ImageModel(imageId: data['id'], data: data['data'], updateAt: DateTime.parse(data['updated_at']));
+    ImageModel(
+      imageId: data['id'], 
+      imageUri: data['image_uri'],
+      updateAt: DateTime.parse(data['updated_at'])
+    );
   
   Map<String, dynamic> toJson() => <String, dynamic>{
     'id': imageId,
-    'data': data,
+    'image_uri': imageUri,
     'updated_at': updateAt.toIso8601String(),
   };
 
   @override
   String toString() {
-    return 'photoId: $imageId, data: $data, update time: $updateAt';
+    return 'photoId: $imageId, image_uri: $imageUri, update time: $updateAt';
   }
 }

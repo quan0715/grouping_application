@@ -223,7 +223,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // MessagesList(messageService: loginManager.messageService),
-                  TitleWithContent(
+                  const TitleWithContent(
                       title: "登入 Login", content: "利用Email 登入或第三方登入"),
                   const Divider(thickness: 2),
                   _getInputForm(),
@@ -246,7 +246,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget getInfoDisplayFrame() {
     return Consumer<LoginViewModel>(
       builder: (context, value, child) => Container(
-          color: AppColor.surfaceVariant(context),
+          color: Colors.white,
           child: Column(
             children: [Expanded(child: groupingIcon)],
           )),
