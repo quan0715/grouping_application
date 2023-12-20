@@ -10,6 +10,30 @@ import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+extension DateTimeExtension on DateTime {
+  int get weekOfMonthStartFromMonday {
+    var date = this;
+    final firstDayOfTheMonth = DateTime(date.year, date.month, 1);
+    int sum = firstDayOfTheMonth.weekday - 1 + date.day;
+    if (sum % 7 == 0) {
+      return sum ~/ 7;
+    } else {
+      return sum ~/ 7 + 1;
+    }
+  }
+
+  int get weekOfMonthStartFromSunday {
+    var date = this;
+    final firstDayOfTheMonth = DateTime(date.year, date.month, 1);
+    int sum = firstDayOfTheMonth.weekday + date.day;
+    if (sum % 7 == 0) {
+      return sum ~/ 7;
+    } else {
+      return sum ~/ 7 + 1;
+    }
+  }
+}
+
 class ActivityListViewModel extends ChangeNotifier {
   UserDataProvider userDataProvider;
   List<ActivityEntity>? activities;
@@ -146,7 +170,7 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   List<EventEntity> _sortEvents() {
-    List<EventEntity> allEvents = activities!.whereType<EventEntity>().where((event) => _sameAsSelectedDay(event.startTime)).toList();
+    List<EventEntity> allEvents = activities!.whereType<EventEntity>().where((event) => _sameAsSelectedDay(event.startTime) || _sameAsSelectedDay(event.endTime)).toList();
     allEvents.sort(
         (front, rear) => _compareDateTime(front.startTime, rear.startTime));
     return allEvents;
@@ -177,11 +201,30 @@ class ActivityListViewModel extends ChangeNotifier {
   DateTime getSeletedDay() {
     return _selectDate;
   }
+
+  DateTime setInitialDate() {
+    DateTime initialDate = DateTime.now();
+    switch(initialDate.weekOfMonthStartFromMonday % 4){
+      case 1:
+        initialDate = initialDate;
+        break;
+      case 2:
+        initialDate = initialDate.subtract(const Duration(days: 7));
+        break;
+      case 3:
+        initialDate = initialDate.subtract(const Duration(days: 14));
+        break;
+      case 0:
+        initialDate = initialDate.subtract(const Duration(days: 21));
+        break;
+    }
+    return initialDate;
+  }
 }
 
-class ActivityDataSource extends CalendarDataSource {
+class ActivityData extends CalendarDataSource {
 
-  ActivityDataSource(List<ActivityEntity> source) {
+  ActivityData(List<ActivityEntity> source) {
     // appointments = source;
     // appointments = source.map((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
     appointments = source.where((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
