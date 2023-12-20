@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:grouping_project/app/presentation/components/components.dart';
+import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:provider/provider.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
 import 'package:grouping_project/space/presentation/views/components/forms/tag_edit_form.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
-import 'package:grouping_project/app/presentation/components/buttons/user_action_button.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../../app/presentation/components/components.dart';
 
 class UserSettingFrame extends StatefulWidget {
   const UserSettingFrame({

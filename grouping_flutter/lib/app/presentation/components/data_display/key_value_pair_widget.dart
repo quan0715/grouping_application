@@ -78,6 +78,8 @@ class KeyValuePairWidget<K, V> extends StatelessWidget{
                 getKeyWidget(context),
                 Gap(gap),
                 getValueWidget(context),
+                if (child != null) Gap(gap),
+                if (child != null) child!,
               ]
             ),
           ),

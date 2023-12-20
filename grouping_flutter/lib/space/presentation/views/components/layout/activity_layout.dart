@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/data_display/color_card_widget.dart';
-import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';

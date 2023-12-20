@@ -1,20 +1,17 @@
 import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:grouping_project/auth/data/repositories/auth_repository_impl.dart';
-
 import 'package:flutter/material.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/auth/domain/usecases/logout_usecase.dart';
 import 'package:grouping_project/core/shared/message_entity.dart';
-import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
 import 'package:grouping_project/space/data/repositories/user_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/usecases/user_usecases/get_current_user_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/user_usecases/update_current_user.dart';
-import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
 import 'package:image_picker/image_picker.dart';
 
 
@@ -116,52 +113,3 @@ class UserDataProvider extends ChangeNotifier{
   }
 }
 
-class SpaceViewModel extends ChangeNotifier {
-
-  final messageService = MessageService();
-  UserDataProvider? userDataProvider;
-  GroupDataProvider? workspaceDataProvider;
-
-  
-  bool _isLoading = true;
-
-  bool get isLoading => _isLoading 
-    || (workspaceDataProvider?.isLoading ?? false)
-    || (userDataProvider?.isLoading ?? false);
-  
-  UserEntity? get currentUser => userDataProvider!.currentUser;
-
-  Color get userColor => AppColor.mainSpaceColor;
-
-  String get rootPath
-    => workspaceDataProvider == null ? 'user' : 'workspace';
-
-  Color get spaceColor => (workspaceDataProvider?.color ?? userColor);
-
-  Future<void> init() async {
-    debugPrint("UserPageViewModel init");
-    _isLoading = true;
-    notifyListeners();
-    if(userDataProvider!=null){
-      await userDataProvider!.init();
-    }
-    if(workspaceDataProvider!=null){
-      await workspaceDataProvider!.init();
-    }
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  void updateUser(UserDataProvider userProvider) {
-    debugPrint("UserViewModel update userData");
-    userDataProvider = userProvider;
-    notifyListeners();
-  }
-
-  void updateGroup(GroupDataProvider workspaceProvider) {
-    debugPrint("UserViewModel update workspaceData");
-    workspaceDataProvider = workspaceProvider;
-    notifyListeners();
-  }
-
-}

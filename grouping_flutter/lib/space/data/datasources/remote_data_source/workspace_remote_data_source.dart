@@ -113,6 +113,8 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         if(image == null){
           return temp;
         }
+        break;
+        
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
@@ -133,7 +135,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     var streamedResponse = await request.send();
     response = await http.Response.fromStream(streamedResponse);
     
-      switch (response.statusCode) {
+    switch (response.statusCode) {
       case 200:
         return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
       case 400:

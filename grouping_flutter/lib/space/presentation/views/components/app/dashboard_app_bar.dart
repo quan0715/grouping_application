@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:provider/provider.dart';
 
