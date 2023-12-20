@@ -10,7 +10,7 @@ import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/create_workspace_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/join_worksapcee_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/workspace_usecases/workspace_usecaes_lib.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateWorkspaceViewModel extends ChangeNotifier {

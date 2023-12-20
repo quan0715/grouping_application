@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/activity_layout.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';

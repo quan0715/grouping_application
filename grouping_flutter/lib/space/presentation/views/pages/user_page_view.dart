@@ -3,9 +3,10 @@ import 'package:grouping_project/space/presentation/view_models/create_workspace
 import 'package:grouping_project/space/presentation/view_models/join_workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/setting_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
+import 'package:grouping_project/space/presentation/views/frames/activity_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/navigate_rail_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/activity_list_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/user_space/user_setting_frame.dart';
@@ -116,7 +117,12 @@ class _UserPageViewState extends State<UserPageView> {
           frameColor: color,
           child: ActivityListFrame(color: color,)
         )),
-        _tempFrame("Activities Detail", 3),
+        Expanded(
+          flex: 3,
+          child: ActivityDetailFrame(
+            color: color,
+          )
+        )
       ],
       DashboardPageType.threads => [
         _tempFrame("thread list", 1),
