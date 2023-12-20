@@ -13,7 +13,7 @@ import 'package:grouping_project/space/presentation/views/components/layout/dash
 import 'package:grouping_project/app/presentation/components/buttons/user_action_button.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../app/presentation/components/components.dart';
+import '../../../../../app/presentation/components/components.dart';
 
 class UserSettingFrame extends StatefulWidget {
   const UserSettingFrame({

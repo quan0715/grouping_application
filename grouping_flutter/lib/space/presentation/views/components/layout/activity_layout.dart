@@ -231,29 +231,37 @@ class ActivityLayOut extends StatelessWidget {
                   onTap: () {
                     debugPrint("unimplemnted yet, show detailed of event");
                   },
-                  child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "@ ${belongWorkspace.name}",
-                              style: TextStyle(
-                                  color: displayColor, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              missions[index].title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Text("狀態")
-                      ],
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "@${belongWorkspace.name}",
+                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                color: displayColor, fontWeight: FontWeight.bold),
+                          ),
+                          const Gap(3),
+                          Text(
+                            missions[index].title,
+                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                       const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "狀態"
+                          ),
+                         
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),

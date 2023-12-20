@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
@@ -22,16 +23,21 @@ class MemberWidget extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Row(
       children: [
-        ProfileAvatar(themePrimaryColor: themePrimaryColor, label: profile.userName),
-            const SizedBox(width: 10,),
-            Text(
-              profile.userName,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                fontWeight: FontWeight.bold
-              )
-            ),
-            const Spacer(),
-            showSelectedLeader,
+        ProfileAvatar(
+          avatarSize: 48,
+          themePrimaryColor: themePrimaryColor,
+          label: profile.userName,
+          imageUrl: profile.photo?.imageUri ?? "",
+        ),
+        const Gap(10,),
+        Text(
+          profile.userName,
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+            fontWeight: FontWeight.bold
+          )
+        ),
+        const Spacer(),
+        showSelectedLeader,
       ],
     );
   }

@@ -7,8 +7,8 @@ import 'package:grouping_project/space/presentation/views/components/layout/dash
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
 import 'package:grouping_project/space/presentation/views/frames/navigate_rail_frame.dart';
 import 'package:grouping_project/space/presentation/views/frames/activity_list_frame.dart';
-import 'package:grouping_project/space/presentation/views/frames/user_setting_frame.dart';
-import 'package:grouping_project/space/presentation/views/frames/user_space_info_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/user_space/user_setting_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/user_space/user_space_info_frame.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
 
@@ -99,33 +99,18 @@ class _UserPageViewState extends State<UserPageView> {
     var color = userPageViewModel.spaceColor;
     return switch (widget.pageType) {
       DashboardPageType.home => [
-        SpaceInfoFrame(
-          frameColor: color,
-          frameWidth: MediaQuery.of(context).size.width * 0.25,
+        Expanded(
+          flex: 1,
+          child: SpaceInfoFrame(
+            frameColor: color,
+            // frameWidth: MediaQuery.of(context).size.width * 0.25,
+          ),
         ),
-        _tempFrame("home", 1),
+        _tempFrame("home", 3),
       ],
       DashboardPageType.activities => [
-        // spaceInfoAndNavigatorFrame,
-        // gap,
-        // Expanded(
-        //   flex: 2,
-        //   child: DashboardFrameLayout(
-        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
-        //   child: const ActivityListFrame()
-        // )),
-        // gap,
-        // Expanded(
-        //   flex: 3,
-        //   child: DashboardFrameLayout(
-        //   frameColor: userPageViewModel.selectedProfile.spaceColor,
-        //   child: const Center(
-        //     child: Text("Activities Detail"),
-        //   )
-        // )),
-        // _tempFrame("Calendar", 2),
         Expanded(
-          flex: 2,
+          flex: 1,
           child: DashboardFrameLayout(
           frameColor: color,
           child: ActivityListFrame(color: color,)

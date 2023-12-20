@@ -18,7 +18,7 @@ class AppRouter {
     // debugPrint('create user data provider');
     return UserDataProvider(
       tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
-    );
+    )..init();
   }
 
   GroupDataProvider getGroupDataProvider(BuildContext context, int workspaceId) {
@@ -26,7 +26,7 @@ class AppRouter {
     return GroupDataProvider(
       tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
       workspaceIndex: workspaceId
-    );
+    )..init();
   }
 
   DashboardPageType getDashboardPath(String pageType) {

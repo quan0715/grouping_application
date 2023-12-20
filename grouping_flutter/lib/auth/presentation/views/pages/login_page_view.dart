@@ -246,7 +246,7 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget getInfoDisplayFrame() {
     return Consumer<LoginViewModel>(
       builder: (context, value, child) => Container(
-          color: AppColor.surfaceVariant(context),
+          color: Colors.white,
           child: Column(
             children: [Expanded(child: groupingIcon)],
           )),

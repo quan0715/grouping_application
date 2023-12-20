@@ -4,6 +4,7 @@ import 'package:grouping_project/space/presentation/view_models/user_page_view_m
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
 import 'package:grouping_project/space/presentation/views/frames/navigate_rail_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/worksapce/workspace_info_frame.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,12 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
       ..updateUser(userData)
       ..init();
     // viewModel.init();
+  }
+
+  @override
+  void dispose(){
+    spaceViewModel.dispose();
+    super.dispose();
   }
   
   @override
@@ -66,8 +73,13 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
     var color = spaceViewModel.spaceColor;
     return switch (widget.pageType) {
       DashboardPageType.home => [
-        _tempFrame("info", 1),
-        _tempFrame("home", 2),
+        Expanded(
+          flex: 1,
+          child: WorkspaceInfoFrame(
+            frameColor: color,
+          )
+        ),
+        _tempFrame("home", 3),
       ],
       DashboardPageType.activities => [
         _tempFrame("Calendar", 2),
@@ -104,12 +116,10 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
           : 
           DashboardView(
             backgroundColor: Colors.white,
-            // appBar: _getAppBar(context, viewModel),
             frames: [
               const NavigateRailFrame(),
               ..._getFrames(),
             ],
-            // drawer: _getDrawer(context),
             direction: Axis.horizontal,
         ),
     );
