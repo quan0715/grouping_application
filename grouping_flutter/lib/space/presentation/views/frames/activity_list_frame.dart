@@ -66,7 +66,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                       numberOfWeeksInView: 2, dayFormat: 'EEE'),
                   showDatePickerButton: true,
                   showTodayButton: true,
-                  initialDisplayDate: activityListViewModel.setInitialDate(),
+                  // initialDisplayDate: activityListViewModel.setInitialDate(),
                   dataSource:
                       ActivityData(activityListViewModel.activities!),
                   onTap: (calendarTapDetails) {
