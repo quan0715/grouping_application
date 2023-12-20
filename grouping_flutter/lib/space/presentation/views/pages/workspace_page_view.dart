@@ -1,16 +1,18 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/app/presentation/providers/token_manager.dart';
-import 'package:grouping_project/space/presentation/view_models/workspace_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/app/dashboard_app_bar.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/app/dashboard_drawer.dart';
-import 'package:grouping_project/space/presentation/views/components/app/mobile_bottom_navigation_bar.dart';
-import 'package:grouping_project/space/presentation/views/frames/workspace_info_and_navigator_frame.dart';
+import 'package:grouping_project/space/presentation/view_models/group_data_provider.dart';
+import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
+import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
+import 'package:grouping_project/space/presentation/views/frames/navigate_rail_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/worksapce/workspace_info_frame.dart';
+import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
+import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
 
 class WorkspacePageView extends StatefulWidget {
-  const WorkspacePageView({super.key});
+  const WorkspacePageView({super.key, required this.pageType});
+  final DashboardPageType pageType;
 
   @override
   State<WorkspacePageView> createState() => _WorkspacePageViewState();
@@ -19,86 +21,109 @@ class WorkspacePageView extends StatefulWidget {
 
 class _WorkspacePageViewState extends State<WorkspacePageView> {
 
-  late final WorkspaceViewModel viewModel;
+  late final SpaceViewModel spaceViewModel;
 
   @override
   void initState(){
     super.initState();
-    viewModel = WorkspaceViewModel(tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel);
-    viewModel.init();
+    var userData = Provider.of<UserDataProvider>(context, listen: false);
+    var groupData = Provider.of<GroupDataProvider>(context, listen: false);
+    spaceViewModel = SpaceViewModel()
+      ..updateGroup(groupData)
+      ..updateUser(userData)
+      ..init();
+    // viewModel.init();
+  }
+
+  @override
+  void dispose(){
+    spaceViewModel.dispose();
+    super.dispose();
   }
   
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider<WorkspaceViewModel>.value(
-    value: viewModel,
-    child: _buildBody()
-  );
-
-  Widget _buildDashBoard(BuildContext context, List<Widget> frames){
-    return Consumer<WorkspaceViewModel>(
-      builder: (context, viewModel, child) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Row(
-            children: frames,
-          ),
+  Widget build(BuildContext context){
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProxyProvider2<UserDataProvider, GroupDataProvider, SpaceViewModel>(
+          create: (context) => spaceViewModel,
+          update: (context, userDataProvider, groupDataProvider, spaceViewModel) => 
+            spaceViewModel!
+              ..updateUser(userDataProvider)
+              ..updateGroup(groupDataProvider),
         ),
-      )
+
+      ],
+      child: _buildBody(),
     );
   }
 
-  Widget _buildBody(){
-    return Consumer2<UserSpaceViewModel, WorkspaceViewModel>(
-      builder: (context, userVM, workspaceVM, child) => Scaffold(
-        backgroundColor: Colors.white,
-        appBar: _getAppBar(context, workspaceVM),
-        body: Center(
-          child: _buildDashBoard(context, [
-            // TODO: add frames
-            // SpaceInfoAndNavigatorFrame(
-            //   frameColor: userVM.selectedProfile.spaceColor,
-            //   frameWidth: MediaQuery.of(context).size.width * 0.25,
-            // ),
-            WorkspaceInfoAndNavigatorFrame(
-              workspace: workspaceVM.getEntity(),
-              frameColor: workspaceVM.workspaceProfile.spaceColor,
-              frameWidth: MediaQuery.of(context).size.width * 0.25,
-            )
-          ]),
-        ),
-        bottomNavigationBar: _getNavigationBar(context, workspaceVM),
-        drawer: DashboardDrawer(
-          primaryColor: workspaceVM.workspaceProfile.spaceColor,
-          userProfiles: userVM.currentUser!,
-          isSelectedUserSpace: false,
-          selectedProfileId: 0,
-          workspaceProfiles: userVM.currentUser!.joinedWorkspaces,
-        ),
+  Widget _tempFrame(String title, int flex){
+    return Expanded(
+      flex: flex,
+      child: DashboardFrameLayout(
+        frameColor: spaceViewModel.spaceColor,
+        child: Center(
+          child: Text(title),
+        )
       ),
     );
   }
 
-  SpaceAppBar _getAppBar(BuildContext context, WorkspaceViewModel viewModel){
-    return SpaceAppBar(
-      color: viewModel.workspaceProfile.spaceColor,
-      spaceName: viewModel.workspaceProfile.spaceName,
-      spaceProfilePicURL: "",
-    );
+  List<Widget> _getFrames(){
+    var color = spaceViewModel.spaceColor;
+    return switch (widget.pageType) {
+      DashboardPageType.home => [
+        Expanded(
+          flex: 1,
+          child: WorkspaceInfoFrame(
+            frameColor: color,
+          )
+        ),
+        _tempFrame("home", 3),
+      ],
+      DashboardPageType.activities => [
+        _tempFrame("Calendar", 2),
+        _tempFrame("Activities Detail", 3),
+      ],
+      DashboardPageType.threads => [
+        _tempFrame("thread list", 1),
+        Expanded(
+          flex: 3,
+          child: DashboardFrameLayout(
+            frameColor: color,
+            child: const ChatThreadBody(
+            threadTitle: "Test Thread",
+          ))),
+      ],
+      DashboardPageType.settings => [
+        _tempFrame("setting", 1)
+      ],
+      DashboardPageType.none => [
+        _tempFrame("error", 1)
+      ],
+    };
   }
-  
-  Widget? _getNavigationBar(BuildContext context, WorkspaceViewModel viewModel){
-    if(kIsWeb){
-      return null;
-    }else{
-      debugPrint("is not web, return bottom navigation bar");
-      return MobileBottomNavigationBar(
-          currentIndex: viewModel.currentPageIndex,
-          themePrimaryColor: viewModel.workspaceProfile.spaceColor,
-          onTap: (index) => viewModel.updateCurrentIndex(index),
-      );
-    }
+
+  Widget _buildBody() {
+    return Consumer<SpaceViewModel>(
+        builder: (context, spaceViewModel, child) => 
+          spaceViewModel.isLoading
+            ? const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : 
+          DashboardView(
+            backgroundColor: Colors.white,
+            frames: [
+              const NavigateRailFrame(),
+              ..._getFrames(),
+            ],
+            direction: Axis.horizontal,
+        ),
+    );
   }
 }
 

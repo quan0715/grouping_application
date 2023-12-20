@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/activity_layout.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -51,40 +51,49 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
       builder: (context, activityListViewModel, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-              flex: 5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SfCalendar(
-                  view: CalendarView.month,
-                  headerDateFormat: "y 年 MM 月",
-                  headerHeight: 25,
-                  headerStyle: CalendarHeaderStyle(
-                      textStyle: TextStyle(fontSize: 15, color: widget.color)),
-                  monthViewSettings: const MonthViewSettings(
-                      numberOfWeeksInView: 2, dayFormat: 'EEE'),
-                  showDatePickerButton: true,
-                  showTodayButton: true,
-                  dataSource:
-                      ActivityDataSource(activityListViewModel.activities!),
-                  onTap: (calendarTapDetails) {
-                    activityListViewModel.setSeletedDay(
-                        calendarTapDetails.date ?? DateTime.now());
-                    // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
-
-
-
-
-                    setState(() {
-                      // TODO: I can't find out what happen here
-                      // activityListViewModel should refresh the screen
-                    });
-
-
-
-                  },
-                ),
-              )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SfCalendar(
+              view: CalendarView.month,
+              headerDateFormat: "y 年 MM 月",
+              // headerStyle: CalendarHeaderStyle(
+              //     textStyle: TextStyle(fontSize: 15, color: widget.color)),
+              // timeSlotViewSettings: TimeSlotViewSettings(
+              //     timeInterval: Duration(hours: 1),
+              //     timeIntervalHeight: 50,
+              //     timeTextStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: widget.color,
+              //         fontWeight: FontWeight.bold),
+              // ),
+              monthViewSettings: const MonthViewSettings(
+                numberOfWeeksInView: 4, 
+                dayFormat: 'EEE', 
+                // showAgenda: true,
+                
+              ),
+              showDatePickerButton: true,
+              showTodayButton: true,
+              dataSource:
+                  ActivityDataSource(activityListViewModel.activities!),
+              onTap: (calendarTapDetails) {
+                activityListViewModel.setSeletedDay(
+                    calendarTapDetails.date ?? DateTime.now());
+                // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
+          
+          
+          
+          
+                setState(() {
+                  // TODO: I can't find out what happen here
+                  // activityListViewModel should refresh the screen
+                });
+          
+          
+          
+              },
+            ),
+          ),
           const Divider(),
           Text(
             dateFormat.format(activityListViewModel.getSeletedDay()),

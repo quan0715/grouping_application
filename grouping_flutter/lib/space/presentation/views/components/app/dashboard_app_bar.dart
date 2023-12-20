@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +20,8 @@ class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget{
   // @override
   // Color get getThemePrimaryColor => profile.spaceColor;
 
-  UserSpaceViewModel getSpaceViewModel(BuildContext context){
-    return Provider.of<UserSpaceViewModel>(context, listen: false);
+  SpaceViewModel getSpaceViewModel(BuildContext context){
+    return Provider.of<SpaceViewModel>(context, listen: false);
   }
   @override
   Widget build(BuildContext context) => _buildBody(context); 
@@ -49,8 +49,8 @@ class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget{
         ProfileAvatar(
           themePrimaryColor: color,
           label: spaceName,
-          avatar: spaceProfilePicURL != null && spaceProfilePicURL!.isNotEmpty 
-            ? Image.network(spaceProfilePicURL!) : null,
+          imageUrl: spaceProfilePicURL != null && spaceProfilePicURL!.isNotEmpty  
+            ? spaceProfilePicURL! : "",
           avatarSize: 35,
         ),
         const SizedBox(width: 10,),

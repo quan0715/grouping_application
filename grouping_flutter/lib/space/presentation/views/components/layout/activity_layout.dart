@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
-import 'package:grouping_project/space/domain/entities/activity_entity.dart';
+import 'package:gap/gap.dart';
+import 'package:grouping_project/app/presentation/components/data_display/color_card_widget.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
-import 'package:grouping_project/space/presentation/views/components/color_card_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -48,8 +47,9 @@ class ActivityLayOut extends StatelessWidget {
           children: [
             Text(
               "$title ($len)",
-              style: TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.bold, color: color),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.bold)
             ),
             const Spacer(),
             _createButton(),
@@ -66,7 +66,7 @@ class ActivityLayOut extends StatelessWidget {
         Expanded(
             flex: 6,
             child: Padding(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               child: type == ActivityType.event
                   ? _displayEvent(activityListViewModel)
                   : _displayMission(activityListViewModel),
@@ -79,7 +79,8 @@ class ActivityLayOut extends StatelessWidget {
       {required String typeTitle,
       required List<MissionEntity> missions,
       required bool isSeleted,
-      required double width}) {
+      required double width,
+      required BuildContext context}) {
     int length = missions.length;
 
     Color displayColor = isSeleted ? color : Colors.black45;
@@ -91,7 +92,9 @@ class ActivityLayOut extends StatelessWidget {
       child: Center(
           child: Text(
         "$typeTitle ($length)",
-        style: TextStyle(fontSize: 15, color: displayColor),
+        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+            color: displayColor,
+            fontWeight: FontWeight.bold),
       )),
     );
   }
@@ -119,6 +122,7 @@ class ActivityLayOut extends StatelessWidget {
                   activityListViewModel.setMissionTypePage(index);
                 },
                 child: _typeNavigatorTitle(
+                    context: context,
                     typeTitle: typeTitle[index]["title"],
                     missions: typeTitle[index]["missions"],
                     isSeleted:
@@ -150,42 +154,44 @@ class ActivityLayOut extends StatelessWidget {
                   onTap: () {
                     debugPrint("unimplemnted yet, show detailed of event");
                   },
-                  child: SizedBox(
-                    height: 50,     // TODO: dynamic give height
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "@ ${belongWorkspace.name}",
-                              style: TextStyle(
-                                  color: displayColor, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              events[index].title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Spacer(),
-                            Text(
-                              format.format(events[index].startTime),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              format.format(events[index].endTime),
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black45),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "@${belongWorkspace.name}",
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                color: displayColor, fontWeight: FontWeight.bold),
+                          ),
+                          const Gap(3),
+                          Text(
+                            events[index].title,
+                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      const Spacer(), 
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            format.format(events[index].startTime),
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          const Gap(3),
+                          Text(
+                            format.format(events[index].endTime),
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.black45),
+                          )
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -226,29 +232,37 @@ class ActivityLayOut extends StatelessWidget {
                   onTap: () {
                     debugPrint("unimplemnted yet, show detailed of event");
                   },
-                  child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "@ ${belongWorkspace.name}",
-                              style: TextStyle(
-                                  color: displayColor, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              missions[index].title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Text("狀態")
-                      ],
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "@${belongWorkspace.name}",
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                color: displayColor, fontWeight: FontWeight.bold),
+                          ),
+                          const Gap(3),
+                          Text(
+                            missions[index].title,
+                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                       const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "狀態"
+                          ),
+                         
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),

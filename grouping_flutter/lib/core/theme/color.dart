@@ -38,8 +38,9 @@ class AppColor{
   static Color mainSpaceColor = const Color(0xFF7D5800);
   static Color spaceColor1 = const Color(0xFF006874);
   static Color spaceColor2 = const Color(0xFF206FCC);
-  static Color spaceColor3 = const Color(0xFFFF8F8F);
+  static Color spaceColor3 = const Color(0xFFBF0707);
   static Color spaceColor4 = const Color(0xFFBF5F07);
+  static Color spaceColor5 = const Color(0xFF4C4A4A);
   // colorScheme
   static Color onSurfaceColor = const Color(0xFF1E1E1E);
   static Color surfaceColor = const Color(0xFFE5E5E5);
@@ -50,17 +51,17 @@ class AppColor{
       2 => spaceColor2,
       3 => spaceColor3,
       4 => spaceColor4,
+      5 => spaceColor5,
       _ => mainSpaceColor,
     };
   }
 
-
-
-  // static ColorScheme lightColorScheme = ColorScheme(
-  //   primary: mainSpaceColor,
-    
-  //   brightness: Brightness.light, onPrimary: null,
-  // );
-
-
+  static List<Color> spaceColors = [
+    mainSpaceColor,
+    spaceColor1,
+    spaceColor2,
+    spaceColor3,
+    spaceColor4,
+    spaceColor5,
+  ];
 }
