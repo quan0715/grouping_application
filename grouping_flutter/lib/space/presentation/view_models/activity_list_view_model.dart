@@ -203,7 +203,22 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   DateTime setInitialDate() {
-    return DateTime.now().weekOfMonthStartFromMonday % 2 == 0 ? DateTime.now().subtract(const Duration(days: 7)) : DateTime.now();
+    DateTime initialDate = DateTime.now();
+    switch(initialDate.weekOfMonthStartFromMonday % 4){
+      case 1:
+        initialDate = initialDate;
+        break;
+      case 2:
+        initialDate = initialDate.subtract(const Duration(days: 7));
+        break;
+      case 3:
+        initialDate = initialDate.subtract(const Duration(days: 14));
+        break;
+      case 0:
+        initialDate = initialDate.subtract(const Duration(days: 21));
+        break;
+    }
+    return initialDate;
   }
 }
 

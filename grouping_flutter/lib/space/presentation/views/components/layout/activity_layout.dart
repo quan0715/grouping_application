@@ -75,41 +75,9 @@ class ActivityLayOut extends StatelessWidget {
     );
   }
 
-  Widget _typeNavigatorTitle(
-      {required String typeTitle,
-      required List<MissionEntity> missions,
-      required bool isSeleted,
-      required double width,
-      required BuildContext context}) {
-    int length = missions.length;
-
-    Color displayColor = isSeleted ? color : Colors.black45;
-
-    return Container(
-      width: width,
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: displayColor, width: 2))),
-      child: Center(
-          child: Text(
-        "$typeTitle ($length)",
-        style: Theme.of(context)
-            .textTheme
-            .labelSmall!
-            .copyWith(color: displayColor, fontWeight: FontWeight.bold),
-      )),
-    );
-  }
-
   Widget _displayMissionBody(
       BuildContext context, ActivityListViewModel activityListViewModel) {
-    // TODO: use another way
-    // final List<Map<String, dynamic>> typeTitle = [
-    //   {"title": "ALL", "missions": activityListViewModel.missions!},
-    //   {"title": "未開始", "missions": activityListViewModel.pengingMissions},
-    //   {"title": "進行中", "missions": activityListViewModel.progressingMissions},
-    //   {"title": "待回覆", "missions": activityListViewModel.progressingMissions},
-    //   {"title": "已完成", "missions": activityListViewModel.finishMissions}
-    // ];
+   
     List<List<MissionEntity>> missionsType = [
       activityListViewModel.missions!,
       activityListViewModel.pengingMissions,
@@ -120,10 +88,8 @@ class ActivityLayOut extends StatelessWidget {
 
     // debugPrint(missionsType.toString());
 
-    // final List<String> typeTitle = ["ALL", "未開始", "進行中", "待回覆", "已完成"];
 
     return LayoutBuilder(builder: (context, constraints) {
-      // double width = constraints.maxWidth * 0.2;
       return DefaultTabController(
         initialIndex: 0,
         length: 5,
@@ -131,39 +97,39 @@ class ActivityLayOut extends StatelessWidget {
           TabBar(
             tabs: [
               Tab(
-                child: Text("ALL ${missionsType[0].length}",
+                child: Text("ALL (${missionsType[0].length})",
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall!
-                        .copyWith(fontWeight: FontWeight.bold)),
+                        .copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               ),
               Tab(
-                child: Text("未開始 ${missionsType[1].length}",
+                child: Text("未開始 (${missionsType[1].length})",
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall!
-                        .copyWith(fontWeight: FontWeight.bold)),
+                        .copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               ),
               Tab(
-                child: Text("進行中 ${missionsType[2].length}",
+                child: Text("進行中 (${missionsType[2].length})",
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall!
-                        .copyWith(fontWeight: FontWeight.bold)),
+                        .copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               ),
               Tab(
-                child: Text("待回覆 ${missionsType[3].length}",
+                child: Text("待回覆 (${missionsType[3].length})",
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall!
-                        .copyWith(fontWeight: FontWeight.bold)),
+                        .copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               ),
               Tab(
-                child: Text("已完成 ${missionsType[4].length}",
+                child: Text("已完成 (${missionsType[4].length})",
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall!
-                        .copyWith(fontWeight: FontWeight.bold)),
+                        .copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               )
             ],
           ),
