@@ -45,55 +45,51 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
   }
 
   Widget _buildBody() {
-    DateFormat dateFormat = DateFormat("MM 月 d 日 EEEE", "zh");
+    DateFormat dateFormat = DateFormat("MM 月 dd 日 EEEE", "zh");
 
     return Consumer<ActivityListViewModel>(
       builder: (context, activityListViewModel, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SfCalendar(
-              view: CalendarView.month,
-              headerDateFormat: "y 年 MM 月",
-              // headerStyle: CalendarHeaderStyle(
-              //     textStyle: TextStyle(fontSize: 15, color: widget.color)),
-              // timeSlotViewSettings: TimeSlotViewSettings(
-              //     timeInterval: Duration(hours: 1),
-              //     timeIntervalHeight: 50,
-              //     timeTextStyle: TextStyle(
-              //         fontSize: 15,
-              //         color: widget.color,
-              //         fontWeight: FontWeight.bold),
-              // ),
-              monthViewSettings: const MonthViewSettings(
-                numberOfWeeksInView: 4, 
-                dayFormat: 'EEE', 
-                // showAgenda: true,
-                
-              ),
-              showDatePickerButton: true,
-              showTodayButton: true,
-              dataSource:
-                  ActivityDataSource(activityListViewModel.activities!),
-              onTap: (calendarTapDetails) {
-                activityListViewModel.setSeletedDay(
-                    calendarTapDetails.date ?? DateTime.now());
-                // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
-          
-          
-          
-          
-                setState(() {
-                  // TODO: I can't find out what happen here
-                  // activityListViewModel should refresh the screen
-                });
-          
-          
-          
-              },
-            ),
-          ),
+          Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SfCalendar(
+                  view: CalendarView.month,
+                  firstDayOfWeek: 1,        // first day of week, this is Monday, should let the user set the first day of week?
+                  headerDateFormat: "y 年 MM 月",
+                  headerHeight: 25,
+                  headerStyle: CalendarHeaderStyle(
+                      textStyle: TextStyle(fontSize: 15, color: widget.color)),
+                  monthViewSettings: const MonthViewSettings(
+                      numberOfWeeksInView: 4, dayFormat: 'EEE'),
+                  showDatePickerButton: true,
+                  showTodayButton: true,
+                  initialDisplayDate: activityListViewModel.setInitialDate(),
+                  dataSource:
+                      ActivityData(activityListViewModel.activities!),
+                  onTap: (calendarTapDetails) {
+                    if(calendarTapDetails.targetElement == CalendarElement.header) {
+                      return;
+                    }
+                    activityListViewModel.setSeletedDay(
+                        calendarTapDetails.date ?? DateTime.now());
+                    // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
+
+
+
+
+                    setState(() {
+                      // TODO: I can't find out what happen here
+                      // activityListViewModel should refresh the screen
+                    });
+
+
+
+                  },
+                ),
+              )),
           const Divider(),
           Text(
             dateFormat.format(activityListViewModel.getSeletedDay()),
