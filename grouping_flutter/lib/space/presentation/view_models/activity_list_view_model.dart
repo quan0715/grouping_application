@@ -10,6 +10,30 @@ import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+extension DateTimeExtension on DateTime {
+  int get weekOfMonthStartFromMonday {
+    var date = this;
+    final firstDayOfTheMonth = DateTime(date.year, date.month, 1);
+    int sum = firstDayOfTheMonth.weekday - 1 + date.day;
+    if (sum % 7 == 0) {
+      return sum ~/ 7;
+    } else {
+      return sum ~/ 7 + 1;
+    }
+  }
+
+  int get weekOfMonthStartFromSunday {
+    var date = this;
+    final firstDayOfTheMonth = DateTime(date.year, date.month, 1);
+    int sum = firstDayOfTheMonth.weekday + date.day;
+    if (sum % 7 == 0) {
+      return sum ~/ 7;
+    } else {
+      return sum ~/ 7 + 1;
+    }
+  }
+}
+
 class ActivityListViewModel extends ChangeNotifier {
   UserDataProvider userDataProvider;
   List<ActivityEntity>? activities;
@@ -146,7 +170,7 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   List<EventEntity> _sortEvents() {
-    List<EventEntity> allEvents = activities!.whereType<EventEntity>().where((event) => _sameAsSelectedDay(event.startTime)).toList();
+    List<EventEntity> allEvents = activities!.whereType<EventEntity>().where((event) => _sameAsSelectedDay(event.startTime) || _sameAsSelectedDay(event.endTime)).toList();
     allEvents.sort(
         (front, rear) => _compareDateTime(front.startTime, rear.startTime));
     return allEvents;
@@ -176,6 +200,10 @@ class ActivityListViewModel extends ChangeNotifier {
 
   DateTime getSeletedDay() {
     return _selectDate;
+  }
+
+  DateTime setInitialDate() {
+    return DateTime.now().weekOfMonthStartFromMonday % 2 == 0 ? DateTime.now().subtract(const Duration(days: 7)) : DateTime.now();
   }
 }
 

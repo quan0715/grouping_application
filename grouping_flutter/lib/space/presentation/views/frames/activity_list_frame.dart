@@ -45,7 +45,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
   }
 
   Widget _buildBody() {
-    DateFormat dateFormat = DateFormat("MM 月 d 日 EEEE", "zh");
+    DateFormat dateFormat = DateFormat("MM 月 dd 日 EEEE", "zh");
 
     return Consumer<ActivityListViewModel>(
       builder: (context, activityListViewModel, child) => Column(
@@ -57,6 +57,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SfCalendar(
                   view: CalendarView.month,
+                  firstDayOfWeek: 1,        // first day of week, this is Monday, should let the user set the first day of week?
                   headerDateFormat: "y 年 MM 月",
                   headerHeight: 25,
                   headerStyle: CalendarHeaderStyle(
@@ -65,9 +66,13 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                       numberOfWeeksInView: 2, dayFormat: 'EEE'),
                   showDatePickerButton: true,
                   showTodayButton: true,
+                  initialDisplayDate: activityListViewModel.setInitialDate(),
                   dataSource:
                       ActivityData(activityListViewModel.activities!),
                   onTap: (calendarTapDetails) {
+                    if(calendarTapDetails.targetElement == CalendarElement.header) {
+                      return;
+                    }
                     activityListViewModel.setSeletedDay(
                         calendarTapDetails.date ?? DateTime.now());
                     // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());

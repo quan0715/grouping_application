@@ -55,22 +55,21 @@ class ActivityLayOut extends StatelessWidget {
             _createButton(),
           ],
         ),
-        type == ActivityType.mission
-            ? Expanded(
-                flex: 1,
-                child: _buildMissionNavigator(context, activityListViewModel))
-            : const SizedBox(),
-        // const Expanded(
+        type == ActivityType.event
+              ? Expanded(flex: 6, child: _displayEventBody(activityListViewModel))
+              : Expanded(flex: 7, child: _displayMissionBody(context, activityListViewModel))
+        //     ? Expanded(
+        //         flex: 1,
+        //         child: _buildMissionNavigator(context, activityListViewModel))
+        //     : const SizedBox(),
+        // Expanded(
         //     flex: 6,
-        //     child: Padding(padding: EdgeInsets.all(5.0), child: Placeholder()))
-        Expanded(
-            flex: 6,
-            child: Padding(
-              padding: EdgeInsets.all(5.0),
-              child: type == ActivityType.event
-                  ? _displayEvent(activityListViewModel)
-                  : _displayMission(activityListViewModel),
-            ))
+        //     child: Padding(
+        //       padding: EdgeInsets.all(5.0),
+        //       child: type == ActivityType.event
+        //           ? _displayEvent(activityListViewModel)
+        //           : _displayMission(activityListViewModel),
+        //     ))
       ],
     );
   }
@@ -96,107 +95,16 @@ class ActivityLayOut extends StatelessWidget {
     );
   }
 
-  Widget _buildMissionNavigator(
+  Widget _displayMissionBody(
       BuildContext context, ActivityListViewModel activityListViewModel) {
     // TODO: use another way
-    final List<Map<String, dynamic>> typeTitle = [
-      {"title": "ALL", "missions": activityListViewModel.missions!},
-      {"title": "未開始", "missions": activityListViewModel.pengingMissions},
-      {"title": "進行中", "missions": activityListViewModel.progressingMissions},
-      {"title": "待回覆", "missions": activityListViewModel.progressingMissions},
-      {"title": "已完成", "missions": activityListViewModel.finishMissions}
-    ];
-
-    // final List<String> typeTitle = ["ALL", "未開始", "進行中", "待回覆", "已完成"];
-
-    return LayoutBuilder(builder: (context, constraints) {
-      double width = constraints.maxWidth * 0.2;
-      return ListView.builder(
-          itemCount: 5,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => InkWell(
-                onTap: () {
-                  activityListViewModel.setMissionTypePage(index);
-                },
-                child: _typeNavigatorTitle(
-                    typeTitle: typeTitle[index]["title"],
-                    missions: typeTitle[index]["missions"],
-                    isSeleted:
-                        index == activityListViewModel.getMissionTypePage(),
-                    width: width),
-              ));
-    });
-  }
-
-  Widget _displayEvent(ActivityListViewModel activityListViewModel) {
-    List<EventEntity> events = activityListViewModel.events!;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return ListView.builder(
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            WorkspaceEntity belongWorkspace =
-                events[index].belongWorkspace.toEntity();
-            Color displayColor =
-                isWorkspace ? color : Color(belongWorkspace.themeColor);
-            DateFormat format = DateFormat("hh:mm");
-        
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: ColorCardWidget(
-                color: displayColor,
-                child: InkWell(
-                  onTap: () {
-                    debugPrint("unimplemnted yet, show detailed of event");
-                  },
-                  child: SizedBox(
-                    height: 50,     // TODO: dynamic give height
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "@ ${belongWorkspace.name}",
-                              style: TextStyle(
-                                  color: displayColor, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              events[index].title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Spacer(),
-                            Text(
-                              format.format(events[index].startTime),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              format.format(events[index].endTime),
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black45),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      }
-    );
-  }
-
-  Widget _displayMission(ActivityListViewModel activityListViewModel) {
+    // final List<Map<String, dynamic>> typeTitle = [
+    //   {"title": "ALL", "missions": activityListViewModel.missions!},
+    //   {"title": "未開始", "missions": activityListViewModel.pengingMissions},
+    //   {"title": "進行中", "missions": activityListViewModel.progressingMissions},
+    //   {"title": "待回覆", "missions": activityListViewModel.progressingMissions},
+    //   {"title": "已完成", "missions": activityListViewModel.finishMissions}
+    // ];
     List<List<MissionEntity>> missionsType = [
       activityListViewModel.missions!,
       activityListViewModel.pengingMissions,
@@ -205,57 +113,188 @@ class ActivityLayOut extends StatelessWidget {
       activityListViewModel.finishMissions
     ];
 
-    int currentMissionTypePage = activityListViewModel.getMissionTypePage();
+    // debugPrint(missionsType.toString());
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return ListView.builder(
-          itemCount: missionsType[currentMissionTypePage].length,
-          itemBuilder: (context, index) {
-            List<MissionEntity> missions = missionsType[currentMissionTypePage];
-            WorkspaceEntity belongWorkspace =
-                missions[index].belongWorkspace.toEntity();
-            Color displayColor =
-                isWorkspace ? color : Color(belongWorkspace.themeColor);
-        
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: ColorCardWidget(
-                color: displayColor,
-                child: InkWell(
-                  onTap: () {
-                    debugPrint("unimplemnted yet, show detailed of event");
-                  },
-                  child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "@ ${belongWorkspace.name}",
-                              style: TextStyle(
-                                  color: displayColor, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              missions[index].title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Text("狀態")
-                      ],
-                    ),
+    // final List<String> typeTitle = ["ALL", "未開始", "進行中", "待回覆", "已完成"];
+
+    return LayoutBuilder(builder: (context, constraints) {
+      // double width = constraints.maxWidth * 0.2;
+      return DefaultTabController(
+        initialIndex: 0,
+        length: 5,
+        child: Column(children: [
+          TabBar(
+            tabs: [
+              Tab(
+                child: Text("ALL ${missionsType[0].length}"),
+              ),
+              Tab(
+                child: Text("未開始 ${missionsType[1].length}"),
+              ),
+              Tab(
+                child: Text("進行中 ${missionsType[2].length}"),
+              ),
+              Tab(
+                child: Text("待回覆 ${missionsType[3].length}"),
+              ),
+              Tab(
+                child: Text("已完成 ${missionsType[4].length}"),
+              )
+            ],
+          ),
+          Expanded(child: TabBarView(children: [
+            _buildMission(activityListViewModel, missionsType[0]),
+            _buildMission(activityListViewModel, missionsType[1]),
+            _buildMission(activityListViewModel, missionsType[2]),
+            _buildMission(activityListViewModel, missionsType[3]),
+            _buildMission(activityListViewModel, missionsType[4]),
+          ])),
+        ]),
+      );
+      // return ListView.builder(
+      //     itemCount: 5,
+      //     scrollDirection: Axis.horizontal,
+      //     itemBuilder: (context, index) => InkWell(
+      //           onTap: () {
+      //             activityListViewModel.setMissionTypePage(index);
+      //           },
+      //           child: _typeNavigatorTitle(
+      //               typeTitle: typeTitle[index]["title"],
+      //               missions: typeTitle[index]["missions"],
+      //               isSeleted:
+      //                   index == activityListViewModel.getMissionTypePage(),
+      //               width: width),
+      //         ));
+    });
+  }
+
+  Widget _displayEventBody(ActivityListViewModel activityListViewModel) {
+    List<EventEntity> events = activityListViewModel.events!;
+
+    return LayoutBuilder(builder: (context, constraints) {
+      return ListView.builder(
+        itemCount: events.length,
+        itemBuilder: (context, index) {
+          WorkspaceEntity belongWorkspace =
+              events[index].belongWorkspace.toEntity();
+          Color displayColor =
+              isWorkspace ? color : Color(belongWorkspace.themeColor);
+          DateFormat format = DateFormat("hh:mm");
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: ColorCardWidget(
+              color: displayColor,
+              child: InkWell(
+                onTap: () {
+                  debugPrint("unimplemnted yet, show detailed of event");
+                },
+                child: SizedBox(
+                  height: 50, // TODO: dynamic give height
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "@ ${belongWorkspace.name}",
+                            style: TextStyle(
+                                color: displayColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            events[index].title,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Spacer(),
+                          Text(
+                            format.format(events[index].startTime),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            format.format(events[index].endTime),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black45),
+                          )
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  Widget _buildMission(ActivityListViewModel activityListViewModel, List<MissionEntity> missions) {
+    // List<List<MissionEntity>> missionsType = [
+    //   activityListViewModel.missions!,
+    //   activityListViewModel.pengingMissions,
+    //   activityListViewModel.progressingMissions,
+    //   activityListViewModel.progressingMissions,
+    //   activityListViewModel.finishMissions
+    // ];
+
+    // int currentMissionTypePage = activityListViewModel.getMissionTypePage();
+
+    return ListView.builder(
+      itemCount: missions.length,
+      itemBuilder: (context, index) {
+        // List<MissionEntity> missions = missionsType[currentMissionTypePage];
+        WorkspaceEntity belongWorkspace =
+            missions[index].belongWorkspace.toEntity();
+        Color displayColor =
+            isWorkspace ? color : Color(belongWorkspace.themeColor);
+    
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: ColorCardWidget(
+            color: displayColor,
+            child: InkWell(
+              onTap: () {
+                debugPrint("unimplemnted yet, show detailed of mission");
+                debugPrint(missions[index].deadline.toString());
+              },
+              child: SizedBox(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "@ ${belongWorkspace.name}",
+                          style: TextStyle(
+                              color: displayColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          missions[index].title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    Text("狀態")
+                  ],
+                ),
+              ),
+            ),
+          ),
         );
-      }
+      },
     );
   }
 
