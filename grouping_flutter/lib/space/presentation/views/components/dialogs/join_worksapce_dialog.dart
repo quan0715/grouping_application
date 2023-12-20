@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:grouping_project/app/presentation/components/chips/color_tag_chip.dart';
-import 'package:grouping_project/app/presentation/components/data_display/app_log_message_card.dart';
+import 'package:grouping_project/app/presentation/components/components.dart';
 import 'package:grouping_project/app/presentation/components/data_display/title_with_content.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/join_workspace_view_model.dart';
 import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
-import 'package:grouping_project/app/presentation/components/buttons/user_action_button.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../app/presentation/components/components.dart';
 
 class JoinWorkspaceDialog extends StatelessWidget {
   JoinWorkspaceDialog({super.key});
