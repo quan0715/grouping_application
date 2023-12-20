@@ -22,10 +22,6 @@ class ColorCardWidget extends StatelessWidget implements WithThemePrimaryColor{
 
   @override
   Widget build(BuildContext context) => _buildBody(context);
-
-  // BorderSide get _getFocusedBorder => BorderSide( color: getThemePrimaryColor, width: borderRadius,);
-  // BorderSide get _getUnfocusedBorder => BorderSide(color: Colors.white, width: 0,);
-
   Widget _buildBody(BuildContext context){
     return Container(
       decoration: BoxDecoration(
@@ -33,7 +29,7 @@ class ColorCardWidget extends StatelessWidget implements WithThemePrimaryColor{
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: EdgeInsets.all(borderRadius),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(borderRadius),
           child: Container(

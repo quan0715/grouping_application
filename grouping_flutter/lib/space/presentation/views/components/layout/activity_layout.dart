@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/data_display/color_card_widget.dart';
+import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
@@ -155,7 +156,7 @@ class ActivityLayOut extends StatelessWidget {
                     debugPrint("unimplemnted yet, show detailed of event");
                   },
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Column(
@@ -164,29 +165,30 @@ class ActivityLayOut extends StatelessWidget {
                         children: [
                           Text(
                             "@${belongWorkspace.name}",
-                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: displayColor, fontWeight: FontWeight.bold),
                           ),
                           const Gap(3),
                           Text(
                             events[index].title,
-                            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
                                 fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
+                      const Spacer(), 
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             format.format(events[index].startTime),
-                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: Colors.black, fontWeight: FontWeight.bold),
                           ),
                           const Gap(3),
                           Text(
                             format.format(events[index].endTime),
-                            style: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.bold, color: Colors.black45),
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.black45),
                           )
                         ],
                       )
@@ -241,7 +243,7 @@ class ActivityLayOut extends StatelessWidget {
                         children: [
                           Text(
                             "@${belongWorkspace.name}",
-                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: displayColor, fontWeight: FontWeight.bold),
                           ),
                           const Gap(3),
