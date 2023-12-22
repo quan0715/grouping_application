@@ -9,7 +9,7 @@ class ProfileAvatar extends StatelessWidget{
   final String imageUrl;
   final String label;
   final double avatarSize;
-  final double labelFontSize;
+  final double? labelFontSize;
   final double radius;
   
   const ProfileAvatar({
@@ -19,9 +19,26 @@ class ProfileAvatar extends StatelessWidget{
     this.imageUrl = "",
     this.avatar,
     this.avatarSize = 40,
-    this.labelFontSize = 14,
+    this.labelFontSize,
     this.radius = 10,
   });
+
+  factory ProfileAvatar.circular({
+    required Color themePrimaryColor,
+    required String label,
+    String imageUrl = "",
+    Widget? avatar,
+    double avatarSize = 36,
+    double labelFontSize = 12,
+  }) => ProfileAvatar(
+    themePrimaryColor: themePrimaryColor,
+    label: label.substring(0,1),
+    imageUrl: imageUrl,
+    avatar: avatar,
+    avatarSize: avatarSize,
+    labelFontSize: labelFontSize,
+    radius: avatarSize / 2,
+  );
 
   Future<Size> _getImageSize(ImageProvider imageProvider) async {
     final Completer<Size> completer = Completer<Size>();
@@ -44,7 +61,7 @@ class ProfileAvatar extends StatelessWidget{
         softWrap: false,
         style: Theme.of(context).textTheme.labelLarge!.copyWith(
           color: themePrimaryColor,
-          // fontSize: labelFontSize,
+          fontSize: labelFontSize,
           fontWeight: FontWeight.bold
         ))
     );
@@ -62,10 +79,9 @@ class ProfileAvatar extends StatelessWidget{
         future: _getImageSize(image),
         builder: (BuildContext context, AsyncSnapshot<Size> snapshot) {
           if (snapshot.hasData) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(radius),
-              ),
+            return ClipRRect(
+              clipBehavior: Clip.hardEdge,
+              borderRadius: BorderRadius.circular(radius),
               child: Image.network(
                 imageUrl,
                 fit: snapshot.data!.width > snapshot.data!.height ? BoxFit.fitHeight : BoxFit.fitWidth,
@@ -88,13 +104,10 @@ class ProfileAvatar extends StatelessWidget{
       height: avatarSize,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(radius),
         border: Border.all(color: themePrimaryColor.withOpacity(0.3), width: 2),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: _getAvatar(context),
-      ),
+      child: _getAvatar(context),
     );
   }
 

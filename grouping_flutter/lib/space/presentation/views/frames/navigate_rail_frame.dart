@@ -155,7 +155,12 @@ class _NavigateRailFrameState extends State<NavigateRailFrame> {
                   padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                   child: InkWell(
                     onTap: () {
-                      GoRouter.of(context).go('/app/workspace/${workspace.id}/home');
+                      if(spaceViewModel.workspaceDataProvider != null){
+                        GoRouter.of(context).push('/app/workspace/${workspace.id}/home');
+                      }
+                      else{
+                        GoRouter.of(context).go('/app/workspace/${workspace.id}/home');
+                      }
                     },
                     child: ProfileAvatar(
                       themePrimaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
