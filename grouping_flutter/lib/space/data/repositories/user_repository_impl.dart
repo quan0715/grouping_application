@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:dartz/dartz.dart';
 import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
@@ -60,10 +61,15 @@ class UserRepositoryImpl implements UserRepository {
       return Left(CacheFailure(errorMessage: error.exceptionMessage));
     }
   }
-  
+
   @override
-  Future<Either<Failure, void>> updateProfilePhoto(int userId, String photoUrl) {
-    // TODO: implement updateProfilePhoto
-    throw UnimplementedError();
+  Future<Either<Failure, UserEntity>> updateProfilePhoto(UserEntity user, XFile image) async {
+     try {
+      final userModel = await remoteDataSource.updateUserProfileImage(
+          account: UserModel.fromEntity(user), image: image);
+      return Right(UserEntity.fromModel(userModel));
+    } on ServerException catch (error) {
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
+    }
   }
 }

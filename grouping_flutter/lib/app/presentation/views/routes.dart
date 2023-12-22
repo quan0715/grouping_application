@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grouping_project/app/presentation/providers/token_manager.dart';
 import 'package:grouping_project/auth/presentation/views/auth_view.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/view_models/group_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
 import 'package:grouping_project/space/presentation/views/pages/workspace_page_view.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,14 @@ class AppRouter {
     // debugPrint('create user data provider');
     return UserDataProvider(
       tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
+    )..init();
+  }
+
+  GroupDataProvider getGroupDataProvider(BuildContext context, int workspaceId) {
+    // debugPrint('create group data provider');
+    return GroupDataProvider(
+      tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
+      workspaceIndex: workspaceId
     )..init();
   }
 
@@ -73,10 +82,19 @@ class AppRouter {
               },
             ),
             GoRoute(
-              path: 'workspace/:workspaceId',
-              builder: (BuildContext context, GoRouterState state) {
-                // debugPrint(state.pathParameters['workspaceId'].toString());
-                return const WorkspacePageView();
+              path: 'workspace/:workspaceId/:pageType',
+              builder: (context, state){
+                debugPrint('build user page');
+                DashboardPageType pageType = getDashboardPath(state.pathParameters['pageType']!);
+                int workspaceId = int.parse(state.pathParameters['workspaceId']!);
+                return MultiProvider(providers: [
+                  ChangeNotifierProvider<GroupDataProvider>(
+                    create: (context) => getGroupDataProvider(context, workspaceId)..init(),
+                  ),
+                  ChangeNotifierProvider<UserDataProvider>(
+                    create: (context) => getUserDataProvider(context)..init(),
+                  ),
+                ], child: WorkspacePageView(pageType: pageType));
               },
             ),
           ]

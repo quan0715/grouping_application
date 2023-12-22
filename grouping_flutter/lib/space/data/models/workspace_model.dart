@@ -71,7 +71,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
         'workspace_name': name,
         'description': description,
         'photo': photo?.toJson(),
-        'members': members?.map((member) => member.toJson()).toList(),
+        'members': members?.map((member) => member.id).toList(),
         'activities': activities?.map((activity) => activity.toJson()).toList(),
         'tags': tags?.map((tag) => tag.toJson()).toList(),
       };
@@ -88,9 +88,16 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
         members: ((data['members'] ?? []) as List)
-            .map((memberID) => Member(
-                id: memberID, userName: 'unknown')) //TODO: make it correct
-            .toList(),
+            .map((member){
+              if(member is int){
+                return Member(id: member, userName: 'unknown');
+              }
+              else if(member is Map<String, dynamic>){
+                return Member.fromJson(data: member);
+              }
+              else{
+                return Member(id: -1, userName: 'unknown');
+              }}).toList(),
         activities: ((data['activities'] ?? []).cast<Map<String, dynamic>>()
                 as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null

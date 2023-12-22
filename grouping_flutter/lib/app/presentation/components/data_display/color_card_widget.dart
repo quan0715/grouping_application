@@ -16,31 +16,34 @@ class ColorCardWidget extends StatelessWidget implements WithThemePrimaryColor{
     required this.color,
     this.child,
     this.borderRadius = 5,
-    this.withALLBorder = false,
-    this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 10,),
+    this.withALLBorder = true,
+    this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 8,),
   });
 
   @override
   Widget build(BuildContext context) => _buildBody(context);
-
-  BorderSide get _getFocusedBorder => BorderSide( color: getThemePrimaryColor, width: borderRadius,);
-  BorderSide get _getUnfocusedBorder => BorderSide(color: getThemePrimaryColor, width: withALLBorder ? 1 : 0,);
-
   Widget _buildBody(BuildContext context){
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border(
-          left: _getFocusedBorder,
-          right: _getUnfocusedBorder,
-          top: _getUnfocusedBorder,
-          bottom: _getUnfocusedBorder,
-        )
       ),
       child: Padding(
-        padding: padding,
-        child: child,
+        padding: EdgeInsets.all(borderRadius),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(color: color, width: borderRadius,),
+              ),
+            ),
+            child: Padding(
+              padding: padding,
+              child: child,
+            ),
+          ),
+        ),
       ),
     );
   }

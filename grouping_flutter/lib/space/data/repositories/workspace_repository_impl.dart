@@ -6,6 +6,7 @@ import 'package:grouping_project/space/data/datasources/remote_data_source/works
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 import 'package:grouping_project/space/domain/repositories/workspace_repository.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// ## 這個 WorkspaceService 主要是負責處理 workspace 的功能操作
 /// 
@@ -29,9 +30,9 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository{
   }
 
   @override
-  Future<Either<Failure, WorkspaceEntity>> createWorkspace(WorkspaceEntity workspace) async {
+  Future<Either<Failure, WorkspaceEntity>> createWorkspace(WorkspaceEntity workspace, XFile? image) async {
     try {
-      final workspaceModel = await remoteDataSource.createWorkspaceData(workspace: WorkspaceModel.fromEntity(workspace));
+      final workspaceModel = await remoteDataSource.createWorkspaceData(workspace: WorkspaceModel.fromEntity(workspace), image: image);
       return Right(workspaceModel.toEntity());
     } on ServerException catch(error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));

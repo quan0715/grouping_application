@@ -8,5 +8,7 @@
         "-d",
         "chrome",
         "--web-port",
-        "5000"]
+        "5000"
+    ],
+    "cmake.sourceDirectory": "/Users/quan/grouping_application/grouping_flutter/linux"
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_page_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/activity_layout.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +45,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
   }
 
   Widget _buildBody() {
-    DateFormat dateFormat = DateFormat("MM 月 d 日 EEEE", "zh");
+    DateFormat dateFormat = DateFormat("MM 月 dd 日 EEEE", "zh");
 
     return Consumer<ActivityListViewModel>(
       builder: (context, activityListViewModel, child) => Column(
@@ -57,17 +57,22 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SfCalendar(
                   view: CalendarView.month,
+                  firstDayOfWeek: 1,        // first day of week, this is Monday, should let the user set the first day of week?
                   headerDateFormat: "y 年 MM 月",
                   headerHeight: 25,
                   headerStyle: CalendarHeaderStyle(
                       textStyle: TextStyle(fontSize: 15, color: widget.color)),
                   monthViewSettings: const MonthViewSettings(
-                      numberOfWeeksInView: 2, dayFormat: 'EEE'),
+                      numberOfWeeksInView: 4, dayFormat: 'EEE'),
                   showDatePickerButton: true,
                   showTodayButton: true,
+                  initialDisplayDate: activityListViewModel.setInitialDate(),
                   dataSource:
-                      ActivityDataSource(activityListViewModel.activities!),
+                      ActivityData(activityListViewModel.activities!),
                   onTap: (calendarTapDetails) {
+                    if(calendarTapDetails.targetElement == CalendarElement.header) {
+                      return;
+                    }
                     activityListViewModel.setSeletedDay(
                         calendarTapDetails.date ?? DateTime.now());
                     // debugPrint((calendarTapDetails.date! == activityListViewModel.getSeletedDay()).toString());
