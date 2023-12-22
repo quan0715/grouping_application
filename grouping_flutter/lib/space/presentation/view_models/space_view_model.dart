@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:grouping_project/app/presentation/providers/message_service.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/presentation/view_models/group_data_provider.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/group_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 
 class SpaceViewModel extends ChangeNotifier {
 

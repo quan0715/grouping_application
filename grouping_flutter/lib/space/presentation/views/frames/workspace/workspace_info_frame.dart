@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/components.dart';
 import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
 import 'package:grouping_project/core/shared/color_widget_interface.dart';
-import 'package:grouping_project/space/presentation/view_models/group_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/group_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/member_widget.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';

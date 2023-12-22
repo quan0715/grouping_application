@@ -19,28 +19,28 @@ class MissionStateModel{
       MissionStateModel._default(
           id: -1,
           stage: MissionStage.progress,
-          stateName: 'in progress');
+          stateName: '進行中');
 
   ///the default state of pending stage, called pending
   static final MissionStateModel defaultPendingState =
       MissionStateModel._default(
           id: -1,
           stage: MissionStage.pending,
-          stateName: 'pending');
+          stateName: '審查中');
 
   ///the default state of close stage, called finish
   static final MissionStateModel defaultFinishState =
       MissionStateModel._default(
           id: -1,
           stage: MissionStage.close,
-          stateName: 'finish');
+          stateName: '已完成');
 
   ///the default state of progress stage, called time out
   static final MissionStateModel defaultTimeOutState =
       MissionStateModel._default(
           id: -1,
           stage: MissionStage.pending,
-          stateName: 'time out');
+          stateName: '已逾期');
 
   MissionStateModel._default(
       {required this.id, required this.stage, required this.stateName});

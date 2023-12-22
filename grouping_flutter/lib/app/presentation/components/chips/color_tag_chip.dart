@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 class ColorTagChip extends StatelessWidget {
   const ColorTagChip({
@@ -30,5 +31,57 @@ class ColorTagChip extends StatelessWidget {
         ),
       ),
         ));
+  }
+}
+
+
+class StatusChip extends StatelessWidget{
+  
+  const StatusChip({
+    super.key,
+    required this.statusLabel,
+    this.statusColor = Colors.amber,
+    this.textStyle,
+  });
+
+  Color _getBackgroundColor(Color color)
+    => Color.lerp(Colors.white, color, 0.05)!;
+
+  Color _getBorderColor(Color color)
+    => Color.lerp(Colors.white, color, 0.3)!;
+
+
+  final Color statusColor;
+  final String statusLabel;
+  final TextStyle? textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: _getBorderColor(statusColor), width: 1),
+          borderRadius: BorderRadius.circular(5),
+          color: _getBackgroundColor(statusColor)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Center(
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: statusColor,
+                radius: 4,
+              ),
+              const Gap(5),
+              Text(statusLabel,
+                  textAlign: TextAlign.center,
+                  style: textStyle ?? Theme.of(context).textTheme.labelMedium!.copyWith(
+                    color: statusColor,
+                    fontWeight: FontWeight.bold,
+              ), 
+                      ),
+            ],
+          ),
+      ),
+    ));
   }
 }

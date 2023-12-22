@@ -5,7 +5,7 @@ import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/create_workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/join_workspace_view_model.dart';
 import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/profile_avatar.dart';
 import 'package:grouping_project/space/presentation/views/components/dialogs/create_workspace_dialog.dart';
@@ -155,7 +155,12 @@ class _NavigateRailFrameState extends State<NavigateRailFrame> {
                   padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                   child: InkWell(
                     onTap: () {
-                      GoRouter.of(context).go('/app/workspace/${workspace.id}/home');
+                      if(spaceViewModel.workspaceDataProvider != null){
+                        GoRouter.of(context).push('/app/workspace/${workspace.id}/home');
+                      }
+                      else{
+                        GoRouter.of(context).go('/app/workspace/${workspace.id}/home');
+                      }
                     },
                     child: ProfileAvatar(
                       themePrimaryColor: AppColor.getWorkspaceColorByIndex(workspace.themeColor),
