@@ -183,6 +183,24 @@ class ActivityNotificationSerializer(serializers.ModelSerializer):
         model = ActivityNotification
         fields = ['notify_time']
 
+class ActivityReadSerializer(ActivitySimpleSerializer):
+    creator = UserSimpleSerializer(read_only=True)
+    children = ActivitySimpleSerializer(many=True,
+                                            read_only=True)
+    contributors = UserSimpleSerializer(many=True,
+                                            read_only=True)
+    notifications = ActivityNotificationSerializer(many=True,
+                                                             read_only=True)
+
+    class Meta(ActivitySimpleSerializer.Meta):
+        fields = ActivitySimpleSerializer.Meta.fields + [
+            'description', 'created_at',
+            'creator', 'children', 'contributors', 'notifications']
+        extra_kwargs = ActivitySimpleSerializer.Meta.extra_kwargs.copy()
+        extra_kwargs.update({
+            'description': {'read_only': True},
+            'created_at': {'read_only': True},
+        })
 
 class ActivitySerializer(serializers.ModelSerializer):
     parents = serializers.PrimaryKeyRelatedField(many=True,
