@@ -46,7 +46,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         else:
             workspace = Workspace.objects.create(**validated_data)
 
-        if tags_data:
+        if tags_data != None:
             for tag_data in tags_data:
                 WorkspaceTag.objects.create(
                     belong_workspace=workspace, **tag_data)
@@ -66,7 +66,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             instance.photo = photo
             instance.save()
 
-        if tags_data:
+        if tags_data != None:
             instance.tags.all().delete()
             for tag_data in tags_data:
                 WorkspaceTag.objects.create(
@@ -182,6 +182,26 @@ class ActivityNotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityNotification
         fields = ['notify_time']
+
+
+class ActivityReadSerializer(ActivitySimpleSerializer):
+    creator = UserSimpleSerializer(read_only=True)
+    children = ActivitySimpleSerializer(many=True,
+                                        read_only=True)
+    contributors = UserSimpleSerializer(many=True,
+                                        read_only=True)
+    notifications = ActivityNotificationSerializer(many=True,
+                                                   read_only=True)
+
+    class Meta(ActivitySimpleSerializer.Meta):
+        fields = ActivitySimpleSerializer.Meta.fields + [
+            'description', 'created_at',
+            'creator', 'children', 'contributors', 'notifications']
+        extra_kwargs = ActivitySimpleSerializer.Meta.extra_kwargs.copy()
+        extra_kwargs.update({
+            'description': {'read_only': True},
+            'created_at': {'read_only': True},
+        })
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -301,7 +321,7 @@ class UserSerializer(serializers.ModelSerializer):
             instance.photo = photo
             instance.save()
 
-        if tags_data:
+        if tags_data != None:
             instance.tags.all().delete()
             for tag_data in tags_data:
                 UserTag.objects.create(belong_user=instance, **tag_data)
