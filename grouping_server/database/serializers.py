@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from typing import List
 from rest_framework import serializers, exceptions
 from .models import Image, User, UserTag, MissionState, Activity, ActivityNotification, Event, Mission, WorkspaceTag, Workspace
@@ -6,7 +7,29 @@ from grouping_server import settings
 # ---↓↓↓--- below is SimpleReadSerializer part ---↓↓↓---
 
 
-class ImageSimpleReadSerializer(serializers.ModelSerializer):
+class BaseReadSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        raise exceptions.MethodNotAllowed(
+            method=self.context['request'].method)
+
+    def update(self, instance, validated_data):
+        raise exceptions.MethodNotAllowed(
+            method=self.context['request'].method)
+
+
+class BaseWriteSerializer(serializers.ModelSerializer, metaclass=ABCMeta):
+
+    @abstractmethod
+    def get_read_serializer(self, *args, **kwargs):
+        pass
+
+    def to_representation(self, instance):
+        read_serializer = self.get_read_serializer(instance)
+        representation = read_serializer.data
+        return representation
+
+
+class ImageSimpleReadSerializer(BaseReadSerializer):
     image_uri = serializers.ImageField(source='data', read_only=True)
 
     class Meta:
@@ -18,7 +41,7 @@ class ImageSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class UserTagSimpleReadSerializer(serializers.ModelSerializer):
+class UserTagSimpleReadSerializer(BaseReadSerializer):
     class Meta:
         model = UserTag
         fields = ['id', 'title', 'content']
@@ -29,7 +52,7 @@ class UserTagSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class UserSimpleReadSerializer(serializers.ModelSerializer):
+class UserSimpleReadSerializer(BaseReadSerializer):
     photo = ImageSimpleReadSerializer(read_only=True)
 
     class Meta:
@@ -41,7 +64,7 @@ class UserSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class WorkspaceTagSimpleReadSerializer(serializers.ModelSerializer):
+class WorkspaceTagSimpleReadSerializer(BaseReadSerializer):
     class Meta:
         model = WorkspaceTag
         fields = ['id', 'content']
@@ -51,7 +74,7 @@ class WorkspaceTagSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class WorkspaceSimpleReadSerializer(serializers.ModelSerializer):
+class WorkspaceSimpleReadSerializer(BaseReadSerializer):
     photo = ImageSimpleReadSerializer(read_only=True)
 
     class Meta:
@@ -64,7 +87,7 @@ class WorkspaceSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class MissionStateSimpleReadSerializer(serializers.ModelSerializer):
+class MissionStateSimpleReadSerializer(BaseReadSerializer):
     class Meta:
         model = MissionState
         fields = ['id', 'stage', 'name']
@@ -75,7 +98,7 @@ class MissionStateSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class MissionSimpleReadSerializer(serializers.ModelSerializer):
+class MissionSimpleReadSerializer(BaseReadSerializer):
     state = MissionStateSimpleReadSerializer(read_only=True)
 
     class Meta:
@@ -86,7 +109,7 @@ class MissionSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class EventSimpleReadSerializer(serializers.ModelSerializer):
+class EventSimpleReadSerializer(BaseReadSerializer):
     class Meta:
         model = Event
         fields = ['start_time', 'end_time']
@@ -96,7 +119,7 @@ class EventSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class ActivityNotificationSimpleReadSerializer(serializers.ModelSerializer):
+class ActivityNotificationSimpleReadSerializer(BaseReadSerializer):
     class Meta:
         model = ActivityNotification
         fields = ['id', 'notify_time']
@@ -106,7 +129,7 @@ class ActivityNotificationSimpleReadSerializer(serializers.ModelSerializer):
         }
 
 
-class ActivitySimpleReadSerializer(serializers.ModelSerializer):
+class ActivitySimpleReadSerializer(BaseReadSerializer):
     event = EventSimpleReadSerializer(read_only=True)
     mission = MissionSimpleReadSerializer(read_only=True)
     belong_workspace = WorkspaceSimpleReadSerializer(read_only=True)
@@ -196,7 +219,7 @@ class ActivityReadSerializer(ActivitySimpleReadSerializer):
 
 # ---↓↓↓--- below is WriteSerializer part ---↓↓↓---
 
-class ImageWriteSerializer(serializers.ModelSerializer):
+class ImageWriteSerializer(BaseWriteSerializer):
     data = serializers.ImageField(write_only=True)
 
     class Meta:
@@ -220,7 +243,7 @@ class UserTagValidateSerializer(serializers.ModelSerializer):
         }
 
 
-class UserWriteSerializer(serializers.ModelSerializer):
+class UserWriteSerializer(BaseWriteSerializer):
     tags = UserTagValidateSerializer(
         many=True, required=False, allow_empty=True, write_only=True)
     photo_data = serializers.ImageField(write_only=True)
@@ -260,6 +283,9 @@ class UserWriteSerializer(serializers.ModelSerializer):
 
         return instance
 
+    def get_read_serializer(self, *args, **kwargs):
+        return UserReadSerializer(*args, **kwargs)
+
 
 class WorkspaceTagValidateSerializer(serializers.ModelSerializer):
     """
@@ -273,7 +299,7 @@ class WorkspaceTagValidateSerializer(serializers.ModelSerializer):
         }
 
 
-class WorkspaceWriteSerializer(serializers.ModelSerializer):
+class WorkspaceWriteSerializer(BaseWriteSerializer):
     tags = WorkspaceTagValidateSerializer(
         many=True, required=False, allow_empty=True, write_only=True)
     photo_data = serializers.ImageField(write_only=True, required=False)
@@ -335,8 +361,11 @@ class WorkspaceWriteSerializer(serializers.ModelSerializer):
 
         return instance
 
+    def get_read_serializer(self, *args, **kwargs):
+        return WorkspaceReadSerializer(*args, **kwargs)
 
-class MissionStateWriteSerializer(serializers.ModelSerializer):
+
+class MissionStateWriteSerializer(BaseWriteSerializer):
     class Meta:
         model = MissionState
         fields = ['stage', 'name', 'belong_workspace']
@@ -346,8 +375,11 @@ class MissionStateWriteSerializer(serializers.ModelSerializer):
             'belong_workspace': {'write_only': True}
         }
 
+    def get_read_serializer(self, *args, **kwargs):
+        return MissionStateReadSerializer(*args, **kwargs)
 
-class EventWriteSerializer(serializers.ModelSerializer):
+
+class EventWriteSerializer(BaseWriteSerializer):
     start_time = serializers.DateTimeField(
         input_formats=settings.DATETIME_FORMAT, write_only=True)
     end_time = serializers.DateTimeField(
@@ -357,14 +389,20 @@ class EventWriteSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['start_time', 'end_time']
 
+    def get_read_serializer(self, *args, **kwargs):
+        return EventSimpleReadSerializer(*args, **kwargs)
 
-class MissionWriteSerializer(serializers.ModelSerializer):
+
+class MissionWriteSerializer(BaseWriteSerializer):
     deadline = serializers.DateTimeField(
         input_formats=settings.DATETIME_FORMAT, write_only=True)
 
     class Meta:
         model = Mission
         fields = ['deadline', 'state']
+
+    def get_read_serializer(self, *args, **kwargs):
+        return MissionSimpleReadSerializer(*args, **kwargs)
 
 
 class ActivityNotificationValidateSerializer(serializers.ModelSerializer):
@@ -379,7 +417,7 @@ class ActivityNotificationValidateSerializer(serializers.ModelSerializer):
         fields = ['notify_time']
 
 
-class ActivityWriteSerializer(serializers.ModelSerializer):
+class ActivityWriteSerializer(BaseWriteSerializer):
     event = EventWriteSerializer(required=False, write_only=True)
     mission = MissionWriteSerializer(required=False, write_only=True)
     notifications = ActivityNotificationValidateSerializer(
@@ -407,11 +445,15 @@ class ActivityWriteSerializer(serializers.ModelSerializer):
 
         errors = {}
         if event_data and mission_data:
-            errors['event'] = ['This field cannot coexist with the mission field.']
-            errors['mission'] = ['This field cannot coexist with the event field.']
+            errors['event'] = [
+                'This field cannot coexist with the mission field.']
+            errors['mission'] = [
+                'This field cannot coexist with the event field.']
         elif (not event_data) and (not mission_data):
-            errors['event'] = ['Either this field or the mission field should be provided.']
-            errors['mission'] = ['Either this field or the event field should be provided.']
+            errors['event'] = [
+                'Either this field or the mission field should be provided.']
+            errors['mission'] = [
+                'Either this field or the event field should be provided.']
         if children is not None:
             errors['children'] = [
                 'This field can not be provided using this method. Try using PATCH.']
@@ -467,5 +509,8 @@ class ActivityWriteSerializer(serializers.ModelSerializer):
                     belong_activity=instance, **notification_data)
 
         return instance
+
+    def get_read_serializer(self, *args, **kwargs):
+        return ActivityReadSerializer(*args, **kwargs)
 
 # ---↑↑↑--- above is WriteSerializer part ---↑↑↑---
