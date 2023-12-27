@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
     # '192.168.0.102',
     'localhost',
     # '127.0.0.1'
-    
+
     # the test domain own by Bryant
     # 'amazed-privately-goshawk.ngrok-free.app'
 
@@ -67,7 +67,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware", # cors headers
+    "corsheaders.middleware.CorsMiddleware",  # cors headers
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -92,8 +92,7 @@ ROOT_URLCONF = 'grouping_server.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -177,6 +176,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATETIME_FORMAT = ('%Y-%m-%d', 'iso-8601')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -189,4 +189,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
