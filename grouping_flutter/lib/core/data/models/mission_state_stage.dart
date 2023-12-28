@@ -1,4 +1,6 @@
 // import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:grouping_project/core/theme/color.dart';
 
 /// Stage of mission 
 /// print(MissionStage.progress.label) => progress
@@ -24,6 +26,19 @@ enum MissionStage {
         return MissionStage.reply;
       default:
         return MissionStage.progress;
+    }
+  }
+
+  Color get color {
+    switch(this){
+      case MissionStage.progress:
+        return AppColor.inProgressColor;
+      case MissionStage.pending:
+        return AppColor.pendingColor;
+      case MissionStage.close:
+        return AppColor.completeColor;
+      default:
+        return AppColor.incorrect;
     }
   }
 }

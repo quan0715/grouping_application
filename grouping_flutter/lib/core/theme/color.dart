@@ -27,6 +27,13 @@ class AppColor{
   static Color brightness(BuildContext context) => Theme.of(context).colorScheme.brightness == Brightness.dark ? Colors.white : Colors.black;
   static ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
   
+
+  // status color
+  static Color completeColor = const Color(0xFF11AE3D);
+  static Color inProgressColor = const Color(0xFF1C448D);
+  static Color nonStartColor = const Color(0xFF656565);
+  static Color pendingColor = const Color(0xFFC300E3);
+
   // log color
   static Color logSuccess = Colors.green;
   static Color logError = Colors.red;

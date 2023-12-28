@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_stage.dart';
+import 'package:grouping_project/core/data/models/image_model.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
+import 'package:grouping_project/core/theme/color.dart';
+// import 'package:grouping_project/space/data/models/mission_state_stage.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 extension DateTimeExtension on DateTime {
@@ -36,104 +42,145 @@ extension DateTimeExtension on DateTime {
 class ActivityListViewModel extends ChangeNotifier {
   UserDataProvider userDataProvider;
   List<ActivityEntity>? activities;
-  List<EventEntity>? events;
-  List<MissionEntity>? missions;
+  List<EventEntity> get events => _sortEvents();
+  List<MissionEntity> get missions => _sortMissions();
+  
   int _missionTypePage = 0;
   DateTime _selectDate = DateTime.now();
 
+  ActivityEntity? selectedActivity;
+  
+  WorkspaceModel tempGroup = WorkspaceModel(
+    id: -1, name: "Grouping 專題研究小組",
+    themeColor: 1,
+    members: [
+      Member(
+        id: 1,
+        userName: '張百寬',
+        photo: ImageModel(imageId: -1, imageUri: "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg", updateAt: DateTime.now()),
+      ),
+      Member(
+        id: 2,
+        userName: '許明瑞',
+      ),
+    ]
+  );
 
-  /*
-  List<ActivityEntity> tmpDatas = [
+  List<ActivityEntity>  get tmpData => [
     EventEntity(
-        id: -1,
+        id: 0,
         title: "code review",
         introduction: "this is a test",
         contributors: [],
         notifications: [],
-        creatorAccount: UserModel.defaultAccount,
+        // creatorAccount: UserModel.defaultAccount,
         creator: UserModel.defaultAccount.toEntity(),
-        belongWorkspace: WorkspaceModel(
-            id: -1, name: "Grouping 專題研究小組", themeColor: 0xFF006874),
+        createTime: DateTime.now(),
+        belongWorkspace: tempGroup.toEntity(),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(const Duration(hours: 1)),
-        relatedMissionIds: []),
+        childMissions: [],),
     MissionEntity(
-        id: -1,
+        id: 1,
         title: "UI/UX 設計",
         introduction: "this is a test",
         contributors: [],
         notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: WorkspaceModel(
-            id: -1, name: "Grouping 專題研究小組", themeColor: 0xFF006874),
+        // creatorAccount: UserModel.defaultAccount,
+        creator: UserModel.defaultAccount.toEntity(),
+        createTime: DateTime.now(),
+        belongWorkspace: tempGroup.toEntity(),
         deadline: DateTime.now().add(const Duration(hours: 1)),
-        stateId: -1,
+        // stateId: -1,
         state: MissionState.defaultProgressState,
-        parentMissionIds: [],
-        childMissionIds: []),
+        childMissions: [],
+        // parentMissionIds: [],
+        // childMissionIds: [],
+        ),
     MissionEntity(
-        id: -1,
+        id: 2,
         title: "Login issue 解決",
         introduction: "this is a test",
         contributors: [],
         notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: WorkspaceModel(
-            id: -1, name: "Grouping 專題研究小組", themeColor: 0xFF006874),
+        // creatorAccount: UserModel.defaultAccount,
+        creator: UserModel.defaultAccount.toEntity(),
+        createTime: DateTime.now(),
+        belongWorkspace: tempGroup.toEntity(),
         deadline: DateTime.now().add(const Duration(hours: 1)),
-        stateId: -1,
+        // stateId: -1,
         state: MissionState.defaultPendingState,
-        parentMissionIds: [],
-        childMissionIds: []),
+        childMissions: [],
+        // parentMissionIds: [],
+        // childMissionIds: [],
+        ),
     EventEntity(
-        id: -1,
+        id: 3,
         title: "進度報告會議",
         introduction: "this is a test",
         contributors: [],
         notifications: [],
-        creatorAccount: UserModel.defaultAccount,
+        // creatorAccount: UserModel.defaultAccount,
+        creator: UserModel.defaultAccount.toEntity(),
+        createTime: DateTime.now(),
         belongWorkspace:
-            WorkspaceModel(id: -1, name: "軟工小組", themeColor: 0xFF206FCC),
+            WorkspaceModel(id: -1, name: "軟工小組", themeColor: 2).toEntity(),
         startTime: DateTime.now().add(const Duration(days: 1)),
         endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
-        relatedMissionIds: []),
+        childMissions: [],
+        // relatedMissionIds: [],
+        ),
     EventEntity(
-        id: -1,
+        id: 4,
         title: "校運會練習",
         introduction: "this is a test",
         contributors: [],
         notifications: [],
-        creatorAccount: UserModel.defaultAccount,
+        // creatorAccount: UserModel.defaultAccount,
+        creator: UserModel.defaultAccount.toEntity(),
+        createTime: DateTime.now(),
         belongWorkspace: WorkspaceModel(
-            id: -1, name: "test 的 workspace", themeColor: 0xFFBF5F07),
+            id: -1, name: "test 的 workspace", themeColor: 4).toEntity(),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(const Duration(hours: 1)),
-        relatedMissionIds: []),
+        childMissions: [],
+        // relatedMissionIds: [],
+        ),
     MissionEntity(
-        id: -1,
+        id: 5,
         title: "與教授的專題時間",
         introduction: "this is a test",
         contributors: [],
         notifications: [],
-        creatorAccount: UserModel.defaultAccount,
+        // creatorAccount: UserModel.defaultAccount,
+        creator: UserModel.defaultAccount.toEntity(),
+        createTime: DateTime.now(),
         belongWorkspace: WorkspaceModel(
-            id: -1, name: "test 的 workspace", themeColor: 0xFFBF5F07),
+            id: -1, name: "test 的 workspace", themeColor: 4).toEntity(),
         deadline: DateTime.now().add(const Duration(hours: 1)),
-        stateId: -1,
+        // stateId: -1,
         state: MissionState.defaultFinishState,
-        parentMissionIds: [],
-        childMissionIds: []),
+        childMissions: [],
+        // parentMissionIds: [],
+        // childMissionIds: [],
+        ),
   ];
-  */
+
   ActivityListViewModel({required this.userDataProvider});
+
+  void selectActivity(ActivityEntity activity) {
+    selectedActivity = activity;
+    notifyListeners();
+  }
 
   void init() {
     activities = userDataProvider.currentUser!.contributingActivities
         .map((activity) => activity.toEntity() as ActivityEntity)
         .toList();
-    activities = tmpDatas;
-    events = _sortEvents();
-    missions = _sortMissions();
+    activities = tmpData;
+    selectedActivity = activities!.first;
+    // events = _sortEvents();
+    // missions = _sortMissions();
   }
 
   void update(UserDataProvider userProvider) {
@@ -142,18 +189,18 @@ class ActivityListViewModel extends ChangeNotifier {
     activities = userDataProvider.currentUser!.contributingActivities
         .map((activity) => activity.toEntity() as ActivityEntity)
         .toList();
-    activities = tmpDatas;
-    events = _sortEvents();
-    missions = _sortMissions();
+    activities = tmpData;
+    // events = _sortEvents();
+    // missions = _sortMissions();
   }
 
-  List<MissionEntity> get pengingMissions => missions!
+  List<MissionEntity> get  v => missions
       .where((element) => element.state.stage == MissionStage.pending)
       .toList();
-  List<MissionEntity> get progressingMissions => missions!
+  List<MissionEntity> get progressingMissions => missions
       .where((element) => element.state.stage == MissionStage.progress)
       .toList();
-  List<MissionEntity> get finishMissions => missions!
+  List<MissionEntity> get finishMissions => missions
       .where((element) => element.state.stage == MissionStage.close)
       .toList();
 
@@ -190,16 +237,16 @@ class ActivityListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  int getMissionTypePage() {
-    return _missionTypePage;
-  }
-
-  void setSeletedDay(DateTime newDate) {
+  get getMissionTypePage => _missionTypePage;
+  
+  void setSelectedDay(DateTime newDate) {
     _selectDate = newDate;
+    // events = _sortEvents();
+    // missions = _sortMissions();
     notifyListeners();
   }
 
-  DateTime getSeletedDay() {
+  DateTime getSelectedDay() {
     return _selectDate;
   }
 
@@ -248,12 +295,59 @@ class ActivityData extends CalendarDataSource {
 
   @override
   Color getColor(int index) {
-    return Color(appointments![index].belongWorkspace.themeColor);
+    return AppColor.getWorkspaceColorByIndex(appointments![index].belongWorkspace.themeColor);
   }
 
   @override
   bool isAllDay(int index) {
     // return appointments![index].isAllDay;
     return false;
+  }
+}
+
+class ActivityDisplayViewModel extends ChangeNotifier{
+  // final 
+  ActivityListViewModel? activityListViewModel;
+
+  ActivityEntity get selectedActivity => activityListViewModel!.selectedActivity!;
+
+  Color get activityColor => AppColor.getWorkspaceColorByIndex(selectedActivity.belongWorkspace.themeColor);
+
+  ActivityDisplayViewModel({this.activityListViewModel});
+
+  final formattedDate = DateFormat('MM 月 dd 日 HH:mm');
+
+  bool get isEvent
+    => selectedActivity is EventEntity;
+
+  bool get isMission 
+    => selectedActivity is MissionEntity;
+  
+  String get startTime => 
+    formattedDate.format(
+      isEvent
+        ? (selectedActivity as EventEntity).startTime 
+        : (selectedActivity as MissionEntity).deadline
+      );
+        
+  String get endTime => 
+      selectedActivity is EventEntity 
+      ? formattedDate.format((selectedActivity as EventEntity).endTime) 
+      : "null";
+
+  update(ActivityListViewModel activityListViewModel){
+    // debugPrint("ActivityDisplayViewModel update");
+    this.activityListViewModel = activityListViewModel;
+    debugPrint(selectedActivity.toString());
+    notifyListeners();
+  }
+  void init(){
+
+  }
+
+  set activityTitle(String newTitle){
+    selectedActivity.title = newTitle; 
+    activityListViewModel!.notifyListeners();
+    notifyListeners();
   }
 }
