@@ -1,23 +1,37 @@
-import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
+// import 'package:grouping_project/core/util/data_mapper.dart';
+// import 'package:grouping_project/space/data/models/activity_model.dart';
+// import 'package:grouping_project/space/data/models/user_model.dart';
+// import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/core/util/entity_data_mapper.dart';
+import 'package:grouping_project/space/data/models/activity_model.dart';
+import 'package:grouping_project/space/domain/entities/mission_entity.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
+import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
-abstract class ActivityEntity {
-  final int? id;
+abstract class ActivityEntity<T extends ActivityModel<ActivityEntity<T>>> extends ModelDataMapper<T>{
+  final int id;
   String title;
   String introduction;
-  List<int> contributors;
+  List<UserEntity> contributors;
   List<DateTime> notifications;
-  UserModel creatorAccount;
-  WorkspaceModel belongWorkspace;
-  // late UserEntity creator;
+  UserEntity creator;
+  DateTime createTime;
+  WorkspaceEntity belongWorkspace;
+  // late List<MissionEntity> parentMissions;
+  List<MissionEntity> childMissions;
+
+
 
   ActivityEntity(
       {required this.id,
       required this.title,
       required this.introduction,
       required this.contributors,
-      required this.notifications,
-      required this.creatorAccount,
+      required this.creator,
+      required this.createTime,
       required this.belongWorkspace,
+      // required this.parentMissionIDs,
+      required this.childMissions,
+      required this.notifications,
       });
 }

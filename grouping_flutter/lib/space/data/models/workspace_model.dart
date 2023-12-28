@@ -1,8 +1,11 @@
-import 'package:grouping_project/core/util/data_mapper.dart';
+// import 'package:grouping_project/core/util/data_mapper.dart';
+import 'package:grouping_project/core/util/model_data_mapper.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
+import 'package:grouping_project/space/data/models/event_model.dart';
+import 'package:grouping_project/space/data/models/mission_model.dart';
+// import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
 /// ## the type for [WorkspaceModel.tags]
@@ -25,11 +28,11 @@ class WorkspaceTagModel {
   }
 }
 
-class WorkspaceModel extends DataMapper<WorkspaceEntity> {
+class WorkspaceModel extends EntityDataMapper<WorkspaceEntity>{
   final int? id;
   int themeColor;
   String name;
-  String? description;
+  String description;
   ImageModel? photo;
   List<Member>? members;
   List<ActivityModel>? activities;
@@ -102,7 +105,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
                 as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
                 ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity))
+                : MissionModel.fromJson(data: activity) as ActivityModel)
             .toList(),
         tags: ((data['tags'] ?? []).cast<Map<String, dynamic>>()
                 as List<Map<String, dynamic>>)
@@ -130,7 +133,7 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
       id: id ?? -1,
       themeColor: themeColor,
       name: name,
-      description: description ?? defaultWorkspace.description!,
+      description: description,
       photo: photo,
       members: members ?? [],
       activities: activities ?? [],
@@ -138,18 +141,18 @@ class WorkspaceModel extends DataMapper<WorkspaceEntity> {
     );
   }
 
-  factory WorkspaceModel.fromEntity(WorkspaceEntity entity) {
-    return WorkspaceModel(
-      id: entity.id,
-      themeColor: entity.themeColor,
-      name: entity.name,
-      description: entity.description,
-      photo: entity.photo,
-      members: entity.members,
-      activities: entity.activities,
-      tags: entity.tags,
-    );
-  }
+  // factory WorkspaceModel.fromEntity(WorkspaceEntity entity) {
+  //   return WorkspaceModel(
+  //     id: entity.id,
+  //     themeColor: entity.themeColor,
+  //     name: entity.name,
+  //     description: entity.description,
+  //     photo: entity.photo,
+  //     members: entity.members,
+  //     activities: entity.activities,
+  //     tags: entity.tags,
+  //   );
+  // }
 
   @override
   bool operator ==(Object other) {

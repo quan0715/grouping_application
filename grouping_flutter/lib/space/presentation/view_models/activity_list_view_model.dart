@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/data/models/mission_state_model.dart';
-import 'package:grouping_project/space/data/models/mission_state_stage.dart';
+import 'package:grouping_project/core/data/models/mission_state_stage.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
@@ -43,6 +42,7 @@ class ActivityListViewModel extends ChangeNotifier {
   DateTime _selectDate = DateTime.now();
 
 
+  /*
   List<ActivityEntity> tmpDatas = [
     EventEntity(
         id: -1,
@@ -51,6 +51,7 @@ class ActivityListViewModel extends ChangeNotifier {
         contributors: [],
         notifications: [],
         creatorAccount: UserModel.defaultAccount,
+        creator: UserModel.defaultAccount.toEntity(),
         belongWorkspace: WorkspaceModel(
             id: -1, name: "Grouping 專題研究小組", themeColor: 0xFF006874),
         startTime: DateTime.now(),
@@ -67,7 +68,7 @@ class ActivityListViewModel extends ChangeNotifier {
             id: -1, name: "Grouping 專題研究小組", themeColor: 0xFF006874),
         deadline: DateTime.now().add(const Duration(hours: 1)),
         stateId: -1,
-        state: MissionStateModel.defaultProgressState,
+        state: MissionState.defaultProgressState,
         parentMissionIds: [],
         childMissionIds: []),
     MissionEntity(
@@ -81,7 +82,7 @@ class ActivityListViewModel extends ChangeNotifier {
             id: -1, name: "Grouping 專題研究小組", themeColor: 0xFF006874),
         deadline: DateTime.now().add(const Duration(hours: 1)),
         stateId: -1,
-        state: MissionStateModel.defaultPendingState,
+        state: MissionState.defaultPendingState,
         parentMissionIds: [],
         childMissionIds: []),
     EventEntity(
@@ -119,11 +120,11 @@ class ActivityListViewModel extends ChangeNotifier {
             id: -1, name: "test 的 workspace", themeColor: 0xFFBF5F07),
         deadline: DateTime.now().add(const Duration(hours: 1)),
         stateId: -1,
-        state: MissionStateModel.defaultFinishState,
+        state: MissionState.defaultFinishState,
         parentMissionIds: [],
         childMissionIds: []),
   ];
-
+  */
   ActivityListViewModel({required this.userDataProvider});
 
   void init() {
@@ -225,9 +226,8 @@ class ActivityListViewModel extends ChangeNotifier {
 class ActivityData extends CalendarDataSource {
 
   ActivityData(List<ActivityEntity> source) {
-    // appointments = source;
-    // appointments = source.map((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
-    appointments = source.where((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
+    appointments = source;
+    // appointments = source.where((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
   }
 
   @override

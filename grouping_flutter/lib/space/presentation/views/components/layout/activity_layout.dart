@@ -168,7 +168,7 @@ class ActivityLayOut extends StatelessWidget {
         itemCount: events.length,
         itemBuilder: (context, index) {
           WorkspaceEntity belongWorkspace =
-              events[index].belongWorkspace.toEntity();
+              events[index].belongWorkspace;
           Color displayColor =
               isWorkspace ? color : Color(belongWorkspace.themeColor);
           DateFormat format = DateFormat("hh:mm");
@@ -254,7 +254,7 @@ class ActivityLayOut extends StatelessWidget {
       itemBuilder: (context, index) {
         // List<MissionEntity> missions = missionsType[currentMissionTypePage];
         WorkspaceEntity belongWorkspace =
-            missions[index].belongWorkspace.toEntity();
+            missions[index].belongWorkspace;
         Color displayColor =
             isWorkspace ? color : Color(belongWorkspace.themeColor);
 

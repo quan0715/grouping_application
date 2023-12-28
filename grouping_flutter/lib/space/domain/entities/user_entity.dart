@@ -1,11 +1,12 @@
 import 'package:grouping_project/core/theme/color.dart';
+import 'package:grouping_project/core/util/entity_data_mapper.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
-class UserEntity {
-  final int? id;
+class UserEntity extends ModelDataMapper<UserModel>{
+  final int id;
   String account;
   String name;
   // String nickname;
@@ -19,7 +20,7 @@ class UserEntity {
 
   // build constructor
   UserEntity({
-    this.id,
+    required this.id,
     required this.account,
     required this.name,
     required this.introduction,
@@ -31,20 +32,33 @@ class UserEntity {
     required this.contributingActivities,
   });
 
-  factory UserEntity.fromModel(UserModel account) {
-    return UserEntity(
-      id: account.id,
-      account: account.account,
-      name: account.userName,
-      introduction: account.introduction,
-      // photoId: account.photoId,
-      photo: account.photo,
-      tags: account.tags.map((tag) => UserTagEntity.fromModel(tag)).toList(),
-      joinedWorkspaces: account.joinedWorkspaces,
-      // joinedWorkspaceIds: account.joinedWorkspaceIds,
-      contributingActivities: account.contributingActivities,
+  @override
+  UserModel toModel() {
+    return UserModel(
+      accountId: id,
+      userName: name,
+      introduction: introduction.isEmpty ? name : introduction,
+      photo: photo,
+      tags: tags.map((tag) => UserTagModel(title: tag.title, content: tag.content)).toList(),
+      joinedWorkspaces: joinedWorkspaces,
+      contributingActivities: contributingActivities,
     );
   }
+
+  // factory UserEntity.fromModel(UserModel account) {
+  //   return UserEntity(
+  //     id: account.id,
+  //     account: account.account,
+  //     name: account.userName,
+  //     introduction: account.introduction,
+  //     // photoId: account.photoId,
+  //     photo: account.photo,
+  //     tags: account.tags.map((tag) => UserTagEntity.fromModel(tag)).toList(),
+  //     joinedWorkspaces: account.joinedWorkspaces,
+  //     // joinedWorkspaceIds: account.joinedWorkspaceIds,
+  //     contributingActivities: account.contributingActivities,
+  //   );
+  // }
 
   @override
   String toString() {

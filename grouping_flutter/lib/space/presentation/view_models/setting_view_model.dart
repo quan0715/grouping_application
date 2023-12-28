@@ -153,7 +153,7 @@ class SettingPageViewModel extends ChangeNotifier {
     debugPrint(file.path);
     // currentUser.photo!.data = file.path;
     var testRemote = UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token);
-    await testRemote.updateUserProfileImage(account: UserModel.fromEntity(currentUser),image: file);
+    await testRemote.updateUserProfileImage(account: currentUser.toModel(), image: file);
     
     await updateUser(currentUser);
     // updateAvatar(await file.readAsBytes());

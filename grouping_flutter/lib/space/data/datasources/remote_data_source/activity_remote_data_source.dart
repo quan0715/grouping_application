@@ -78,7 +78,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
     switch (response.statusCode) {
       case 200:
         var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data) as ActivityModel;
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
@@ -114,7 +114,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
     switch (response.statusCode) {
       case 200:
         var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data) as ActivityModel;
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
@@ -149,7 +149,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
     switch (response.statusCode) {
       case 200:
         var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data) as ActivityModel;
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:

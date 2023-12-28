@@ -1,9 +1,11 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
+import 'package:grouping_project/core/util/model_data_mapper.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
+import 'package:grouping_project/space/data/models/event_model.dart';
+import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 // import '../workspace/data_model.dart';
@@ -33,7 +35,7 @@ class UserTagModel {
 /// ## a data model for account, either user or group
 /// * ***DO NOT*** pass or set id for AccountModel
 /// * to upload/download, use `DataController`
-class UserModel {
+class UserModel extends EntityDataMapper<UserEntity>{
   final int? id;
   String account;
   String userName;
@@ -117,21 +119,37 @@ class UserModel {
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
                 ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity))
+                : MissionModel.fromJson(data: activity) as ActivityModel)
             .toList(),
       );
 
-  factory UserModel.fromEntity(UserEntity entity) {
-    return UserModel(
-      accountId: entity.id ?? defaultAccount.id,
-      userName: entity.name,
-      introduction: entity.introduction.isEmpty ? entity.name : entity.introduction,
-      photo: entity.photo ?? defaultAccount.photo,
-      tags: entity.tags.map((tag) => UserTagModel(title: tag.title, content: tag.content)).toList(),
-      joinedWorkspaces: entity.joinedWorkspaces,
-      contributingActivities: entity.contributingActivities,
+  @override
+  UserEntity toEntity(){
+    return UserEntity(
+      id: id!,
+      account: account,
+      name: userName,
+      introduction: introduction,
+      // photoId: photoId,
+      photo: photo,
+      tags: tags.map((tag) => UserTagEntity.fromModel(tag)).toList(),
+      joinedWorkspaces: joinedWorkspaces,
+      // joinedWorkspaceIds: joinedWorkspaceIds,
+      contributingActivities: contributingActivities,
     );
   }
+
+  // factory UserModel.fromEntity(UserEntity entity) {
+  //   return UserModel(
+  //     accountId: entity.id ?? defaultAccount.id,
+  //     userName: entity.name,
+  //     introduction: entity.introduction.isEmpty ? entity.name : entity.introduction,
+  //     photo: entity.photo ?? defaultAccount.photo,
+  //     tags: entity.tags.map((tag) => UserTagModel(title: tag.title, content: tag.content)).toList(),
+  //     joinedWorkspaces: entity.joinedWorkspaces,
+  //     contributingActivities: entity.contributingActivities,
+  //   );
+  // }
 
   @override
   String toString() {

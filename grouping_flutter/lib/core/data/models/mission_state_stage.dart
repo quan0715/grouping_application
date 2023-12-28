@@ -6,6 +6,7 @@ enum MissionStage {
   
   progress(label: 'progress'),
   pending(label: 'pending'),
+  reply(label: 'reply'),
   close(label: 'close');
   
   final String label;
@@ -19,6 +20,8 @@ enum MissionStage {
         return MissionStage.pending;
       case 'close':
         return MissionStage.close;
+      case 'reply':
+        return MissionStage.reply;
       default:
         return MissionStage.progress;
     }
