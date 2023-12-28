@@ -21,34 +21,34 @@ class MissionState {
   static final MissionState defaultProgressState = MissionState._default(
       id: -1,
       stage: MissionStage.progress,
-      stateName: 'in progress',
+      stateName: '進行中',
       belongWorkspaceID: -1);
 
   ///the default state of pending stage, called pending
   static final MissionState defaultPendingState = MissionState._default(
       id: -1,
       stage: MissionStage.pending,
-      stateName: 'pending',
+      stateName: '未開始',
       belongWorkspaceID: -1);
 
   static final MissionState defaultReplyState = MissionState._default(
       id: -1,
       stage: MissionStage.reply,
-      stateName: 'reply',
+      stateName: '待回覆',
       belongWorkspaceID: -1);
 
   ///the default state of close stage, called finish
   static final MissionState defaultFinishState = MissionState._default(
       id: -1,
       stage: MissionStage.close,
-      stateName: 'finish',
+      stateName: '已完成',
       belongWorkspaceID: -1);
 
   ///the default state of progress stage, called time out
   static final MissionState defaultTimeOutState = MissionState._default(
       id: -1,
       stage: MissionStage.pending,
-      stateName: 'time out',
+      stateName: '已逾期',
       belongWorkspaceID: -1);
 
   MissionState._default(
