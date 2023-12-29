@@ -7,7 +7,17 @@ from grouping_server import settings
 # ---↓↓↓--- below is SimpleReadSerializer part ---↓↓↓---
 
 
+class ABCMetaAndSerializerMetaclassCombineMeta(ABCMeta, serializers.SerializerMetaclass):
+    """
+    This metaclass is a simple metaclass only combine ABCMeta and serializers.SerializerMetaclass
+    """
+    pass
+
+
 class BaseReadSerializer(serializers.ModelSerializer):
+    """
+    Base class for all read serializer
+    """
     def create(self, validated_data):
         raise exceptions.MethodNotAllowed(
             method=self.context['request'].method)
@@ -17,16 +27,22 @@ class BaseReadSerializer(serializers.ModelSerializer):
             method=self.context['request'].method)
 
 
-class BaseWriteSerializer(serializers.ModelSerializer, metaclass=ABCMeta):
-
+class BaseWriteSerializer(serializers.ModelSerializer, metaclass=ABCMetaAndSerializerMetaclassCombineMeta):
+    """
+    Base class for all write serializer
+    """
     @abstractmethod
     def get_read_serializer(self, *args, **kwargs):
+        """
+        all subclass should overwrite this method to explicitly return a corresponding read serializer
+        """
         pass
 
     def to_representation(self, instance):
         read_serializer = self.get_read_serializer(instance)
         representation = read_serializer.data
         return representation
+
 
 
 class ImageSimpleReadSerializer(BaseReadSerializer):
