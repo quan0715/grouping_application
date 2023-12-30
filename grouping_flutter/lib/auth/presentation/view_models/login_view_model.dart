@@ -147,29 +147,19 @@ class LoginViewModel extends ChangeNotifier {
   Future isURLContainCode(Uri platformURI) async {
     late final CodeEntity codeEntity;
     if (kIsWeb && platformURI.queryParameters.containsKey('code')) {
-      // FlutterSecureStorage storage = const FlutterSecureStorage();
-      // await storage.write(key: 'code', value: Uri.base.queryParameters['code']);
-      // BaseOAuthService authService;
       if (platformURI.queryParametersAll.containsKey('scope')) {
-        // authService = BaseOAuthService.getOAuthService(AuthProvider.google);
         codeEntity = CodeEntity(
             code: Uri.base.queryParameters['code']!,
             authProvider: AuthProvider.google);
       } else if (platformURI.queryParametersAll.containsKey('state')) {
-        // authService = BaseOAuthService.getOAuthService(AuthProvider.line);
         codeEntity = CodeEntity(
             code: Uri.base.queryParameters['code']!,
             authProvider: AuthProvider.line);
       } else {
-        // authService = BaseOAuthService.getOAuthService(AuthProvider.github);
         codeEntity = CodeEntity(
             code: Uri.base.queryParameters['code']!,
             authProvider: AuthProvider.github);
       }
-      // var authServiceResult = await authService
-      //     .getAccessToken(AuthLocalDataSourceImpl())
-      //     .whenComplete(() => html.window.history.replaceState(
-      //         null, Uri.base.toString(), Uri.base.fragment + Uri.base.path));
       var failureOrToken = await repo.thridPartyExchangeToken(codeEntity);
 
       failureOrToken.fold((failure) {

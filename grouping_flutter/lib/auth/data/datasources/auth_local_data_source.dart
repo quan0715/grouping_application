@@ -28,12 +28,12 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         exceptionMessage: 'cache Token is expired',
       );
     } else {
-      debugPrint('token ${tokenModel.token}');
-      debugPrint('refresh ${tokenModel.refresh}');
       await sharedPreferences.setValue(
           "String", 'auth-token', tokenModel.token);
+      debugPrint("auth-token: ${tokenModel.token}");
       await sharedPreferences.setValue(
           "String", "refresh-token", tokenModel.refresh);
+      debugPrint("refresh-token: ${tokenModel.refresh}");
     }
   }
 
@@ -46,6 +46,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     final refreshString =
         (await sharedPreferences.getAllWithPrefix(''))['refresh-token'] ?? "";
 
+    debugPrint(tokenString.toString());
+    debugPrint(refreshString.toString());
     // debugPrint('get token from cache $data');
     final tokenModel = AuthTokenModel(
       token: tokenString as String,

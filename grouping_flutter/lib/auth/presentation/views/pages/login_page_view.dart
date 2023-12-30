@@ -262,7 +262,9 @@ class WebLoginViewPage extends AuthLayoutInterface {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LoginViewModel>.value(
       value: loginManager
-        ..isURLContainCode(Uri.base)
+        ..isURLContainCode(Uri.base).whenComplete(() {
+          if (loginManager.userAccessToken.isNotEmpty) moveToHome(context);
+        })
         ..init(),
       child: super.build(context),
     );
