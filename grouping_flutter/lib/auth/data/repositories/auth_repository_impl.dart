@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
 import 'package:grouping_project/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
+import 'package:grouping_project/auth/domain/entities/code_entity.dart';
 import 'package:grouping_project/auth/domain/entities/login_entity.dart';
 import 'package:grouping_project/auth/domain/entities/register_entity.dart';
 import 'package:grouping_project/auth/domain/repositories/auth_login_repositories.dart';
@@ -47,15 +48,17 @@ class AuthRepositoryImpl implements AuthRepository {
     await remoteDataSource.logout(authTokenModel);
     await localDataSource.clearCacheToken();
   }
-  
+
   @override
-  Future<Either<Failure, AuthTokenModel>> getAccessToken() async {
+  Future<Either<Failure, AuthTokenModel>> thridPartyExchangeToken(
+      CodeEntity codeEntity) async {
+    // TODO: implement thridPartyExchangeToken
     try {
-      final token = await localDataSource.getCacheToken();
+      final token = await remoteDataSource.thridPartyTokenExchange(codeEntity);
+      await localDataSource.cacheToken(token);
       return Right(token);
-    } on CacheException catch (error) {
-      return Left(CacheFailure(errorMessage: error.exceptionMessage));
+    } on ServerException catch (error) {
+      return Left(ServerFailure(errorMessage: error.exceptionMessage));
     }
   }
-
 }

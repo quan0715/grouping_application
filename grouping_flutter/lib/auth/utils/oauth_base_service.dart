@@ -5,6 +5,7 @@ import 'package:grouping_project/auth/data/datasources/auth_local_data_source.da
 import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/auth_provider_enum.dart';
+import 'package:grouping_project/core/config/config.dart';
 import 'package:http/http.dart';
 import 'package:pkce/pkce.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -103,23 +104,64 @@ class BaseOAuthService {
     await post(Uri.parse(stringUrl), body: body);
   }
 
-  Future getAccessToken(AuthLocalDataSource localDataSource) async {
-    // await _informCode();
-    Object body = {"code": await StorageMethods.read(key: 'code')};
-    try {
-      Uri url;
-      String stringUrl = EndPointGetter.getAuthBackendEndpoint(provider.string);
-
-      url = Uri.parse(stringUrl);
-
-      Response response = await post(url, body: body);
-      Map<String, dynamic> jsonData = json.decode(response.body);
-      AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
-      await localDataSource.cacheToken(authTokenModel);
-      return authTokenModel;
-    } catch (e) {
-      debugPrint("In oauth2_web: $e");
-      // rethrow;
+  static BaseOAuthService getOAuthService(AuthProvider provider) {
+    BaseOAuthService oauthService;
+    switch (provider) {
+      case AuthProvider.google:
+        oauthService = BaseOAuthService(
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.google).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.google).$2,
+            scopes: Config.googleScopes,
+            authorizationEndpoint: Config.googleAuthEndpoint,
+            tokenEndpoint: Config.googleTokenEndpoint,
+            provider: AuthProvider.google,
+            usePkce: true,
+            useState: false);
+        return oauthService;
+      case AuthProvider.github:
+        oauthService = BaseOAuthService(
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.github).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.github).$2,
+            scopes: Config.gitHubScopes,
+            authorizationEndpoint: Config.gitHubAuthEndpoint,
+            tokenEndpoint: Config.gitHubTokenEndpoint,
+            provider: AuthProvider.github,
+            usePkce: false,
+            useState: false);
+        return oauthService;
+      case AuthProvider.line:
+        oauthService = BaseOAuthService(
+            clientId: getAuthProviderKeyAndSecret(AuthProvider.line).$1,
+            clientSecret: getAuthProviderKeyAndSecret(AuthProvider.line).$2,
+            scopes: Config.lineScopes,
+            authorizationEndpoint: Config.lineAuthEndPoint,
+            tokenEndpoint: Config.lineTokenEndpoint,
+            provider: AuthProvider.line,
+            useState: true,
+            usePkce: true);
+        return oauthService;
+      default:
+        throw Exception("Provider not found");
     }
   }
+
+  // Future getAccessToken(AuthLocalDataSource localDataSource) async {
+  //   // await _informCode();
+  //   Object body = {"code": await StorageMethods.read(key: 'code')};
+  //   try {
+  //     Uri url;
+  //     String stringUrl = EndPointGetter.getAuthBackendEndpoint(provider.string);
+
+  //     url = Uri.parse(stringUrl);
+
+  //     Response response = await post(url, body: body);
+  //     Map<String, dynamic> jsonData = json.decode(response.body);
+  //     AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
+  //     await localDataSource.cacheToken(authTokenModel);
+  //     return authTokenModel;
+  //   } catch (e) {
+  //     debugPrint("In oauth2_web: $e");
+  //     // rethrow;
+  //   }
+  // }
 }
