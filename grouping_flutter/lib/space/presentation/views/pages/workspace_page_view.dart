@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:grouping_project/space/presentation/view_models/group_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/group_data_provider.dart';
 import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_layout.dart';
 import 'package:grouping_project/space/presentation/views/frames/navigate_rail_frame.dart';
-import 'package:grouping_project/space/presentation/views/frames/worksapce/workspace_info_frame.dart';
+import 'package:grouping_project/space/presentation/views/frames/workspace/workspace_info_frame.dart';
 import 'package:grouping_project/space/presentation/views/pages/user_page_view.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +37,7 @@ class _WorkspacePageViewState extends State<WorkspacePageView> {
 
   @override
   void dispose(){
-    spaceViewModel.dispose();
+    // spaceViewModel.dispose();
     super.dispose();
   }
   

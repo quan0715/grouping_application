@@ -9,7 +9,7 @@ import 'package:grouping_project/space/data/repositories/user_repository_impl.da
 import 'package:grouping_project/space/domain/entities/setting_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/usecases/setting_usecases/update_setting_usercase.dart';
-import 'package:grouping_project/space/presentation/view_models/user_data_provider.dart';
+import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 

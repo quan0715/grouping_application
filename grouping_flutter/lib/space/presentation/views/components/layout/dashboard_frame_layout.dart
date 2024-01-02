@@ -5,6 +5,7 @@ class DashboardFrameLayout extends StatelessWidget{
   final double? frameWidth;
   final double? frameHeight;
   final Color? frameColor;
+  final EdgeInsetsGeometry padding;
   final Widget child;
 
   const DashboardFrameLayout({
@@ -12,7 +13,8 @@ class DashboardFrameLayout extends StatelessWidget{
     required this.child,
     this.frameWidth,
     this.frameHeight,
-    this.frameColor
+    this.frameColor,
+    this.padding = const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
   });
 
   @override
@@ -27,7 +29,7 @@ class DashboardFrameLayout extends StatelessWidget{
         borderRadius: const BorderRadius.all(Radius.circular(10.0),
       )),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        padding: padding,
         child: child,
       )
     );
