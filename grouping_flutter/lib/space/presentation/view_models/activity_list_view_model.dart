@@ -43,105 +43,106 @@ class ActivityListViewModel extends ChangeNotifier {
   List<ActivityEntity>? activities;
   List<EventEntity> get events => _sortEvents();
   List<MissionEntity> get missions => _sortMissions();
-  
+
   int _missionTypePage = 0;
   DateTime _selectDate = DateTime.now();
 
   ActivityEntity? selectedActivity;
-  
-  WorkspaceModel tempGroup = WorkspaceModel(
-    id: -1, name: "Grouping 專題研究小組",
-    themeColor: 1,
-    members: [
-      Member(
-        id: 1,
-        userName: '張百寬',
-        photo: ImageModel(imageId: -1, imageUri: "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg", updateAt: DateTime.now()),
-      ),
-      Member(
-        id: 2,
-        userName: '許明瑞',
-      ),
-    ]
-  );
 
-  List<ActivityEntity>  get tmpData => [
-    EventEntity(
-        id: 0,
-        title: "code review",
-        introduction: "this is a test",
-        contributors: [],
-        notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: tempGroup,
-        startTime: DateTime.now(),
-        endTime: DateTime.now().add(const Duration(hours: 1)),
-        relatedMissionIds: []),
-    MissionEntity(
-        id: 1,
-        title: "UI/UX 設計",
-        introduction: "this is a test",
-        contributors: [],
-        notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: tempGroup,
-        deadline: DateTime.now().add(const Duration(hours: 1)),
-        stateId: -1,
-        state: MissionStateModel.defaultProgressState,
-        parentMissionIds: [],
-        childMissionIds: []),
-    MissionEntity(
-        id: 2,
-        title: "Login issue 解決",
-        introduction: "this is a test",
-        contributors: [],
-        notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: tempGroup,
-        deadline: DateTime.now().add(const Duration(hours: 1)),
-        stateId: -1,
-        state: MissionStateModel.defaultPendingState,
-        parentMissionIds: [],
-        childMissionIds: []),
-    EventEntity(
-        id: 3,
-        title: "進度報告會議",
-        introduction: "this is a test",
-        contributors: [],
-        notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace:
-            WorkspaceModel(id: -1, name: "軟工小組", themeColor: 2),
-        startTime: DateTime.now().add(const Duration(days: 1)),
-        endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
-        relatedMissionIds: []),
-    EventEntity(
-        id: 4,
-        title: "校運會練習",
-        introduction: "this is a test",
-        contributors: [],
-        notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: WorkspaceModel(
-            id: -1, name: "test 的 workspace", themeColor: 4),
-        startTime: DateTime.now(),
-        endTime: DateTime.now().add(const Duration(hours: 1)),
-        relatedMissionIds: []),
-    MissionEntity(
-        id: 5,
-        title: "與教授的專題時間",
-        introduction: "this is a test",
-        contributors: [],
-        notifications: [],
-        creatorAccount: UserModel.defaultAccount,
-        belongWorkspace: WorkspaceModel(
-            id: -1, name: "test 的 workspace", themeColor: 4),
-        deadline: DateTime.now().add(const Duration(hours: 1)),
-        stateId: -1,
-        state: MissionStateModel.defaultFinishState,
-        parentMissionIds: [],
-        childMissionIds: []),
-  ];
+  WorkspaceModel tempGroup =
+      WorkspaceModel(id: -1, name: "Grouping 專題研究小組", themeColor: 1, members: [
+    Member(
+      id: 1,
+      userName: '張百寬',
+      photo: ImageModel(
+          imageId: -1,
+          imageUri:
+              "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
+          updateAt: DateTime.now()),
+    ),
+    Member(
+      id: 2,
+      userName: '許明瑞',
+    ),
+  ]);
+
+  List<ActivityEntity> get tmpData => [
+        EventEntity(
+            id: 0,
+            title: "code review",
+            introduction: "this is a test when between duration",
+            contributors: [],
+            notifications: [],
+            creatorAccount: UserModel.defaultAccount,
+            belongWorkspace: tempGroup,
+            startTime: DateTime.now(),
+            endTime: DateTime.now().add(const Duration(hours: 1)),
+            relatedMissionIds: []),
+        MissionEntity(
+            id: 1,
+            title: "UI/UX 設計",
+            introduction: "this is a test when before deadline",
+            contributors: [],
+            notifications: [],
+            creatorAccount: UserModel.defaultAccount,
+            belongWorkspace: tempGroup,
+            deadline: DateTime.now().add(const Duration(hours: 1)),
+            stateId: -1,
+            state: MissionStateModel.defaultProgressState,
+            parentMissionIds: [],
+            childMissionIds: []),
+        MissionEntity(
+            id: 2,
+            title: "Login issue 解決",
+            introduction: "this is a test with passed deadline",
+            contributors: [],
+            notifications: [],
+            creatorAccount: UserModel.defaultAccount,
+            belongWorkspace: tempGroup,
+            deadline: DateTime.now().subtract(const Duration(hours: 1)),
+            stateId: -1,
+            state: MissionStateModel.defaultPendingState,
+            parentMissionIds: [],
+            childMissionIds: []),
+        EventEntity(
+            id: 3,
+            title: "進度報告會議",
+            introduction: "this is a test before duration",
+            contributors: [],
+            notifications: [],
+            creatorAccount: UserModel.defaultAccount,
+            belongWorkspace:
+                WorkspaceModel(id: -1, name: "軟工小組", themeColor: 2),
+            startTime: DateTime.now().add(const Duration(days: 1)),
+            endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
+            relatedMissionIds: []),
+        EventEntity(
+            id: 4,
+            title: "校運會練習",
+            introduction: "this is a test after duration",
+            contributors: [],
+            notifications: [],
+            creatorAccount: UserModel.defaultAccount,
+            belongWorkspace:
+                WorkspaceModel(id: -1, name: "test 的 workspace", themeColor: 4),
+            startTime: DateTime.now().subtract(const Duration(hours: 1)),
+            endTime: DateTime.now().subtract(const Duration(minutes: 1)),
+            relatedMissionIds: []),
+        MissionEntity(
+            id: 5,
+            title: "與教授的專題時間",
+            introduction: "this is a test",
+            contributors: [],
+            notifications: [],
+            creatorAccount: UserModel.defaultAccount,
+            belongWorkspace:
+                WorkspaceModel(id: -1, name: "test 的 workspace", themeColor: 4),
+            deadline: DateTime.now().add(const Duration(hours: 1)),
+            stateId: -1,
+            state: MissionStateModel.defaultFinishState,
+            parentMissionIds: [],
+            childMissionIds: []),
+      ];
 
   ActivityListViewModel({required this.userDataProvider});
 
@@ -171,7 +172,7 @@ class ActivityListViewModel extends ChangeNotifier {
     // missions = _sortMissions();
   }
 
-  List<MissionEntity> get  v => missions
+  List<MissionEntity> get v => missions
       .where((element) => element.state.stage == MissionStage.pending)
       .toList();
   List<MissionEntity> get progressingMissions => missions
@@ -190,20 +191,29 @@ class ActivityListViewModel extends ChangeNotifier {
     }
   }
 
-  bool _sameAsSelectedDay(DateTime date){
-    return date.year == _selectDate.year && date.month == _selectDate.month && date.day == _selectDate.day;
+  bool _sameAsSelectedDay(DateTime date) {
+    return date.year == _selectDate.year &&
+        date.month == _selectDate.month &&
+        date.day == _selectDate.day;
   }
 
   List<EventEntity> _sortEvents() {
-    List<EventEntity> allEvents = activities!.whereType<EventEntity>().where((event) => _sameAsSelectedDay(event.startTime) || _sameAsSelectedDay(event.endTime)).toList();
+    List<EventEntity> allEvents = activities!
+        .whereType<EventEntity>()
+        .where((event) =>
+            _sameAsSelectedDay(event.startTime) ||
+            _sameAsSelectedDay(event.endTime))
+        .toList();
     allEvents.sort(
         (front, rear) => _compareDateTime(front.startTime, rear.startTime));
     return allEvents;
   }
 
   List<MissionEntity> _sortMissions() {
-    List<MissionEntity> allMissions =
-        activities!.whereType<MissionEntity>().where((mission) => _sameAsSelectedDay(mission.deadline)).toList();
+    List<MissionEntity> allMissions = activities!
+        .whereType<MissionEntity>()
+        .where((mission) => _sameAsSelectedDay(mission.deadline))
+        .toList();
     allMissions
         .sort((front, rear) => _compareDateTime(front.deadline, rear.deadline));
     return allMissions;
@@ -215,7 +225,7 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   get getMissionTypePage => _missionTypePage;
-  
+
   void setSelectedDay(DateTime newDate) {
     _selectDate = newDate;
     // events = _sortEvents();
@@ -229,7 +239,7 @@ class ActivityListViewModel extends ChangeNotifier {
 
   DateTime setInitialDate() {
     DateTime initialDate = DateTime.now();
-    switch(initialDate.weekOfMonthStartFromMonday % 4){
+    switch (initialDate.weekOfMonthStartFromMonday % 4) {
       case 1:
         initialDate = initialDate;
         break;
@@ -248,21 +258,28 @@ class ActivityListViewModel extends ChangeNotifier {
 }
 
 class ActivityData extends CalendarDataSource {
-
   ActivityData(List<ActivityEntity> source) {
     // appointments = source;
     // appointments = source.map((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
-    appointments = source.where((activity) => activity is MissionEntity ? activity.parentMissionIds.isEmpty : true).toList();
+    appointments = source
+        .where((activity) => activity is MissionEntity
+            ? activity.parentMissionIds.isEmpty
+            : true)
+        .toList();
   }
 
   @override
   DateTime getStartTime(int index) {
-    return (appointments![index] is EventEntity) ? appointments![index].startTime : appointments![index].deadline;
+    return (appointments![index] is EventEntity)
+        ? appointments![index].startTime
+        : appointments![index].deadline;
   }
 
   @override
   DateTime getEndTime(int index) {
-    return (appointments![index] is EventEntity) ? appointments![index].endTime : appointments![index].deadline;
+    return (appointments![index] is EventEntity)
+        ? appointments![index].endTime
+        : appointments![index].deadline;
     // return appointments![index].to;
   }
 
@@ -273,7 +290,8 @@ class ActivityData extends CalendarDataSource {
 
   @override
   Color getColor(int index) {
-    return AppColor.getWorkspaceColorByIndex(appointments![index].belongWorkspace.themeColor);
+    return AppColor.getWorkspaceColorByIndex(
+        appointments![index].belongWorkspace.themeColor);
   }
 
   @override
@@ -283,48 +301,58 @@ class ActivityData extends CalendarDataSource {
   }
 }
 
-class ActivityDisplayViewModel extends ChangeNotifier{
-  // final 
+class ActivityDisplayViewModel extends ChangeNotifier {
+  // final
   ActivityListViewModel? activityListViewModel;
 
-  ActivityEntity get selectedActivity => activityListViewModel!.selectedActivity!;
+  ActivityEntity get selectedActivity =>
+      activityListViewModel!.selectedActivity!;
 
-  Color get activityColor => AppColor.getWorkspaceColorByIndex(selectedActivity.belongWorkspace.themeColor);
+  bool get isEventStartedNow =>
+      (selectedActivity as EventEntity).startTime.compareTo(DateTime.now()) < 1;
+
+  bool get isOverNow => isEvent
+      ? (selectedActivity as EventEntity).endTime.compareTo(DateTime.now()) < 1
+      : (selectedActivity as MissionEntity).deadline.compareTo(DateTime.now()) <
+          1;
+
+  Duration get timeDifference => isEvent
+      ? (selectedActivity as EventEntity).startTime.difference(DateTime.now())
+      : (selectedActivity as MissionEntity).deadline.difference(DateTime.now());
+
+  Duration get endtimeDifference =>
+      (selectedActivity as EventEntity).startTime.difference(DateTime.now());
+
+  Color get activityColor => AppColor.getWorkspaceColorByIndex(
+      selectedActivity.belongWorkspace.themeColor);
 
   ActivityDisplayViewModel({this.activityListViewModel});
 
   final formattedDate = DateFormat('MM 月 dd 日 HH:mm');
 
-  bool get isEvent
-    => selectedActivity is EventEntity;
+  bool get isEvent => selectedActivity is EventEntity;
 
-  bool get isMission 
-    => selectedActivity is MissionEntity;
-  
-  String get startTime => 
-    formattedDate.format(
-      isEvent
-        ? (selectedActivity as EventEntity).startTime 
-        : (selectedActivity as MissionEntity).deadline
-      );
-        
-  String get endTime => 
-      selectedActivity is EventEntity 
-      ? formattedDate.format((selectedActivity as EventEntity).endTime) 
+  bool get isMission => selectedActivity is MissionEntity;
+
+  String get startTime => formattedDate.format(isEvent
+      ? (selectedActivity as EventEntity).startTime
+      : (selectedActivity as MissionEntity).deadline);
+
+  String get endTime => selectedActivity is EventEntity
+      ? formattedDate.format((selectedActivity as EventEntity).endTime)
       : "null";
 
-  update(ActivityListViewModel activityListViewModel){
+  update(ActivityListViewModel activityListViewModel) {
     // debugPrint("ActivityDisplayViewModel update");
     this.activityListViewModel = activityListViewModel;
     debugPrint(selectedActivity.toString());
     notifyListeners();
   }
-  void init(){
 
-  }
+  void init() {}
 
-  set activityTitle(String newTitle){
-    selectedActivity.title = newTitle; 
+  set activityTitle(String newTitle) {
+    selectedActivity.title = newTitle;
     activityListViewModel!.notifyListeners();
     notifyListeners();
   }
