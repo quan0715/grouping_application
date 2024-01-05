@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:grouping_project/auth/data/datasources/auth_local_data_source.dart';
-import 'package:grouping_project/auth/data/models/auth_token_model.dart';
 import 'package:grouping_project/auth/utils/auth_helpers.dart';
 import 'package:grouping_project/auth/utils/auth_provider_enum.dart';
 import 'package:grouping_project/core/config/config.dart';
@@ -144,24 +142,4 @@ class BaseOAuthService {
         throw Exception("Provider not found");
     }
   }
-
-  // Future getAccessToken(AuthLocalDataSource localDataSource) async {
-  //   // await _informCode();
-  //   Object body = {"code": await StorageMethods.read(key: 'code')};
-  //   try {
-  //     Uri url;
-  //     String stringUrl = EndPointGetter.getAuthBackendEndpoint(provider.string);
-
-  //     url = Uri.parse(stringUrl);
-
-  //     Response response = await post(url, body: body);
-  //     Map<String, dynamic> jsonData = json.decode(response.body);
-  //     AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
-  //     await localDataSource.cacheToken(authTokenModel);
-  //     return authTokenModel;
-  //   } catch (e) {
-  //     debugPrint("In oauth2_web: $e");
-  //     // rethrow;
-  //   }
-  // }
 }

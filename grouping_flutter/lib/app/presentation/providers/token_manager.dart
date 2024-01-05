@@ -19,7 +19,7 @@ class TokenManager extends ChangeNotifier {
       notifyListeners();
       // return token;
     } catch (e) {
-      debugPrint("In updateToken: ${e.toString()}");
+      debugPrint(e.toString());
       tokenModel = AuthTokenModel(token: '', refresh: '');
       notifyListeners();
     }
