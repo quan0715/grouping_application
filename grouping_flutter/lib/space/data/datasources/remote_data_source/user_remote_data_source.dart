@@ -79,7 +79,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
         case 404:
           throw ServerException(exceptionMessage: "The requesting data was not found");
         default:
-          return UserModel.defaultAccount;
+          return UserModel.defaultUser;
     }
   }
 
@@ -113,7 +113,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
         throw ServerException(
             exceptionMessage: "The requesting data was not found");
       default:
-        return UserModel.defaultAccount;
+        return UserModel.defaultUser;
     }
   }
 
@@ -149,7 +149,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
         throw ServerException(
             exceptionMessage: "The requesting data was not found");
       default:
-        return UserModel.defaultAccount;
+        return UserModel.defaultUser;
     }
   }
 }

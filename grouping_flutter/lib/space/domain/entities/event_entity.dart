@@ -8,18 +8,19 @@ class EventEntity extends ActivityEntity<EventModel> {
   DateTime startTime;
   DateTime endTime;
 
-  EventEntity(
-      {required super.id,
-      required super.title,
-      required super.introduction,
-      required super.creator,
-      required super.createTime,
-      required this.startTime,
-      required this.endTime,
-      required super.belongWorkspace,
-      required super.childMissions,
-      required super.contributors,
-      required super.notifications,});
+  EventEntity({
+    required super.id,
+    required super.title,
+    required super.introduction,
+    required super.creator,
+    required super.createTime,
+    required this.startTime,
+    required this.endTime,
+    required super.belongWorkspace,
+    required super.childMissions,
+    required super.contributors,
+    required super.notifications,
+  });
 
   @override
   EventModel toModel() {
@@ -37,9 +38,15 @@ class EventEntity extends ActivityEntity<EventModel> {
       // childMissions: childMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
       childMissions: childMissions.map((mission) => mission.toModel()).toList(),
       // contributors: contributors.map((contributor) => UserModel.fromEntity(contributor)).toList(),
-      contributors: contributors.map((contributor) => contributor.toModel()).toList(),
+      contributors:
+          contributors.map((contributor) => contributor.toModel()).toList(),
       notifications: notifications,
     );
+  }
+
+  @override
+  String toString() {
+    return "id: $id, title: $title, introduction: $introduction, creator: $creator, createTime: $createTime, belong workspace: $belongWorkspace, startTime: $startTime, endTime: $endTime, child missions: $childMissions, contributor: $contributors, notification: $notifications";
   }
 
   // factory EventEntity.fromModel(EventModel model) {

@@ -69,13 +69,13 @@ class WorkspaceModel extends EntityDataMapper<WorkspaceEntity>{
         tags = tags ?? defaultWorkspace.tags;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
+        // 'id': id,
         'theme_color': themeColor,
         'workspace_name': name,
         'description': description,
-        'photo': photo?.toJson(),
+        // 'photo': photo?.toJson(),
         'members': members?.map((member) => member.id).toList(),
-        'activities': activities?.map((activity) => activity.toJson()).toList(),
+        // 'activities': activities?.map((activity) => activity.toJson()).toList(),
         'tags': tags?.map((tag) => tag.toJson()).toList(),
       };
 

@@ -114,7 +114,7 @@ class _ActivityListFrameState extends State<ActivityListFrame> {
               ),
               child: ActivityLayout(
                 title: "事件",
-                isWorkspace: false,
+                isWorkspace: true,
                 type: ActivityType.event,
                 color: widget.color,
               )),

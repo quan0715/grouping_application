@@ -47,7 +47,7 @@ class ActivityLayout extends StatelessWidget {
                     .titleSmall!
                     .copyWith(color: color, fontWeight: FontWeight.bold)),
             const Spacer(),
-            _createButton(),
+            _createButton(activityListViewModel),
           ],
         ),
         Expanded(
@@ -173,12 +173,14 @@ class ActivityLayout extends StatelessWidget {
     );
   }
 
-  Widget _createButton() {
+  Widget _createButton(ActivityListViewModel activityListViewModel) {
     return Visibility(
       visible: isWorkspace,
       child: IconButton(
-          onPressed: () {
-            debugPrint("unimplemented yet, create activity");
+          onPressed: () async {
+            // debugPrint("unimplemented yet, create activity");
+            // await activityListViewModel.testCreateEvent();
+            await activityListViewModel.testCreateMission();
           },
           icon: const Icon(Icons.add_outlined,)),
     );

@@ -46,7 +46,7 @@ class UserModel extends EntityDataMapper<UserEntity>{
   List<ActivityModel> contributingActivities;
 
   /// default account that all attribute is set to a default value
-  static final UserModel defaultAccount = UserModel._default();
+  static final UserModel defaultUser = UserModel._default();
 
   /// default constructor, only for default account
   UserModel._default()
@@ -71,39 +71,40 @@ class UserModel extends EntityDataMapper<UserEntity>{
     List<UserTagModel>? tags,
     List<WorkspaceModel>? joinedWorkspaces,
     List<ActivityModel>? contributingActivities,
-  })  : this.id = accountId ?? defaultAccount.id,
-        this.account = account ?? defaultAccount.account,
-        this.userName = userName ?? defaultAccount.userName,
-        this.introduction = introduction ?? defaultAccount.introduction,
-        this.photo = photo ?? defaultAccount.photo,
-        this.tags = tags ?? List.from(defaultAccount.tags),
+  })  : this.id = accountId ?? defaultUser.id,
+        this.account = account ?? defaultUser.account,
+        this.userName = userName ?? defaultUser.userName,
+        this.introduction = introduction ?? defaultUser.introduction,
+        this.photo = photo ?? defaultUser.photo,
+        this.tags = tags ?? List.from(defaultUser.tags),
         this.joinedWorkspaces =
-            joinedWorkspaces ?? List.from(defaultAccount.joinedWorkspaces),
+            joinedWorkspaces ?? List.from(defaultUser.joinedWorkspaces),
         this.contributingActivities = contributingActivities ??
-            List.from(defaultAccount.contributingActivities);
+            List.from(defaultUser.contributingActivities);
 
  
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': this.id,
+        // 'id': this.id,
+        'account': this.account,
         'user_name': this.userName,
         'introduction': this.introduction,
         // 'photo': this.photo?.toJson(),
         'tags': this.tags.map((tag) => tag.toJson()).toList(),
-        'joined_workspaces': this
-            .joinedWorkspaces
-            .map((workspace) => workspace.toJson())
-            .toList(),
-        'contributing_activities': this
-            .contributingActivities
-            .map((activity) => activity.toJson())
-            .toList(),
+        // 'joined_workspaces': this
+        //     .joinedWorkspaces
+        //     .map((workspace) => workspace.toJson())
+        //     .toList(),
+        // 'contributing_activities': this
+        //     .contributingActivities
+        //     .map((activity) => activity.toJson())
+        //     .toList(),
       };
 
   factory UserModel.fromJson({required Map<String, dynamic> data}) => UserModel(
         accountId: data['id'],
-        account: data['account'],
-        userName: data['user_name'],
-        introduction: data['introduction'],
+        account: data['account'] ?? defaultUser.account,
+        userName: data['user_name'] ?? defaultUser.userName,
+        introduction: data['introduction'] ?? defaultUser.introduction,
         photo: data['photo'] != null
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
