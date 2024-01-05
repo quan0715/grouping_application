@@ -10,7 +10,10 @@ class TimeDisplayWithPressibleBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          debugPrint(
+              'TimeDisplayWithPressibleBody pressed, currently unimplemented');
+        },
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: Colors.transparent,
