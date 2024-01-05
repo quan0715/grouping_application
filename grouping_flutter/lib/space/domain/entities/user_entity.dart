@@ -1,11 +1,11 @@
 import 'package:grouping_project/core/theme/color.dart';
-import 'package:grouping_project/core/util/entity_data_mapper.dart';
+import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
-class UserEntity extends ModelDataMapper<UserModel>{
+class UserEntity implements BaseEntity<UserModel>{
   final int id;
   String account;
   String name;
@@ -35,7 +35,8 @@ class UserEntity extends ModelDataMapper<UserModel>{
   @override
   UserModel toModel() {
     return UserModel(
-      accountId: id,
+      id: id,
+      account: account,
       userName: name,
       introduction: introduction.isEmpty ? name : introduction,
       photo: photo,

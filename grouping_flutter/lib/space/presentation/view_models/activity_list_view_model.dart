@@ -5,7 +5,6 @@ import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/theme/color.dart';
 // import 'package:grouping_project/space/data/models/mission_state_stage.dart';
-import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
@@ -64,22 +63,29 @@ class ActivityListViewModel extends ChangeNotifier {
 
   ActivityEntity? selectedActivity;
 
-  WorkspaceModel tempGroup =
-      WorkspaceModel(id: -1, name: "Grouping 專題研究小組", themeColor: 1, members: [
-    Member(
-      id: 1,
-      userName: '張百寬',
-      photo: ImageModel(
-          imageId: -1,
-          imageUri:
-              "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
-          updateAt: DateTime.now()),
-    ),
-    Member(
-      id: 2,
-      userName: '許明瑞',
-    ),
-  ]);
+  WorkspaceModel tempGroup = WorkspaceModel(
+    id: -1,
+    name: "Grouping 專題研究小組",
+    description: "擁有製作 Grouping App 專案的熱情所組成的小組",
+    themeColor: 1,
+    members: [
+      Member(
+        id: 1,
+        userName: '張百寬',
+        photo: ImageModel(
+            imageId: -1,
+            imageUri:
+                "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
+            updateAt: DateTime.now()),
+      ),
+      Member(
+        id: 2,
+        userName: '許明瑞',
+      ),
+    ],
+    activities: [],
+    tags: [],
+  );
 
   List<ActivityEntity> get tmpData => [
         EventEntity(
@@ -89,7 +95,7 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: UserModel.defaultUser.toEntity(),
+          creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
           belongWorkspace: tempGroup.toEntity(),
           startTime: DateTime.now(),
@@ -103,7 +109,7 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: UserModel.defaultUser.toEntity(),
+          creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
           belongWorkspace: tempGroup.toEntity(),
           deadline: DateTime.now().add(const Duration(hours: 1)),
@@ -120,7 +126,7 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: UserModel.defaultUser.toEntity(),
+          creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
           belongWorkspace: tempGroup.toEntity(),
           deadline: DateTime.now().add(const Duration(hours: 1)),
@@ -137,10 +143,16 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: UserModel.defaultUser.toEntity(),
+          creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace:
-              WorkspaceModel(id: -1, name: "軟工小組", themeColor: 2).toEntity(),
+          belongWorkspace: WorkspaceModel(
+              id: -1,
+              name: "軟工小組",
+              description: "軟體工程實務的小組，只要撐半學期就好啦~",
+              themeColor: 2,
+              members: [],
+              activities: [],
+              tags: []).toEntity(),
           startTime: DateTime.now().add(const Duration(days: 1)),
           endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
           childMissions: [],
@@ -153,11 +165,16 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: UserModel.defaultUser.toEntity(),
+          creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace:
-              WorkspaceModel(id: -1, name: "test 的 workspace", themeColor: 4)
-                  .toEntity(),
+          belongWorkspace: WorkspaceModel(
+              id: -1,
+              name: "test 的 workspace",
+              description: "屬於自己的 workspace",
+              themeColor: 4,
+              members: [],
+              activities: [],
+              tags: []).toEntity(),
           startTime: DateTime.now(),
           endTime: DateTime.now().add(const Duration(hours: 1)),
           childMissions: [],
@@ -170,11 +187,16 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: UserModel.defaultUser.toEntity(),
+          creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace:
-              WorkspaceModel(id: -1, name: "test 的 workspace", themeColor: 4)
-                  .toEntity(),
+          belongWorkspace: WorkspaceModel(
+              id: -1,
+              name: "test 的 workspace",
+              description: "屬於自己的 workspace",
+              themeColor: 4,
+              members: [],
+              activities: [],
+              tags: []).toEntity(),
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
           state: MissionState.defaultFinishState,
@@ -297,23 +319,28 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   Future<void> testCreateEvent() async {
-
     CreateEventUseCase createEventUseCase = CreateEventUseCase(
         activityRepository: ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
 
-    UpdateEventUseCase updateEventUseCase = UpdateEventUseCase(activityRepository:  ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+    UpdateEventUseCase updateEventUseCase = UpdateEventUseCase(
+        activityRepository: ActivityRepositoryImpl(
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
-    
-    GetEventUseCase getEventUseCase = GetEventUseCase(activityRepository:  ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+
+    GetEventUseCase getEventUseCase = GetEventUseCase(
+        activityRepository: ActivityRepositoryImpl(
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
 
     DeleteActivityUseCase deleteActivityUseCase = DeleteActivityUseCase(
         ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
@@ -343,14 +370,12 @@ class ActivityListViewModel extends ChangeNotifier {
 
     // MessageService messageService = userDataProvider.messageService!;
     failureOrEvent.fold((failure) {
-
       debugPrint('建立 event 失敗');
     }, (event) async {
       debugPrint("建立成功成功");
       debugPrint("\n========== start of create event ===========\n");
       debugPrint("$event");
       debugPrint("\n========== end of create event ===========\n");
-
 
       event.endTime = event.endTime.add(const Duration(days: 1));
       final failureOrUpdate = await updateEventUseCase.call(event);
@@ -375,30 +400,34 @@ class ActivityListViewModel extends ChangeNotifier {
       debugPrint(event.id.toString());
       final failiureOrSuccess = await deleteActivityUseCase.call(event.id);
 
-      failiureOrSuccess.fold(
-          (l) => debugPrint('刪除 event 失敗'), (r) => debugPrint("========== 刪除成功 ==========="));
+      failiureOrSuccess.fold((l) => debugPrint('刪除 event 失敗'),
+          (r) => debugPrint("========== 刪除成功 ==========="));
     });
-
   }
 
   Future<void> testCreateMission() async {
-
     CreateMissionUseCase createMissionUseCase = CreateMissionUseCase(
         activityRepository: ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
 
-    UpdateMissionUseCase updateMissionUseCase = UpdateMissionUseCase(activityRepository:  ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+    UpdateMissionUseCase updateMissionUseCase = UpdateMissionUseCase(
+        activityRepository: ActivityRepositoryImpl(
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
-    
-    GetMissionUseCase getMissionUseCase = GetMissionUseCase(activityRepository:  ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+
+    GetMissionUseCase getMissionUseCase = GetMissionUseCase(
+        activityRepository: ActivityRepositoryImpl(
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
 
     DeleteActivityUseCase deleteActivityUseCase = DeleteActivityUseCase(
         ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+            remoteDataSource: ActivityRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
             localDataSource: ActivityLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
@@ -411,8 +440,12 @@ class ActivityListViewModel extends ChangeNotifier {
         members: [Member(id: user.id, userName: user.name)],
         activities: [],
         tags: []);
-    
-    MissionState state = MissionState(id: 10, stage: MissionStage.progress, stateName: "test state", belongWorkspaceID: workspace.id);
+
+    MissionState state = MissionState(
+        id: 10,
+        stage: MissionStage.progress,
+        stateName: "test state",
+        belongWorkspaceID: workspace.id);
     MissionEntity defaultmission = MissionEntity(
         id: 10,
         title: 'test title',
@@ -430,14 +463,12 @@ class ActivityListViewModel extends ChangeNotifier {
 
     // MessageService messageService = userDataProvider.messageService!;
     failureOrMission.fold((failure) {
-
       debugPrint('建立 mission 失敗');
     }, (mission) async {
       debugPrint("建立成功成功");
       debugPrint("\n========== start of create mission ===========\n");
       debugPrint("$mission");
       debugPrint("\n========== end of create mission ===========\n");
-
 
       mission.deadline = mission.deadline.add(const Duration(days: 1));
       final failureOrUpdate = await updateMissionUseCase.call(mission);
@@ -462,10 +493,9 @@ class ActivityListViewModel extends ChangeNotifier {
       debugPrint(mission.id.toString());
       final failiureOrSuccess = await deleteActivityUseCase.call(mission.id);
 
-      failiureOrSuccess.fold(
-          (l) => debugPrint('刪除 mission 失敗'), (r) => debugPrint("========== 刪除成功 ==========="));
+      failiureOrSuccess.fold((l) => debugPrint('刪除 mission 失敗'),
+          (r) => debugPrint("========== 刪除成功 ==========="));
     });
-
   }
 }
 

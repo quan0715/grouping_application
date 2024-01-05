@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
@@ -73,13 +74,19 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     switch (response.statusCode) {
       case 200:
         // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
-          return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+          try{
+            return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+          }
+          catch (error) {
+            debugPrint("database data error: $error");
+            throw ServerException(exceptionMessage: "Database Data Error");
+          }
         case 400:
           throw ServerException(exceptionMessage: "Invalid Syntax");
         case 404:
           throw ServerException(exceptionMessage: "The requesting data was not found");
         default:
-          return UserModel.defaultUser;
+          throw ServerException(exceptionMessage: "unknown error");
     }
   }
 
@@ -105,15 +112,20 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
     switch (response.statusCode) {
       case 200:
-
-        return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        try{
+          return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
         throw ServerException(
             exceptionMessage: "The requesting data was not found");
       default:
-        return UserModel.defaultUser;
+        throw ServerException(exceptionMessage: "unknown error");
     }
   }
 
@@ -142,14 +154,20 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     switch (response.statusCode) {
       case 200:
         // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
-        return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        try{
+          return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
         throw ServerException(
             exceptionMessage: "The requesting data was not found");
       default:
-        return UserModel.defaultUser;
+        throw ServerException(exceptionMessage: "unknown error");
     }
   }
 }

@@ -33,7 +33,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// ```
   ///
   ActivityRemoteDataSourceImpl({required String token}) {
@@ -63,7 +63,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// EditableCardModel activity = await remoteDataSource.getActivityData(activityID: -1);
   /// ```
   /// 
@@ -75,8 +75,14 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
 
     switch (response.statusCode) {
       case 200:
-        var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data) as ActivityModel;
+        try{
+          var data = jsonDecode(response.body);
+          return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -98,7 +104,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// EditableCardModel activity = await remoteDataSource.createActivityData(activity: createDataofActivity);
   /// ```
   /// 
@@ -114,8 +120,14 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
 
     switch (response.statusCode) {
       case 201:
-        var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data) as ActivityModel;
+        try{
+          var data = jsonDecode(response.body);
+          return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         debugPrint("error 400 when create activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -135,7 +147,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// EditableCardModel activity = await remoteDataSource.updateActivityData(event: updateDataofActivity);
   /// ```
   /// 
@@ -151,8 +163,14 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
 
     switch (response.statusCode) {
       case 200:
-        var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data) as ActivityModel;
+        try{
+          var data = jsonDecode(response.body);
+          return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         debugPrint("error ${response.statusCode} when update activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -175,7 +193,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// await remoteDataSource.deleteActivityData(activityID: -1);
   /// ```
   /// 
@@ -194,8 +212,10 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
       case 404:
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
+        debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
+        throw ServerException(exceptionMessage: "unknown error");
         // do nothing
-        return;
+        // return;
     }
   }
 }

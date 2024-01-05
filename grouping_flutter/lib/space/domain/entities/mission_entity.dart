@@ -4,7 +4,7 @@ import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
 // import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
-class MissionEntity extends ActivityEntity<MissionModel> {
+class MissionEntity extends ActivityEntity {
   DateTime deadline;
   MissionState state;
 

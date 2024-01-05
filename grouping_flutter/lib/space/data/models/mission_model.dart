@@ -8,37 +8,10 @@ import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
 /// ## 用於 database 儲存 mission 的資料結構
 /// ### 僅可被 repository 使用
-class MissionModel extends ActivityModel<MissionEntity> {
+class MissionModel extends ActivityModel {
   DateTime deadline;
   // int stateID;
   MissionState state;
-
-  /// ### default data of MissionModel (a.k.a. initial MissionModel)
-  /// 
-  /// 預設 [id] 為 -1, \
-  /// [title]、[introduction] 為 "unknown", \
-  /// [deadline] 為現在時間的一小時後, \
-  /// [stateID]、[creator]、[belongWorkspaceID] 為 -1, \
-  /// [childMissionIDs]、[parentMissionIDs]、[contributors]、[notifications] 為 List\<int\>(空矩陣)
-  static final MissionModel defaultMission = MissionModel._default();
-
-  MissionModel._default()
-      // : this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-      : deadline = DateTime.now().add(const Duration(hours: 1)),
-        // this.stateID = MissionStateModel.defaultUnknownState.id,
-        state = MissionState.defaultUnknownState,
-        super(
-          id: -1,
-          title: 'unknown',
-          introduction: 'unknown',
-          creator: UserModel.defaultUser,
-          createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel.defaultWorkspace,
-          // parentMissionIDs: [],
-          childMissions: [],
-          contributors: [],
-          notifications: [],
-        );
 
   /// ### [MissionModel] 的建構式，回傳非 null 的 [MissionModel]
   /// 
@@ -47,53 +20,35 @@ class MissionModel extends ActivityModel<MissionEntity> {
   /// [parentMissionIDs]、[childMissions]、[contributors]、[notifications]\
   /// 若除 [id] 外有未給予的欄位，將自動套用 [MissionModel.defaultMission] 的欄位
   MissionModel({
-    required int id,
-    String? title,
-    String? introduction,
-    DateTime? deadline,
-    UserModel? creator,
-    DateTime? createTime,
-    WorkspaceModel? belongWorkspace,
-    MissionState? state,
-    // List<int>? parentMissionIDs,
-    List<MissionModel>? childMissions,
-    List<UserModel>? contributors,
-    List<DateTime>? notifications,
+    required super.id,
+    required super.title,
+    required super.introduction,
+    required super.creator,
+    required super.createTime,
+    required super.belongWorkspace,
+    required super.childMissions,
+    required super.contributors,
+    required super.notifications,
+    required this.state,
+    required this.deadline,
     // MissionStateModel? state,
-  })  : deadline = deadline ?? defaultMission.deadline,
-        state = state ?? defaultMission.state,
-        // this.stateId = state?.id ?? (stateId ?? defaultMission.stateId),
-        // this.state = state ?? defaultMission.state,
-        super(
-          id: id,
-          title: title ?? defaultMission.title,
-          introduction: introduction ?? defaultMission.introduction,
-          creator: creator ?? defaultMission.creator,
-          createTime: createTime ?? defaultMission.createTime,
-          belongWorkspace: belongWorkspace ?? defaultMission.belongWorkspace,
-          // parentMissionIDs: parentMissionIDs ?? defaultMission.parentMissionIDs,
-          childMissions: childMissions ?? defaultMission.childMissions,
-          contributors: contributors ?? List.from(defaultMission.contributors),
-          notifications:
-              notifications ?? List.from(defaultMission.notifications),
-        );
+  });
 
   /// ### 藉由特定的 Json 格式來建構的 [MissionModel]
   factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
       MissionModel(
           id: data['id'] as int,
-          title: (data['title'] ?? defaultMission.title) as String,
-          introduction: (data['description'] ?? defaultMission.introduction) as String,
-          deadline: data['mission']['deadline'] != null ? DateTime.parse(data['mission']['deadline']) : DateTime.now().add(const Duration(hours: 1)),
-          state: data['mission']['state'] != null ? MissionState.fromJson(data: data['mission']['state']) : MissionState.defaultUnknownState,
-          creator: data['creator'] != null ? UserModel.fromJson(data: data['creator']) : UserModel.defaultUser,
-          createTime: data['created_at'] != null ? DateTime.parse(data['created_at']) : DateTime.now(),
-          belongWorkspace: data['belong_workspace'] != null ? WorkspaceModel.fromJson(data: data['belong_workspace']) : defaultMission.belongWorkspace,
+          title: data['title'] as String,
+          introduction: data['description'] as String,
+          deadline: DateTime.parse(data['mission']['deadline']),
+          state: MissionState.fromJson(data: data['mission']['state']),
+          creator: UserModel.fromJson(data: data['creator']),
+          createTime: DateTime.parse(data['created_at']),
+          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']),
           // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
-          childMissions: (data['children'] ?? []).cast<MissionModel>() as List<MissionModel>,
-          contributors: (data['contributors'] ?? []).cast<UserModel>() as List<UserModel>,
-          notifications: _notificationFromJson(
-              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),
+          childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
+          contributors: data['contributors'].cast<UserModel>() as List<UserModel>,
+          notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),
           );
 
   /// ### 將 [MissionModel] 轉換成特定的 Json 格式
@@ -117,7 +72,7 @@ class MissionModel extends ActivityModel<MissionEntity> {
   @override
   MissionEntity toEntity(){
     return MissionEntity(
-        id: id!,
+        id: id,
         title: title,
         introduction: introduction,
         // creator: UserEntity.fromModel(creator),
@@ -134,23 +89,6 @@ class MissionModel extends ActivityModel<MissionEntity> {
         contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
         notifications: notifications,);
   }
-
-  // factory MissionModel.fromEntity(MissionEntity entity){
-  //   return MissionModel(
-  //     id: entity.id,
-  //     title: entity.title,
-  //     introduction: entity.introduction,
-  //     deadline: entity.deadline,
-  //     state: entity.state,
-  //     creator: UserModel.fromEntity(entity.creator),
-  //     createTime: entity.createTime,
-  //     belongWorkspace: WorkspaceModel.fromEntity(entity.belongWorkspace),
-  //     contributors: entity.contributors.map((contributor) => UserModel.fromEntity(contributor)).toList(),   // TODO: id must exist in entity
-  //     // parentMissionIDs: entity.parentMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
-  //     childMissions: entity.childMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
-  //     notifications: entity.notifications,
-  //   );
-  // }
 
   /// ### 用於 [MissionModel] 的 [notifications]
   /// 從 List\<DateTime\> 轉換成特定 Json 格式
@@ -198,5 +136,5 @@ class MissionModel extends ActivityModel<MissionEntity> {
 
   @override
   // TODO: implement hashCode
-  int get hashCode => id!;
+  int get hashCode => id;
 }

@@ -2,13 +2,13 @@
 // import 'package:grouping_project/space/data/models/activity_model.dart';
 // import 'package:grouping_project/space/data/models/user_model.dart';
 // import 'package:grouping_project/space/data/models/workspace_model.dart';
-import 'package:grouping_project/core/util/entity_data_mapper.dart';
+import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
-abstract class ActivityEntity<T extends ActivityModel<ActivityEntity<T>>> extends ModelDataMapper<T>{
+abstract class ActivityEntity implements BaseEntity<ActivityModel>{
   final int id;
   String title;
   String introduction;

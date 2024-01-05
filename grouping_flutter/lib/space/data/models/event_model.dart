@@ -9,36 +9,10 @@ import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
 /// ## 用於 database 儲存 event 的資料結構
 /// ### 僅可被 repository 使用
-class EventModel extends ActivityModel<EventEntity> {
+class EventModel extends ActivityModel {
   DateTime startTime;
   DateTime endTime;
 
-  /// ### default data of EventModel (a.k.a. initial EventModel)
-  /// 
-  /// 預設 [id] 為 -1, \
-  /// [title]、[introduction] 為 "unknown", \
-  /// [startTime]、[endTime] 分別為現在時間以及現在時間的一小時後, \
-  /// [creator]、[belongWorkspaceID] 為 -1, \
-  /// [childMissionIDs]、[contributors]、[notifications] 為 List\<int\>(空矩陣)
-  static final EventModel defaultEvent = EventModel._default();
-
-  EventModel._default()
-      // : this.startTime = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        // this.endTime = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-      : this.startTime = DateTime.now(),
-        this.endTime = DateTime.now().add(const Duration(hours: 1)),
-        super(
-          id: -1,
-          title: 'unknown',
-          introduction: 'unknown',
-          creator: UserModel.defaultUser,
-          createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel.defaultWorkspace,
-          childMissions: [],
-          contributors: [],
-          notifications: [],
-          // parentMissionIDs: [],
-        );
 
   /// ### EventModel 的建構式，回傳非 null 的 [EventModel]
   /// 
@@ -47,47 +21,32 @@ class EventModel extends ActivityModel<EventEntity> {
   /// [contributors]、[notifications]\
   /// 若除 [id] 外有未給予的欄位，將自動套用 [EventModel.defaultEvent] 的欄位
   EventModel(
-      {required int id,
-      String? title,
-      String? introduction,
-      DateTime? startTime,
-      DateTime? endTime,
-      UserModel? creator,
-      DateTime? createTime,
-      WorkspaceModel? belongWorkspace,
-      List<MissionModel>? childMissions,
-      List<UserModel>? contributors,
-      List<DateTime>? notifications,})
-      : this.startTime = startTime ?? defaultEvent.startTime,
-        this.endTime = endTime ?? defaultEvent.endTime,
-        super(
-          id: id,
-          title: title ?? defaultEvent.title,
-          introduction: introduction ?? defaultEvent.introduction,
-          creator: creator ?? defaultEvent.creator,
-          createTime: createTime ?? defaultEvent.createTime,
-          belongWorkspace: belongWorkspace ?? defaultEvent.belongWorkspace,
-          childMissions: childMissions ?? defaultEvent.childMissions,
-          contributors: contributors ?? List.from(defaultEvent.contributors),
-          notifications: notifications ?? List.from(defaultEvent.notifications),
-          // parentMissionIDs: defaultEvent.parentMissionIDs,
-        );
+      {required super.id,
+      required super.title,
+      required super.introduction,
+      required super.creator,
+      required super.createTime,
+      required super.belongWorkspace,
+      required super.childMissions,
+      required super.contributors,
+      required super.notifications,
+      required this.startTime,
+      required this.endTime,});
 
   /// ### 藉由特定的 Json 格式來建構的 [EventModel]
   factory EventModel.fromJson({required Map<String, dynamic> data}) =>
       EventModel(
           id: data['id'] as int,
-          title: (data['title'] ?? defaultEvent.title) as String,
-          introduction: (data['description'] ?? defaultEvent.introduction) as String,
-          creator: data['creator'] != null ? UserModel.fromJson(data: data['creator']) : UserModel.defaultUser,
-          createTime: data['created_at'] != null ? DateTime.parse(data['created_at']) : DateTime.now(),
-          startTime: data['event']['start_time'] != null ? DateTime.parse(data['event']['start_time']) : DateTime.now(),
-          endTime: data['event']['end_time'] != null ? DateTime.parse(data['event']['end_time']) : DateTime.now().add(const Duration(hours: 1)),
-          belongWorkspace: data['belong_workspace'] != null ? WorkspaceModel.fromJson(data: data['belong_workspace']) : defaultEvent.belongWorkspace,
-          childMissions: (data['children'] ?? []).cast<MissionModel>() as List<MissionModel>,
-          contributors: (data['contributors'] ?? []).cast<UserModel>() as List<UserModel>,
-          notifications: _notificationFromJson(
-              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),);
+          title: data['title'] as String,
+          introduction: data['description'] as String,
+          creator: UserModel.fromJson(data: data['creator']),
+          createTime: DateTime.parse(data['created_at']),
+          startTime: DateTime.parse(data['event']['start_time']),
+          endTime: DateTime.parse(data['event']['end_time']),
+          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']),
+          childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
+          contributors: data['contributors'].cast<UserModel>() as List<UserModel>,
+          notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),);
 
   /// ### 將 [EventModel] 轉換成特定的 Json 格式
   @override
@@ -110,7 +69,7 @@ class EventModel extends ActivityModel<EventEntity> {
   @override
   EventEntity toEntity() {
     return EventEntity(
-        id: id!,
+        id: id,
         title: title,
         introduction: introduction,
         startTime: startTime,
@@ -187,5 +146,5 @@ class EventModel extends ActivityModel<EventEntity> {
 
   @override
   // TODO: implement hashCode
-  int get hashCode => id!;
+  int get hashCode => id;
 }

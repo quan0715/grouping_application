@@ -73,13 +73,19 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     switch (response.statusCode){
 
       case 200:
-        return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        try{
+          return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
-        return WorkspaceModel.defaultWorkspace;
+        throw ServerException(exceptionMessage: utf8.decode(response.bodyBytes));
     }
   }
 
@@ -109,11 +115,17 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     WorkspaceModel temp;
     switch (response.statusCode) {
       case 201:
-        temp =  WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-        if(image == null){
-          return temp;
+        try{
+          temp =  WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+          if(image == null){
+            return temp;
+          }
+          break;
         }
-        break;
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
         
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -137,7 +149,13 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     
     switch (response.statusCode) {
       case 200:
-        return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        try{
+          return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
@@ -173,7 +191,13 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     
     switch (response.statusCode){
       case 200:
-        return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes) ));
+        try{
+          return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
         debugPrint(response.body);
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -211,8 +235,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
       case 404:
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
-        // do nothing
-        return;
+        throw ServerException(exceptionMessage: "unknown error");
     }
   }
 }

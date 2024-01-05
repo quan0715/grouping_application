@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
-import 'package:grouping_project/core/util/model_data_mapper.dart';
+import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/space/data/models/event_model.dart';
@@ -35,8 +35,8 @@ class UserTagModel {
 /// ## a data model for account, either user or group
 /// * ***DO NOT*** pass or set id for AccountModel
 /// * to upload/download, use `DataController`
-class UserModel extends EntityDataMapper<UserEntity>{
-  final int? id;
+class UserModel implements BaseModel<UserEntity>{
+  final int id;
   String account;
   String userName;
   String introduction;
@@ -45,42 +45,19 @@ class UserModel extends EntityDataMapper<UserEntity>{
   List<WorkspaceModel> joinedWorkspaces;
   List<ActivityModel> contributingActivities;
 
-  /// default account that all attribute is set to a default value
-  static final UserModel defaultUser = UserModel._default();
-
-  /// default constructor, only for default account
-  UserModel._default()
-      : this.id = -1,
-        this.account = 'unknown',
-        this.userName = 'unknown',
-        this.introduction = 'empty',
-        this.photo = null,
-        this.tags = [],
-        this.joinedWorkspaces = [],
-        this.contributingActivities = [];
-
   /// ## a data model for account, either user or group
   /// * ***DO NOT*** pass or set id for AccountModel
   /// * to upload/download, use `DataController`
   UserModel({
-    int? accountId,
-    String? account,
-    String? userName,
-    String? introduction,
-    ImageModel? photo,
-    List<UserTagModel>? tags,
-    List<WorkspaceModel>? joinedWorkspaces,
-    List<ActivityModel>? contributingActivities,
-  })  : this.id = accountId ?? defaultUser.id,
-        this.account = account ?? defaultUser.account,
-        this.userName = userName ?? defaultUser.userName,
-        this.introduction = introduction ?? defaultUser.introduction,
-        this.photo = photo ?? defaultUser.photo,
-        this.tags = tags ?? List.from(defaultUser.tags),
-        this.joinedWorkspaces =
-            joinedWorkspaces ?? List.from(defaultUser.joinedWorkspaces),
-        this.contributingActivities = contributingActivities ??
-            List.from(defaultUser.contributingActivities);
+    required this.id,
+    required this.account,
+    required this.userName,
+    required this.introduction,
+    required this.tags,
+    required this.joinedWorkspaces,
+    required this.contributingActivities,
+    this.photo,
+  });
 
  
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -101,33 +78,33 @@ class UserModel extends EntityDataMapper<UserEntity>{
       };
 
   factory UserModel.fromJson({required Map<String, dynamic> data}) => UserModel(
-        accountId: data['id'],
-        account: data['account'] ?? defaultUser.account,
-        userName: data['user_name'] ?? defaultUser.userName,
-        introduction: data['introduction'] ?? defaultUser.introduction,
+        id: data['id'],
+        account: data['account'] as String,
+        userName: data['user_name'] as String,
+        introduction: data['introduction'] as String,
         photo: data['photo'] != null
             ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
             : null,
-        tags: ((data['tags'] ?? []).cast<Map<String, dynamic>>()
+        tags: (data['tags'].cast<Map<String, dynamic>>()
                 as List<Map<String, dynamic>>)
             .map((tag) => UserTagModel.fromJson(data: tag))
             .toList(),
-        joinedWorkspaces: ((data['joined_workspaces'] ?? [])
+        joinedWorkspaces: (data['joined_workspaces']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((workspace) => WorkspaceModel.fromJson(data: workspace))
             .toList(),
-        contributingActivities: ((data['contributing_activities'] ?? [])
+        contributingActivities: (data['contributing_activities']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
                 ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity) as ActivityModel)
+                : MissionModel.fromJson(data: activity))
             .toList(),
       );
 
   @override
   UserEntity toEntity(){
     return UserEntity(
-      id: id!,
+      id: id,
       account: account,
       name: userName,
       introduction: introduction,
@@ -170,5 +147,5 @@ class UserModel extends EntityDataMapper<UserEntity>{
   }
 
   @override
-  int get hashCode => id!;
+  int get hashCode => id;
 }

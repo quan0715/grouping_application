@@ -1,13 +1,13 @@
 // create event & mission super class or activity parent class?
-import 'package:grouping_project/core/util/model_data_mapper.dart';
+import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 // import 'package:grouping_project/model/workspace/data_model.dart';
 
-abstract class ActivityModel<T extends ActivityEntity<ActivityModel<T>>> extends EntityDataMapper<T>{
-  final int? id;
+abstract class ActivityModel implements BaseModel<ActivityEntity>{
+  final int id;
   String title;
   String introduction;
   // List<String> tags;

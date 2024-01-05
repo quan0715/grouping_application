@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:grouping_project/app/presentation/components/chips/user_profile_chip.dart';
-import 'package:grouping_project/app/presentation/components/components.dart';
 import 'package:grouping_project/app/presentation/components/data_display/key_value_pair_widget.dart';
-import 'package:grouping_project/core/data/models/image_model.dart';
-import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
 import 'package:grouping_project/space/presentation/views/components/layout/dashboard_frame_layout.dart';
@@ -129,7 +126,7 @@ class ActivityDetailFrame extends StatelessWidget {
               valueChild: Wrap(
                 spacing: 5,
                 runSpacing: 5,
-                children: vm.selectedActivity.belongWorkspace.members!
+                children: vm.selectedActivity.belongWorkspace.members
                 .map((member) => UserProfileChip(
                   member: member,
                   color: vm.activityColor)).toList(),
