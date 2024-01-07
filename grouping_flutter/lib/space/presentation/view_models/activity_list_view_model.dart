@@ -545,6 +545,21 @@ class ActivityDisplayViewModel extends ChangeNotifier {
   ActivityEntity get selectedActivity =>
       activityListViewModel!.selectedActivity!;
 
+  bool get isEventStartedNow =>
+      (selectedActivity as EventEntity).startTime.compareTo(DateTime.now()) < 1;
+
+  bool get isOverNow => isEvent
+      ? (selectedActivity as EventEntity).endTime.compareTo(DateTime.now()) < 1
+      : (selectedActivity as MissionEntity).deadline.compareTo(DateTime.now()) <
+          1;
+
+  Duration get timeDifference => isEvent
+      ? (selectedActivity as EventEntity).startTime.difference(DateTime.now())
+      : (selectedActivity as MissionEntity).deadline.difference(DateTime.now());
+
+  Duration get endtimeDifference =>
+      (selectedActivity as EventEntity).startTime.difference(DateTime.now());
+
   Color get activityColor => AppColor.getWorkspaceColorByIndex(
       selectedActivity.belongWorkspace.themeColor);
 
