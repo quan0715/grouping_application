@@ -40,9 +40,13 @@ extension DateTimeExtension on DateTime {
 
 class ActivityListViewModel extends ChangeNotifier {
   UserDataProvider userDataProvider;
+
   List<ActivityEntity>? activities;
   List<EventEntity> get events => _sortEvents();
   List<MissionEntity> get missions => _sortMissions();
+
+  bool isCreateMode = false;
+  bool isCreateEvent = false;
 
   int _missionTypePage = 0;
   DateTime _selectDate = DateTime.now();
@@ -255,6 +259,18 @@ class ActivityListViewModel extends ChangeNotifier {
     }
     return initialDate;
   }
+
+  setCreateMode(bool isCreateEvent) {
+    isCreateMode = true;
+    isCreateEvent = isCreateEvent;
+    notifyListeners();
+  }
+
+  cancleCreateMode() {
+    isCreateMode = false;
+    isCreateEvent = false;
+    notifyListeners();
+  }
 }
 
 class ActivityData extends CalendarDataSource {
@@ -308,6 +324,15 @@ class ActivityDisplayViewModel extends ChangeNotifier {
   ActivityEntity get selectedActivity =>
       activityListViewModel!.selectedActivity!;
 
+  bool isEditMode = false;
+
+  DateTime startTimeInChange = DateTime.now();
+  DateTime endTimeInChange = DateTime.now();
+  String titleInCChange = "";
+  String introductionInChange = "";
+  List<int> relatedMissionIdsInChange = [];
+  List<int> contributorsInChange = [];
+
   bool get isEventStartedNow =>
       (selectedActivity as EventEntity).startTime.compareTo(DateTime.now()) < 1;
 
@@ -338,9 +363,17 @@ class ActivityDisplayViewModel extends ChangeNotifier {
       ? (selectedActivity as EventEntity).startTime
       : (selectedActivity as MissionEntity).deadline);
 
+  DateTime get startTimeDateTime => isEvent
+      ? (selectedActivity as EventEntity).startTime
+      : (selectedActivity as MissionEntity).deadline;
+
   String get endTime => selectedActivity is EventEntity
       ? formattedDate.format((selectedActivity as EventEntity).endTime)
       : "null";
+
+  DateTime get endTimeDateTime => selectedActivity is EventEntity
+      ? (selectedActivity as EventEntity).endTime
+      : DateTime.now();
 
   update(ActivityListViewModel activityListViewModel) {
     // debugPrint("ActivityDisplayViewModel update");
@@ -354,6 +387,85 @@ class ActivityDisplayViewModel extends ChangeNotifier {
   set activityTitle(String newTitle) {
     selectedActivity.title = newTitle;
     activityListViewModel!.notifyListeners();
+    notifyListeners();
+  }
+
+  setStartTimeInChange(DateTime newStartTime) {
+    startTimeInChange = newStartTime;
+    notifyListeners();
+  }
+
+  setEndTimeInChange(DateTime newEndTime) {
+    endTimeInChange = newEndTime;
+    notifyListeners();
+  }
+
+  void deleteActivity() {
+    // TODO: delete activity from server
+    // update user activity usecase here
+
+    debugPrint("deleteActivity unimplemented!");
+
+    notifyListeners();
+  }
+
+  void createMissionDone() {
+    activityListViewModel!.isCreateMode = false;
+    activityListViewModel!.isCreateEvent = false;
+    // TODO: create mission to server
+    // update user activity usecase here
+
+    debugPrint("createMissionDone unimplemented!");
+
+    notifyListeners();
+  }
+
+  void createEventDone() {
+    // TODO: create event to server
+    // update user activity usecase here
+
+    debugPrint("createEventDone unimplemented!");
+    activityListViewModel!.isCreateMode = false;
+    activityListViewModel!.isCreateEvent = false;
+
+    notifyListeners();
+  }
+
+  void editMissionPressed() {
+    cancelEditOrCreate();
+    isEditMode = true;
+    notifyListeners();
+  }
+
+  void editMissionDone() {
+    // TODO: edit mission to server
+    // update user activity usecase here
+
+    debugPrint("editMissionDone unimplemented!");
+    isEditMode = false;
+
+    notifyListeners();
+  }
+
+  void editEventPressed() {
+    cancelEditOrCreate();
+    isEditMode = true;
+    notifyListeners();
+  }
+
+  void editEventDone() {
+    // TODO: edit event to server
+    // update user activity usecase here
+
+    debugPrint("editEventDone unimplemented!");
+    isEditMode = false;
+
+    notifyListeners();
+  }
+
+  void cancelEditOrCreate() {
+    isEditMode = false;
+    activityListViewModel!.cancleCreateMode();
     notifyListeners();
   }
 }

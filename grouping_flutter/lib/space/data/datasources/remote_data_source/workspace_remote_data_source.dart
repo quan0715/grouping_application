@@ -69,7 +69,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<WorkspaceModel> getWorkspaceData({required int workspaceId}) async {
     final response = await _client.get(
-        Uri.parse("${Config.baseUriWeb}/workspaces/$workspaceId"),
+        Uri.parse("${Config.baseUriWeb}/api/workspaces/$workspaceId"),
         headers: headers);
 
     switch (response.statusCode) {
@@ -209,7 +209,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<void> deleteWorkspaceData({required int workspaceId}) async {
     final response = await _client.delete(
-        Uri.parse("${Config.baseUriWeb}/workspaces/$workspaceId"),
+        Uri.parse("${Config.baseUriWeb}/api/workspaces/$workspaceId"),
         headers: headers);
     switch (response.statusCode) {
       case 200:

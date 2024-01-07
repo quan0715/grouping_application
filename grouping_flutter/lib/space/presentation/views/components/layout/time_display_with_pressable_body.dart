@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 
 class TimeDisplayWithPressibleBody extends StatelessWidget {
   const TimeDisplayWithPressibleBody(
-      {super.key, required this.activityColor, required this.time});
+      {super.key, required this.activityColor, required this.time, onPressed})
+      : _onPressed = onPressed;
 
   final Color activityColor;
   final String time;
+  final void Function()? _onPressed;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {
-          debugPrint(
-              'TimeDisplayWithPressibleBody pressed, currently unimplemented');
-        },
+        onPressed: _onPressed,
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           foregroundColor: activityColor,
+          disabledBackgroundColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
