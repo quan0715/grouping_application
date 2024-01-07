@@ -5,6 +5,7 @@ import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 import 'package:grouping_project/space/presentation/view_models/activity_list_view_model.dart';
+import 'package:grouping_project/space/presentation/view_models/space_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,6 @@ enum ActivityType {
 
 class ActivityLayout extends StatelessWidget {
   final String title;
-  final bool isWorkspace;
   final ActivityType type;
   final Color color;
 
@@ -23,7 +23,6 @@ class ActivityLayout extends StatelessWidget {
     super.key,
     required this.title,
     required this.color,
-    this.isWorkspace = true,
     this.type = ActivityType.event,
   });
 
@@ -47,7 +46,7 @@ class ActivityLayout extends StatelessWidget {
                     .titleSmall!
                     .copyWith(color: color, fontWeight: FontWeight.bold)),
             const Spacer(),
-            _createButton(),
+            _createButton(context, activityListViewModel),     // TODO: create button function is under testing
           ],
         ),
         Expanded(
@@ -107,13 +106,13 @@ class ActivityLayout extends StatelessWidget {
   }
 
   Widget _displayEventBody(ActivityListViewModel activityListViewModel) {
-    List<EventEntity> events = activityListViewModel.events!;
+    List<EventEntity> events = activityListViewModel.events;
 
     return LayoutBuilder(builder: (context, constraints) {
       return ListView.builder(
         itemCount: events.length,
         itemBuilder: (context, index) {
-          var belongWorkspace = events[index].belongWorkspace.toEntity();
+          var belongWorkspace = events[index].belongWorkspace;
           var displayColor = AppColor.getWorkspaceColorByIndex(belongWorkspace.themeColor);
           DateFormat format = DateFormat("hh:mm");
           return Padding(
@@ -151,7 +150,7 @@ class ActivityLayout extends StatelessWidget {
     return ListView.builder(
       itemCount: missions.length,
       itemBuilder: (context, index) {
-        var belongWorkspace = missions[index].belongWorkspace.toEntity();
+        var belongWorkspace = missions[index].belongWorkspace;
         var displayColor = AppColor.getWorkspaceColorByIndex(belongWorkspace.themeColor);
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
@@ -173,12 +172,16 @@ class ActivityLayout extends StatelessWidget {
     );
   }
 
-  Widget _createButton() {
+  Widget _createButton(BuildContext context, ActivityListViewModel activityListViewModel) {
+    bool isWorkspace = Provider.of<SpaceViewModel>(context, listen: false).isWorkspace;
     return Visibility(
       visible: isWorkspace,
       child: IconButton(
-          onPressed: () {
-            debugPrint("unimplemented yet, create activity");
+          onPressed: () async {
+            // TODO: on press function is under testing
+            // debugPrint("unimplemented yet, create activity");
+            // await activityListViewModel.testCreateEvent();
+            await activityListViewModel.testCreateMission();
           },
           icon: const Icon(Icons.add_outlined,)),
     );

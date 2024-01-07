@@ -11,6 +11,7 @@ class SpaceViewModel extends ChangeNotifier {
   UserDataProvider? userDataProvider;
   GroupDataProvider? workspaceDataProvider;
 
+  bool get isWorkspace => (workspaceDataProvider != null);
   
   bool _isLoading = true;
 
