@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:grouping_project/core/config/config.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
@@ -20,7 +21,6 @@ abstract class ActivityRemoteDataSource {
 /// 此 service 可以 get, create, update, delete event 或 mission
 ///
 class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
-  late final int _workSpaceUid;
   late final String _token;
   late final Map<String, String> headers;
   http.Client _client = http.Client();
@@ -29,19 +29,17 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// 此 service 可以 get, create, update, delete event 或 mission
   ///
-  /// * [workSpaceUid] : 當前所處的 workspace 的 uid
   /// * [token] : 使用者的認證碼
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// ```
   ///
-  ActivityRemoteDataSourceImpl({required int workSpaceUid, required String token}) {
-    _workSpaceUid = workSpaceUid;
+  ActivityRemoteDataSourceImpl({required String token}) {
     _token = token;
     headers = {
-      "ContentType": "application/json",
+      "Content-Type": "application/json",
       "Authorization": "Bearer $_token",
     };
   }
@@ -65,25 +63,34 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// EditableCardModel activity = await remoteDataSource.getActivityData(activityID: -1);
   /// ```
   /// 
   @override
   Future<ActivityModel> getActivityData({required int activityID}) async {
     final response = await _client.get(
-        Uri.parse("${Config.baseUriWeb}/$_workSpaceUid/activities/$activityID"),
+        Uri.parse("${Config.baseUriWeb}/api/activities/$activityID/"),
         headers: headers);
 
     switch (response.statusCode) {
       case 200:
-        var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        try{
+          var data = jsonDecode(response.body);
+          return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
+        debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
+        debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
+        debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
         // return EventModel.defaultEvent;
         throw ServerException(exceptionMessage: "Unknown Error");
     }
@@ -97,27 +104,35 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// EditableCardModel activity = await remoteDataSource.createActivityData(activity: createDataofActivity);
   /// ```
   /// 
   @override
   Future<ActivityModel> createActivityData({required ActivityModel activity}) async {
     Map<String, dynamic> body = activity.toJson();
-    body.addAll({"belong_workspace": _workSpaceUid.toString()});
+    // body.addAll({"belong_workspace": _workSpaceUid.toString()});
 
     final response = await _client.post(
-        Uri.parse("${Config.baseUriWeb}/$_workSpaceUid/activities"),
+        Uri.parse("${Config.baseUriWeb}/api/activities/"),
         headers: headers,
         body: jsonEncode(body));
 
     switch (response.statusCode) {
-      case 200:
-        var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+      case 201:
+        try{
+          var data = jsonDecode(response.body);
+          return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
+        debugPrint("error 400 when create activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
+        debugPrint("error ${response.statusCode} when create activity: \n${response.body}\n");
         // return EventModel.defaultEvent;
         throw ServerException(exceptionMessage: "unknown error");
     }
@@ -132,29 +147,38 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// EditableCardModel activity = await remoteDataSource.updateActivityData(event: updateDataofActivity);
   /// ```
   /// 
   @override
   Future<ActivityModel> updateActivityData({required ActivityModel activity}) async {
     Map<String, dynamic> body = activity.toJson();
-    body.addAll({"belong_workspace": _workSpaceUid.toString()});
+    // body.addAll({"belong_workspace": _workSpaceUid.toString()});
 
     final response = await _client.patch(
-        Uri.parse("${Config.baseUriWeb}/$_workSpaceUid/activities/${activity.id}"),
+        Uri.parse("${Config.baseUriWeb}/api/activities/${activity.id}/"),
         headers: headers,
         body: jsonEncode(body));
 
     switch (response.statusCode) {
       case 200:
-        var data = jsonDecode(response.body);
-        return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        try{
+          var data = jsonDecode(response.body);
+          return data['event'] != null ? EventModel.fromJson(data: data) : MissionModel.fromJson(data: data);
+        }
+        catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
       case 400:
+        debugPrint("error ${response.statusCode} when update activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
+        debugPrint("error ${response.statusCode} when update activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
+        debugPrint("error ${response.statusCode} when update activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "unknown error");
         // return EventModel.defaultEvent;
     }
@@ -169,14 +193,14 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
   /// 
   /// ### Example
   /// ```dart
-  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(workSpaceUid: -1, token: uesrToken);
+  /// ActivityRemoteDataSource remoteDataSource = ActivityRemoteDataSourceImpl(token: uesrToken);
   /// await remoteDataSource.deleteActivityData(activityID: -1);
   /// ```
   /// 
   @override
   Future<void> deleteActivityData({required int activityID}) async {
     final response = await _client.delete(
-        Uri.parse("${Config.baseUriWeb}/$_workSpaceUid/activities/$activityID"),
+        Uri.parse("${Config.baseUriWeb}/api/activities/$activityID/"),
         headers: headers);
 
     switch (response.statusCode) {
@@ -188,8 +212,10 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
       case 404:
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
+        debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
+        throw ServerException(exceptionMessage: "unknown error");
         // do nothing
-        return;
+        // return;
     }
   }
 }

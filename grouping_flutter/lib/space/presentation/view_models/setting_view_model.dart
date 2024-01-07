@@ -3,7 +3,7 @@ import 'package:grouping_project/app/presentation/providers/message_service.dart
 import 'package:grouping_project/core/shared/message_entity.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/user_local_data_source.dart';
 import 'package:grouping_project/space/data/datasources/remote_data_source/user_remote_data_source.dart';
-import 'package:grouping_project/space/data/models/user_model.dart';
+// import 'package:grouping_project/space/data/models/user_model.dart';
 // import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/repositories/user_repository_impl.dart';
 import 'package:grouping_project/space/domain/entities/setting_entity.dart';
@@ -153,7 +153,7 @@ class SettingPageViewModel extends ChangeNotifier {
     debugPrint(file.path);
     // currentUser.photo!.data = file.path;
     var testRemote = UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token);
-    await testRemote.updateUserProfileImage(account: UserModel.fromEntity(currentUser),image: file);
+    await testRemote.updateUserProfileImage(account: currentUser.toModel(), image: file);
     
     await updateUser(currentUser);
     // updateAvatar(await file.readAsBytes());
