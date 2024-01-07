@@ -212,7 +212,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
       case 404:
         throw ServerException(exceptionMessage: "The requesting data was not found");
       default:
-        debugPrint("error ${response.statusCode} when get activity: \n${response.body}\n");
+        debugPrint("error ${response.statusCode} when delete activity: \n${response.body}\n");
         throw ServerException(exceptionMessage: "unknown error");
         // do nothing
         // return;
