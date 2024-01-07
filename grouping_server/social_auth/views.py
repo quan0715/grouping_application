@@ -1,3 +1,4 @@
+import json
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -37,8 +38,9 @@ class LoginView(GenericAPIView):
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         
-        data = {"auth-token" : (serializer.validated_data)['tokens']['access'],
-                "refresh-token": (serializer.validated_data)['tokens']['refresh']}
+        data = {"auth-token" : (serializer.validated_data)["tokens"]["access"],
+                "refresh-token": (serializer.validated_data)["tokens"]["refresh"]}
+        print(data)
         return Response(data, status=status.HTTP_200_OK)
 
 class RegisterView(GenericAPIView):
@@ -53,8 +55,8 @@ class RegisterView(GenericAPIView):
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         
-        data = {"auth-token" : (serializer.validated_data)['tokens']['access'],
-                "refresh-token": (serializer.validated_data)['tokens']['refresh']}
+        data = {"auth-token" : (serializer.validated_data)["tokens"]["access"],
+                "refresh-token": (serializer.validated_data)["tokens"]["refresh"]}
         return Response(data, status=status.HTTP_200_OK)
    
 class GoogleSocialAuthView(GenericAPIView):
@@ -70,8 +72,8 @@ class GoogleSocialAuthView(GenericAPIView):
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         
-        data = {"auth-token" : (serializer.validated_data)['tokens']['access'],
-                "refresh-token": (serializer.validated_data)['tokens']['refresh']}
+        data = {"auth-token" : (serializer.validated_data)["tokens"]["access"],
+                "refresh-token": (serializer.validated_data)["tokens"]["refresh"]}
         
         return Response(data, status=status.HTTP_200_OK)
 
@@ -87,8 +89,8 @@ class LineSocialAuthView(GenericAPIView):
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
         
-        data = {"auth-token" : (serializer.validated_data)['tokens']['access'],
-                "refresh-token": (serializer.validated_data)['tokens']['refresh']}
+        data = {"auth-token" : (serializer.validated_data)["tokens"]["access"],
+                "refresh-token": (serializer.validated_data)["tokens"]["refresh"]}
         return Response(data, status=status.HTTP_200_OK)
 
 class GitHubSocialAuthView(GenericAPIView):
@@ -102,10 +104,10 @@ class GitHubSocialAuthView(GenericAPIView):
 
         if 'error' in serializer.validated_data:
             return Response((serializer.validated_data), status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            data = {"auth-token" : (serializer.validated_data)['tokens']['access'],
-                "refresh-token": (serializer.validated_data)['tokens']['refresh']}
-            return Response(data, status=status.HTTP_200_OK)
+
+        data = {"auth-token" : (serializer.validated_data)["tokens"]["access"],
+                "refresh-token": (serializer.validated_data)["tokens"]["refresh"]}
+        return Response(data, status=status.HTTP_200_OK)
 
 class LogoutView(GenericAPIView):
     serializer_class = LogoutSerializer
