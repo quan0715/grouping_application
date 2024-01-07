@@ -127,6 +127,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
           throw ServerException(exceptionMessage: "Database Data Error");
         }
         
+       
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
