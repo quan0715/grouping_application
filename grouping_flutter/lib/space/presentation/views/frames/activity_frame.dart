@@ -28,16 +28,18 @@ class ActivityDetailFrame extends StatelessWidget {
 
   Widget _buildFrameToolBar(BuildContext context) {
     return Consumer<ActivityDisplayViewModel>(
-      builder: (context, vm, child) =>
-          vm.activityListViewModel!.isCreateMode || vm.isEditMode
-              ? _buildFrameInputToolBar(
-                  context,
-                  vm.selectedActivity.belongWorkspace.name,
-                  vm.selectedActivity.belongWorkspace.themeColor)
-              : _buildFrameDisplayToolBar(
-                  context,
-                  vm.selectedActivity.belongWorkspace.name,
-                  vm.selectedActivity.belongWorkspace.themeColor),
+      builder: (context, vm, child) {
+        debugPrint(vm.isEditMode.toString());
+        return vm.activityListViewModel!.isCreateMode || vm.isEditMode
+            ? _buildFrameInputToolBar(
+                context,
+                vm.selectedActivity.belongWorkspace.name,
+                vm.selectedActivity.belongWorkspace.themeColor)
+            : _buildFrameDisplayToolBar(
+                context,
+                vm.selectedActivity.belongWorkspace.name,
+                vm.selectedActivity.belongWorkspace.themeColor);
+      },
     );
   }
 
@@ -56,9 +58,8 @@ class ActivityDetailFrame extends StatelessWidget {
         const Spacer(),
         IconButton(
           onPressed: () {
-            ActivityDisplayViewModel vm =
-                Provider.of<ActivityDisplayViewModel>(context, listen: false);
-            vm.isEvent ? vm.editEventPressed() : vm.editMissionPressed();
+            Provider.of<ActivityDisplayViewModel>(context, listen: false)
+                .intoEditMode();
           },
           color: AppColor.getWorkspaceColorByIndex(themeColor),
           icon: const Icon(Icons.edit),
@@ -123,7 +124,7 @@ class ActivityDetailFrame extends StatelessWidget {
                   ? vm.createEventDone()
                   : vm.createMissionDone();
             } else {
-              vm.isEvent ? vm.editEventDone() : vm.editMissionDone();
+              vm.editDone();
             }
           },
         ),

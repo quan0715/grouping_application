@@ -328,9 +328,11 @@ class ActivityDisplayViewModel extends ChangeNotifier {
 
   DateTime startTimeInChange = DateTime.now();
   DateTime endTimeInChange = DateTime.now();
-  String titleInCChange = "";
+  String titleInChange = "";
   String introductionInChange = "";
-  List<int> relatedMissionIdsInChange = [];
+  int missionStateIdInChange = -1;
+  List<DateTime> notificationsInChange = [];
+  List<String> relatedMissionIdsInChange = [];
   List<int> contributorsInChange = [];
 
   bool get isEventStartedNow =>
@@ -431,34 +433,59 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void editMissionPressed() {
-    cancelEditOrCreate();
+  void intoEditMode() {
     isEditMode = true;
+
+    startTimeInChange = startTimeDateTime;
+    endTimeInChange = endTimeDateTime;
+    titleInChange = selectedActivity.title;
+    introductionInChange = selectedActivity.introduction;
+    relatedMissionIdsInChange =
+        isEvent ? (selectedActivity as EventEntity).relatedMissionIds : [];
+    contributorsInChange = selectedActivity.contributors;
+    missionStateIdInChange =
+        isEvent ? -1 : (selectedActivity as MissionEntity).stateId;
+
     notifyListeners();
   }
 
-  void editMissionDone() {
-    // TODO: edit mission to server
-    // update user activity usecase here
-
-    debugPrint("editMissionDone unimplemented!");
+  void editDone() {
     isEditMode = false;
 
-    notifyListeners();
-  }
+    debugPrint(activityListViewModel!.selectedActivity!.toString());
 
-  void editEventPressed() {
-    cancelEditOrCreate();
-    isEditMode = true;
-    notifyListeners();
-  }
+    activityListViewModel!.selectedActivity = isEvent
+        ? EventEntity(
+            id: activityListViewModel!.selectedActivity!.id,
+            title: titleInChange,
+            introduction: introductionInChange,
+            contributors: contributorsInChange,
+            notifications: notificationsInChange,
+            creatorAccount:
+                activityListViewModel!.selectedActivity!.creatorAccount,
+            belongWorkspace:
+                activityListViewModel!.selectedActivity!.belongWorkspace,
+            startTime: startTimeInChange,
+            endTime: endTimeInChange,
+            relatedMissionIds: relatedMissionIdsInChange)
+        : MissionEntity(
+            id: activityListViewModel!.selectedActivity!.id,
+            title: titleInChange,
+            introduction: introductionInChange,
+            contributors: contributorsInChange,
+            notifications: notificationsInChange,
+            creatorAccount:
+                activityListViewModel!.selectedActivity!.creatorAccount,
+            belongWorkspace:
+                activityListViewModel!.selectedActivity!.belongWorkspace,
+            deadline: startTimeInChange,
+            stateId: missionStateIdInChange,
+            state: (activityListViewModel!.selectedActivity as MissionEntity)
+                .state,
+            parentMissionIds: relatedMissionIdsInChange,
+            childMissionIds: []);
 
-  void editEventDone() {
-    // TODO: edit event to server
-    // update user activity usecase here
-
-    debugPrint("editEventDone unimplemented!");
-    isEditMode = false;
+    debugPrint(activityListViewModel!.selectedActivity!.toString());
 
     notifyListeners();
   }
