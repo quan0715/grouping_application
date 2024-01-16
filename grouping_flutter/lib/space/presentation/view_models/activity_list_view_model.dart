@@ -27,6 +27,13 @@ import 'package:grouping_project/space/domain/usecases/activity_usecases/create_
 import 'package:grouping_project/space/domain/usecases/activity_usecases/get_mission_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/activity_usecases/update_mission_usecase.dart';
 import 'package:grouping_project/space/domain/usecases/activity_usecases/delete_activity_usecase.dart';
+import 'package:grouping_project/space/data/datasources/local_data_source/state_local_data_source.dart';
+import 'package:grouping_project/space/data/datasources/remote_data_source/state_remote_data_source.dart';
+import 'package:grouping_project/space/data/repositories/state_repository_impl.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/create_state_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/delete_state_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/get_state_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/update_state_usecase.dart';
 
 extension DateTimeExtension on DateTime {
   int get weekOfMonthStartFromMonday {
@@ -114,7 +121,11 @@ class ActivityListViewModel extends ChangeNotifier {
           belongWorkspace: tempGroup.toEntity(),
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
-          state: MissionState.defaultProgressState,
+          state: MissionState(
+              id: -1,
+              stage: MissionStage.progress,
+              stateName: "test progress",
+              belongWorkspaceID: tempGroup.id),
           childMissions: [],
           // parentMissionIds: [],
           // childMissionIds: [],
@@ -131,7 +142,11 @@ class ActivityListViewModel extends ChangeNotifier {
           belongWorkspace: tempGroup.toEntity(),
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
-          state: MissionState.defaultPendingState,
+          state: MissionState(
+              id: -1,
+              stage: MissionStage.progress,
+              stateName: "test progress",
+              belongWorkspaceID: tempGroup.id),
           childMissions: [],
           // parentMissionIds: [],
           // childMissionIds: [],
@@ -199,7 +214,11 @@ class ActivityListViewModel extends ChangeNotifier {
               tags: []).toEntity(),
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
-          state: MissionState.defaultFinishState,
+          state: MissionState(
+              id: -1,
+              stage: MissionStage.close,
+              stateName: "test finish",
+              belongWorkspaceID: tempGroup.id),
           childMissions: [],
           // parentMissionIds: [],
           // childMissionIds: [],
@@ -234,6 +253,9 @@ class ActivityListViewModel extends ChangeNotifier {
     // missions = _sortMissions();
   }
 
+  List<MissionEntity> get todoMissions => missions
+      .where((element) => element.state.stage == MissionStage.todo)
+      .toList();
   List<MissionEntity> get v => missions
       .where((element) => element.state.stage == MissionStage.pending)
       .toList();
@@ -318,30 +340,114 @@ class ActivityListViewModel extends ChangeNotifier {
     return initialDate;
   }
 
-  Future<void> testCreateEvent() async {
-    CreateEventUseCase createEventUseCase = CreateEventUseCase(
-        activityRepository: ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(
-                token: userDataProvider.tokenModel.token),
-            localDataSource: ActivityLocalDataSourceImpl()));
+  // Future<void> testCreateEvent() async {
+  //   CreateEventUseCase createEventUseCase = CreateEventUseCase(
+  //       activityRepository: ActivityRepositoryImpl(
+  //           remoteDataSource: ActivityRemoteDataSourceImpl(
+  //               token: userDataProvider.tokenModel.token),
+  //           localDataSource: ActivityLocalDataSourceImpl()));
 
-    UpdateEventUseCase updateEventUseCase = UpdateEventUseCase(
-        activityRepository: ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(
-                token: userDataProvider.tokenModel.token),
-            localDataSource: ActivityLocalDataSourceImpl()));
+  //   UpdateEventUseCase updateEventUseCase = UpdateEventUseCase(
+  //       activityRepository: ActivityRepositoryImpl(
+  //           remoteDataSource: ActivityRemoteDataSourceImpl(
+  //               token: userDataProvider.tokenModel.token),
+  //           localDataSource: ActivityLocalDataSourceImpl()));
 
-    GetEventUseCase getEventUseCase = GetEventUseCase(
-        activityRepository: ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(
-                token: userDataProvider.tokenModel.token),
-            localDataSource: ActivityLocalDataSourceImpl()));
+  //   GetEventUseCase getEventUseCase = GetEventUseCase(
+  //       activityRepository: ActivityRepositoryImpl(
+  //           remoteDataSource: ActivityRemoteDataSourceImpl(
+  //               token: userDataProvider.tokenModel.token),
+  //           localDataSource: ActivityLocalDataSourceImpl()));
 
-    DeleteActivityUseCase deleteActivityUseCase = DeleteActivityUseCase(
-        ActivityRepositoryImpl(
-            remoteDataSource: ActivityRemoteDataSourceImpl(
+  //   DeleteActivityUseCase deleteActivityUseCase = DeleteActivityUseCase(
+  //       ActivityRepositoryImpl(
+  //           remoteDataSource: ActivityRemoteDataSourceImpl(
+  //               token: userDataProvider.tokenModel.token),
+  //           localDataSource: ActivityLocalDataSourceImpl()));
+
+  //   UserEntity user = userDataProvider.currentUser!;
+  //   WorkspaceEntity workspace = WorkspaceEntity(
+  //       id: 1,
+  //       themeColor: 1,
+  //       name: 'test 的個人空間',
+  //       description: 'this is a test',
+  //       photo: null,
+  //       members: [Member(id: user.id, userName: user.name)],
+  //       activities: [],
+  //       tags: []);
+  //   EventEntity defaultevent = EventEntity(
+  //       id: 10,
+  //       title: 'test title',
+  //       introduction: 'test introduction',
+  //       creator: userDataProvider.currentUser!,
+  //       createTime: DateTime.now(),
+  //       startTime: DateTime.now(),
+  //       endTime: DateTime.now().add(const Duration(hours: 1)),
+  //       belongWorkspace: workspace,
+  //       childMissions: [],
+  //       contributors: [user],
+  //       notifications: []);
+
+  //   final failureOrEvent = await createEventUseCase.call(defaultevent);
+
+  //   // MessageService messageService = userDataProvider.messageService!;
+  //   failureOrEvent.fold((failure) {
+  //     debugPrint('建立 event 失敗');
+  //   }, (event) async {
+  //     debugPrint("建立成功成功");
+  //     debugPrint("\n========== start of create event ===========\n");
+  //     debugPrint("$event");
+  //     debugPrint("\n========== end of create event ===========\n");
+
+  //     event.endTime = event.endTime.add(const Duration(days: 1));
+  //     final failureOrUpdate = await updateEventUseCase.call(event);
+
+  //     failureOrUpdate.fold((l) => debugPrint("更新失敗"), (updateEvent) {
+  //       debugPrint("更新成功");
+  //       debugPrint("\n========== start of update event ===========\n");
+  //       debugPrint("\n$updateEvent\n");
+  //       debugPrint("\n========== end of update event ===========\n");
+  //     });
+
+  //     final failureOrGet = await getEventUseCase.call(event.id);
+
+  //     failureOrGet.fold((l) => debugPrint("獲取失敗"), (getEvent) {
+  //       debugPrint("獲取成功");
+  //       debugPrint("\n========== start of get event ===========\n");
+  //       debugPrint("$getEvent");
+  //       debugPrint("\n========== end of get event ===========\n");
+  //     });
+
+  //     debugPrint('成功創立，準備執行刪除');
+  //     debugPrint(event.id.toString());
+  //     final failiureOrSuccess = await deleteActivityUseCase.call(event.id);
+
+  //     failiureOrSuccess.fold((l) => debugPrint('刪除 event 失敗'),
+  //         (r) => debugPrint("========== 刪除成功 ==========="));
+  //   });
+  // }
+
+  Future<void> testState() async {
+    CreateStateUsecase createStateUsecase = CreateStateUsecase(
+        stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
                 token: userDataProvider.tokenModel.token),
-            localDataSource: ActivityLocalDataSourceImpl()));
+            localDataSource: StateLocalDataSourceImpl()));
+    
+    UpdateStateUsecase updateStateUsecase = UpdateStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+
+    GetStateUsecase getStateUsecase = GetStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+    
+    DeleteStateUsecase deleteStateUsecase = DeleteStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
     WorkspaceEntity workspace = WorkspaceEntity(
@@ -353,55 +459,39 @@ class ActivityListViewModel extends ChangeNotifier {
         members: [Member(id: user.id, userName: user.name)],
         activities: [],
         tags: []);
-    EventEntity defaultevent = EventEntity(
-        id: 10,
-        title: 'test title',
-        introduction: 'test introduction',
-        creator: userDataProvider.currentUser!,
-        createTime: DateTime.now(),
-        startTime: DateTime.now(),
-        endTime: DateTime.now().add(const Duration(hours: 1)),
-        belongWorkspace: workspace,
-        childMissions: [],
-        contributors: [user],
-        notifications: []);
 
-    final failureOrEvent = await createEventUseCase.call(defaultevent);
+    MissionState defaultstate = MissionState(id: -1, stage: MissionStage.progress, stateName: 'test stateName', belongWorkspaceID: workspace.id);
 
-    // MessageService messageService = userDataProvider.messageService!;
-    failureOrEvent.fold((failure) {
-      debugPrint('建立 event 失敗');
-    }, (event) async {
+    final failureOrState = await createStateUsecase.call(defaultstate);
+
+    failureOrState.fold((l) => debugPrint("建立 mission state 失敗"), (state) async {
       debugPrint("建立成功成功");
-      debugPrint("\n========== start of create event ===========\n");
-      debugPrint("$event");
-      debugPrint("\n========== end of create event ===========\n");
+      debugPrint("\n========== start of create state ===========\n");
+      debugPrint("$state");
+      debugPrint("\n========== end of create state ===========\n");
 
-      event.endTime = event.endTime.add(const Duration(days: 1));
-      final failureOrUpdate = await updateEventUseCase.call(event);
+      state.stateName = 'update new stateName';
+      final failureOrUpdate = await updateStateUsecase.call(state);
 
-      failureOrUpdate.fold((l) => debugPrint("更新失敗"), (updateEvent) {
+      failureOrUpdate.fold((l) => debugPrint("更新 mission state 失敗"), (updateState) async {
         debugPrint("更新成功");
-        debugPrint("\n========== start of update event ===========\n");
-        debugPrint("\n$updateEvent\n");
-        debugPrint("\n========== end of update event ===========\n");
+        debugPrint("\n========== start of update state ===========\n");
+        debugPrint("\n$updateState\n");
+        debugPrint("\n========== end of update state ===========\n");
       });
 
-      final failureOrGet = await getEventUseCase.call(event.id);
+      final failureOrGet = await getStateUsecase.call(state.id);
 
-      failureOrGet.fold((l) => debugPrint("獲取失敗"), (getEvent) {
-        debugPrint("獲取成功");
-        debugPrint("\n========== start of get event ===========\n");
-        debugPrint("$getEvent");
-        debugPrint("\n========== end of get event ===========\n");
+      failureOrGet.fold((l) => debugPrint("獲取 mission state 失敗"), (getState) async {
+        debugPrint("獲取成功成功");
+        debugPrint("\n========== start of get state ===========\n");
+        debugPrint("\n$getState\n");
+        debugPrint("\n========== end of get state ===========\n");
       });
 
-      debugPrint('成功創立，準備執行刪除');
-      debugPrint(event.id.toString());
-      final failiureOrSuccess = await deleteActivityUseCase.call(event.id);
+      final failureOrDelete = await deleteStateUsecase.call(state.id);
 
-      failiureOrSuccess.fold((l) => debugPrint('刪除 event 失敗'),
-          (r) => debugPrint("========== 刪除成功 ==========="));
+      failureOrDelete.fold((l) => debugPrint("刪除 mission state 失敗"), (r) => debugPrint("刪除成功"));
     });
   }
 

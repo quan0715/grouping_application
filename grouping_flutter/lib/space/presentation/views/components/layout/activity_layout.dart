@@ -181,7 +181,8 @@ class ActivityLayout extends StatelessWidget {
             // TODO: on press function is under testing
             // debugPrint("unimplemented yet, create activity");
             // await activityListViewModel.testCreateEvent();
-            await activityListViewModel.testCreateMission();
+            // await activityListViewModel.testCreateMission();
+            await activityListViewModel.testState();
           },
           icon: const Icon(Icons.add_outlined,)),
     );
