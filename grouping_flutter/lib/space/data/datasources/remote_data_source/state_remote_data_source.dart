@@ -64,7 +64,7 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
 
   @override
   Future<MissionState> createStateData({required MissionState state}) async {
-    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/states/"), headers: headers);
+    final response = await _client.post(Uri.parse("${Config.baseUriWeb}/api/states/"), headers: headers);
 
     switch (response.statusCode) {
       case 201:
@@ -86,7 +86,7 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
 
   @override
   Future<MissionState> updateStateData({required MissionState state}) async {
-    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/states/${state.id}"), headers: headers);
+    final response = await _client.patch(Uri.parse("${Config.baseUriWeb}/api/states/${state.id}"), headers: headers);
 
     switch (response.statusCode) {
       case 200:
@@ -111,7 +111,7 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
 
   @override
   Future<void> deleteStateData({required int stateID}) async {
-    final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/states/$stateID/"), headers: headers);
+    final response = await _client.delete(Uri.parse("${Config.baseUriWeb}/api/states/$stateID/"), headers: headers);
 
     switch (response.statusCode) {
       case 200:

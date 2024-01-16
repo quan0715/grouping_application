@@ -1,3 +1,4 @@
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
@@ -14,7 +15,7 @@ class UserEntity implements BaseEntity<UserModel>{
   String introduction;
   ImageModel? photo;
   List<UserTagEntity> tags;
-  List<WorkspaceModel> joinedWorkspaces;
+  List<NestWorkspace> joinedWorkspaces;
   List<ActivityModel> contributingActivities;
   final spaceColor = AppColor.mainSpaceColor;
 

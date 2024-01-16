@@ -98,12 +98,13 @@ class ActivityDetailFrame extends StatelessWidget {
                 )
               ])),
           Row(
-            children: vm.selectedActivity.belongWorkspace.members!
-                .map((member) => Row(children: [
-                      UserProfileChip(member: member, color: vm.activityColor),
-                      gap
-                    ]))
-                .toList(),
+            // children: vm.selectedActivity.belongWorkspace.members!
+            //     .map((member) => Row(children: [
+            //           UserProfileChip(member: member, color: vm.activityColor),
+            //           gap
+            //         ]))
+            //     .toList(),
+            children: [Text("This field need more discussion")],
           ),
           gap,
           Divider(color: color.withOpacity(0.3)),

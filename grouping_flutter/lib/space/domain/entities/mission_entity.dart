@@ -35,7 +35,7 @@ class MissionEntity extends ActivityEntity {
       creator: creator.toModel(),
       createTime: createTime,
       // belongWorkspace: WorkspaceModel.fromEntity(belongWorkspace),
-      belongWorkspace: belongWorkspace.toModel(),
+      belongWorkspace: belongWorkspace,
       // contributors: contributors.map((contributor) => UserModel.fromEntity(contributor)).toList(),
       contributors: contributors.map((contributor) => contributor.toModel()).toList(),
       // parentMissionIDs: parentMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),

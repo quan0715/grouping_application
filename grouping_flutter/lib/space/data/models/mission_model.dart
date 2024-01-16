@@ -1,5 +1,6 @@
 // import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
@@ -44,7 +45,7 @@ class MissionModel extends ActivityModel {
           state: MissionState.fromJson(data: data['mission']['state']),
           creator: UserModel.fromJson(data: data['creator']),
           createTime: DateTime.parse(data['created_at']),
-          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']),
+          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
           // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
           childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
           contributors: data['contributors'].cast<UserModel>() as List<UserModel>,
@@ -79,7 +80,7 @@ class MissionModel extends ActivityModel {
         creator: creator.toEntity(),
         createTime: createTime,
         // belongWorkspace: WorkspaceEntity.fromModel(belongWorkspace),
-        belongWorkspace: belongWorkspace.toEntity(),
+        belongWorkspace: belongWorkspace,
         deadline: deadline,
         state: state,
         // parentMissionIDs: parentMissionIDs,

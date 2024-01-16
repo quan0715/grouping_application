@@ -175,7 +175,8 @@ class ActivityLayout extends StatelessWidget {
   Widget _createButton(BuildContext context, ActivityListViewModel activityListViewModel) {
     bool isWorkspace = Provider.of<SpaceViewModel>(context, listen: false).isWorkspace;
     return Visibility(
-      visible: isWorkspace,
+      // visible: isWorkspace,
+      visible: true,
       child: IconButton(
           onPressed: () async {
             // TODO: on press function is under testing

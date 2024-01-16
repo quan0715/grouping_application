@@ -32,7 +32,7 @@ class EventEntity extends ActivityEntity {
       // creator: UserModel.fromEntity(creator),
       createTime: createTime,
       // belongWorkspace: WorkspaceModel.fromEntity(belongWorkspace),
-      belongWorkspace: belongWorkspace.toModel(),
+      belongWorkspace: belongWorkspace,
       startTime: startTime,
       endTime: endTime,
       // childMissions: childMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),

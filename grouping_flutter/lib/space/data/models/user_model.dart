@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_this
 // import 'dart:typed_data';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
@@ -42,7 +43,7 @@ class UserModel implements BaseModel<UserEntity>{
   String introduction;
   ImageModel? photo;
   List<UserTagModel> tags;
-  List<WorkspaceModel> joinedWorkspaces;
+  List<NestWorkspace> joinedWorkspaces;
   List<ActivityModel> contributingActivities;
 
   /// ## a data model for account, either user or group
@@ -91,7 +92,7 @@ class UserModel implements BaseModel<UserEntity>{
             .toList(),
         joinedWorkspaces: (data['joined_workspaces']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
-            .map((workspace) => WorkspaceModel.fromJson(data: workspace))
+            .map((workspace) => NestWorkspace.fromJson(data: workspace))
             .toList(),
         contributingActivities: (data['contributing_activities']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)

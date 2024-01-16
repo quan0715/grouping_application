@@ -3,6 +3,7 @@ import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_stage.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/theme/color.dart';
 // import 'package:grouping_project/space/data/models/mission_state_stage.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
@@ -70,28 +71,27 @@ class ActivityListViewModel extends ChangeNotifier {
 
   ActivityEntity? selectedActivity;
 
-  WorkspaceModel tempGroup = WorkspaceModel(
+  NestWorkspace tempGroup = NestWorkspace(
     id: -1,
     name: "Grouping 專題研究小組",
-    description: "擁有製作 Grouping App 專案的熱情所組成的小組",
     themeColor: 1,
-    members: [
-      Member(
-        id: 1,
-        userName: '張百寬',
-        photo: ImageModel(
-            imageId: -1,
-            imageUri:
-                "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
-            updateAt: DateTime.now()),
-      ),
-      Member(
-        id: 2,
-        userName: '許明瑞',
-      ),
-    ],
-    activities: [],
-    tags: [],
+    // members: [
+    //   Member(
+    //     id: 1,
+    //     userName: '張百寬',
+    //     photo: ImageModel(
+    //         imageId: -1,
+    //         imageUri:
+    //             "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
+    //         updateAt: DateTime.now()),
+    //   ),
+    //   Member(
+    //     id: 2,
+    //     userName: '許明瑞',
+    //   ),
+    // ],
+    // activities: [],
+    // tags: [],
   );
 
   List<ActivityEntity> get tmpData => [
@@ -104,7 +104,7 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace: tempGroup.toEntity(),
+          belongWorkspace: tempGroup,
           startTime: DateTime.now(),
           endTime: DateTime.now().add(const Duration(hours: 1)),
           childMissions: [],
@@ -118,7 +118,7 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace: tempGroup.toEntity(),
+          belongWorkspace: tempGroup,
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
           state: MissionState(
@@ -139,7 +139,7 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace: tempGroup.toEntity(),
+          belongWorkspace: tempGroup,
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
           state: MissionState(
@@ -160,14 +160,10 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel(
+          belongWorkspace: NestWorkspace(
               id: -1,
               name: "軟工小組",
-              description: "軟體工程實務的小組，只要撐半學期就好啦~",
-              themeColor: 2,
-              members: [],
-              activities: [],
-              tags: []).toEntity(),
+              themeColor: 2,),
           startTime: DateTime.now().add(const Duration(days: 1)),
           endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
           childMissions: [],
@@ -182,14 +178,10 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel(
+          belongWorkspace: NestWorkspace(
               id: -1,
               name: "test 的 workspace",
-              description: "屬於自己的 workspace",
-              themeColor: 4,
-              members: [],
-              activities: [],
-              tags: []).toEntity(),
+              themeColor: 4,),
           startTime: DateTime.now(),
           endTime: DateTime.now().add(const Duration(hours: 1)),
           childMissions: [],
@@ -204,14 +196,10 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: userDataProvider.currentUser!,
           createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel(
+          belongWorkspace: NestWorkspace(
               id: -1,
               name: "test 的 workspace",
-              description: "屬於自己的 workspace",
-              themeColor: 4,
-              members: [],
-              activities: [],
-              tags: []).toEntity(),
+              themeColor: 4,),
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
           state: MissionState(
@@ -521,15 +509,11 @@ class ActivityListViewModel extends ChangeNotifier {
             localDataSource: ActivityLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
-    WorkspaceEntity workspace = WorkspaceEntity(
+    NestWorkspace workspace = NestWorkspace(
         id: 1,
         themeColor: 1,
         name: 'test 的個人空間',
-        description: 'this is a test',
-        photo: null,
-        members: [Member(id: user.id, userName: user.name)],
-        activities: [],
-        tags: []);
+        photo: null,);
 
     MissionState state = MissionState(
         id: 10,

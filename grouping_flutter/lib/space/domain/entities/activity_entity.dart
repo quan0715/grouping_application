@@ -2,6 +2,7 @@
 // import 'package:grouping_project/space/data/models/activity_model.dart';
 // import 'package:grouping_project/space/data/models/user_model.dart';
 // import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
@@ -16,7 +17,7 @@ abstract class ActivityEntity implements BaseEntity<ActivityModel>{
   List<DateTime> notifications;
   UserEntity creator;
   DateTime createTime;
-  WorkspaceEntity belongWorkspace;
+  NestWorkspace belongWorkspace;
   // late List<MissionEntity> parentMissions;
   List<MissionEntity> childMissions;
 
