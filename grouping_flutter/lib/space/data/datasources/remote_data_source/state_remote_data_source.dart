@@ -64,7 +64,7 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
 
   @override
   Future<MissionState> createStateData({required MissionState state}) async {
-    final response = await _client.post(Uri.parse("${Config.baseUriWeb}/api/states/"), headers: headers);
+    final response = await _client.post(Uri.parse("${Config.baseUriWeb}/api/states/"), headers: headers, body: jsonEncode(state.toJson()));
 
     switch (response.statusCode) {
       case 201:
@@ -86,7 +86,7 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
 
   @override
   Future<MissionState> updateStateData({required MissionState state}) async {
-    final response = await _client.patch(Uri.parse("${Config.baseUriWeb}/api/states/${state.id}"), headers: headers);
+    final response = await _client.patch(Uri.parse("${Config.baseUriWeb}/api/states/${state.id}/"), headers: headers, body: jsonEncode(state.toJson()));
 
     switch (response.statusCode) {
       case 200:
@@ -114,7 +114,7 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
     final response = await _client.delete(Uri.parse("${Config.baseUriWeb}/api/states/$stateID/"), headers: headers);
 
     switch (response.statusCode) {
-      case 200:
+      case 204:
         return;
       case 400:
         debugPrint("error ${response.statusCode} when delete state: \n${response.body}\n");

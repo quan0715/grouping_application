@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_this
 // import 'data_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
+
 import 'mission_state_stage.dart';
 
 
@@ -7,7 +9,7 @@ class MissionState {
   int id;
   MissionStage stage;
   String stateName;
-  int belongWorkspaceID;
+  NestWorkspace? belongWorkspace;
 
   ///the default unknown state
   // static final MissionState defaultUnknownState = MissionState._default(
@@ -64,13 +66,13 @@ class MissionState {
   //       this.stateName = stateName ?? defaultProgressState.stateName,
   //       this.belongWorkspaceID =
   //           belongWorkspaceID ?? defaultProgressState.belongWorkspaceID;
-  MissionState({required this.id, required this.stage, required this.stateName, required this.belongWorkspaceID});
+  MissionState({required this.id, required this.stage, required this.stateName, required this.belongWorkspace});
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         // 'id': this.id,
         'stage': this.stage.label,
         'name': this.stateName,
-        'belong_workspace': this.belongWorkspaceID,
+        'belong_workspace': this.belongWorkspace?.id,
       };
 
   factory MissionState.fromJson({required Map<String, dynamic> data}) =>
@@ -78,5 +80,10 @@ class MissionState {
           id: data['id'],
           stage: MissionStage.fromLabel(data['stage']),
           stateName: data['name'],
-          belongWorkspaceID: data['belong_workspace']);
+          belongWorkspace: data['belong_workspace'] != null ? NestWorkspace.fromJson(data: data['belong_workspace']) : null);
+
+  @override
+  String toString() {
+    return {"id": this.id, "stage": this.stage.label, "state name": this.stateName}.toString();
+  }
 }

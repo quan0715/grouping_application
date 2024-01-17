@@ -20,4 +20,9 @@ class NestWorkspace {
           photo: data["photo"] != null
               ? ImageModel.fromJson(data["photo"])
               : null);
+
+  @override
+  String toString() {
+    return {"id": id, "theme color": themeColor, "name": name}.toString();
+  }
 }

@@ -104,7 +104,7 @@ class ActivityDetailFrame extends StatelessWidget {
             //           gap
             //         ]))
             //     .toList(),
-            children: [Text("This field need more discussion")],
+            children: [Container(color: Colors.red.withOpacity(0.2), child: Text("This field need more discussion"))],
           ),
           gap,
           Divider(color: color.withOpacity(0.3)),

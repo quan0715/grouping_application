@@ -1,4 +1,5 @@
 // create event & mission super class or activity parent class?
+import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
@@ -12,12 +13,12 @@ abstract class ActivityModel implements BaseModel<ActivityEntity>{
   String title;
   String introduction;
   // List<String> tags;
-  UserModel creator;
+  Member creator;
   DateTime createTime;
   NestWorkspace belongWorkspace;
   // List<int> parentMissionIDs;
   List<MissionModel> childMissions;
-  List<UserModel> contributors;
+  List<Member> contributors;
   List<DateTime> notifications;
 
   ActivityModel(

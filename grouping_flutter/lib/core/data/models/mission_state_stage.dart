@@ -7,20 +7,20 @@ import 'package:grouping_project/core/theme/color.dart';
 enum MissionStage {
   
   todo(label: 'todo'),
-  progress(label: 'progress'),
-  pending(label: 'pending'),
-  close(label: 'close');
+  progress(label: 'IN_PROGRESS'),
+  pending(label: 'PENDING'),
+  close(label: 'CLOSE');
   
   final String label;
   const MissionStage({required this.label});
 
   factory MissionStage.fromLabel(String label){
     switch(label){
-      case 'progress':
+      case 'IN_PROGRESS':
         return MissionStage.progress;
-      case 'pending':
+      case 'PENDING':
         return MissionStage.pending;
-      case 'close':
+      case 'CLOSE':
         return MissionStage.close;
       case 'todo':
         return MissionStage.todo;

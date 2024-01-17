@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_this
 // import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
@@ -40,13 +41,13 @@ class EventModel extends ActivityModel {
           id: data['id'] as int,
           title: data['title'] as String,
           introduction: data['description'] as String,
-          creator: UserModel.fromJson(data: data['creator']),
+          creator: Member.fromJson(data: data['creator']),
           createTime: DateTime.parse(data['created_at']),
           startTime: DateTime.parse(data['event']['start_time']),
           endTime: DateTime.parse(data['event']['end_time']),
           belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
           childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
-          contributors: data['contributors'].cast<UserModel>() as List<UserModel>,
+          contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
           notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),);
 
   /// ### 將 [EventModel] 轉換成特定的 Json 格式
@@ -76,14 +77,15 @@ class EventModel extends ActivityModel {
         startTime: startTime,
         endTime: endTime,
         // creator: UserEntity.fromModel(creator),
-        creator: creator.toEntity(),
+        creator: creator,
         createTime: createTime,
         // belongWorkspace: WorkspaceEntity.fromModel(belongWorkspace),
         belongWorkspace: belongWorkspace,
         // childMissions: childMissions.map((mission) => MissionEntity.fromModel(mission)).toList(),
         childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
         // contributors: contributors.map((contributor) => UserEntity.fromModel(contributor)).toList(),
-        contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
+        // contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
+        contributors: contributors,
         notifications: notifications,);
   }
 

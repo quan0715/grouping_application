@@ -233,7 +233,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         Uri.parse("${Config.baseUriWeb}/workspaces/$workspaceId"),
         headers: headers);
     switch (response.statusCode) {
-      case 200:
+      case 204:
         // do nothing
         return;
       case 400:

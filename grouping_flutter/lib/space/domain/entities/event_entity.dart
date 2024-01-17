@@ -28,7 +28,7 @@ class EventEntity extends ActivityEntity {
       id: id,
       title: title,
       introduction: introduction,
-      creator: creator.toModel(),
+      creator: creator,
       // creator: UserModel.fromEntity(creator),
       createTime: createTime,
       // belongWorkspace: WorkspaceModel.fromEntity(belongWorkspace),
@@ -38,8 +38,9 @@ class EventEntity extends ActivityEntity {
       // childMissions: childMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
       childMissions: childMissions.map((mission) => mission.toModel()).toList(),
       // contributors: contributors.map((contributor) => UserModel.fromEntity(contributor)).toList(),
-      contributors:
-          contributors.map((contributor) => contributor.toModel()).toList(),
+      // contributors:
+      //     contributors.map((contributor) => contributor.toModel()).toList(),
+      contributors: contributors,
       notifications: notifications,
     );
   }

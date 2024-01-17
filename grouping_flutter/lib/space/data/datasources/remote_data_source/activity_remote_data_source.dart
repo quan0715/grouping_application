@@ -204,7 +204,7 @@ class ActivityRemoteDataSourceImpl extends ActivityRemoteDataSource{
         headers: headers);
 
     switch (response.statusCode) {
-      case 200:
+      case 204:
         // do nothing
         return;
       case 400:

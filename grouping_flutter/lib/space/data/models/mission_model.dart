@@ -1,4 +1,5 @@
 // import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
@@ -43,12 +44,12 @@ class MissionModel extends ActivityModel {
           introduction: data['description'] as String,
           deadline: DateTime.parse(data['mission']['deadline']),
           state: MissionState.fromJson(data: data['mission']['state']),
-          creator: UserModel.fromJson(data: data['creator']),
+          creator: Member.fromJson(data: data['creator']),
           createTime: DateTime.parse(data['created_at']),
           belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
           // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
           childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
-          contributors: data['contributors'].cast<UserModel>() as List<UserModel>,
+          contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
           notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),
           );
 
@@ -77,7 +78,7 @@ class MissionModel extends ActivityModel {
         title: title,
         introduction: introduction,
         // creator: UserEntity.fromModel(creator),
-        creator: creator.toEntity(),
+        creator: creator,
         createTime: createTime,
         // belongWorkspace: WorkspaceEntity.fromModel(belongWorkspace),
         belongWorkspace: belongWorkspace,
@@ -87,7 +88,8 @@ class MissionModel extends ActivityModel {
         // childMissions: childMissions.map((mission) => MissionEntity.fromModel(mission)).toList(),
         childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
         // contributors: contributors.map((contributor) => UserEntity.fromModel(contributor)).toList(),
-        contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
+        // contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
+        contributors: contributors,
         notifications: notifications,);
   }
 
