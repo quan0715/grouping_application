@@ -205,11 +205,20 @@ class ActivityDetailFrame extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             gap,
-            Text(
-              vm.selectedActivity.title,
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            AppTextFormField(
+              initialValue: vm.selectedActivity.title,
+              hintText: "點擊變更標題",
+              primaryColor: vm.activityColor,
+              fillColor: Colors.white.withOpacity(0.4),
+              textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
+              contentStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+              onChanged: (value) {
+                vm.titleInChange = value ?? "";
+              },
             ),
             gap,
             KeyValuePairWidget<String, Widget>(
@@ -255,14 +264,64 @@ class ActivityDetailFrame extends StatelessWidget {
                         }),
                   )
                 ])),
-            Row(
-                children: vm.selectedActivity.belongWorkspace.members!
-                    .map((member) => Row(children: [
-                          UserProfileChip(
-                              member: member, color: vm.activityColor),
-                          gap
-                        ]))
-                    .toList()),
+            KeyValuePairWidget<String, Widget>(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+              primaryColor: vm.activityColor,
+              keyChild: "編輯參與者",
+              valueChild: Row(
+                  children: (vm.selectedActivity.belongWorkspace.members!
+                          .map((member) => Row(children: [
+                                UserProfileChip(
+                                    member: member, color: vm.activityColor),
+                                gap
+                              ]) as Widget)
+                          .toList()) +
+                      [
+                        TextButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: vm.selectedActivity
+                                            .belongWorkspace.members!
+                                            .map((member) => Row(children: [
+                                                  UserProfileChip(
+                                                    member: member,
+                                                    color: vm.activityColor,
+                                                    selected: vm
+                                                        .contributorsInChange
+                                                        .contains(member.id),
+                                                    onPressed: () {
+                                                      debugPrint(vm
+                                                          .contributorsInChange
+                                                          .toString());
+                                                      if (vm
+                                                          .contributorsInChange
+                                                          .contains(
+                                                              member.id)) {
+                                                        vm.removeContributer(
+                                                            member.id);
+                                                      } else {
+                                                        vm.addContributer(
+                                                            member.id);
+                                                      }
+                                                    },
+                                                  ),
+                                                  gap
+                                                ]))
+                                            .toList(),
+                                      ),
+                                    );
+                                  });
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text("新增參與者"))
+                      ]),
+            ),
             gap,
             Divider(color: color.withOpacity(0.3)),
             KeyValuePairWidget<String, Widget>(
@@ -273,7 +332,7 @@ class ActivityDetailFrame extends StatelessWidget {
                 initialValue: vm.selectedActivity.introduction,
                 hintText: "點擊新增${vm.isEvent ? "活動" : "任務"}說明",
                 primaryColor: vm.activityColor,
-                fillColor: Colors.white.withOpacity(0.5),
+                fillColor: Colors.white.withOpacity(0.4),
                 onChanged: (value) {
                   vm.introductionInChange = value ?? "";
                 },

@@ -79,7 +79,7 @@ class ActivityListViewModel extends ChangeNotifier {
             notifications: [],
             creatorAccount: UserModel.defaultAccount,
             belongWorkspace: tempGroup,
-            startTime: DateTime.now(),
+            startTime: DateTime.now().subtract(const Duration(minutes: 1)),
             endTime: DateTime.now().add(const Duration(hours: 1)),
             relatedMissionIds: []),
         MissionEntity(
@@ -430,6 +430,16 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     activityListViewModel!.isCreateMode = false;
     activityListViewModel!.isCreateEvent = false;
 
+    notifyListeners();
+  }
+
+  addContributer(int id) {
+    contributorsInChange.add(id);
+    notifyListeners();
+  }
+
+  removeContributer(int id) {
+    contributorsInChange.remove(id);
     notifyListeners();
   }
 
