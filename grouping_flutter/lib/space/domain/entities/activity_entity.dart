@@ -7,8 +7,6 @@ import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
-import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
 abstract class ActivityEntity implements BaseEntity<ActivityModel>{
   final int id;

@@ -14,11 +14,26 @@ abstract class StateRemoteDataSource {
   Future<void> deleteStateData({required int stateID});
 }
 
+/// ## 這個 RemoteDataSource 主要是負責處理 [MissionState] 的功能操作
+/// 
+/// 此 service 可以 get, create, update, delete [MissionState]
+///
 class StateRemoteDataSourceImpl extends StateRemoteDataSource{
   late final String _token;
   late final Map<String, String> headers;
   http.Client _client = http.Client();
 
+  /// ## 這個 RemoteDataSource 主要是負責處理 [MissionState] 的功能操作
+  /// 
+  /// 此 service 可以 get, create, update, delete [MissionState]
+  ///
+  /// * [token] : 使用者的認證碼
+  /// 
+  /// ### Example
+  /// ```dart
+  /// StateRemoteDataSource remoteDataSource = StateRemoteDataSourceImpl(token: uesrToken);
+  /// ```
+  ///
   StateRemoteDataSourceImpl({required String token}) {
     _token = token;
     headers = {
@@ -27,16 +42,30 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
     };
   }
 
-  /// 設定當前 DatabaseService 要對後端傳遞的**客戶(client)** 
+  /// 設定當前 RemoteDataSource 要對後端傳遞的**客戶(client)** 
   void setClient(http.Client client) {
     _client = client;
   }
 
-  /// 獲取當前 DatabaseService 要對後端傳遞的**客戶(client)**
+  /// 獲取當前 RemoteDataSource 要對後端傳遞的**客戶(client)**
   http.Client getClient() {
     return _client;
   }
 
+  /// ## 獲取想要的 [MissionState] 的資訊
+  /// 
+  /// 傳入 [stateID] 來獲取 [MissionState]\
+  /// 若未出錯則回傳 [MissionState]\
+  /// 若 [stateID] 有對應到 [MissionState] 但其內部存在非法 null field，則會丟出 [ServerException]\
+  /// 若 [stateID] 有格式錯誤則會丟出 [ServerException]\
+  /// 若 [stateID] 所對應的 [MissionState] 不存在則會丟出 [ServerException]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// StateRemoteDataSource remoteDataSource = StateRemoteDataSourceImpl(token: uesrToken);
+  /// MissionState state = await remoteDataSource.getStateData(stateID: -1);
+  /// ```
+  /// 
   @override
   Future<MissionState> getStateData({required int stateID}) async {
     final response = await _client.get(Uri.parse("${Config.baseUriWeb}/api/states/$stateID/"), headers: headers);
@@ -62,6 +91,19 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
     }
   }
 
+  /// ## 創立一個 [MissionState] 的資訊
+  /// 
+  /// 傳入想創立的 [MissionState] 的資料 [state]\
+  /// 若未出錯則回傳 [MissionState]\
+  /// 若 [state] 有對應到 [MissionState] 但其內部存在非法 null field，則會丟出 [ServerException]\
+  /// 若 [state] 有格式錯誤則會丟出 [ServerException]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// StateRemoteDataSource remoteDataSource = StateRemoteDataSourceImpl(token: uesrToken);
+  /// MissionState state = await remoteDataSource.createStateData(state: someDataOfState);
+  /// ```
+  /// 
   @override
   Future<MissionState> createStateData({required MissionState state}) async {
     final response = await _client.post(Uri.parse("${Config.baseUriWeb}/api/states/"), headers: headers, body: jsonEncode(state.toJson()));
@@ -84,6 +126,20 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
     }
   }
 
+  /// ## 更新一個 [MissionState] 的資訊
+  /// 
+  /// 傳入想更新的 [MissionState] 的資料 [state]\
+  /// 若未出錯則回傳 [MissionState]\
+  /// 若 [state] 有對應到 [MissionState] 但其內部存在非法 null field，則會丟出 [ServerException]\
+  /// 若 [state] 有格式錯誤則會丟出 [ServerException]\
+  /// 若 [state] 所對應的 [MissionState] 不存在則會丟出 [ServerException]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// StateRemoteDataSource remoteDataSource = StateRemoteDataSourceImpl(token: uesrToken);
+  /// MissionState state = await remoteDataSource.updateStateData(state: someDataOfState);
+  /// ```
+  /// 
   @override
   Future<MissionState> updateStateData({required MissionState state}) async {
     final response = await _client.patch(Uri.parse("${Config.baseUriWeb}/api/states/${state.id}/"), headers: headers, body: jsonEncode(state.toJson()));
@@ -109,6 +165,19 @@ class StateRemoteDataSourceImpl extends StateRemoteDataSource{
     }
   }
 
+  /// ## 刪除一個 [MissionState] 的資訊
+  /// 
+  /// 傳入 [stateID] 來刪除對應的 [MissionState]\
+  /// 若未出錯則不回傳\
+  /// 若 [stateID] 有格式錯誤則會丟出 [ServerException]\
+  /// 若 [stateID] 所對應的 [MissionState] 不存在則會丟出 [ServerException]
+  /// 
+  /// ### Example
+  /// ```dart
+  /// StateRemoteDataSource remoteDataSource = StateRemoteDataSourceImpl(token: uesrToken);
+  /// await remoteDataSource.deleteStateData(stateID: -1);
+  /// ```
+  /// 
   @override
   Future<void> deleteStateData({required int stateID}) async {
     final response = await _client.delete(Uri.parse("${Config.baseUriWeb}/api/states/$stateID/"), headers: headers);

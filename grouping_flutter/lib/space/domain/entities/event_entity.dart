@@ -47,21 +47,7 @@ class EventEntity extends ActivityEntity {
 
   @override
   String toString() {
-    return "id: $id, title: $title, introduction: $introduction, creator: $creator, createTime: $createTime, belong workspace: $belongWorkspace, startTime: $startTime, endTime: $endTime, child missions: $childMissions, contributor: $contributors, notification: $notifications";
+    return "id: $id\n, title: $title\n, introduction: $introduction\n, creator: $creator\n, createTime: $createTime\n, belong workspace: $belongWorkspace\n, startTime: $startTime\n, endTime: $endTime\n, child missions: $childMissions\n, contributor: $contributors\n, notification: $notifications\n";
   }
 
-  // factory EventEntity.fromModel(EventModel model) {
-  //   return EventEntity(
-  //       id: model.id!,
-  //       title: model.title,
-  //       introduction: model.introduction,
-  //       startTime: model.startTime,
-  //       endTime: model.endTime,
-  //       creator: UserEntity.fromModel(model.creator),
-  //       createTime: model.createTime,
-  //       belongWorkspace: WorkspaceEntity.fromModel(model.belongWorkspace),
-  //       childMissions: model.childMissions.map((mission) => MissionEntity.fromModel(mission)).toList(),
-  //       contributors: model.contributors.map((contributor) => UserEntity.fromModel(contributor)).toList(),
-  //       notifications: model.notifications,);
-  // }
 }

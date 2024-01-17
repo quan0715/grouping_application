@@ -1,15 +1,12 @@
-// import 'package:grouping_project/core/util/data_mapper.dart';
 import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/space/data/models/event_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
-// import 'package:grouping_project/space/data/models/workspace_model_lib.dart';
 import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
 
 /// ## the type for [WorkspaceModel.tags]
-/// * [title] : the key for this tag
 /// * [content] : the value for this tag
 class WorkspaceTagModel {
   String content;
@@ -50,13 +47,10 @@ class WorkspaceModel implements BaseModel<WorkspaceEntity>{
   });
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        // 'id': id,
         'theme_color': themeColor,
         'workspace_name': name,
         'description': description,
-        // 'photo': photo?.toJson(),
         'members': members.map((member) => member.id).toList(),
-        // 'activities': activities?.map((activity) => activity.toJson()).toList(),
         'tags': tags.map((tag) => tag.toJson()).toList(),
       };
 
@@ -121,20 +115,7 @@ class WorkspaceModel implements BaseModel<WorkspaceEntity>{
       tags: tags,
     );
   }
-
-  // factory WorkspaceModel.fromEntity(WorkspaceEntity entity) {
-  //   return WorkspaceModel(
-  //     id: entity.id,
-  //     themeColor: entity.themeColor,
-  //     name: entity.name,
-  //     description: entity.description,
-  //     photo: entity.photo,
-  //     members: entity.members,
-  //     activities: entity.activities,
-  //     tags: entity.tags,
-  //   );
-  // }
-
+  
   @override
   bool operator ==(Object other) {
     return toString() == other.toString();

@@ -4,7 +4,6 @@ import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
 
 class UserEntity implements BaseEntity<UserModel>{
   final int id;
@@ -25,7 +24,6 @@ class UserEntity implements BaseEntity<UserModel>{
     required this.account,
     required this.name,
     required this.introduction,
-    // required this.photoId,
     required this.photo,
     required this.tags,
     required this.joinedWorkspaces,
@@ -47,20 +45,6 @@ class UserEntity implements BaseEntity<UserModel>{
     );
   }
 
-  // factory UserEntity.fromModel(UserModel account) {
-  //   return UserEntity(
-  //     id: account.id,
-  //     account: account.account,
-  //     name: account.userName,
-  //     introduction: account.introduction,
-  //     // photoId: account.photoId,
-  //     photo: account.photo,
-  //     tags: account.tags.map((tag) => UserTagEntity.fromModel(tag)).toList(),
-  //     joinedWorkspaces: account.joinedWorkspaces,
-  //     // joinedWorkspaceIds: account.joinedWorkspaceIds,
-  //     contributingActivities: account.contributingActivities,
-  //   );
-  // }
 
   @override
   String toString() {

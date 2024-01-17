@@ -1,18 +1,13 @@
-// import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
-import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
-// import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
 /// ## 用於 database 儲存 mission 的資料結構
 /// ### 僅可被 repository 使用
 class MissionModel extends ActivityModel {
   DateTime deadline;
-  // int stateID;
   MissionState state;
 
   /// ### [MissionModel] 的建構式，回傳非 null 的 [MissionModel]
@@ -33,7 +28,6 @@ class MissionModel extends ActivityModel {
     required super.notifications,
     required this.state,
     required this.deadline,
-    // MissionStateModel? state,
   });
 
   /// ### 藉由特定的 Json 格式來建構的 [MissionModel]
@@ -56,18 +50,14 @@ class MissionModel extends ActivityModel {
   /// ### 將 [MissionModel] 轉換成特定的 Json 格式
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-        // 'id': this.id,
         'title': title,
         'description': introduction,
         'creator': creator.id,
-        // 'created_at': createTime.toIso8601String(),
         'belong_workspace': belongWorkspace.id,
         'mission': {
           "deadline": deadline.toIso8601String(),
           "state": state.id,
         },
-        // 'children': childMissions.map((mission) => mission.toJson()).toList(),
-        // 'contributors': contributors.map((contributor) => contributor.toJson()).toList(),
         'notifications': _notificationsToJson(),
       };
 
@@ -77,18 +67,13 @@ class MissionModel extends ActivityModel {
         id: id,
         title: title,
         introduction: introduction,
-        // creator: UserEntity.fromModel(creator),
         creator: creator,
         createTime: createTime,
-        // belongWorkspace: WorkspaceEntity.fromModel(belongWorkspace),
         belongWorkspace: belongWorkspace,
         deadline: deadline,
         state: state,
         // parentMissionIDs: parentMissionIDs,
-        // childMissions: childMissions.map((mission) => MissionEntity.fromModel(mission)).toList(),
         childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
-        // contributors: contributors.map((contributor) => UserEntity.fromModel(contributor)).toList(),
-        // contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
         contributors: contributors,
         notifications: notifications,);
   }
@@ -128,7 +113,6 @@ class MissionModel extends ActivityModel {
       "notifications": notifications,
       // "parent Missions": parentMissionIDs,
       "child Missions": childMissions,
-      // "tags": this.tags,
     }.toString();
   }
 

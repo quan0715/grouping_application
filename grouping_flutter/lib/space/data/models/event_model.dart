@@ -1,12 +1,7 @@
-// ignore_for_file: unnecessary_this
-// import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
-import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
-// import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
 /// ## 用於 database 儲存 event 的資料結構
@@ -53,18 +48,14 @@ class EventModel extends ActivityModel {
   /// ### 將 [EventModel] 轉換成特定的 Json 格式
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-        // 'id': this.id,
-        'title': this.title,
-        'description': this.introduction,
-        'creator': this.creator.id,
-        // 'created_at': this.createTime.toIso8601String(),
+        'title': title,
+        'description': introduction,
+        'creator': creator.id,
         'belong_workspace': belongWorkspace.id,
         'event': {
-          'start_time': this.startTime.toIso8601String(),
-          'end_time': this.endTime.toIso8601String(),
+          'start_time': startTime.toIso8601String(),
+          'end_time': endTime.toIso8601String(),
         },
-        // 'children': childMissions.map((mission) => mission.toJson()).toList(),
-        // 'contributors': this.contributors.map((contributor) => contributor.toJson()).toList(),
         'notifications': _notificationsToJson(),
       };
 
@@ -76,40 +67,19 @@ class EventModel extends ActivityModel {
         introduction: introduction,
         startTime: startTime,
         endTime: endTime,
-        // creator: UserEntity.fromModel(creator),
         creator: creator,
         createTime: createTime,
-        // belongWorkspace: WorkspaceEntity.fromModel(belongWorkspace),
         belongWorkspace: belongWorkspace,
-        // childMissions: childMissions.map((mission) => MissionEntity.fromModel(mission)).toList(),
         childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
-        // contributors: contributors.map((contributor) => UserEntity.fromModel(contributor)).toList(),
-        // contributors: contributors.map((contributor) => contributor.toEntity()).toList(),
         contributors: contributors,
         notifications: notifications,);
   }
-
-  // factory EventModel.fromEntity(EventEntity entity){
-  //   return EventModel(
-  //     id: entity.id,
-  //     title: entity.title,
-  //     introduction: entity.introduction,
-  //     creator: UserModel.fromEntity(entity.creator),
-  //     createTime: entity.createTime,
-  //     belongWorkspace: WorkspaceModel.fromEntity(entity.belongWorkspace),
-  //     startTime: entity.startTime,
-  //     endTime: entity.endTime,
-  //     childMissions: entity.childMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
-  //     contributors: entity.contributors.map((contributor) => UserModel.fromEntity(contributor)).toList(),
-  //     notifications: entity.notifications,
-  //   );
-  // }
 
   /// ### 用於 [EventModel] 的 [notifications]
   /// 從 List\<DateTime\> 轉換成特定 Json 格式
   List<Map<String, String>> _notificationsToJson() {
     List<Map<String, String>> notiMap = [];
-    for (DateTime noti in this.notifications) {
+    for (DateTime noti in notifications) {
       notiMap.add({"notify_time": noti.toIso8601String()});
     }
     return notiMap;
@@ -128,23 +98,23 @@ class EventModel extends ActivityModel {
   @override
   String toString() {
     return {
-      "id": this.id,
-      "title": this.title,
-      "introduction": this.introduction,
-      "creator": this.creator,
-      "create Time": this.createTime,
-      "belong workspace": this.belongWorkspace,
-      "startTime": this.startTime,
-      "endTime": this.endTime,
-      "child Missions": this.childMissions,
-      "contributors": this.contributors,
-      "notifications": this.notifications,
+      "id": id,
+      "title": title,
+      "introduction": introduction,
+      "creator": creator,
+      "create Time": createTime,
+      "belong workspace": belongWorkspace,
+      "startTime": startTime,
+      "endTime": endTime,
+      "child Missions": childMissions,
+      "contributors": contributors,
+      "notifications": notifications,
     }.toString();
   }
 
   @override
   bool operator ==(Object other) {
-    return this.toString() == other.toString();
+    return toString() == other.toString();
   }
 
   @override

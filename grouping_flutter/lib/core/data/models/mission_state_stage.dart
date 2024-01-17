@@ -2,8 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/theme/color.dart';
 
-/// Stage of mission 
-/// print(MissionStage.progress.label) => progress
+/// ## [MissionStage] 為 mission 當前所屬的狀態
+/// [todo] 代表此 mission 為準備進行 \
+/// [progress] 代表此 mission 為正在進行中 \
+/// [pending] 代表此 mission 為審核中或以逾期 \
+/// [close] 代表此 mission 為已經結束
 enum MissionStage {
   
   todo(label: 'todo'),
