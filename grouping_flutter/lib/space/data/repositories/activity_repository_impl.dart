@@ -1,6 +1,5 @@
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:grouping_project/core/errors/failure.dart';
 import 'package:grouping_project/core/exceptions/exceptions.dart';
 import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
@@ -100,9 +99,7 @@ class ActivityRepositoryImpl extends ActivityRepository {
   @override
   Future<Either<Failure, MissionEntity>> updateMission(MissionEntity entity) async {
     try {
-      debugPrint("before update: ${entity.deadline}");
       final MissionModel model = await remoteDataSource.updateActivityData(activity: entity.toModel()) as MissionModel;
-      debugPrint("after update: ${model.deadline}");
 
       final MissionEntity mission = model.toEntity();
 
