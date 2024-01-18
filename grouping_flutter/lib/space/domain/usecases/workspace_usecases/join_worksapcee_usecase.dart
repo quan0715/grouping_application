@@ -13,7 +13,7 @@ class JoinWorkspaceUseCase {
 
   Future<Either<Failure, WorkspaceEntity>> call(WorkspaceEntity workspaceId, UserEntity joinUser) async {
     workspaceId.members.add(
-      Member(id: joinUser.id! , userName: joinUser.name)
+      Member(id: joinUser.id , userName: joinUser.name)
     );
     return await _workspaceRepository.updateWorkspace(workspaceId);
   }

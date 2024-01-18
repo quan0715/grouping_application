@@ -1,95 +1,62 @@
-// ignore_for_file: unnecessary_this
-import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 
-// import 'account_model.dart';
-
-/// ## a data model for event
-/// * to upload/download, use `DataController`
+/// ## 用於 database 儲存 event 的資料結構
+/// ### 僅可被 repository 使用
 class EventModel extends ActivityModel {
-  // String title;
   DateTime startTime;
   DateTime endTime;
-  // List<String> contributorIds;
-  // String introduction;
-  // List<String> tags;
-  // List<DateTime> notifications;
-  List<String> relatedMissionIds;
-  // AccountModel ownerAccount;
 
-  static final EventModel defaultEvent = EventModel._default();
 
-  EventModel._default()
-      : this.startTime = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        this.endTime = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        this.relatedMissionIds = [],
-        super(
-          title: 'unknown',
-          contributors: [],
-          introduction: 'unknown',
-          notifications: [],
-          creatorAccount: UserModel.defaultAccount,
-          id: 0,
-          belongWorkspace: WorkspaceModel.defaultWorkspace,
-        );
-
-  /// ## a data model for event
-  /// * to upload/download, use `DataController`
+  /// ### EventModel 的建構式，回傳非 null 的 [EventModel]
+  /// 
+  /// 除了 [id] 必定要給予之外，可自由給予 [EventModel] 的 [title]、[introduction]、\
+  /// [startTime]、[endTime]、[creator]、[belongWorkspace]、[childMissions]、\
+  /// [contributors]、[notifications]\
+  /// 若除 [id] 外有未給予的欄位，將自動套用 [EventModel.defaultEvent] 的欄位
   EventModel(
-      {super.id,
-      String? title,
-      DateTime? startTime,
-      DateTime? endTime,
-      List<int>? contributors,
-      String? introduction,
-      UserModel? creatorAccount,
-      List<String>? relatedMissionIds,
-      List<DateTime>? notifications,
-      WorkspaceModel? belongWorkspace,})
-      : this.startTime = startTime ?? defaultEvent.startTime,
-        this.endTime = endTime ?? defaultEvent.endTime,
-        this.relatedMissionIds =
-            relatedMissionIds ?? List.from(defaultEvent.relatedMissionIds),
-        super(
-          title: title ?? defaultEvent.title,
-          contributors: contributors ?? List.from(defaultEvent.contributors),
-          introduction: introduction ?? defaultEvent.introduction,
-          notifications: notifications ?? List.from(defaultEvent.notifications),
-          creatorAccount: creatorAccount ?? defaultEvent.creatorAccount,
-          belongWorkspace: belongWorkspace ?? defaultEvent.belongWorkspace,
-        );
+      {required super.id,
+      required super.title,
+      required super.introduction,
+      required super.creator,
+      required super.createTime,
+      required super.belongWorkspace,
+      required super.childMissions,
+      required super.contributors,
+      required super.notifications,
+      required this.startTime,
+      required this.endTime,});
 
+  /// ### 藉由特定的 Json 格式來建構的 [EventModel]
   factory EventModel.fromJson({required Map<String, dynamic> data}) =>
       EventModel(
           id: data['id'] as int,
-          title: (data['title'] ?? defaultEvent.title) as String,
-          introduction: (data['description'] ?? defaultEvent.introduction) as String,
+          title: data['title'] as String,
+          introduction: data['description'] as String,
+          creator: Member.fromJson(data: data['creator']),
+          createTime: DateTime.parse(data['created_at']),
           startTime: DateTime.parse(data['event']['start_time']),
           endTime: DateTime.parse(data['event']['end_time']),
-          contributors: (data['contributors'] ?? []).cast<int>() as List<int>,
-          // tags: data['tags'].cast<String>() as List<String>,
-          relatedMissionIds: (data['children'] ?? []).cast<String>() as List<String>,
-          notifications: _notificationFromJson(
-              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),
-          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']));
+          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
+          childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
+          contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
+          notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),);
 
+  /// ### 將 [EventModel] 轉換成特定的 Json 格式
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': this.id,
-        'title': this.title,
-        'description': this.introduction,
-        'creator': this.creatorAccount.id,
+        'title': title,
+        'description': introduction,
+        'creator': creator.id,
+        'belong_workspace': belongWorkspace.id,
         'event': {
-          'start_time': this.startTime.toIso8601String(),
-          'end_time': this.endTime.toIso8601String(),
+          'start_time': startTime.toIso8601String(),
+          'end_time': endTime.toIso8601String(),
         },
-        'contributors': this.contributors,
-        // 'tags': this.tags,
-        'children': this.relatedMissionIds,
         'notifications': _notificationsToJson(),
-        'belong_workspace': belongWorkspace.toJson(),
       };
 
   @override
@@ -98,72 +65,59 @@ class EventModel extends ActivityModel {
         id: id,
         title: title,
         introduction: introduction,
-        contributors: contributors,
-        notifications: notifications,
-        creatorAccount: creatorAccount,
         startTime: startTime,
         endTime: endTime,
-        relatedMissionIds: relatedMissionIds,
-        belongWorkspace: belongWorkspace);
+        creator: creator,
+        createTime: createTime,
+        belongWorkspace: belongWorkspace,
+        childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
+        contributors: contributors,
+        notifications: notifications,);
   }
 
-  factory EventModel.fromEntity(EventEntity entity){
-    return EventModel(
-      id: entity.id,
-      title: entity.title,
-      introduction: entity.introduction,
-      contributors: entity.contributors,
-      notifications: entity.notifications,
-      creatorAccount: entity.creatorAccount,
-      startTime: entity.startTime,
-      endTime: entity.endTime,
-      relatedMissionIds: entity.relatedMissionIds,
-      belongWorkspace: entity.belongWorkspace
-    );
-  }
-
+  /// ### 用於 [EventModel] 的 [notifications]
+  /// 從 List\<DateTime\> 轉換成特定 Json 格式
   List<Map<String, String>> _notificationsToJson() {
     List<Map<String, String>> notiMap = [];
-    for (DateTime noti in this.notifications) {
+    for (DateTime noti in notifications) {
       notiMap.add({"notify_time": noti.toIso8601String()});
     }
     return notiMap;
   }
 
+  /// ### 用於 [EventModel] 的 [notifications]
+  /// 從特定 Json 格式轉換成 List\<DateTime\>
   static List<DateTime> _notificationFromJson(List<Map<String, String>> data) {
     List<DateTime> noti = [];
     for (Map<String, String> object in data) {
-      noti.add(DateTime.parse(object.values.elementAt(0)));
+      noti.add(DateTime.parse(object["notify_time"] as String));
     }
     return noti;
   }
 
-  /// TODO: set the data about owner for this instance
-  // void setOwner({required AccountModel ownerAccount}) {
-  //   this.ownerAccount = ownerAccount;
-  // }
-
   @override
   String toString() {
     return {
-      "id": this.id,
-      "title": this.title,
-      "introduction": this.introduction,
-      "startTime": this.startTime,
-      "endTime": this.endTime,
-      "contributors": this.contributors,
-      "notifications": this.notifications,
-      "relatedMissionIds": this.relatedMissionIds,
-      // "tags": this.tags
+      "id": id,
+      "title": title,
+      "introduction": introduction,
+      "creator": creator,
+      "create Time": createTime,
+      "belong workspace": belongWorkspace,
+      "startTime": startTime,
+      "endTime": endTime,
+      "child Missions": childMissions,
+      "contributors": contributors,
+      "notifications": notifications,
     }.toString();
   }
 
   @override
   bool operator ==(Object other) {
-    return this.toString() == other.toString();
+    return toString() == other.toString();
   }
 
   @override
   // TODO: implement hashCode
-  int get hashCode => id!;
+  int get hashCode => id;
 }

@@ -32,7 +32,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository{
   @override
   Future<Either<Failure, WorkspaceEntity>> createWorkspace(WorkspaceEntity workspace, XFile? image) async {
     try {
-      final workspaceModel = await remoteDataSource.createWorkspaceData(workspace: WorkspaceModel.fromEntity(workspace), image: image);
+      final workspaceModel = await remoteDataSource.createWorkspaceData(workspace: workspace.toModel(), image: image);
       return Right(workspaceModel.toEntity());
     } on ServerException catch(error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
@@ -43,7 +43,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository{
   Future<Either<Failure, WorkspaceEntity>> updateWorkspace(WorkspaceEntity workspace) async {
     // TODO: change update data?
     try {
-      final WorkspaceModel workspaceModel = await remoteDataSource.updateWorkspaceData(workspace: WorkspaceModel.fromEntity(workspace));
+      final WorkspaceModel workspaceModel = await remoteDataSource.updateWorkspaceData(workspace: workspace.toModel());
       return Right(workspaceModel.toEntity());
     } on ServerException catch(error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));

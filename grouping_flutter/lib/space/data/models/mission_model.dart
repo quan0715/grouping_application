@@ -1,183 +1,95 @@
-// ignore_for_file: unnecessary_this
-// import 'package:grouping_project/core/exceptions/exception.dart';
-import 'package:grouping_project/space/data/models/user_model.dart';
+import 'package:grouping_project/core/data/models/member_model.dart';
+import 'package:grouping_project/core/data/models/mission_state_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
-import 'mission_state_model.dart';
-// import 'package:grouping_project/exception.dart';
-
-// import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
-
-/// ## a data model for misison
-/// * to upload/download, use `DataController`
+/// ## 用於 database 儲存 mission 的資料結構
+/// ### 僅可被 repository 使用
 class MissionModel extends ActivityModel {
   DateTime deadline;
-  int stateId;
-  MissionStateModel state;
-  List<String> parentMissionIds;
-  List<String> childMissionIds;
+  MissionState state;
 
-  static final MissionModel defaultMission = MissionModel._default();
-
-  MissionModel._default()
-      : this.deadline = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true),
-        this.stateId = MissionStateModel.defaultUnknownState.id,
-        this.state = MissionStateModel.defaultUnknownState,
-        this.parentMissionIds = [],
-        this.childMissionIds = [],
-        super(
-          title: 'unknown',
-          contributors: [],
-          introduction: 'unknown',
-          notifications: [],
-          creatorAccount: UserModel.defaultAccount,
-          id: 0,
-          belongWorkspace: WorkspaceModel.defaultWorkspace,
-        );
-
-  /// ## a data model for mission
-  /// * to upload/download, use `DataController`
-  /// -----
-  /// - recommend to pass state using [state]
-  /// - if [state] is not given, will then seek [stateModelId], [stage], [stateName]
-  /// - if all above is not given, seek the attribute of [defaultMission]
+  /// ### [MissionModel] 的建構式，回傳非 null 的 [MissionModel]
+  /// 
+  /// 除了 [id] 必定要給予之外，可自由給予 [MissionModel] 的 [title]、[introduction]、\
+  /// [deadline]、[state]、[creator]、[belongWorkspace]、
+  /// [parentMissionIDs]、[childMissions]、[contributors]、[notifications]\
+  /// 若除 [id] 外有未給予的欄位，將自動套用 [MissionModel.defaultMission] 的欄位
   MissionModel({
-    super.id,
-    String? title,
-    DateTime? deadline,
-    List<int>? contributors,
-    String? introduction,
-    int? stateId,
-    MissionStateModel? state,
-    List<String>? tags,
-    List<DateTime>? notifications,
-    List<String>? parentMissionIds,
-    List<String>? childMissionIds,
-    UserModel? creatorAccount,
-    WorkspaceModel? belongWorkspace,
-    // AccountModel? ownerAccount,
-  })  : this.deadline = deadline ?? defaultMission.deadline,
-        // this.contributorIds = contributorIds ?? defaultMission.contributorIds,
-        // this.introduction = introduction ?? defaultMission.introduction,
-        this.stateId = state?.id ?? (stateId ?? defaultMission.stateId),
-        this.state = state ?? defaultMission.state,
-        // this.tags = tags ?? defaultMission.tags,
-        // this.notifications = notifications ?? defaultMission.notifications,
-        this.parentMissionIds =
-            parentMissionIds ?? defaultMission.parentMissionIds,
-        this.childMissionIds =
-            childMissionIds ?? defaultMission.childMissionIds,
-        // this.ownerAccount = defaultMission.ownerAccount,
-        super(
-          title: title ?? defaultMission.title,
-          contributors: contributors ?? List.from(defaultMission.contributors),
-          introduction: introduction ?? defaultMission.introduction,
-          // tags: tags ?? List.from(defaultMission.tags),
-          notifications:
-              notifications ?? List.from(defaultMission.notifications),
-          creatorAccount: creatorAccount ?? defaultMission.creatorAccount,
-          belongWorkspace: belongWorkspace ?? defaultMission.belongWorkspace,
-          // databasePath: defaultMission.databasePath,
-          // storageRequired: defaultMission.storageRequired,
-          // setOwnerRequired: true
-        );
+    required super.id,
+    required super.title,
+    required super.introduction,
+    required super.creator,
+    required super.createTime,
+    required super.belongWorkspace,
+    required super.childMissions,
+    required super.contributors,
+    required super.notifications,
+    required this.state,
+    required this.deadline,
+  });
 
-  /// convert `List<DateTime>` to `List<Timestamp>`
-  // List<Timestamp> _toFirestoreTimeList(List<DateTime> dateTimeList) {
-  //   List<Timestamp> processList = [];
-  //   for (DateTime dateTime in dateTimeList) {
-  //     processList.add(Timestamp.fromDate(dateTime));
-  //   }
-  //   return processList;
-  // }
-
-  // /// convert `List<Timestamp>` to `List<DateTime>`
-  // List<DateTime> _fromFirestoreTimeList(List<Timestamp> timestampList) {
-  //   List<DateTime> processList = [];
-  //   for (Timestamp timestamp in timestampList) {
-  //     processList.add(timestamp.toDate());
-  //   }
-  //   return processList;
-  // }
-
+  /// ### 藉由特定的 Json 格式來建構的 [MissionModel]
   factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
       MissionModel(
           id: data['id'] as int,
-          title: (data['title'] ?? defaultMission.title) as String,
-          introduction: (data['description'] ?? defaultMission.introduction) as String,
+          title: data['title'] as String,
+          introduction: data['description'] as String,
           deadline: DateTime.parse(data['mission']['deadline']),
-          // state: MissionStateModel.fromJson(data: data['state']),
-          stateId: data['mission']['state'],
-          contributors: (data['contributors'] ?? []).cast<int>() as List<int>,
-          // tags: data['tags'].cast<String>() as List<String>,
-          parentMissionIds: (data['parents'] ?? []).cast<String>() as List<String>,
-          childMissionIds: (data['children'] ?? []).cast<String>() as List<String>,
-          notifications: _notificationFromJson(
-              (data['notifications'] ?? []).cast<Map<String, String>>() as List<Map<String, String>>),
-          belongWorkspace: WorkspaceModel.fromJson(data: data['belong_workspace']));
+          state: MissionState.fromJson(data: data['mission']['state']),
+          creator: Member.fromJson(data: data['creator']),
+          createTime: DateTime.parse(data['created_at']),
+          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
+          // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
+          childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
+          contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
+          notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),
+          );
 
+  /// ### 將 [MissionModel] 轉換成特定的 Json 格式
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': this.id,
-        'title': this.title,
-        'description': this.introduction,
+        'title': title,
+        'description': introduction,
+        'creator': creator.id,
+        'belong_workspace': belongWorkspace.id,
         'mission': {
-          "deadline": this.deadline.toIso8601String(),
-          "state": this.state.id,
+          "deadline": deadline.toIso8601String(),
+          "state": state.id,
         },
-        // 'stateId': this.stateId,
-        'contributors': this.contributors,
-        // 'tags': this.tags,
-        'parents': this.parentMissionIds,
-        'children': this.childMissionIds,
         'notifications': _notificationsToJson(),
-        'belong_workspace': belongWorkspace.toJson(),
       };
 
   @override
-  MissionEntity toEntity() {
+  MissionEntity toEntity(){
     return MissionEntity(
         id: id,
         title: title,
         introduction: introduction,
-        contributors: contributors,
-        notifications: notifications,
-        creatorAccount: creatorAccount,
+        creator: creator,
+        createTime: createTime,
+        belongWorkspace: belongWorkspace,
         deadline: deadline,
-        stateId: stateId,
         state: state,
-        parentMissionIds: parentMissionIds,
-        childMissionIds: childMissionIds,
-        belongWorkspace: belongWorkspace,);
+        // parentMissionIDs: parentMissionIDs,
+        childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
+        contributors: contributors,
+        notifications: notifications,);
   }
 
-  factory MissionModel.fromEntity(MissionEntity entity){
-    return MissionModel(
-      id: entity.id,
-      title: entity.title,
-      introduction: entity.introduction,
-      contributors: entity.contributors,
-      notifications: entity.notifications,
-      // createAccount: entity.creatorAccount,
-      deadline: entity.deadline,
-      stateId: entity.stateId,
-      state: entity.state,
-      parentMissionIds: entity.parentMissionIds,
-      childMissionIds: entity.childMissionIds,
-      belongWorkspace: entity.belongWorkspace,
-    );
-  }
-
+  /// ### 用於 [MissionModel] 的 [notifications]
+  /// 從 List\<DateTime\> 轉換成特定 Json 格式
   List<Map<String, String>> _notificationsToJson() {
     List<Map<String, String>> notiMap = [];
-    for (DateTime noti in this.notifications) {
+    for (DateTime noti in notifications) {
       notiMap.add({"notify_time": noti.toIso8601String()});
     }
     return notiMap;
   }
 
+  /// ### 用於 [MissionModel] 的 [notifications]
+  /// 從特定 Json 格式轉換成 List\<DateTime\>
   static List<DateTime> _notificationFromJson(List<Map<String, String>> data) {
     List<DateTime> noti = [];
     for (Map<String, String> object in data) {
@@ -186,50 +98,30 @@ class MissionModel extends ActivityModel {
     return noti;
   }
 
-  // /// set the data about owner for this instance
-  // void setOwner({required AccountModel ownerAccount}) {
-  //   this.ownerAccount = ownerAccount;
-  // }
-
-  /// ### This is the perfered method to change state of mission
-  /// - please make sure the [stateModel] is a correct model in database
-  void setStateByStateModel(MissionStateModel stateModel) {
-    stateId = stateModel.id;
-    state = stateModel;
-    // if (stateModel.id != null) {
-    //   stateId = stateModel.id!;
-    //   state = stateModel;
-    // } else {
-    //   throw GroupingProjectException(
-    //       message: 'This state model is not from the database.',
-    //       code: GroupingProjectExceptionCode.wrongParameter,
-    //       stackTrace: StackTrace.current);
-    // }
-  }
-
   @override
   String toString() {
     return {
-      "id": this.id,
-      "title": this.title,
-      "introduction": this.introduction,
-      "deadline": this.deadline,
-      "contributors": this.contributors,
-      "notifications": this.notifications,
-      "parentMissionIds": this.parentMissionIds,
-      "childMissionIds": this.childMissionIds,
-      // "tags": this.tags,
-      'state': this.state,
-      'stateId': this.stateId
+      "id": id,
+      "title": title,
+      "introduction": introduction,
+      "deadline": deadline,
+      "state": state,
+      "creator": creator,
+      "create Time": createTime,
+      "workspace": belongWorkspace,
+      "contributors": contributors,
+      "notifications": notifications,
+      // "parent Missions": parentMissionIDs,
+      "child Missions": childMissions,
     }.toString();
   }
 
   @override
   bool operator ==(Object other) {
-    return this.toString() == other.toString();
+    return toString() == other.toString();
   }
 
   @override
   // TODO: implement hashCode
-  int get hashCode => id!;
+  int get hashCode => id;
 }

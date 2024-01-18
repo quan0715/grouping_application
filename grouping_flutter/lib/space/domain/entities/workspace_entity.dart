@@ -1,17 +1,16 @@
+import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
-// import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 
-class WorkspaceEntity {
+class WorkspaceEntity implements BaseEntity<WorkspaceModel>{
   final int id;
   int themeColor;
   String name;
   String description;
   final ImageModel? photo;
-  // final List<int> memberIds;
   final List<Member> members;
   final List<ActivityModel> activities;
   List<WorkspaceTagModel> tags;
@@ -25,6 +24,20 @@ class WorkspaceEntity {
       required this.members,
       required this.activities,
       required this.tags});
+
+  @override
+  WorkspaceModel toModel(){
+    return WorkspaceModel(
+      id: id,
+      themeColor: themeColor,
+      name: name,
+      description: description,
+      photo: photo,
+      members: members,
+      activities: activities,
+      tags: tags,
+    );
+  }
   
   factory WorkspaceEntity.newWorkspace() {
     return WorkspaceEntity(
@@ -41,7 +54,6 @@ class WorkspaceEntity {
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "WorkspaceEntity(id: $id, themeColor: $themeColor, name: $name, description: $description, photo: $photo, members: $members, activities: $activities, tags: $tags)";
+    return "id: $id\n, themeColor: $themeColor\n, name: $name\n, description: $description\n, photo: $photo\n, members: $members\n, activities: $activities\n, tags: $tags\n";
   }
 }
