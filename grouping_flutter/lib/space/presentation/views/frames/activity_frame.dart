@@ -60,8 +60,10 @@ class ActivityDetailFrame extends StatelessWidget {
           onPressed: () {
             // TODO:delete this later
             debugPrint("This is for test");
-            Provider.of<ActivityDisplayViewModel>(context, listen: false)
-                .intoCreateMode(isCreateEvent: false);
+            ActivityDisplayViewModel vm =
+                Provider.of<ActivityDisplayViewModel>(context, listen: false);
+
+            vm.intoCreateMode(isCreateEvent: vm.isEvent);
           },
           icon: Icon(Icons.add),
           color: AppColor.getWorkspaceColorByIndex(themeColor),
@@ -130,9 +132,7 @@ class ActivityDetailFrame extends StatelessWidget {
             final vm =
                 Provider.of<ActivityDisplayViewModel>(context, listen: false);
             if (vm.activityListViewModel!.isCreateMode) {
-              vm.activityListViewModel!.isCreateEvent
-                  ? vm.createEventDone()
-                  : vm.createMissionDone();
+              vm.createDone();
             } else {
               vm.editDone();
             }

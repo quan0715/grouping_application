@@ -410,7 +410,9 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     // update user activity usecase here
 
     debugPrint("deleteActivity unimplemented!");
+    activityListViewModel!.activities!.remove(selectedActivity);
 
+    activityListViewModel!.notifyListeners();
     notifyListeners();
   }
 
@@ -421,7 +423,9 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     // update user activity usecase here
 
     debugPrint("createMissionDone unimplemented!");
+    activityListViewModel!.inChangeSwitchLock = false;
 
+    activityListViewModel!.notifyListeners();
     notifyListeners();
   }
 
@@ -432,7 +436,9 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     debugPrint("createEventDone unimplemented!");
     activityListViewModel!.isCreateMode = false;
     activityListViewModel!.isCreateEvent = false;
+    activityListViewModel!.inChangeSwitchLock = false;
 
+    activityListViewModel!.notifyListeners();
     notifyListeners();
   }
 
@@ -472,7 +478,7 @@ class ActivityDisplayViewModel extends ChangeNotifier {
         childMissionIds: []);
 
     startTimeInChange = DateTime.now();
-    endTimeInChange = DateTime.now();
+    endTimeInChange = DateTime.now().add(const Duration(hours: 1));
     titleInChange = "";
     introductionInChange = "";
     relatedMissionIdsInChange = [];
@@ -484,9 +490,9 @@ class ActivityDisplayViewModel extends ChangeNotifier {
   }
 
   void createDone() {
-    activityListViewModel!.activities!.add(activityListViewModel!.isCreateEvent
+    ActivityEntity activityEntity = activityListViewModel!.isCreateEvent
         ? EventEntity(
-            id: activityListViewModel!.selectedActivity!.id,
+            id: -1,
             title: titleInChange,
             introduction: introductionInChange,
             contributors: contributorsInChange,
@@ -499,7 +505,7 @@ class ActivityDisplayViewModel extends ChangeNotifier {
             endTime: endTimeInChange,
             relatedMissionIds: relatedMissionIdsInChange)
         : MissionEntity(
-            id: activityListViewModel!.selectedActivity!.id,
+            id: -1,
             title: titleInChange,
             introduction: introductionInChange,
             contributors: contributorsInChange,
@@ -513,7 +519,10 @@ class ActivityDisplayViewModel extends ChangeNotifier {
             state: (activityListViewModel!.selectedActivity as MissionEntity)
                 .state,
             parentMissionIds: relatedMissionIdsInChange,
-            childMissionIds: []));
+            childMissionIds: []);
+
+    activityListViewModel!.activities!.add(activityEntity);
+    activityListViewModel!.selectedActivity = activityEntity;
 
     activityListViewModel!.isCreateMode = false;
     activityListViewModel!.isCreateEvent = false;
@@ -579,6 +588,7 @@ class ActivityDisplayViewModel extends ChangeNotifier {
 
     debugPrint(activityListViewModel!.selectedActivity!.toString());
 
+    activityListViewModel!.notifyListeners();
     notifyListeners();
   }
 
