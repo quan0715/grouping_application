@@ -116,7 +116,9 @@ class ActivityLayout extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 5),
               child: InkWell(
                 onTap: () {
-                  activityListViewModel.selectActivity(events[index]);
+                  if (!activityListViewModel.inChangeSwitchLock) {
+                    activityListViewModel.selectActivity(events[index]);
+                  }
                 },
                 child: ActivityCard.event(
                   color: displayColor,
@@ -156,7 +158,9 @@ class ActivityLayout extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: InkWell(
               onTap: () {
-                activityListViewModel.selectActivity(missions[index]);
+                if (!activityListViewModel.inChangeSwitchLock) {
+                  activityListViewModel.selectActivity(missions[index]);
+                }
               },
               child: ActivityCard.mission(
                 color: displayColor,

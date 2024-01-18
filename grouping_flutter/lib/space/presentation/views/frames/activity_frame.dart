@@ -58,6 +58,16 @@ class ActivityDetailFrame extends StatelessWidget {
         const Spacer(),
         IconButton(
           onPressed: () {
+            // TODO:delete this later
+            debugPrint("This is for test");
+            Provider.of<ActivityDisplayViewModel>(context, listen: false)
+                .intoCreateMode(isCreateEvent: false);
+          },
+          icon: Icon(Icons.add),
+          color: AppColor.getWorkspaceColorByIndex(themeColor),
+        ),
+        IconButton(
+          onPressed: () {
             Provider.of<ActivityDisplayViewModel>(context, listen: false)
                 .intoEditMode();
           },
@@ -135,7 +145,7 @@ class ActivityDetailFrame extends StatelessWidget {
   Widget _buildActivityInfoFrame(BuildContext context) {
     return Consumer<ActivityDisplayViewModel>(
       builder: (context, vm, child) => Visibility(
-        visible: !vm.isEditMode,
+        visible: !vm.isEditMode && !vm.activityListViewModel!.isCreateMode,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -237,8 +247,19 @@ class ActivityDetailFrame extends StatelessWidget {
                                   .subtract(const Duration(days: 180)),
                               lastDate:
                                   DateTime.now().add(const Duration(days: 365)))
-                          .then((value) => vm.setStartTimeInChange(
-                              value ?? vm.startTimeDateTime));
+                          .then((value) {
+                        vm.setStartTimeInChange(value ?? vm.startTimeDateTime);
+                        showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.fromDateTime(
+                                    vm.startTimeInChange))
+                            .then((value) => vm.setStartTimeInChange(
+                                vm.startTimeInChange.add(value != null
+                                    ? Duration(
+                                        hours: value.hour,
+                                        minutes: value.minute)
+                                    : Duration.zero)));
+                      });
                     },
                   ),
                   gap,
@@ -259,8 +280,19 @@ class ActivityDetailFrame extends StatelessWidget {
                                       .subtract(const Duration(days: 180)),
                                   lastDate: DateTime.now()
                                       .add(const Duration(days: 365)))
-                              .then((value) => vm.setEndTimeInChange(
-                                  value ?? vm.endTimeDateTime));
+                              .then((value) {
+                            vm.setEndTimeInChange(value ?? vm.endTimeInChange);
+                            showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.fromDateTime(
+                                        vm.endTimeInChange))
+                                .then((value) => vm.setEndTimeInChange(
+                                    vm.endTimeInChange.add(value != null
+                                        ? Duration(
+                                            hours: value.hour,
+                                            minutes: value.minute)
+                                        : Duration.zero)));
+                          });
                         }),
                   )
                 ])),
@@ -354,11 +386,21 @@ class ActivityDetailFrame extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             gap,
-            Text(
-              vm.selectedActivity.title,
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            AppTextFormField(
+              initialValue: "",
+              hintText: "點擊變更標題",
+              primaryColor:
+                  Color(vm.activityListViewModel!.tempGroup.themeColor),
+              fillColor: Colors.white.withOpacity(0.4),
+              textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
+              contentStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+              onChanged: (value) {
+                vm.titleInChange = value ?? "";
+              },
             ),
             gap,
             KeyValuePairWidget<String, Widget>(
@@ -368,7 +410,7 @@ class ActivityDetailFrame extends StatelessWidget {
                 valueChild: Row(children: [
                   TimeDisplayWithPressibleBody(
                     activityColor: vm.activityColor,
-                    time: vm.formattedDate.format(DateTime.now()),
+                    time: vm.formattedDate.format(vm.startTimeInChange),
                     onPressed: () {
                       showDatePicker(
                               context: context,
@@ -377,8 +419,19 @@ class ActivityDetailFrame extends StatelessWidget {
                                   .subtract(const Duration(days: 180)),
                               lastDate:
                                   DateTime.now().add(const Duration(days: 365)))
-                          .then((value) => vm.setStartTimeInChange(
-                              value ?? vm.startTimeDateTime));
+                          .then((value) {
+                        vm.setStartTimeInChange(value ?? vm.startTimeDateTime);
+                        showTimePicker(
+                                context: context,
+                                initialTime:
+                                    TimeOfDay.fromDateTime(DateTime.now()))
+                            .then((value) => vm.setStartTimeInChange(
+                                vm.startTimeInChange.add(value != null
+                                    ? Duration(
+                                        hours: value.hour,
+                                        minutes: value.minute)
+                                    : Duration.zero)));
+                      });
                     },
                   ),
                   gap,
@@ -390,8 +443,7 @@ class ActivityDetailFrame extends StatelessWidget {
                     visible: vm.activityListViewModel!.isCreateEvent,
                     child: TimeDisplayWithPressibleBody(
                         activityColor: vm.activityColor,
-                        time: vm.formattedDate.format(
-                            DateTime.now().add(const Duration(hours: 1))),
+                        time: vm.formattedDate.format(vm.endTimeInChange),
                         onPressed: () {
                           showDatePicker(
                                   context: context,
@@ -400,8 +452,19 @@ class ActivityDetailFrame extends StatelessWidget {
                                       .subtract(const Duration(days: 180)),
                                   lastDate: DateTime.now()
                                       .add(const Duration(days: 365)))
-                              .then((value) => vm.setEndTimeInChange(
-                                  value ?? vm.endTimeDateTime));
+                              .then((value) {
+                            vm.setEndTimeInChange(value ?? vm.endTimeDateTime);
+                            showTimePicker(
+                                    context: context,
+                                    initialTime:
+                                        TimeOfDay.fromDateTime(DateTime.now()))
+                                .then((value) => vm.setEndTimeInChange(
+                                    vm.endTimeInChange.add(value != null
+                                        ? Duration(
+                                            hours: value.hour,
+                                            minutes: value.minute)
+                                        : Duration.zero)));
+                          });
                         }),
                   )
                 ])),

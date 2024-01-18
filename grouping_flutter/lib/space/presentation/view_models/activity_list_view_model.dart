@@ -47,11 +47,13 @@ class ActivityListViewModel extends ChangeNotifier {
 
   bool isCreateMode = false;
   bool isCreateEvent = false;
+  bool inChangeSwitchLock = false;
 
   int _missionTypePage = 0;
   DateTime _selectDate = DateTime.now();
 
   ActivityEntity? selectedActivity;
+  ActivityEntity? lastSelected;
 
   WorkspaceModel tempGroup =
       WorkspaceModel(id: -1, name: "Grouping 專題研究小組", themeColor: 1, members: [
@@ -269,6 +271,7 @@ class ActivityListViewModel extends ChangeNotifier {
   cancleCreateMode() {
     isCreateMode = false;
     isCreateEvent = false;
+    inChangeSwitchLock = false;
     notifyListeners();
   }
 }
@@ -443,7 +446,87 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void intoCreateMode({required bool isCreateEvent}) {
+    activityListViewModel!.isCreateMode = true;
+    activityListViewModel!.isCreateEvent = isCreateEvent;
+    activityListViewModel!.inChangeSwitchLock = true;
+
+    activityListViewModel!.lastSelected =
+        activityListViewModel!.selectedActivity;
+
+    activityListViewModel!.lastSelected =
+        activityListViewModel!.selectedActivity;
+
+    activityListViewModel!.selectedActivity = MissionEntity(
+        id: -1,
+        title: "",
+        introduction: "",
+        contributors: [],
+        notifications: [],
+        creatorAccount: UserModel(),
+        belongWorkspace: WorkspaceModel(),
+        deadline: DateTime.now(),
+        stateId: -1,
+        state: MissionStateModel(),
+        parentMissionIds: [],
+        childMissionIds: []);
+
+    startTimeInChange = DateTime.now();
+    endTimeInChange = DateTime.now();
+    titleInChange = "";
+    introductionInChange = "";
+    relatedMissionIdsInChange = [];
+    contributorsInChange = [];
+    missionStateIdInChange = -1;
+
+    activityListViewModel!.notifyListeners();
+    notifyListeners();
+  }
+
+  void createDone() {
+    activityListViewModel!.activities!.add(activityListViewModel!.isCreateEvent
+        ? EventEntity(
+            id: activityListViewModel!.selectedActivity!.id,
+            title: titleInChange,
+            introduction: introductionInChange,
+            contributors: contributorsInChange,
+            notifications: notificationsInChange,
+            creatorAccount:
+                activityListViewModel!.selectedActivity!.creatorAccount,
+            belongWorkspace:
+                activityListViewModel!.selectedActivity!.belongWorkspace,
+            startTime: startTimeInChange,
+            endTime: endTimeInChange,
+            relatedMissionIds: relatedMissionIdsInChange)
+        : MissionEntity(
+            id: activityListViewModel!.selectedActivity!.id,
+            title: titleInChange,
+            introduction: introductionInChange,
+            contributors: contributorsInChange,
+            notifications: notificationsInChange,
+            creatorAccount:
+                activityListViewModel!.selectedActivity!.creatorAccount,
+            belongWorkspace:
+                activityListViewModel!.selectedActivity!.belongWorkspace,
+            deadline: startTimeInChange,
+            stateId: missionStateIdInChange,
+            state: (activityListViewModel!.selectedActivity as MissionEntity)
+                .state,
+            parentMissionIds: relatedMissionIdsInChange,
+            childMissionIds: []));
+
+    activityListViewModel!.isCreateMode = false;
+    activityListViewModel!.isCreateEvent = false;
+    activityListViewModel!.inChangeSwitchLock = false;
+
+    activityListViewModel!.notifyListeners();
+    notifyListeners();
+  }
+
   void intoEditMode() {
+    activityListViewModel!.lastSelected =
+        activityListViewModel!.selectedActivity;
+    activityListViewModel!.inChangeSwitchLock = true;
     isEditMode = true;
 
     startTimeInChange = startTimeDateTime;
@@ -461,8 +544,7 @@ class ActivityDisplayViewModel extends ChangeNotifier {
 
   void editDone() {
     isEditMode = false;
-
-    debugPrint(activityListViewModel!.selectedActivity!.toString());
+    activityListViewModel!.inChangeSwitchLock = false;
 
     activityListViewModel!.selectedActivity = isEvent
         ? EventEntity(
@@ -503,6 +585,10 @@ class ActivityDisplayViewModel extends ChangeNotifier {
   void cancelEditOrCreate() {
     isEditMode = false;
     activityListViewModel!.cancleCreateMode();
+    activityListViewModel!.selectedActivity =
+        activityListViewModel!.lastSelected;
+
+    activityListViewModel!.notifyListeners();
     notifyListeners();
   }
 }
