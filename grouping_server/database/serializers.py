@@ -18,6 +18,7 @@ class BaseReadSerializer(serializers.ModelSerializer):
     """
     Base class for all read serializer
     """
+
     def create(self, validated_data):
         raise exceptions.MethodNotAllowed(
             method=self.context['request'].method)
@@ -42,7 +43,6 @@ class BaseWriteSerializer(serializers.ModelSerializer, metaclass=ABCMetaAndSeria
         read_serializer = self.get_read_serializer(instance)
         representation = read_serializer.data
         return representation
-
 
 
 class ImageSimpleReadSerializer(BaseReadSerializer):
@@ -509,6 +509,9 @@ class ActivityWriteSerializer(BaseWriteSerializer):
                 raise serializers.ValidationError(
                     'The event field can only be write into an event.')
         elif mission_data:
+            if mission_data['state'] and isinstance(mission_data['state'], MissionState):
+                state_instance = mission_data['state']
+                mission_data['state'] = state_instance.pk
             try:
                 mission = Mission.objects.get(belong_activity=instance)
                 mission_serializer = MissionWriteSerializer(
