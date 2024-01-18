@@ -176,12 +176,14 @@ class ActivityLayout extends StatelessWidget {
     bool isWorkspace = Provider.of<SpaceViewModel>(context, listen: false).isWorkspace;
     return Visibility(
       visible: isWorkspace,
+      // visible: true,
       child: IconButton(
           onPressed: () async {
             // TODO: on press function is under testing
             // debugPrint("unimplemented yet, create activity");
             // await activityListViewModel.testCreateEvent();
-            await activityListViewModel.testCreateMission();
+            // await activityListViewModel.testCreateMission();
+            // await activityListViewModel.testState();
           },
           icon: const Icon(Icons.add_outlined,)),
     );

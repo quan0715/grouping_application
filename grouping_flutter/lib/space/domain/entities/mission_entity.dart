@@ -31,34 +31,18 @@ class MissionEntity extends ActivityEntity {
       introduction: introduction,
       deadline: deadline,
       state: state,
-      // creator: UserModel.fromEntity(creator),
-      creator: creator.toModel(),
+      creator: creator,
       createTime: createTime,
-      // belongWorkspace: WorkspaceModel.fromEntity(belongWorkspace),
-      belongWorkspace: belongWorkspace.toModel(),
-      // contributors: contributors.map((contributor) => UserModel.fromEntity(contributor)).toList(),
-      contributors: contributors.map((contributor) => contributor.toModel()).toList(),
+      belongWorkspace: belongWorkspace,
+      contributors: contributors,
       // parentMissionIDs: parentMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
-      // childMissions: childMissions.map((mission) => MissionModel.fromEntity(mission)).toList(),
       childMissions: childMissions.map((mission) => mission.toModel()).toList(),
       notifications: notifications,
     );
   }
 
-  // @override
-  // factory MissionEntity.fromModel(MissionModel model) {
-  //   return MissionEntity(
-  //       id: model.id!,
-  //       title: model.title,
-  //       introduction: model.introduction,
-  //       creator: UserEntity.fromModel(model.creator),
-  //       createTime: model.createTime,
-  //       belongWorkspace: WorkspaceEntity.fromModel(model.belongWorkspace),
-  //       deadline: model.deadline,
-  //       state: model.state,
-  //       // parentMissionIDs: model.parentMissionIDs,
-  //       childMissions: model.childMissions.map((mission) => MissionEntity.fromModel(mission)).toList(),
-  //       contributors: model.contributors.map((contributor) => UserEntity.fromModel(contributor)).toList(),
-  //       notifications: model.notifications,);
-  // }
+  @override
+  String toString() {
+    return "id: $id\n, title: $title\n, introduction: $introduction\n, creator: $creator\n, createTime: $createTime\n, belong workspace: $belongWorkspace\n, deadline: $deadline\n, state: {$state}\n, child missions: $childMissions\n, contributor: $contributors\n, notification: $notifications\n";
+  }
 }

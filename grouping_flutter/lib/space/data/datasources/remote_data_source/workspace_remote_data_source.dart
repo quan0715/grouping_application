@@ -126,6 +126,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
           debugPrint("database data error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }
+        
        
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
@@ -232,7 +233,7 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         Uri.parse("${Config.baseUriWeb}/workspaces/$workspaceId"),
         headers: headers);
     switch (response.statusCode) {
-      case 200:
+      case 204:
         // do nothing
         return;
       case 400:

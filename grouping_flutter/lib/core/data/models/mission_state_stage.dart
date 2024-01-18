@@ -2,28 +2,31 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/theme/color.dart';
 
-/// Stage of mission 
-/// print(MissionStage.progress.label) => progress
+/// ## [MissionStage] 為 mission 當前所屬的狀態
+/// [todo] 代表此 mission 為準備進行 \
+/// [progress] 代表此 mission 為正在進行中 \
+/// [pending] 代表此 mission 為審核中或以逾期 \
+/// [close] 代表此 mission 為已經結束
 enum MissionStage {
   
-  progress(label: 'progress'),
-  pending(label: 'pending'),
-  reply(label: 'reply'),
-  close(label: 'close');
+  todo(label: 'todo'),
+  progress(label: 'IN_PROGRESS'),
+  pending(label: 'PENDING'),
+  close(label: 'CLOSE');
   
   final String label;
   const MissionStage({required this.label});
 
   factory MissionStage.fromLabel(String label){
     switch(label){
-      case 'progress':
+      case 'IN_PROGRESS':
         return MissionStage.progress;
-      case 'pending':
+      case 'PENDING':
         return MissionStage.pending;
-      case 'close':
+      case 'CLOSE':
         return MissionStage.close;
-      case 'reply':
-        return MissionStage.reply;
+      case 'todo':
+        return MissionStage.todo;
       default:
         return MissionStage.progress;
     }
@@ -31,6 +34,8 @@ enum MissionStage {
 
   Color get color {
     switch(this){
+      case MissionStage.todo:
+        return AppColor.inProgressColor;      // TODO: give todo color
       case MissionStage.progress:
         return AppColor.inProgressColor;
       case MissionStage.pending:
@@ -42,27 +47,3 @@ enum MissionStage {
     }
   }
 }
-
-// /// convert `MissionStage` to `String`
-// String? stageToString(MissionStage stage) {
-//   if (stage == MissionStage.progress) {
-//     return 'progress';
-//   } else if (stage == MissionStage.pending) {
-//     return 'pending';
-//   } else if (stage == MissionStage.close) {
-//     return 'close';
-//   }
-//   return null;
-// }
-
-// /// convert `String` to `MissionStage`
-// MissionStage? stringToStage(String stage) {
-//   if (stage == 'progress') {
-//     return MissionStage.progress;
-//   } else if (stage == 'pending') {
-//     return MissionStage.pending;
-//   } else if (stage == 'close') {
-//     return MissionStage.close;
-//   }
-//   return null;
-// }

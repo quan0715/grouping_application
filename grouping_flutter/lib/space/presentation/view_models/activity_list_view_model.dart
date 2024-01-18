@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_stage.dart';
-import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
+import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/core/theme/color.dart';
 // import 'package:grouping_project/space/data/models/mission_state_stage.dart';
-import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/user_entity.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
@@ -15,18 +15,26 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 // will be deleted after test
-import 'package:grouping_project/space/domain/entities/user_entity.dart';
-import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
-import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
-import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
-import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/create_event_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/get_event_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/update_event_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/create_mission_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/get_mission_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/update_mission_usecase.dart';
-import 'package:grouping_project/space/domain/usecases/activity_usecases/delete_activity_usecase.dart';
+// import 'package:grouping_project/core/data/models/image_model.dart';
+// import 'package:grouping_project/space/data/models/workspace_model.dart';
+// import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
+// import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
+// import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
+// import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/create_event_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/get_event_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/update_event_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/create_mission_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/get_mission_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/update_mission_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/activity_usecases/delete_activity_usecase.dart';
+// import 'package:grouping_project/space/data/datasources/local_data_source/state_local_data_source.dart';
+// import 'package:grouping_project/space/data/datasources/remote_data_source/state_remote_data_source.dart';
+// import 'package:grouping_project/space/data/repositories/state_repository_impl.dart';
+// import 'package:grouping_project/space/domain/usecases/state_usecases/create_state_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/state_usecases/delete_state_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/state_usecases/get_state_usecase.dart';
+// import 'package:grouping_project/space/domain/usecases/state_usecases/update_state_usecase.dart';
 
 extension DateTimeExtension on DateTime {
   int get weekOfMonthStartFromMonday {
@@ -63,31 +71,33 @@ class ActivityListViewModel extends ChangeNotifier {
 
   ActivityEntity? selectedActivity;
 
-  WorkspaceModel tempGroup = WorkspaceModel(
+  NestWorkspace tempGroup = NestWorkspace(
     id: -1,
     name: "Grouping 專題研究小組",
-    description: "擁有製作 Grouping App 專案的熱情所組成的小組",
     themeColor: 1,
-    members: [
-      Member(
-        id: 1,
-        userName: '張百寬',
-        photo: ImageModel(
-            imageId: -1,
-            imageUri:
-                "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
-            updateAt: DateTime.now()),
-      ),
-      Member(
-        id: 2,
-        userName: '許明瑞',
-      ),
-    ],
-    activities: [],
-    tags: [],
+    // members: [
+    //   Member(
+    //     id: 1,
+    //     userName: '張百寬',
+    //     photo: ImageModel(
+    //         imageId: -1,
+    //         imageUri:
+    //             "http://localhost:8000/media/images/55057ef5-65fd-4a36-bd09-1bf89fd4fa07.jpg",
+    //         updateAt: DateTime.now()),
+    //   ),
+    //   Member(
+    //     id: 2,
+    //     userName: '許明瑞',
+    //   ),
+    // ],
+    // activities: [],
+    // tags: [],
   );
 
-  List<ActivityEntity> get tmpData => [
+  List<ActivityEntity> get tmpData { 
+    UserEntity user = userDataProvider.currentUser!;
+    Member member = Member(id: user.id, userName: user.name);
+    return [
         EventEntity(
           id: 0,
           title: "code review",
@@ -95,9 +105,9 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: userDataProvider.currentUser!,
+          creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: tempGroup.toEntity(),
+          belongWorkspace: tempGroup,
           startTime: DateTime.now(),
           endTime: DateTime.now().add(const Duration(hours: 1)),
           childMissions: [],
@@ -109,12 +119,16 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: userDataProvider.currentUser!,
+          creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: tempGroup.toEntity(),
+          belongWorkspace: tempGroup,
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
-          state: MissionState.defaultProgressState,
+          state: MissionState(
+              id: -1,
+              stage: MissionStage.progress,
+              stateName: "test progress",
+              belongWorkspace: tempGroup),
           childMissions: [],
           // parentMissionIds: [],
           // childMissionIds: [],
@@ -126,12 +140,16 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: userDataProvider.currentUser!,
+          creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: tempGroup.toEntity(),
+          belongWorkspace: tempGroup,
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
-          state: MissionState.defaultPendingState,
+          state: MissionState(
+              id: -1,
+              stage: MissionStage.progress,
+              stateName: "test progress",
+              belongWorkspace: tempGroup),
           childMissions: [],
           // parentMissionIds: [],
           // childMissionIds: [],
@@ -143,16 +161,12 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: userDataProvider.currentUser!,
+          creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel(
+          belongWorkspace: NestWorkspace(
               id: -1,
               name: "軟工小組",
-              description: "軟體工程實務的小組，只要撐半學期就好啦~",
-              themeColor: 2,
-              members: [],
-              activities: [],
-              tags: []).toEntity(),
+              themeColor: 2,),
           startTime: DateTime.now().add(const Duration(days: 1)),
           endTime: DateTime.now().add(const Duration(days: 1, hours: 1)),
           childMissions: [],
@@ -165,16 +179,12 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: userDataProvider.currentUser!,
+          creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel(
+          belongWorkspace: NestWorkspace(
               id: -1,
               name: "test 的 workspace",
-              description: "屬於自己的 workspace",
-              themeColor: 4,
-              members: [],
-              activities: [],
-              tags: []).toEntity(),
+              themeColor: 4,),
           startTime: DateTime.now(),
           endTime: DateTime.now().add(const Duration(hours: 1)),
           childMissions: [],
@@ -187,24 +197,24 @@ class ActivityListViewModel extends ChangeNotifier {
           contributors: [],
           notifications: [],
           // creatorAccount: UserModel.defaultAccount,
-          creator: userDataProvider.currentUser!,
+          creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: WorkspaceModel(
+          belongWorkspace: NestWorkspace(
               id: -1,
               name: "test 的 workspace",
-              description: "屬於自己的 workspace",
-              themeColor: 4,
-              members: [],
-              activities: [],
-              tags: []).toEntity(),
+              themeColor: 4,),
           deadline: DateTime.now().add(const Duration(hours: 1)),
           // stateId: -1,
-          state: MissionState.defaultFinishState,
+          state: MissionState(
+              id: -1,
+              stage: MissionStage.close,
+              stateName: "test finish",
+              belongWorkspace: tempGroup),
           childMissions: [],
           // parentMissionIds: [],
           // childMissionIds: [],
         ),
-      ];
+      ];}
 
   ActivityListViewModel({required this.userDataProvider});
 
@@ -215,7 +225,7 @@ class ActivityListViewModel extends ChangeNotifier {
 
   void init() {
     activities = userDataProvider.currentUser!.contributingActivities
-        .map((activity) => activity.toEntity() as ActivityEntity)
+        .map((activity) => activity.toEntity())
         .toList();
     activities = tmpData;
     selectedActivity = activities!.first;
@@ -227,13 +237,16 @@ class ActivityListViewModel extends ChangeNotifier {
     // debugPrint("UserViewModel update userData");
     userDataProvider = userProvider;
     activities = userDataProvider.currentUser!.contributingActivities
-        .map((activity) => activity.toEntity() as ActivityEntity)
+        .map((activity) => activity.toEntity())
         .toList();
     activities = tmpData;
     // events = _sortEvents();
     // missions = _sortMissions();
   }
 
+  List<MissionEntity> get todoMissions => missions
+      .where((element) => element.state.stage == MissionStage.todo)
+      .toList();
   List<MissionEntity> get v => missions
       .where((element) => element.state.stage == MissionStage.pending)
       .toList();
@@ -318,6 +331,7 @@ class ActivityListViewModel extends ChangeNotifier {
     return initialDate;
   }
 
+  /*
   Future<void> testCreateEvent() async {
     CreateEventUseCase createEventUseCase = CreateEventUseCase(
         activityRepository: ActivityRepositoryImpl(
@@ -344,26 +358,23 @@ class ActivityListViewModel extends ChangeNotifier {
             localDataSource: ActivityLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
-    WorkspaceEntity workspace = WorkspaceEntity(
+    Member member = Member(id: user.id, userName: user.name);
+    NestWorkspace workspace = NestWorkspace(
         id: 1,
         themeColor: 1,
         name: 'test 的個人空間',
-        description: 'this is a test',
-        photo: null,
-        members: [Member(id: user.id, userName: user.name)],
-        activities: [],
-        tags: []);
+        photo: null,);
     EventEntity defaultevent = EventEntity(
         id: 10,
         title: 'test title',
         introduction: 'test introduction',
-        creator: userDataProvider.currentUser!,
+        creator: member,
         createTime: DateTime.now(),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(const Duration(hours: 1)),
         belongWorkspace: workspace,
         childMissions: [],
-        contributors: [user],
+        contributors: [member],
         notifications: []);
 
     final failureOrEvent = await createEventUseCase.call(defaultevent);
@@ -405,7 +416,81 @@ class ActivityListViewModel extends ChangeNotifier {
     });
   }
 
+  Future<void> testState() async {
+    CreateStateUsecase createStateUsecase = CreateStateUsecase(
+        stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+    
+    UpdateStateUsecase updateStateUsecase = UpdateStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+
+    GetStateUsecase getStateUsecase = GetStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+    
+    DeleteStateUsecase deleteStateUsecase = DeleteStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+
+    UserEntity user = userDataProvider.currentUser!;
+    NestWorkspace workspace = NestWorkspace(
+        id: 1,
+        themeColor: 1,
+        name: 'test 的個人空間',
+        photo: null,);
+
+    MissionState defaultstate = MissionState(id: -1, stage: MissionStage.close, stateName: 'test stateName', belongWorkspace: workspace);
+
+    final failureOrState = await createStateUsecase.call(defaultstate);
+
+    failureOrState.fold((l) => debugPrint("建立 mission state 失敗"), (state) async {
+      debugPrint("建立成功成功");
+      debugPrint("\n========== start of create state ===========\n");
+      debugPrint("$state");
+      debugPrint("\n========== end of create state ===========\n");
+
+      state.stateName = 'update new stateName';
+      final failureOrUpdate = await updateStateUsecase.call(state);
+
+      failureOrUpdate.fold((l) => debugPrint("更新 mission state 失敗"), (updateState) async {
+        debugPrint("更新成功");
+        debugPrint("\n========== start of update state ===========\n");
+        debugPrint("\n$updateState\n");
+        debugPrint("\n========== end of update state ===========\n");
+      });
+
+      final failureOrGet = await getStateUsecase.call(state.id);
+
+      failureOrGet.fold((l) => debugPrint("獲取 mission state 失敗"), (getState) async {
+        debugPrint("獲取成功成功");
+        debugPrint("\n========== start of get state ===========\n");
+        debugPrint("\n$getState\n");
+        debugPrint("\n========== end of get state ===========\n");
+      });
+
+      final failureOrDelete = await deleteStateUsecase.call(state.id);
+
+      failureOrDelete.fold((l) => debugPrint("刪除 mission state 失敗"), (r) => debugPrint("刪除成功"));
+    });
+  }
+
   Future<void> testCreateMission() async {
+    CreateStateUsecase createStateUsecase = CreateStateUsecase(
+        stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+    DeleteStateUsecase deleteStateUsecase = DeleteStateUsecase(stateRepository: StateRepositoryImpl(
+            remoteDataSource: StateRemoteDataSourceImpl(
+                token: userDataProvider.tokenModel.token),
+            localDataSource: StateLocalDataSourceImpl()));
+
     CreateMissionUseCase createMissionUseCase = CreateMissionUseCase(
         activityRepository: ActivityRepositoryImpl(
             remoteDataSource: ActivityRemoteDataSourceImpl(
@@ -431,32 +516,27 @@ class ActivityListViewModel extends ChangeNotifier {
             localDataSource: ActivityLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
-    WorkspaceEntity workspace = WorkspaceEntity(
+    Member member = Member(id: user.id, userName: user.name);
+    NestWorkspace workspace = NestWorkspace(
         id: 1,
         themeColor: 1,
         name: 'test 的個人空間',
-        description: 'this is a test',
-        photo: null,
-        members: [Member(id: user.id, userName: user.name)],
-        activities: [],
-        tags: []);
+        photo: null,);
 
-    MissionState state = MissionState(
-        id: 10,
-        stage: MissionStage.progress,
-        stateName: "test state",
-        belongWorkspaceID: workspace.id);
+    MissionState state = MissionState(id: -1, stage: MissionStage.progress, stateName: 'test stateName', belongWorkspace: workspace);
+    (await createStateUsecase.call(state)).fold((l) => debugPrint("create state fail"), (r) => state = r);
+
     MissionEntity defaultmission = MissionEntity(
         id: 10,
         title: 'test title',
         introduction: 'test introduction',
-        creator: userDataProvider.currentUser!,
+        creator: member,
         createTime: DateTime.now(),
         state: state,
         deadline: DateTime.now().add(const Duration(hours: 1)),
         belongWorkspace: workspace,
         childMissions: [],
-        contributors: [user],
+        contributors: [member],
         notifications: []);
 
     final failureOrMission = await createMissionUseCase.call(defaultmission);
@@ -473,19 +553,20 @@ class ActivityListViewModel extends ChangeNotifier {
       mission.deadline = mission.deadline.add(const Duration(days: 1));
       final failureOrUpdate = await updateMissionUseCase.call(mission);
 
-      failureOrUpdate.fold((l) => debugPrint("更新失敗"), (updateEvent) {
+      failureOrUpdate.fold((l) => debugPrint("更新失敗"), (updateMission) {
         debugPrint("更新成功");
         debugPrint("\n========== start of update mission ===========\n");
-        debugPrint("\n$updateEvent\n");
+        debugPrint("\n$updateMission\n");
+        debugPrint("expected: ${mission.deadline}, actual: ${updateMission.deadline}");
         debugPrint("\n========== end of update mission ===========\n");
       });
 
       final failureOrGet = await getMissionUseCase.call(mission.id);
 
-      failureOrGet.fold((l) => debugPrint("獲取失敗"), (getEvent) {
+      failureOrGet.fold((l) => debugPrint("獲取失敗"), (getMission) {
         debugPrint("獲取成功");
         debugPrint("\n========== start of get mission ===========\n");
-        debugPrint("$getEvent");
+        debugPrint("$getMission");
         debugPrint("\n========== end of get mission ===========\n");
       });
 
@@ -495,8 +576,11 @@ class ActivityListViewModel extends ChangeNotifier {
 
       failiureOrSuccess.fold((l) => debugPrint('刪除 mission 失敗'),
           (r) => debugPrint("========== 刪除成功 ==========="));
+      
+      (await deleteStateUsecase.call(state.id)).fold((l) => debugPrint("delete state faile"), (r) => debugPrint("delete state success"));
     });
   }
+  */
 }
 
 class ActivityData extends CalendarDataSource {
