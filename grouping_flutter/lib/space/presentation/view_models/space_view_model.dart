@@ -6,36 +6,36 @@ import 'package:grouping_project/space/presentation/provider/group_data_provider
 import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 
 class SpaceViewModel extends ChangeNotifier {
-
   final messageService = MessageService();
   UserDataProvider? userDataProvider;
   GroupDataProvider? workspaceDataProvider;
 
   bool get isWorkspace => (workspaceDataProvider != null);
-  
+
   bool _isLoading = true;
 
-  bool get isLoading => _isLoading 
-    || (workspaceDataProvider?.isLoading ?? false)
-    || (userDataProvider?.isLoading ?? false);
-  
+  bool get isLoading =>
+      _isLoading ||
+      (workspaceDataProvider?.isLoading ?? false) ||
+      (userDataProvider?.isLoading ?? false);
+
   UserEntity? get currentUser => userDataProvider!.currentUser;
 
   Color get userColor => AppColor.mainSpaceColor;
 
-  String get rootPath
-    => workspaceDataProvider == null ? 'user' : 'workspace';
+  String get rootPath => workspaceDataProvider == null ? 'user' : 'workspace';
 
-  Color get spaceColor => (workspaceDataProvider?.color ?? userColor);
+  Color get spaceColor =>
+      isWorkspace ? workspaceDataProvider!.color : userColor;
 
   Future<void> init() async {
     debugPrint("UserPageViewModel init");
     _isLoading = true;
     notifyListeners();
-    if(userDataProvider!=null){
+    if (userDataProvider != null) {
       await userDataProvider!.init();
     }
-    if(workspaceDataProvider!=null){
+    if (workspaceDataProvider != null) {
       await workspaceDataProvider!.init();
     }
     _isLoading = false;
@@ -53,5 +53,4 @@ class SpaceViewModel extends ChangeNotifier {
     workspaceDataProvider = workspaceProvider;
     notifyListeners();
   }
-
 }

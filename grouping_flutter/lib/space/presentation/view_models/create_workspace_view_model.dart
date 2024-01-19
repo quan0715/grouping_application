@@ -14,7 +14,6 @@ import 'package:grouping_project/space/presentation/provider/user_data_provider.
 import 'package:image_picker/image_picker.dart';
 
 class CreateWorkspaceViewModel extends ChangeNotifier {
-
   final MessageService messageService = MessageService();
   // user data provider for token & current user
   UserDataProvider? userDataProvider;
@@ -27,27 +26,28 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
   // space colors
   List<Color> spaceColors = AppColor.spaceColors;
   // space color index
-  Color get spaceColor => AppColor.getWorkspaceColorByIndex(newWorkspaceData.themeColor);
+  Color get spaceColor =>
+      AppColor.getWorkspaceColorByIndex(newWorkspaceData.themeColor);
   // create state
 
-  void clearTag(){
+  void clearTag() {
     tag = "";
     notifyListeners();
   }
-  
+
   void deleteTag(int index) {
     newWorkspaceData.tags.removeAt(index);
     notifyListeners();
   }
 
-  void addTag(String value ) {
-    if(tag.isNotEmpty){
+  void addTag(String value) {
+    if (tag.isNotEmpty) {
       newWorkspaceData.tags.add(WorkspaceTagModel(content: tag));
       clearTag();
     }
     notifyListeners();
   }
-  
+
   set spaceColorIndex(int index) {
     newWorkspaceData.themeColor = index;
     notifyListeners();
@@ -63,33 +63,32 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  set updateProfileData(XFile? file){
+  set updateProfileData(XFile? file) {
+    debugPrint(file?.path);
     tempAvatarFile = file;
     notifyListeners();
   }
 
-  String? spaceNameValidator (String? value) {
-    if(value == null || value.isEmpty){
+  String? spaceNameValidator(String? value) {
+    if (value == null || value.isEmpty) {
       return "小組名稱請勿留空";
     }
     return null;
   }
 
-  String? spaceDescriptionValidator (String? value) {
-    if(value == null || value.isEmpty){
+  String? spaceDescriptionValidator(String? value) {
+    if (value == null || value.isEmpty) {
       return "小組介紹請勿留空";
     }
     return null;
   }
 
-  
   Future<bool> createWorkspace() async {
-
     debugPrint(newWorkspaceData.toString());
     var workspaceRepo = WorkspaceRepositoryImpl(
-      remoteDataSource: WorkspaceRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token),
-      localDataSource: WorkspaceLocalDataSourceImpl()
-    );
+        remoteDataSource: WorkspaceRemoteDataSourceImpl(
+            token: userDataProvider!.tokenModel.token),
+        localDataSource: WorkspaceLocalDataSourceImpl());
 
     final createWorkspaceUseCase = CreateCurrentWorkspaceUseCase(workspaceRepo);
     final joinWorkspaceUseCase = JoinWorkspaceUseCase(workspaceRepo);
@@ -97,19 +96,19 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
     final workspaceOrFailure = await createWorkspaceUseCase(
       creator: userDataProvider!.currentUser!,
       entity: newWorkspaceData,
-      image: tempAvatarFile,  
+      image: tempAvatarFile,
     );
     bool isSuccess = false;
 
     workspaceOrFailure.fold(
       (failure) => {
         debugPrint('create workspace failure: $failure'),
-          messageService.addMessage(MessageData.error(
-            title: "新增小組失敗",
-            message: "$failure",
-          ),
-          autoClear: false
-        ),
+        messageService.addMessage(
+            MessageData.error(
+              title: "新增小組失敗",
+              message: "$failure",
+            ),
+            autoClear: false),
       },
       (workspace) => {
         newWorkspaceData = workspace,
@@ -117,12 +116,13 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
         debugPrint('create workspace success: $newWorkspaceData'),
       },
     );
-    
-    if(!isSuccess){
+
+    if (!isSuccess) {
       return false;
     }
 
-    var joinOrFailure = await joinWorkspaceUseCase(newWorkspaceData, userDataProvider!.currentUser!);
+    var joinOrFailure = await joinWorkspaceUseCase(
+        newWorkspaceData, userDataProvider!.currentUser!);
 
     joinOrFailure.fold(
       (failure) => debugPrint('join workspace failure: $failure'),

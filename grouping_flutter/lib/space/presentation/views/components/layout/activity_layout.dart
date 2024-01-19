@@ -47,8 +47,12 @@ class ActivityLayout extends StatelessWidget {
                     .titleSmall!
                     .copyWith(color: color, fontWeight: FontWeight.bold)),
             const Spacer(),
-            _createButton(context,
-                activityListViewModel), // TODO: create button function is under testing
+            _createButton(
+                context,
+                activityListViewModel,
+                type ==
+                    ActivityType
+                        .event), // TODO: create button function is under testing
           ],
         ),
         Expanded(
@@ -176,8 +180,8 @@ class ActivityLayout extends StatelessWidget {
     );
   }
 
-  Widget _createButton(
-      BuildContext context, ActivityListViewModel activityListViewModel) {
+  Widget _createButton(BuildContext context,
+      ActivityListViewModel activityListViewModel, bool isEvent) {
     bool isWorkspace =
         Provider.of<SpaceViewModel>(context, listen: false).isWorkspace;
     return Visibility(
@@ -188,14 +192,11 @@ class ActivityLayout extends StatelessWidget {
             // TODO: on press function is under testing
             // debugPrint("unimplemented yet, create activity");
             // await activityListViewModel.testCreateEvent();
-<<<<<<< HEAD
             // await activityListViewModel.testCreateMission();
             // await activityListViewModel.testState();
             ActivityListViewModel vm =
                 Provider.of<ActivityListViewModel>(context, listen: false);
-            vm.setCreateMode(type == ActivityType.event);
-=======
->>>>>>> 489cef87340c531484023096497a2f86cf5d6f96
+            vm.setCreateMode(isEvent);
           },
           icon: const Icon(
             Icons.add_outlined,

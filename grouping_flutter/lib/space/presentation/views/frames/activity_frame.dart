@@ -29,16 +29,17 @@ class ActivityDetailFrame extends StatelessWidget {
   Widget _buildFrameToolBar(BuildContext context) {
     return Consumer<ActivityDisplayViewModel>(
       builder: (context, vm, child) {
-        debugPrint(vm.isEditMode.toString());
         return vm.activityListViewModel!.isCreateMode || vm.isEditMode
             ? _buildFrameInputToolBar(
                 context,
                 vm.selectedActivity.belongWorkspace.name,
                 vm.selectedActivity.belongWorkspace.themeColor)
-            : _buildFrameDisplayToolBar(
-                context,
-                vm.selectedActivity.belongWorkspace.name,
-                vm.selectedActivity.belongWorkspace.themeColor);
+            : vm.selectedActivity.id == -1
+                ? Container()
+                : _buildFrameDisplayToolBar(
+                    context,
+                    vm.selectedActivity.belongWorkspace.name,
+                    vm.selectedActivity.belongWorkspace.themeColor);
       },
     );
   }
@@ -144,66 +145,73 @@ class ActivityDetailFrame extends StatelessWidget {
 
   Widget _buildActivityInfoFrame(BuildContext context) {
     return Consumer<ActivityDisplayViewModel>(
-      builder: (context, vm, child) => Visibility(
-        visible: !vm.isEditMode && !vm.activityListViewModel!.isCreateMode,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            gap,
-            Text(
-              vm.selectedActivity.title,
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
+      builder: (context, vm, child) => vm.selectedActivity.id == -1
+          ? Container()
+          : Visibility(
+              visible:
+                  !vm.isEditMode && !vm.activityListViewModel!.isCreateMode,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  gap,
+                  Text(
+                    vm.selectedActivity.title,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
-            ),
-            gap,
-            KeyValuePairWidget<String, Widget>(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                primaryColor: vm.isEvent ? vm.activityColor : Colors.red,
-                keyChild: vm.isEvent
-                    ? vm.isEventStartedNow
-                        ? vm.isOverNow
-                            ? "活動已經結束"
-                            : "距離活動結束還剩 ${vm.endtimeDifference.inDays} D ${vm.endtimeDifference.inHours % 24} H ${vm.endtimeDifference.inMinutes % 60} M"
-                        : "距離活動開始還剩 ${vm.timeDifference.inDays} D ${vm.timeDifference.inHours % 24} H ${vm.timeDifference.inMinutes % 60} M"
-                    : vm.isOverNow
-                        ? "任務已經結束"
-                        : "距離任務結束還剩 ${vm.timeDifference.inDays} D ${vm.timeDifference.inHours % 24} H ${vm.timeDifference.inMinutes % 60} M",
-                valueChild: Row(children: [
-                  TimeDisplayWithPressibleBody(
-                      activityColor: vm.activityColor, time: vm.startTime),
                   gap,
-                  Visibility(
-                      visible: vm.isEvent,
-                      child: const Icon(Icons.arrow_forward)),
+                  KeyValuePairWidget<String, Widget>(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      primaryColor: vm.isEvent ? vm.activityColor : Colors.red,
+                      keyChild: vm.isEvent
+                          ? vm.isEventStartedNow
+                              ? vm.isOverNow
+                                  ? "活動已經結束"
+                                  : "距離活動結束還剩 ${vm.endtimeDifference.inDays} D ${vm.endtimeDifference.inHours % 24} H ${vm.endtimeDifference.inMinutes % 60} M"
+                              : "距離活動開始還剩 ${vm.timeDifference.inDays} D ${vm.timeDifference.inHours % 24} H ${vm.timeDifference.inMinutes % 60} M"
+                          : vm.isOverNow
+                              ? "任務已經結束"
+                              : "距離任務結束還剩 ${vm.timeDifference.inDays} D ${vm.timeDifference.inHours % 24} H ${vm.timeDifference.inMinutes % 60} M",
+                      valueChild: Row(children: [
+                        TimeDisplayWithPressibleBody(
+                            activityColor: vm.activityColor,
+                            time: vm.startTime),
+                        gap,
+                        Visibility(
+                            visible: vm.isEvent,
+                            child: const Icon(Icons.arrow_forward)),
+                        gap,
+                        Visibility(
+                          visible: vm.isEvent,
+                          child: TimeDisplayWithPressibleBody(
+                              activityColor: vm.activityColor,
+                              time: vm.endTime),
+                        )
+                      ])),
+                  Row(
+                    children: vm.selectedActivity.contributors
+                        .map((member) => Row(children: [
+                              UserProfileChip(
+                                  member: member, color: vm.activityColor),
+                              gap
+                            ]))
+                        .toList(),
+                  ),
                   gap,
-                  Visibility(
-                    visible: vm.isEvent,
-                    child: TimeDisplayWithPressibleBody(
-                        activityColor: vm.activityColor, time: vm.endTime),
-                  )
-                ])),
-            Row(
-              children: vm.selectedActivity.belongWorkspace.members!
-                  .map((member) => Row(children: [
-                        UserProfileChip(
-                            member: member, color: vm.activityColor),
-                        gap
-                      ]))
-                  .toList(),
+                  Divider(color: color.withOpacity(0.3)),
+                  KeyValuePairWidget(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      primaryColor: vm.activityColor,
+                      keyChild: "說明",
+                      valueChild: vm.selectedActivity.introduction),
+                  gap,
+                  Divider(color: color.withOpacity(0.3)),
+                ],
+              ),
             ),
-            gap,
-            Divider(color: color.withOpacity(0.3)),
-            KeyValuePairWidget(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                primaryColor: vm.activityColor,
-                keyChild: "說明",
-                valueChild: vm.selectedActivity.introduction),
-            gap,
-            Divider(color: color.withOpacity(0.3)),
-          ],
-        ),
-      ),
     );
   }
 
@@ -301,7 +309,7 @@ class ActivityDetailFrame extends StatelessWidget {
               primaryColor: vm.activityColor,
               keyChild: "編輯參與者",
               valueChild: Row(
-                  children: (vm.selectedActivity.belongWorkspace.members!
+                  children: (vm.selectedActivity.contributors
                           .map((member) => Row(children: [
                                 UserProfileChip(
                                     member: member, color: vm.activityColor),
@@ -318,8 +326,8 @@ class ActivityDetailFrame extends StatelessWidget {
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: vm.selectedActivity
-                                            .belongWorkspace.members!
+                                        // TODO: add workspace fetcher here
+                                        children: vm.workspaceMembers
                                             .map((member) => Row(children: [
                                                   UserProfileChip(
                                                     member: member,
@@ -390,7 +398,9 @@ class ActivityDetailFrame extends StatelessWidget {
               initialValue: "",
               hintText: "點擊變更標題",
               primaryColor:
-                  Color(vm.activityListViewModel!.tempGroup.themeColor),
+                  vm.activityListViewModel!.workspaceDataProvider?.color ??
+                      vm.activityListViewModel!.userDataProvider.currentUser!
+                          .spaceColor,
               fillColor: Colors.white.withOpacity(0.4),
               textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -501,35 +511,39 @@ class ActivityDetailFrame extends StatelessWidget {
 
   Widget _buildRelatedActivityFrame(BuildContext context) {
     return Consumer<ActivityDisplayViewModel>(
-      builder: (context, vm, child) => Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          KeyValuePairWidget<String, Widget>(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-            primaryColor: vm.activityColor,
-            keyChild: "相關任務",
-            valueChild: TextButton.icon(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
+      builder: (context, vm, child) => vm.selectedActivity.id == -1
+          ? Container()
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                KeyValuePairWidget<String, Widget>(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.black54,
-                ),
-                label: Text("連結子任務",
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Colors.black54,
-                        ))),
-          )
-        ],
-      ),
+                  primaryColor: vm.activityColor,
+                  keyChild: "相關任務",
+                  valueChild: TextButton.icon(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.black54,
+                      ),
+                      label: Text("連結子任務",
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Colors.black54,
+                                  ))),
+                )
+              ],
+            ),
     );
   }
 

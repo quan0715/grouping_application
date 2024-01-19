@@ -9,33 +9,35 @@ import 'package:grouping_project/space/presentation/views/frames/frames.dart';
 import 'package:grouping_project/threads/presentations/widgets/chat_thread_body.dart';
 import 'package:provider/provider.dart';
 
-enum DashboardPageType { 
+enum DashboardPageType {
   home,
   activities,
   threads,
   settings,
   none,
- }
+}
 
-class UserPageView extends StatelessWidget  {
+class UserPageView extends StatelessWidget {
   const UserPageView({super.key, required this.pageType});
   final DashboardPageType pageType;
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProxyProvider<UserDataProvider, SpaceViewModel>(
           create: (context) => SpaceViewModel()
-            ..updateUser(Provider.of<UserDataProvider>(context, listen: false))..init(),
-          update: (context, userDataProvider, userSpaceViewModel) => userSpaceViewModel!..updateUser(userDataProvider),
+            ..updateUser(Provider.of<UserDataProvider>(context, listen: false))
+            ..init(),
+          update: (context, userDataProvider, userSpaceViewModel) =>
+              userSpaceViewModel!..updateUser(userDataProvider),
         ),
       ],
       child: _buildBody(),
     );
   }
 
-  Widget _getLoadingWidget(){
+  Widget _getLoadingWidget() {
     return const Scaffold(
       body: Center(
         child: CircularProgressIndicator(),
@@ -45,38 +47,41 @@ class UserPageView extends StatelessWidget  {
 
   Widget _buildBody() {
     return Consumer<SpaceViewModel>(
-      builder: (context, userSpaceViewModel, child) => 
-        userSpaceViewModel.isLoading
-          ? _getLoadingWidget()
-          : switch (pageType) {
-              DashboardPageType.home => const UserHomepageView(),
-              DashboardPageType.activities => const UserActivityPageView(),
-              DashboardPageType.threads => const UserThreadsPageView(),
-              DashboardPageType.settings => const UserSettingPageView(),
-              DashboardPageType.none => const UserHomepageView(),
-          },
+      builder: (context, userSpaceViewModel, child) =>
+          userSpaceViewModel.isLoading
+              ? _getLoadingWidget()
+              : switch (pageType) {
+                  DashboardPageType.home => const UserHomepageView(),
+                  DashboardPageType.activities => const UserActivityPageView(),
+                  DashboardPageType.threads => const UserThreadsPageView(),
+                  DashboardPageType.settings => const UserSettingPageView(),
+                  DashboardPageType.none => const UserHomepageView(),
+                },
     );
   }
 }
 
-class UserActivityPageView extends StatelessWidget{
+class UserActivityPageView extends StatelessWidget {
   const UserActivityPageView({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProxyProvider<UserDataProvider, ActivityListViewModel>(
           create: (context) => ActivityListViewModel(
-            userDataProvider: Provider.of<UserDataProvider>(context, listen: false)
-          )..init(),
+              userDataProvider:
+                  Provider.of<UserDataProvider>(context, listen: false))
+            ..init(),
           update: (context, userDataProvider, activityListViewModel) =>
-              activityListViewModel!..update(userDataProvider),
+              activityListViewModel!..updateUser(userDataProvider),
         ),
-        ChangeNotifierProxyProvider<ActivityListViewModel, ActivityDisplayViewModel>(
+        ChangeNotifierProxyProvider<ActivityListViewModel,
+            ActivityDisplayViewModel>(
           create: (context) => ActivityDisplayViewModel(
-            activityListViewModel: Provider.of<ActivityListViewModel>(context, listen: false)
-          )..init(),
+              activityListViewModel:
+                  Provider.of<ActivityListViewModel>(context, listen: false))
+            ..init(),
           update: (context, activityListViewModel, activityDisplayViewModel) =>
               activityDisplayViewModel!..update(activityListViewModel),
         ),
@@ -93,20 +98,20 @@ class UserActivityPageView extends StatelessWidget{
       frames: [
         const NavigateRailFrame(),
         Expanded(
-        flex: 1,
-        child: CalendarFrame(
-          color: color,
-        )
-        ),
+            flex: 1,
+            child: CalendarFrame(
+              color: color,
+            )),
         Expanded(
-          flex: 1,
-          child: ActivityListFrame(color: color,)),
+            flex: 1,
+            child: ActivityListFrame(
+              color: color,
+            )),
         Expanded(
-          flex: 2,
-          child: ActivityDetailFrame(
-            color: color,
-          )
-        )
+            flex: 2,
+            child: ActivityDetailFrame(
+              color: color,
+            ))
       ],
       // drawer: _getDrawer(context),
       direction: Axis.horizontal,
@@ -114,20 +119,18 @@ class UserActivityPageView extends StatelessWidget{
   }
 }
 
-
-class UserSettingPageView extends StatelessWidget{
- 
+class UserSettingPageView extends StatelessWidget {
   const UserSettingPageView({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return ChangeNotifierProxyProvider<UserDataProvider, SettingPageViewModel>(
-        create: (context) => SettingPageViewModel()
-          ..update(Provider.of<UserDataProvider>(context, listen: false)),
-          
-        update: (context, userDataProvider, userSpaceSettingViewModel) => userSpaceSettingViewModel!..update(userDataProvider),
-        builder: (context, child) => _buildBody(context),
-      );
+      create: (context) => SettingPageViewModel()
+        ..update(Provider.of<UserDataProvider>(context, listen: false)),
+      update: (context, userDataProvider, userSpaceSettingViewModel) =>
+          userSpaceSettingViewModel!..update(userDataProvider),
+      builder: (context, child) => _buildBody(context),
+    );
   }
 
   Widget _buildBody(BuildContext context) {
@@ -150,19 +153,18 @@ class UserSettingPageView extends StatelessWidget{
   }
 }
 
-class UserHomepageView extends StatelessWidget{
- 
+class UserHomepageView extends StatelessWidget {
   const UserHomepageView({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return ChangeNotifierProxyProvider<UserDataProvider, SettingPageViewModel>(
-        create: (context) => SettingPageViewModel()
-          ..update(Provider.of<UserDataProvider>(context, listen: false)),
-          
-        update: (context, userDataProvider, userSpaceSettingViewModel) => userSpaceSettingViewModel!..update(userDataProvider),
-        builder: (context, child) => _buildBody(context),
-      );
+      create: (context) => SettingPageViewModel()
+        ..update(Provider.of<UserDataProvider>(context, listen: false)),
+      update: (context, userDataProvider, userSpaceSettingViewModel) =>
+          userSpaceSettingViewModel!..update(userDataProvider),
+      builder: (context, child) => _buildBody(context),
+    );
   }
 
   Widget _buildBody(BuildContext context) {
@@ -181,11 +183,10 @@ class UserHomepageView extends StatelessWidget{
         Expanded(
           flex: 3,
           child: DashboardFrameLayout(
-            frameColor: color,
-            child: const Center(
-              child: Text("home"),
-            )
-          ),
+              frameColor: color,
+              child: const Center(
+                child: Text("home"),
+              )),
         )
       ],
       // drawer: _getDrawer(context),
@@ -194,12 +195,11 @@ class UserHomepageView extends StatelessWidget{
   }
 }
 
-class UserThreadsPageView extends StatelessWidget{
- 
+class UserThreadsPageView extends StatelessWidget {
   const UserThreadsPageView({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return _buildBody(context);
   }
 
@@ -213,21 +213,19 @@ class UserThreadsPageView extends StatelessWidget{
         Expanded(
           flex: 1,
           child: DashboardFrameLayout(
-            frameColor: color,
-            child: const Center(
-              child: Text("threads list"),
-            )
-          ),
+              frameColor: color,
+              child: const Center(
+                child: Text("threads list"),
+              )),
         ),
         Expanded(
-          flex: 3,
-          child: DashboardFrameLayout(
-            frameColor: Provider.of<SpaceViewModel>(context, listen: false).spaceColor,
-            child: const ChatThreadBody(
-              threadTitle: "Test Thread",
-            )
-          )
-        )
+            flex: 3,
+            child: DashboardFrameLayout(
+                frameColor: Provider.of<SpaceViewModel>(context, listen: false)
+                    .spaceColor,
+                child: const ChatThreadBody(
+                  threadTitle: "Test Thread",
+                )))
       ],
       // drawer: _getDrawer(context),
       direction: Axis.horizontal,
