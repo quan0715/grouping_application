@@ -144,6 +144,7 @@ class WorkspaceThreadPageView extends StatelessWidget {
     return DashboardView(
       backgroundColor: Colors.white,
       frames: [
+        const NavigateRailFrame(),
         _tempFrame("thread list", 1, context),
         Expanded(
             flex: 3,
@@ -176,8 +177,7 @@ class WorkspaceActivityPageView extends StatelessWidget {
             update: (context, userDataProvider, groupDataProvider,
                     activityListViewModel) =>
                 activityListViewModel!
-                  ..updateUser(
-                      Provider.of<UserDataProvider>(context, listen: false))
+                  ..updateUser(userDataProvider)
                   ..updateWorkspace(groupDataProvider)),
         ChangeNotifierProxyProvider<ActivityListViewModel,
             ActivityDisplayViewModel>(

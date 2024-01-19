@@ -32,20 +32,27 @@ class ActivityDetailFrame extends StatelessWidget {
         return vm.activityListViewModel!.isCreateMode || vm.isEditMode
             ? _buildFrameInputToolBar(
                 context,
-                vm.selectedActivity.belongWorkspace.name,
-                vm.selectedActivity.belongWorkspace.themeColor)
+                vm.selectedActivity.id == -1
+                    ? vm.activityListViewModel!.workspaceDataProvider!
+                        .currentWorkspace!.name
+                    : vm.selectedActivity.belongWorkspace.name,
+                vm.selectedActivity.id == -1
+                    ? vm.activityColor
+                    : AppColor.getWorkspaceColorByIndex(
+                        vm.selectedActivity.belongWorkspace.themeColor))
             : vm.selectedActivity.id == -1
                 ? Container()
                 : _buildFrameDisplayToolBar(
                     context,
                     vm.selectedActivity.belongWorkspace.name,
-                    vm.selectedActivity.belongWorkspace.themeColor);
+                    AppColor.getWorkspaceColorByIndex(
+                        vm.selectedActivity.belongWorkspace.themeColor));
       },
     );
   }
 
   Widget _buildFrameDisplayToolBar(
-      BuildContext context, String workspaceName, int themeColor) {
+      BuildContext context, String workspaceName, Color themeColor) {
     return Row(
       children: [
         // title
@@ -53,7 +60,7 @@ class ActivityDetailFrame extends StatelessWidget {
           '@ $workspaceName 事件',
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColor.getWorkspaceColorByIndex(themeColor),
+                color: themeColor,
               ),
         ),
         const Spacer(),
@@ -67,14 +74,14 @@ class ActivityDetailFrame extends StatelessWidget {
             vm.intoCreateMode(isCreateEvent: vm.isEvent);
           },
           icon: Icon(Icons.add),
-          color: AppColor.getWorkspaceColorByIndex(themeColor),
+          color: themeColor,
         ),
         IconButton(
           onPressed: () {
             Provider.of<ActivityDisplayViewModel>(context, listen: false)
                 .intoEditMode();
           },
-          color: AppColor.getWorkspaceColorByIndex(themeColor),
+          color: themeColor,
           icon: const Icon(Icons.edit),
         ),
         // delete button
@@ -83,7 +90,7 @@ class ActivityDetailFrame extends StatelessWidget {
             Provider.of<ActivityDisplayViewModel>(context, listen: false)
                 .deleteActivity();
           },
-          color: AppColor.getWorkspaceColorByIndex(themeColor),
+          color: themeColor,
           icon: const Icon(Icons.delete),
         ),
         // notification button
@@ -91,7 +98,7 @@ class ActivityDetailFrame extends StatelessWidget {
           onPressed: () {
             debugPrint("notification");
           },
-          color: AppColor.getWorkspaceColorByIndex(themeColor),
+          color: themeColor,
           icon: const Icon(Icons.notifications),
         ),
       ],
@@ -99,7 +106,7 @@ class ActivityDetailFrame extends StatelessWidget {
   }
 
   Widget _buildFrameInputToolBar(
-      BuildContext context, String workspaceName, int themeColor) {
+      BuildContext context, String workspaceName, Color themeColor) {
     return Row(
       children: [
         // title
@@ -107,7 +114,7 @@ class ActivityDetailFrame extends StatelessWidget {
           '@ $workspaceName',
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColor.getWorkspaceColorByIndex(themeColor),
+                color: themeColor,
               ),
         ),
         const Spacer(),
@@ -115,7 +122,7 @@ class ActivityDetailFrame extends StatelessWidget {
         UserActionButton.secondary(
           icon: const Icon(Icons.close),
           label: "取消",
-          primaryColor: AppColor.getWorkspaceColorByIndex(themeColor),
+          primaryColor: themeColor,
           onPressed: () {
             final vm =
                 Provider.of<ActivityDisplayViewModel>(context, listen: false);
@@ -128,7 +135,7 @@ class ActivityDetailFrame extends StatelessWidget {
           icon: const Icon(Icons.check),
           label:
               "建立${Provider.of<ActivityDisplayViewModel>(context, listen: false).isEvent ? "活動" : "任務"}",
-          primaryColor: AppColor.getWorkspaceColorByIndex(themeColor),
+          primaryColor: themeColor,
           onPressed: () {
             final vm =
                 Provider.of<ActivityDisplayViewModel>(context, listen: false);
@@ -158,6 +165,7 @@ class ActivityDetailFrame extends StatelessWidget {
                     vm.selectedActivity.title,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: vm.activityColor,
                         ),
                   ),
                   gap,
@@ -483,7 +491,12 @@ class ActivityDetailFrame extends StatelessWidget {
                 ElevatedButton.icon(
                     icon: const Icon(Icons.add),
                     onPressed: () {},
-                    label: const Text("新增參與者"))
+                    label: const Text("新增參與者"),
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll<Color>(vm.activityColor),
+                        backgroundColor:
+                            MaterialStatePropertyAll<Color>(Colors.white)))
               ],
             ),
             gap,

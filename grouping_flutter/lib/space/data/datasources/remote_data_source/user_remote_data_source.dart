@@ -15,7 +15,8 @@ abstract class UserRemoteDataSource {
   UserRemoteDataSource({String token = ""});
   Future<UserModel> getUserData({required int uid});
   Future<UserModel> updateUserData({required UserModel account});
-  Future<UserModel> updateUserProfileImage({required UserModel account, required XFile image});
+  Future<UserModel> updateUserProfileImage(
+      {required UserModel account, required XFile image});
 }
 
 class UserRemoteDataSourceImpl extends UserRemoteDataSource {
@@ -70,23 +71,24 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   Future<UserModel> getUserData({required int uid}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/$uid/");
     final response = await _client.get(apiUri, headers: headers);
-    // debugPrint(response.body);
+    debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
         // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
-          try{
-            return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-          }
-          catch (error) {
-            debugPrint("database data error: $error");
-            throw ServerException(exceptionMessage: "Database Data Error");
-          }
-        case 400:
-          throw ServerException(exceptionMessage: "Invalid Syntax");
-        case 404:
-          throw ServerException(exceptionMessage: "The requesting data was not found");
-        default:
-          throw ServerException(exceptionMessage: "unknown error");
+        try {
+          return UserModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+        } catch (error) {
+          debugPrint("database data error: $error");
+          throw ServerException(exceptionMessage: "Database Data Error");
+        }
+      case 400:
+        throw ServerException(exceptionMessage: "Invalid Syntax");
+      case 404:
+        throw ServerException(
+            exceptionMessage: "The requesting data was not found");
+      default:
+        throw ServerException(exceptionMessage: "unknown error");
     }
   }
 
@@ -107,15 +109,16 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
     // debugPrint("before update---------------------------");
     // debugPrint(jsonEncode(account.toJson()).toString());
-    final response = await _client.patch(apiUri, headers: headers, body: jsonEncode(account.toJson()));
+    final response = await _client.patch(apiUri,
+        headers: headers, body: jsonEncode(account.toJson()));
     // debugPrint("after update---------------------------");
     // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
     switch (response.statusCode) {
       case 200:
-        try{
-          return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-        }
-        catch (error) {
+        try {
+          return UserModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+        } catch (error) {
           debugPrint("database data error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }
@@ -130,9 +133,10 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   }
 
   @override
-  Future<UserModel> updateUserProfileImage({required UserModel account,required XFile image}) async {
+  Future<UserModel> updateUserProfileImage(
+      {required UserModel account, required XFile image}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
-    
+
     // request.fields[] = productId.toString();
     // request.files.add(await http.MultipartFile.fromPath('photo_data', imageURL));
     var request = http.MultipartRequest("PATCH", apiUri);
@@ -141,7 +145,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       http.MultipartFile.fromBytes(
         'photo_data',
         await image.readAsBytes(),
-    //  contentType: MediaType('application', 'octet-stream'),
+        //  contentType: MediaType('application', 'octet-stream'),
         filename: '${account.id}_profile.jpg',
       ),
     );
@@ -154,10 +158,10 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     switch (response.statusCode) {
       case 200:
         // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
-        try{
-          return UserModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-        }
-        catch (error) {
+        try {
+          return UserModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+        } catch (error) {
           debugPrint("database data error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }

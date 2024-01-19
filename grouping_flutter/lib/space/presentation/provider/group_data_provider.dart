@@ -20,35 +20,34 @@ class GroupDataProvider extends ChangeNotifier {
   // final MessageService? messageService;
 
   Color get color => AppColor.getWorkspaceColorByIndex(
-    currentWorkspace!.themeColor,
-  );
+        currentWorkspace?.themeColor ?? 0,
+      );
 
   Future getWorkspace() async {
     debugPrint("WorkspaceViewModel getCurrentWorkspace");
 
     GetWorkspaceUseCase getCurrentWorkspaceUseCase =
         GetWorkspaceUseCase(WorkspaceRepositoryImpl(
-      remoteDataSource:
-          WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
+      remoteDataSource: WorkspaceRemoteDataSourceImpl(token: tokenModel.token),
       localDataSource: WorkspaceLocalDataSourceImpl(),
     ));
 
-    if(workspaceIndex == -1){
+    if (workspaceIndex == -1) {
       throw Exception("workspaceIndex is not set");
     }
     final failureOrWorkspace = await getCurrentWorkspaceUseCase(workspaceIndex);
 
     failureOrWorkspace.fold(
-      (failure) => {
-        debugPrint("WorkspaceViewModel getCurrentWorkspace failure: ${failure.toString()}")
-      },
-      (workspace) {
+        (failure) => {
+              debugPrint(
+                  "WorkspaceViewModel getCurrentWorkspace failure: ${failure.toString()}")
+            }, (workspace) {
       currentWorkspace = workspace;
       debugPrint("WorkspaceViewModel getCurrentWorkspace success");
       // print user data
       debugPrint(workspace.toString());
-      }
-    );
+    });
+
     notifyListeners();
   }
 
@@ -58,5 +57,4 @@ class GroupDataProvider extends ChangeNotifier {
     isLoading = false;
     // debugPrint("UserData init, ${currentUser?.toString()}");
   }
-
 }
