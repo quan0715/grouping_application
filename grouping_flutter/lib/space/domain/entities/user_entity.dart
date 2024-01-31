@@ -1,8 +1,8 @@
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_activity.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
-import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 
 class UserEntity implements BaseEntity<UserModel>{
@@ -14,8 +14,8 @@ class UserEntity implements BaseEntity<UserModel>{
   String introduction;
   ImageModel? photo;
   List<UserTagEntity> tags;
-  List<NestWorkspace> joinedWorkspaces;
-  List<ActivityModel> contributingActivities;
+  List<SimpleWorkspace> joinedWorkspaces;
+  List<SimpleActivity> contributingActivities;
   final spaceColor = AppColor.mainSpaceColor;
 
   // build constructor

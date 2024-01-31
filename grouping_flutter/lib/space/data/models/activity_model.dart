@@ -1,5 +1,5 @@
 import 'package:grouping_project/core/data/models/member_model.dart';
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
@@ -10,7 +10,7 @@ abstract class ActivityModel implements BaseModel<ActivityEntity>{
   String introduction;
   Member creator;
   DateTime createTime;
-  NestWorkspace belongWorkspace;
+  SimpleWorkspace belongWorkspace;
   // List<int> parentMissionIDs;
   List<MissionModel> childMissions;
   List<Member> contributors;

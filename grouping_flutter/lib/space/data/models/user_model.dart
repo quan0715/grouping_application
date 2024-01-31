@@ -1,9 +1,9 @@
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_activity.dart';
+import 'package:grouping_project/core/data/models/simple_event.dart';
+import 'package:grouping_project/core/data/models/simple_mission.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 import 'package:grouping_project/core/util/base_model.dart';
-import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
-import 'package:grouping_project/space/data/models/event_model.dart';
-import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
 
 // import '../workspace/data_model.dart';
@@ -40,8 +40,8 @@ class UserModel implements BaseModel<UserEntity>{
   String introduction;
   ImageModel? photo;
   List<UserTagModel> tags;
-  List<NestWorkspace> joinedWorkspaces;
-  List<ActivityModel> contributingActivities;
+  List<SimpleWorkspace> joinedWorkspaces;
+  List<SimpleActivity> contributingActivities;
 
   /// ## a data model for account, either user or group
   /// * ***DO NOT*** pass or set id for AccountModel
@@ -79,13 +79,13 @@ class UserModel implements BaseModel<UserEntity>{
             .toList(),
         joinedWorkspaces: (data['joined_workspaces']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
-            .map((workspace) => NestWorkspace.fromJson(data: workspace))
+            .map((workspace) => SimpleWorkspace.fromJson(data: workspace))
             .toList(),
         contributingActivities: (data['contributing_activities']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
-                ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity))
+                ? SimpleEvent.fromJson(data: activity)
+                : SimpleMission.fromJson(data: activity))
             .toList(),
       );
 

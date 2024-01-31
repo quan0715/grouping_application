@@ -1,4 +1,4 @@
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 
 import 'mission_state_stage.dart';
 
@@ -9,7 +9,7 @@ class MissionState {
   int id;
   MissionStage stage;
   String stateName;
-  NestWorkspace? belongWorkspace;
+  SimpleWorkspace? belongWorkspace;
 
   MissionState({required this.id, required this.stage, required this.stateName, this.belongWorkspace});
 
@@ -25,7 +25,7 @@ class MissionState {
           id: data['id'],
           stage: MissionStage.fromLabel(data['stage']),
           stateName: data['name'],
-          belongWorkspace: data['belong_workspace'] != null ? NestWorkspace.fromJson(data: data['belong_workspace']) : null);
+          belongWorkspace: data['belong_workspace'] != null ? SimpleWorkspace.fromJson(data: data['belong_workspace']) : null);
 
   @override
   String toString() {

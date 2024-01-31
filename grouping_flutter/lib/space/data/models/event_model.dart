@@ -1,5 +1,5 @@
 import 'package:grouping_project/core/data/models/member_model.dart';
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
@@ -40,7 +40,7 @@ class EventModel extends ActivityModel {
           createTime: DateTime.parse(data['created_at']),
           startTime: DateTime.parse(data['event']['start_time']),
           endTime: DateTime.parse(data['event']['end_time']),
-          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
+          belongWorkspace: SimpleWorkspace.fromJson(data: data['belong_workspace']),
           childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
           contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
           notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),);

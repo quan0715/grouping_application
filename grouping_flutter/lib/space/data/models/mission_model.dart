@@ -1,6 +1,6 @@
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
 
@@ -40,7 +40,7 @@ class MissionModel extends ActivityModel {
           state: MissionState.fromJson(data: data['mission']['state']),
           creator: Member.fromJson(data: data['creator']),
           createTime: DateTime.parse(data['created_at']),
-          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
+          belongWorkspace: SimpleWorkspace.fromJson(data: data['belong_workspace']),
           // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
           childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
           contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),

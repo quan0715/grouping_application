@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/mission_state_stage.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
-import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/models/simple_workspace.dart';
 import 'package:grouping_project/core/theme/color.dart';
 // import 'package:grouping_project/space/data/models/mission_state_stage.dart';
 import 'package:grouping_project/space/domain/entities/user_entity.dart';
@@ -15,26 +15,26 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 // will be deleted after test
-// import 'package:grouping_project/core/data/models/image_model.dart';
-// import 'package:grouping_project/space/data/models/workspace_model.dart';
-// import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
-// import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
-// import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
-// import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/create_event_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/get_event_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/update_event_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/create_mission_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/get_mission_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/update_mission_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/activity_usecases/delete_activity_usecase.dart';
-// import 'package:grouping_project/space/data/datasources/local_data_source/state_local_data_source.dart';
-// import 'package:grouping_project/space/data/datasources/remote_data_source/state_remote_data_source.dart';
-// import 'package:grouping_project/space/data/repositories/state_repository_impl.dart';
-// import 'package:grouping_project/space/domain/usecases/state_usecases/create_state_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/state_usecases/delete_state_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/state_usecases/get_state_usecase.dart';
-// import 'package:grouping_project/space/domain/usecases/state_usecases/update_state_usecase.dart';
+import 'package:grouping_project/core/data/models/image_model.dart';
+import 'package:grouping_project/space/data/models/workspace_model.dart';
+import 'package:grouping_project/space/domain/entities/workspace_entity.dart';
+import 'package:grouping_project/space/data/datasources/local_data_source/activity_local_data_source.dart';
+import 'package:grouping_project/space/data/datasources/remote_data_source/activity_remote_data_source.dart';
+import 'package:grouping_project/space/data/repositories/activity_repository_impl.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/create_event_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/get_event_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/update_event_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/create_mission_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/get_mission_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/update_mission_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/activity_usecases/delete_activity_usecase.dart';
+import 'package:grouping_project/space/data/datasources/local_data_source/state_local_data_source.dart';
+import 'package:grouping_project/space/data/datasources/remote_data_source/state_remote_data_source.dart';
+import 'package:grouping_project/space/data/repositories/state_repository_impl.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/create_state_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/delete_state_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/get_state_usecase.dart';
+import 'package:grouping_project/space/domain/usecases/state_usecases/update_state_usecase.dart';
 
 extension DateTimeExtension on DateTime {
   int get weekOfMonthStartFromMonday {
@@ -71,7 +71,7 @@ class ActivityListViewModel extends ChangeNotifier {
 
   ActivityEntity? selectedActivity;
 
-  NestWorkspace tempGroup = NestWorkspace(
+  SimpleWorkspace tempGroup = SimpleWorkspace(
     id: -1,
     name: "Grouping 專題研究小組",
     themeColor: 1,
@@ -163,7 +163,7 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: NestWorkspace(
+          belongWorkspace: SimpleWorkspace(
               id: -1,
               name: "軟工小組",
               themeColor: 2,),
@@ -181,7 +181,7 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: NestWorkspace(
+          belongWorkspace: SimpleWorkspace(
               id: -1,
               name: "test 的 workspace",
               themeColor: 4,),
@@ -199,7 +199,7 @@ class ActivityListViewModel extends ChangeNotifier {
           // creatorAccount: UserModel.defaultAccount,
           creator: member,
           createTime: DateTime.now(),
-          belongWorkspace: NestWorkspace(
+          belongWorkspace: SimpleWorkspace(
               id: -1,
               name: "test 的 workspace",
               themeColor: 4,),
@@ -224,9 +224,7 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   void init() {
-    activities = userDataProvider.currentUser!.contributingActivities
-        .map((activity) => activity.toEntity())
-        .toList();
+    // activities = userDataProvider.currentUser!.contributingActivities; TODO: entity? simple?
     activities = tmpData;
     selectedActivity = activities!.first;
     // events = _sortEvents();
@@ -236,9 +234,7 @@ class ActivityListViewModel extends ChangeNotifier {
   void update(UserDataProvider userProvider) {
     // debugPrint("UserViewModel update userData");
     userDataProvider = userProvider;
-    activities = userDataProvider.currentUser!.contributingActivities
-        .map((activity) => activity.toEntity())
-        .toList();
+    // activities = userDataProvider.currentUser!.contributingActivities; TODO: entity? simple?
     activities = tmpData;
     // events = _sortEvents();
     // missions = _sortMissions();
@@ -331,7 +327,7 @@ class ActivityListViewModel extends ChangeNotifier {
     return initialDate;
   }
 
-  /*
+  
   Future<void> testCreateEvent() async {
     CreateEventUseCase createEventUseCase = CreateEventUseCase(
         activityRepository: ActivityRepositoryImpl(
@@ -359,7 +355,7 @@ class ActivityListViewModel extends ChangeNotifier {
 
     UserEntity user = userDataProvider.currentUser!;
     Member member = Member(id: user.id, userName: user.name);
-    NestWorkspace workspace = NestWorkspace(
+    SimpleWorkspace workspace = SimpleWorkspace(
         id: 1,
         themeColor: 1,
         name: 'test 的個人空間',
@@ -439,7 +435,7 @@ class ActivityListViewModel extends ChangeNotifier {
             localDataSource: StateLocalDataSourceImpl()));
 
     UserEntity user = userDataProvider.currentUser!;
-    NestWorkspace workspace = NestWorkspace(
+    SimpleWorkspace workspace = SimpleWorkspace(
         id: 1,
         themeColor: 1,
         name: 'test 的個人空間',
@@ -517,7 +513,7 @@ class ActivityListViewModel extends ChangeNotifier {
 
     UserEntity user = userDataProvider.currentUser!;
     Member member = Member(id: user.id, userName: user.name);
-    NestWorkspace workspace = NestWorkspace(
+    SimpleWorkspace workspace = SimpleWorkspace(
         id: 1,
         themeColor: 1,
         name: 'test 的個人空間',
@@ -580,7 +576,7 @@ class ActivityListViewModel extends ChangeNotifier {
       (await deleteStateUsecase.call(state.id)).fold((l) => debugPrint("delete state faile"), (r) => debugPrint("delete state success"));
     });
   }
-  */
+  
 }
 
 class ActivityData extends CalendarDataSource {
