@@ -63,7 +63,7 @@ class LoginViewModel extends ChangeNotifier {
           MessageData.error(title: "登入失敗", message: failure.errorMessage));
     }, (authToken) {
       userAccessToken = authToken.token;
-      debugPrint("access token : $userAccessToken");
+      debugPrint("access token fetched");
     });
 
     isLoading = false;
@@ -95,7 +95,6 @@ class LoginViewModel extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
-    // debugPrint(loginState.toString());
   }
 
   Future isURLContainCode(Uri platformURI) async {
@@ -122,7 +121,7 @@ class LoginViewModel extends ChangeNotifier {
             MessageData.error(title: "登入失敗", message: failure.errorMessage));
       }, (authToken) {
         userAccessToken = authToken.token;
-        debugPrint("access token : $userAccessToken");
+        debugPrint("access token fetched");
       });
       isLoading = false;
 

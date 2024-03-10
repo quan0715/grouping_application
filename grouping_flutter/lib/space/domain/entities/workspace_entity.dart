@@ -1,18 +1,18 @@
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/space/data/models/workspace_model.dart';
 
-
-class WorkspaceEntity implements BaseEntity<WorkspaceModel>{
+class WorkspaceEntity implements BaseEntity<WorkspaceModel> {
   final int id;
   int themeColor;
   String name;
   String description;
   final ImageModel? photo;
   final List<Member> members;
-  final List<ActivityModel> activities;
+  final List<NestedActivity> activities;
   List<WorkspaceTagModel> tags;
 
   WorkspaceEntity(
@@ -26,7 +26,7 @@ class WorkspaceEntity implements BaseEntity<WorkspaceModel>{
       required this.tags});
 
   @override
-  WorkspaceModel toModel(){
+  WorkspaceModel toModel() {
     return WorkspaceModel(
       id: id,
       themeColor: themeColor,
@@ -38,7 +38,7 @@ class WorkspaceEntity implements BaseEntity<WorkspaceModel>{
       tags: tags,
     );
   }
-  
+
   factory WorkspaceEntity.newWorkspace() {
     return WorkspaceEntity(
       id: -1,

@@ -28,8 +28,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await http.post(Uri.parse(endPoint), body: body);
 
       int statusCode = response.statusCode;
-      // debugPrint('statusCode: $statusCode');
-      // debugPrint('qqqqqqq: ${response.body}');
       Map<String, dynamic> jsonData = json.decode(response.body);
       if (statusCode == 200) {
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
@@ -40,7 +38,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerException(exceptionMessage: 'response status: $statusCode');
       }
     } catch (e) {
-      // debugPrint(e.toString());
       throw ServerException(
         exceptionMessage: e.toString(),
       );
@@ -63,7 +60,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       int statusCode = response.statusCode;
       debugPrint('statusCode: $statusCode');
-      // debugPrint(response.body);
       Map<String, dynamic> jsonData = json.decode(response.body);
       if (statusCode == 200) {
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
@@ -74,7 +70,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerException(exceptionMessage: 'response status: $statusCode');
       }
     } catch (e) {
-      // debugPrint(e.toString());
       throw ServerException(
         exceptionMessage: e.toString(),
       );
@@ -95,7 +90,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       int statusCode = response.statusCode;
       debugPrint('statusCode: $statusCode');
-      // debugPrint(response.body);
       Map<String, dynamic> jsonData = json.decode(response.body);
       if (statusCode == 200) {
         AuthTokenModel authTokenModel = AuthTokenModel.fromJson(jsonData);
@@ -106,7 +100,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerException(exceptionMessage: 'response status: $statusCode');
       }
     } catch (e) {
-      // debugPrint(e.toString());
       throw ServerException(
         exceptionMessage: e.toString(),
       );
@@ -133,7 +126,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (statusCode == 200) {
         return;
       } else if (statusCode == 400) {
-        // debugPrint(jsonData.toString());
         throw ServerException(exceptionMessage: jsonData['error']);
       } else {
         throw ServerException(exceptionMessage: 'response status: $statusCode');

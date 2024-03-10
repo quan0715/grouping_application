@@ -55,6 +55,5 @@ class GroupDataProvider extends ChangeNotifier {
     isLoading = true;
     await getWorkspace();
     isLoading = false;
-    // debugPrint("UserData init, ${currentUser?.toString()}");
   }
 }

@@ -12,10 +12,7 @@ import 'package:grouping_project/space/domain/usecases/setting_usecases/update_s
 import 'package:grouping_project/space/presentation/provider/user_data_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
-
-
 class SettingPageViewModel extends ChangeNotifier {
-
   // user data for render this page
   // it will be auto update since it comes from proxyProvider
   UserDataProvider? userDataProvider;
@@ -26,56 +23,56 @@ class SettingPageViewModel extends ChangeNotifier {
 
   UserTagEntity getTagByIndex(int index) => userTags[index];
 
-  bool get isValidToAddNewTag 
-    => userDataProvider!.currentUser!.tags.length + 1 <= 4;
-  
+  bool get isValidToAddNewTag =>
+      userDataProvider!.currentUser!.tags.length + 1 <= 4;
+
   MessageService messageService = MessageService();
-  
+
   UpdateSettingUseCase? updateSettingUseCase;
-  
+
   int currentSectionIndex = 0;
 
-  SettingEntity settingEntity = SettingEntity(isNightView: false, dashboardColor: Colors.white,);
-  
+  SettingEntity settingEntity = SettingEntity(
+    isNightView: false,
+    dashboardColor: Colors.white,
+  );
+
   bool isAddingNewTag = false;
   bool isLoading = false;
   int indexOfEditingTag = -1;
-  
+
   // Uint8List? tempAvatarData;
 
-  
-  
   void onSectionChange(int index) {
     // when user tap on navigationRail, change current section index by destination index
     currentSectionIndex = index;
     notifyListeners();
   }
 
-  bool tagIsEdited(int index){
+  bool tagIsEdited(int index) {
     // only one tag can be edited at a time
     return index != -1 && (index == indexOfEditingTag);
   }
 
-  void clearFormState(){
+  void clearFormState() {
     // clear either you are adding new tag or editing tag
     isAddingNewTag = false;
     indexOfEditingTag = -1;
     notifyListeners();
   }
-  
+
   void onTagEdited(int index) {
     indexOfEditingTag = index;
     isAddingNewTag = false;
     notifyListeners();
   }
 
-
   Future<void> onNightViewToggled(bool value) async {
-
     final failureOrNull = await updateSettingUseCase!(settingEntity);
 
     failureOrNull.fold(
-        (failure) => MessageService().addMessage(MessageData.error(message: failure.toString())),
+        (failure) => MessageService()
+            .addMessage(MessageData.error(message: failure.toString())),
         (void r) => debugPrint("night view changed, unimplemented"));
 
     notifyListeners();
@@ -86,10 +83,10 @@ class SettingPageViewModel extends ChangeNotifier {
     final failureOrNull = await updateSettingUseCase!(settingEntity);
 
     failureOrNull.fold(
-      (failure) => messageService.addMessage(MessageData.error(message: failure.toString())),
-      (void r) => debugPrint("color changed, unimplemented")
-    );
-    
+        (failure) => messageService
+            .addMessage(MessageData.error(message: failure.toString())),
+        (void r) => debugPrint("color changed, unimplemented"));
+
     notifyListeners();
   }
 
@@ -99,16 +96,13 @@ class SettingPageViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteUserTagByIndex(int index) async {
-    // debugPrint("delete tag $index");
     userDataProvider!.currentUser!.tags.removeAt(index);
     await userDataProvider!.updateUser();
     clearFormState();
-    // debugPrint("delete tag $tag done");
     notifyListeners();
   }
 
   Future<void> updateExistingTag(UserTagEntity tag, int index) async {
-    // debugPrint("update tag $tag");
     userTags[index] = tag;
     await userDataProvider!.updateUser();
     indexOfEditingTag = -1;
@@ -116,16 +110,15 @@ class SettingPageViewModel extends ChangeNotifier {
   }
 
   Future<void> createNewTag(UserTagEntity tag) async {
-    // debugPrint("add tag $tag");
-    if(userTags.length < 4){
+    if (userTags.length < 4) {
       userTags.add(tag);
       await userDataProvider!.updateUser();
-    } 
+    }
     isAddingNewTag = false;
     notifyListeners();
   }
 
-  Future<void> updateUser(UserEntity userEntity) async{
+  Future<void> updateUser(UserEntity userEntity) async {
     isLoading = true;
     notifyListeners();
     await userDataProvider!.updateUser();
@@ -135,12 +128,10 @@ class SettingPageViewModel extends ChangeNotifier {
 
   void update(UserDataProvider userDataProvider) {
     this.userDataProvider = userDataProvider;
-    updateSettingUseCase = UpdateSettingUseCase(
-      UserRepositoryImpl(
-          remoteDataSource:UserRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
-          localDataSource: UserLocalDataSourceImpl()
-      )
-    );
+    updateSettingUseCase = UpdateSettingUseCase(UserRepositoryImpl(
+        remoteDataSource:
+            UserRemoteDataSourceImpl(token: userDataProvider.tokenModel.token),
+        localDataSource: UserLocalDataSourceImpl()));
     notifyListeners();
   }
 
@@ -152,13 +143,15 @@ class SettingPageViewModel extends ChangeNotifier {
     debugPrint("upload avatar");
     debugPrint(file.path);
     // currentUser.photo!.data = file.path;
-    var testRemote = UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token);
-    await testRemote.updateUserProfileImage(account: currentUser.toModel(), image: file);
-    
+    var testRemote =
+        UserRemoteDataSourceImpl(token: userDataProvider!.tokenModel.token);
+    await testRemote.updateUserProfileImage(
+        account: currentUser.toModel(), image: file);
+
     await updateUser(currentUser);
     // updateAvatar(await file.readAsBytes());
   }
-  
+
   set userName(String value) {
     currentUser.name = value;
     notifyListeners();

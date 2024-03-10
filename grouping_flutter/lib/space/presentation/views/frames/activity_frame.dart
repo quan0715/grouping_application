@@ -33,13 +33,11 @@ class ActivityDetailFrame extends StatelessWidget {
             ? _buildFrameInputToolBar(
                 context,
                 vm.selectedActivity.id == -1
-                    ? vm.activityListViewModel!.workspaceDataProvider!
-                        .currentWorkspace!.name
+                    ? "Winnie's"
                     : vm.selectedActivity.belongWorkspace.name,
                 vm.selectedActivity.id == -1
-                    ? vm.activityColor
-                    : AppColor.getWorkspaceColorByIndex(
-                        vm.selectedActivity.belongWorkspace.themeColor))
+                    ? vm.colorOnCreate
+                    : vm.activityColor)
             : vm.selectedActivity.id == -1
                 ? Container()
                 : _buildFrameDisplayToolBar(
@@ -405,10 +403,7 @@ class ActivityDetailFrame extends StatelessWidget {
             AppTextFormField(
               initialValue: "",
               hintText: "點擊變更標題",
-              primaryColor:
-                  vm.activityListViewModel!.workspaceDataProvider?.color ??
-                      vm.activityListViewModel!.userDataProvider.currentUser!
-                          .spaceColor,
+              primaryColor: vm.colorOnCreate,
               fillColor: Colors.white.withOpacity(0.4),
               textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -423,11 +418,11 @@ class ActivityDetailFrame extends StatelessWidget {
             gap,
             KeyValuePairWidget<String, Widget>(
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                primaryColor: vm.isEvent ? vm.activityColor : Colors.red,
+                primaryColor: vm.isEvent ? vm.colorOnCreate : Colors.red,
                 keyChild: "編輯時間",
                 valueChild: Row(children: [
                   TimeDisplayWithPressibleBody(
-                    activityColor: vm.activityColor,
+                    activityColor: vm.colorOnCreate,
                     time: vm.formattedDate.format(vm.startTimeInChange),
                     onPressed: () {
                       showDatePicker(
@@ -460,7 +455,7 @@ class ActivityDetailFrame extends StatelessWidget {
                   Visibility(
                     visible: vm.activityListViewModel!.isCreateEvent,
                     child: TimeDisplayWithPressibleBody(
-                        activityColor: vm.activityColor,
+                        activityColor: vm.colorOnCreate,
                         time: vm.formattedDate.format(vm.endTimeInChange),
                         onPressed: () {
                           showDatePicker(
@@ -494,7 +489,7 @@ class ActivityDetailFrame extends StatelessWidget {
                     label: const Text("新增參與者"),
                     style: ButtonStyle(
                         foregroundColor:
-                            MaterialStatePropertyAll<Color>(vm.activityColor),
+                            MaterialStatePropertyAll<Color>(vm.colorOnCreate),
                         backgroundColor:
                             MaterialStatePropertyAll<Color>(Colors.white)))
               ],
@@ -503,12 +498,12 @@ class ActivityDetailFrame extends StatelessWidget {
             Divider(color: color.withOpacity(0.3)),
             KeyValuePairWidget<String, Widget>(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-              primaryColor: vm.activityColor,
+              primaryColor: vm.colorOnCreate,
               keyChild: "說明",
               valueChild: AppTextFormField(
                 initialValue: vm.introductionInChange,
                 hintText: "點擊新增${vm.isEvent ? "活動" : "任務"}說明",
-                primaryColor: vm.activityColor,
+                primaryColor: vm.colorOnCreate,
                 onChanged: (value) {
                   vm.introductionInChange = value ?? "";
                 },

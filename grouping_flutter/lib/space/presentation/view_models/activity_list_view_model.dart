@@ -72,7 +72,10 @@ class ActivityListViewModel extends ChangeNotifier {
   UserDataProvider userDataProvider;
   GroupDataProvider? workspaceDataProvider;
 
+  late ActivityRepositoryImpl _activityRepository;
+
   List<ActivityEntity>? activities;
+
   List<EventEntity> get events => _sortEvents();
   List<MissionEntity> get missions => _sortMissions();
 
@@ -107,41 +110,49 @@ class ActivityListViewModel extends ChangeNotifier {
       {required this.userDataProvider, this.workspaceDataProvider});
 
   void selectActivity(ActivityEntity activity) {
-    selectedActivity = activity;
+    selectedActivity = activity
+        .toNested()
+        .toEntity(repositoryImpl: _activityRepository)
+        .then((value) => selectedActivity = value) as ActivityEntity;
     notifyListeners();
   }
 
   void init() {
-    activities = (workspaceDataProvider != null
-            ? workspaceDataProvider!.currentWorkspace!.activities
-            : userDataProvider.currentUser!.contributingActivities)
-        .map((activity) => activity.toEntity())
+    debugPrint("ActivityListViewModel init");
+    activities = userDataProvider.currentUser!.contributingActivities
+        .map((activity) => activity.toEntity() as ActivityEntity)
         .toList();
-
-    // activities = tmpData;
     selectedActivity =
         activities!.isNotEmpty ? activities!.first : emptyActivity;
     isLoading = false;
     // events = _sortEvents();
     // missions = _sortMissions();
+    notifyListeners();
   }
 
   void updateUser(UserDataProvider userProvider) {
-    // debugPrint("UserViewModel update userData");
+    isLoading = true;
+    notifyListeners();
     userDataProvider = userProvider;
     activities = userDataProvider.currentUser!.contributingActivities
-        .map((activity) => activity.toEntity())
+        .map((activity) => activity.toEntity() as ActivityEntity)
         .toList();
+    isLoading = false;
+    notifyListeners();
     // activities = tmpData;
     // events = _sortEvents();
     // missions = _sortMissions();
   }
 
   void updateWorkspace(GroupDataProvider groupProvider) {
+    isLoading = true;
+    notifyListeners();
     workspaceDataProvider = groupProvider;
     activities = workspaceDataProvider!.currentWorkspace!.activities
-        .map((activity) => activity.toEntity())
+        .map((activity) => activity.toEntity() as ActivityEntity)
         .toList();
+    isLoading = false;
+    notifyListeners();
   }
 
   List<MissionEntity> get todoMissions => missions
@@ -173,6 +184,7 @@ class ActivityListViewModel extends ChangeNotifier {
   }
 
   List<EventEntity> _sortEvents() {
+    debugPrint(activities!.length.toString());
     List<EventEntity> allEvents = activities!
         .whereType<EventEntity>()
         .where((event) =>
@@ -295,7 +307,7 @@ class ActivityDisplayViewModel extends ChangeNotifier {
 
   ActivityEntity get selectedActivity =>
       activityListViewModel!.selectedActivity!;
-  late ActivityRepositoryImpl _activityRepository;
+  late ActivityEntity selectedActivityDetail;
 
   bool isEditMode = false;
 
@@ -323,10 +335,9 @@ class ActivityDisplayViewModel extends ChangeNotifier {
   Duration get endtimeDifference =>
       (selectedActivity as EventEntity).startTime.difference(DateTime.now());
 
-  Color get activityColor =>
-      activityListViewModel!.workspaceDataProvider?.color ??
-      AppColor.getWorkspaceColorByIndex(
-          selectedActivity.belongWorkspace.themeColor);
+  Color get activityColor => AppColor.getWorkspaceColorByIndex(
+      selectedActivity.belongWorkspace.themeColor);
+  Color get colorOnCreate => AppColor.getWorkspaceColorByIndex(1);
 
   ActivityDisplayViewModel({this.activityListViewModel});
 
@@ -353,14 +364,13 @@ class ActivityDisplayViewModel extends ChangeNotifier {
       : DateTime.now();
 
   update(ActivityListViewModel activityListViewModel) {
-    // debugPrint("ActivityDisplayViewModel update");
     this.activityListViewModel = activityListViewModel;
     debugPrint(selectedActivity.toString());
     notifyListeners();
   }
 
   void init() {
-    _activityRepository = ActivityRepositoryImpl(
+    activityListViewModel!._activityRepository = ActivityRepositoryImpl(
         remoteDataSource: ActivityRemoteDataSourceImpl(
             token: activityListViewModel!.userDataProvider.tokenModel.token),
         localDataSource: ActivityLocalDataSourceImpl());
@@ -389,7 +399,8 @@ class ActivityDisplayViewModel extends ChangeNotifier {
       .call(activityListViewModel!.workspaceDataProvider!.workspaceIndex);
 
   void deleteActivity() {
-    DeleteActivityUseCase(_activityRepository).call(selectedActivity.id);
+    DeleteActivityUseCase(activityListViewModel!._activityRepository)
+        .call(selectedActivity.id);
 
     activityListViewModel!.notifyListeners();
     notifyListeners();
@@ -409,10 +420,6 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     activityListViewModel!.isCreateMode = true;
     activityListViewModel!.isCreateEvent = isCreateEvent;
     activityListViewModel!.inChangeSwitchLock = true;
-
-    activityListViewModel!.lastSelected =
-        activityListViewModel!.selectedActivity;
-
     activityListViewModel!.lastSelected =
         activityListViewModel!.selectedActivity;
 
@@ -434,19 +441,18 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     // ActivityEntity activityEntity = activityListViewModel!.isCreateEvent
     //     ? EventEntity(
     if (activityListViewModel!.isCreateEvent) {
-      CreateEventUseCase(activityRepository: _activityRepository).call(
-          EventEntity(
+      CreateEventUseCase(
+              activityRepository: activityListViewModel!._activityRepository)
+          .call(EventEntity(
               id: -1,
               title: titleInChange,
               introduction: introductionInChange,
               contributors: contributorsInChange,
               notifications: notificationsInChange,
-              creator:
-                  Member(
-                      id: activityListViewModel!
-                          .userDataProvider.currentUser!.id,
-                      userName: activityListViewModel!
-                          .userDataProvider.currentUser!.name),
+              creator: Member(
+                  id: activityListViewModel!.userDataProvider.currentUser!.id,
+                  userName: activityListViewModel!
+                      .userDataProvider.currentUser!.name),
               createTime: DateTime.now(),
               belongWorkspace: NestWorkspace(
                   id: activityListViewModel!
@@ -459,19 +465,18 @@ class ActivityDisplayViewModel extends ChangeNotifier {
               endTime: endTimeInChange,
               childMissions: childMissionInChange));
     } else {
-      CreateMissionUseCase(activityRepository: _activityRepository).call(
-          MissionEntity(
+      CreateMissionUseCase(
+              activityRepository: activityListViewModel!._activityRepository)
+          .call(MissionEntity(
               id: -1,
               title: titleInChange,
               introduction: introductionInChange,
               contributors: contributorsInChange,
               notifications: notificationsInChange,
-              creator:
-                  Member(
-                      id: activityListViewModel!
-                          .userDataProvider.currentUser!.id,
-                      userName: activityListViewModel!
-                          .userDataProvider.currentUser!.name),
+              creator: Member(
+                  id: activityListViewModel!.userDataProvider.currentUser!.id,
+                  userName: activityListViewModel!
+                      .userDataProvider.currentUser!.name),
               createTime: DateTime.now(),
               belongWorkspace: NestWorkspace(
                   id: activityListViewModel!
@@ -520,23 +525,27 @@ class ActivityDisplayViewModel extends ChangeNotifier {
     activityListViewModel!.inChangeSwitchLock = false;
 
     if (isEvent) {
-      UpdateEventUseCase(activityRepository: _activityRepository).call(
-          EventEntity(
-              id: activityListViewModel!.selectedActivity!.id,
-              title: titleInChange,
-              introduction: introductionInChange,
-              contributors: contributorsInChange,
-              notifications: notificationsInChange,
-              creator: activityListViewModel!.selectedActivity!.creator,
-              createTime: activityListViewModel!.selectedActivity!.createTime,
-              belongWorkspace:
-                  activityListViewModel!.selectedActivity!.belongWorkspace,
-              startTime: startTimeInChange,
-              endTime: endTimeInChange,
-              childMissions: childMissionInChange));
+      UpdateEventUseCase(
+              activityRepository: activityListViewModel!._activityRepository)
+          .call(
+              EventEntity(
+                  id: activityListViewModel!.selectedActivity!.id,
+                  title: titleInChange,
+                  introduction: introductionInChange,
+                  contributors: contributorsInChange,
+                  notifications: notificationsInChange,
+                  creator: activityListViewModel!.selectedActivity!.creator,
+                  createTime:
+                      activityListViewModel!.selectedActivity!.createTime,
+                  belongWorkspace:
+                      activityListViewModel!.selectedActivity!.belongWorkspace,
+                  startTime: startTimeInChange,
+                  endTime: endTimeInChange,
+                  childMissions: childMissionInChange));
     } else {
-      UpdateMissionUseCase(activityRepository: _activityRepository).call(
-          MissionEntity(
+      UpdateMissionUseCase(
+              activityRepository: activityListViewModel!._activityRepository)
+          .call(MissionEntity(
               id: activityListViewModel!.selectedActivity!.id,
               title: titleInChange,
               introduction: introductionInChange,

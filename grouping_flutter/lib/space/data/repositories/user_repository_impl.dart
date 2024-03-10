@@ -23,7 +23,6 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, UserEntity>> getUser(int userID) async {
     try {
       final userModel = await remoteDataSource.getUserData(uid: userID);
-      // debugPrint(userModel.toString());
       return Right(userModel.toEntity());
     } on ServerException catch (error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
@@ -33,8 +32,8 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, UserEntity>> updateUser(UserEntity user) async {
     try {
-      final userModel = await remoteDataSource.updateUserData(
-          account: user.toModel());
+      final userModel =
+          await remoteDataSource.updateUserData(account: user.toModel());
       return Right(userModel.toEntity());
     } on ServerException catch (error) {
       return Left(ServerFailure(errorMessage: error.exceptionMessage));
@@ -52,7 +51,8 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateSetting(SettingEntity settingEntity) async {
+  Future<Either<Failure, void>> updateSetting(
+      SettingEntity settingEntity) async {
     try {
       await localDataSource
           .cacheSetting(SettingModel.fromEntity(settingEntity));
@@ -63,8 +63,9 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> updateProfilePhoto(UserEntity user, XFile image) async {
-     try {
+  Future<Either<Failure, UserEntity>> updateProfilePhoto(
+      UserEntity user, XFile image) async {
+    try {
       final userModel = await remoteDataSource.updateUserProfileImage(
           account: user.toModel(), image: image);
       return Right(userModel.toEntity());

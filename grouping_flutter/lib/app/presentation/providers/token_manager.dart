@@ -8,12 +8,10 @@ class TokenManager extends ChangeNotifier {
   bool get isLogin => tokenModel.isValid;
 
   Future<void> updateToken() async {
-    // debugPrint("TokenManager getAccessToken");
     AuthLocalDataSource authLocalDataSource = AuthLocalDataSourceImpl();
     // AuthLocalDataSource authLocalDataSource = AuthLocalDataSource();
     try {
       final token = await authLocalDataSource.getCacheToken();
-      // debugPrint("TokenManager getAccessToken token: ${token.token}");
       debugPrint("update token");
       tokenModel = token;
       notifyListeners();

@@ -1,11 +1,13 @@
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/core/theme/color.dart';
 import 'package:grouping_project/core/util/base_entity.dart';
 import 'package:grouping_project/space/data/models/user_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
+import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 
-class UserEntity implements BaseEntity<UserModel>{
+class UserEntity implements BaseEntity<UserModel> {
   final int id;
   String account;
   String name;
@@ -15,7 +17,7 @@ class UserEntity implements BaseEntity<UserModel>{
   ImageModel? photo;
   List<UserTagEntity> tags;
   List<NestWorkspace> joinedWorkspaces;
-  List<ActivityModel> contributingActivities;
+  List<NestedActivity> contributingActivities;
   final spaceColor = AppColor.mainSpaceColor;
 
   // build constructor
@@ -39,12 +41,13 @@ class UserEntity implements BaseEntity<UserModel>{
       userName: name,
       introduction: introduction.isEmpty ? name : introduction,
       photo: photo,
-      tags: tags.map((tag) => UserTagModel(title: tag.title, content: tag.content)).toList(),
+      tags: tags
+          .map((tag) => UserTagModel(title: tag.title, content: tag.content))
+          .toList(),
       joinedWorkspaces: joinedWorkspaces,
       contributingActivities: contributingActivities,
     );
   }
-
 
   @override
   String toString() {
@@ -54,20 +57,16 @@ class UserEntity implements BaseEntity<UserModel>{
   }
 }
 
-class UserTagEntity extends UserTagModel{
-  UserTagEntity({
-    required super.title, 
-    required super.content
-  });
+class UserTagEntity extends UserTagModel {
+  UserTagEntity({required super.title, required super.content});
 
-  factory UserTagEntity.emptyTag() 
-    => UserTagEntity(title: "", content: "");
+  factory UserTagEntity.emptyTag() => UserTagEntity(title: "", content: "");
 
-  factory UserTagEntity.fromModel(UserTagModel tag)
-    => UserTagEntity(title: tag.title, content: tag.content);
+  factory UserTagEntity.fromModel(UserTagModel tag) =>
+      UserTagEntity(title: tag.title, content: tag.content);
 
-  factory UserTagEntity.exampleTag() 
-    => UserTagEntity(title: "生日", content: "1999/99/99"); 
+  factory UserTagEntity.exampleTag() =>
+      UserTagEntity(title: "生日", content: "1999/99/99");
 
   @override
   String toString() {

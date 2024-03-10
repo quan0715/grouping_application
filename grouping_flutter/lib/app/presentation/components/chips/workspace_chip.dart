@@ -8,7 +8,6 @@ class WorkspaceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint('themeColor: ${workspace.themeColor.toString()}');
     return Stack(
       alignment: Alignment.centerLeft,
       children: [

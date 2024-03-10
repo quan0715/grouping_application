@@ -7,7 +7,6 @@ class GroupingLogo extends StatelessWidget {
   const GroupingLogo({super.key});
   @override
   Widget build(BuildContext context) {
-    // debugPrint(Theme.of(context).brightness.toString());
     return Consumer<ThemeManager>(
       builder: (context, themeManager, child) {
         return themeManager.coverLogo;

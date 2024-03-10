@@ -1,5 +1,6 @@
 import 'package:grouping_project/core/data/models/member_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/domain/entities/event_entity.dart';
@@ -10,40 +11,46 @@ class EventModel extends ActivityModel {
   DateTime startTime;
   DateTime endTime;
 
-
   /// ### EventModel 的建構式，回傳非 null 的 [EventModel]
-  /// 
+  ///
   /// 除了 [id] 必定要給予之外，可自由給予 [EventModel] 的 [title]、[introduction]、\
   /// [startTime]、[endTime]、[creator]、[belongWorkspace]、[childMissions]、\
   /// [contributors]、[notifications]\
   /// 若除 [id] 外有未給予的欄位，將自動套用 [EventModel.defaultEvent] 的欄位
-  EventModel(
-      {required super.id,
-      required super.title,
-      required super.introduction,
-      required super.creator,
-      required super.createTime,
-      required super.belongWorkspace,
-      required super.childMissions,
-      required super.contributors,
-      required super.notifications,
-      required this.startTime,
-      required this.endTime,});
+  EventModel({
+    required super.id,
+    required super.title,
+    required super.introduction,
+    required super.creator,
+    required super.createTime,
+    required super.belongWorkspace,
+    required super.childMissions,
+    required super.contributors,
+    required super.notifications,
+    required this.startTime,
+    required this.endTime,
+  });
 
   /// ### 藉由特定的 Json 格式來建構的 [EventModel]
   factory EventModel.fromJson({required Map<String, dynamic> data}) =>
       EventModel(
-          id: data['id'] as int,
-          title: data['title'] as String,
-          introduction: data['description'] as String,
-          creator: Member.fromJson(data: data['creator']),
-          createTime: DateTime.parse(data['created_at']),
-          startTime: DateTime.parse(data['event']['start_time']),
-          endTime: DateTime.parse(data['event']['end_time']),
-          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
-          childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
-          contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
-          notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),);
+        id: data['id'] as int,
+        title: data['title'] as String,
+        introduction: data['description'] as String,
+        creator: Member.fromJson(data: data['creator']),
+        createTime: DateTime.parse(data['created_at']),
+        startTime: DateTime.parse(data['event']['start_time']),
+        endTime: DateTime.parse(data['event']['end_time']),
+        belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
+        childMissions:
+            data['children'].cast<MissionModel>() as List<MissionModel>,
+        contributors: (data['contributors'].cast<Map<String, dynamic>>()
+                as List<Map<String, dynamic>>)
+            .map((contributor) => Member.fromJson(data: contributor))
+            .toList(),
+        notifications: _notificationFromJson(data['notifications']
+            .cast<Map<String, String>>() as List<Map<String, String>>),
+      );
 
   /// ### 將 [EventModel] 轉換成特定的 Json 格式
   @override
@@ -62,18 +69,28 @@ class EventModel extends ActivityModel {
   @override
   EventEntity toEntity() {
     return EventEntity(
+      id: id,
+      title: title,
+      introduction: introduction,
+      startTime: startTime,
+      endTime: endTime,
+      creator: creator,
+      createTime: createTime,
+      belongWorkspace: belongWorkspace,
+      childMissions:
+          childMissions.map((mission) => mission.toEntity()).toList(),
+      contributors: contributors,
+      notifications: notifications,
+    );
+  }
+
+  NestedEvent toNestedEvent() => NestedEvent(
         id: id,
         title: title,
-        introduction: introduction,
-        startTime: startTime,
-        endTime: endTime,
-        creator: creator,
-        createTime: createTime,
+        startTime: startTime.toIso8601String(),
+        endTime: endTime.toIso8601String(),
         belongWorkspace: belongWorkspace,
-        childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
-        contributors: contributors,
-        notifications: notifications,);
-  }
+      );
 
   /// ### 用於 [EventModel] 的 [notifications]
   /// 從 List\<DateTime\> 轉換成特定 Json 格式

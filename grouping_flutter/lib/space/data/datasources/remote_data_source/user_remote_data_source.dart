@@ -41,8 +41,6 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       "Content-Type": "application/json",
       "Authorization": "Bearer $_token",
     };
-    // debugPrint(_token);
-    // debugPrint(headers.toString());
   }
 
   // / 設定當前 UserService 要對後端傳遞的**客戶(client)**
@@ -71,7 +69,6 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   Future<UserModel> getUserData({required int uid}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/$uid/");
     final response = await _client.get(apiUri, headers: headers);
-    debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
         // To avoid chinese character become unicode, we need to decode response.bodyBytes to utf-8 format first
@@ -107,12 +104,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   @override
   Future<UserModel> updateUserData({required UserModel account}) async {
     final apiUri = Uri.parse("${Config.baseUriWeb}/api/users/${account.id}/");
-    // debugPrint("before update---------------------------");
-    // debugPrint(jsonEncode(account.toJson()).toString());
     final response = await _client.patch(apiUri,
         headers: headers, body: jsonEncode(account.toJson()));
-    // debugPrint("after update---------------------------");
-    // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
     switch (response.statusCode) {
       case 200:
         try {
@@ -154,10 +147,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
-    // debugPrint(response.body);
     switch (response.statusCode) {
       case 200:
-        // debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
         try {
           return UserModel.fromJson(
               data: jsonDecode(utf8.decode(response.bodyBytes)));

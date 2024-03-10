@@ -3,6 +3,7 @@ import 'package:grouping_project/core/data/models/mission_state_model.dart';
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/space/domain/entities/mission_entity.dart';
+import 'package:grouping_project/core/data/nested_activity.dart';
 
 /// ## 用於 database 儲存 mission 的資料結構
 /// ### 僅可被 repository 使用
@@ -11,7 +12,7 @@ class MissionModel extends ActivityModel {
   MissionState state;
 
   /// ### [MissionModel] 的建構式，回傳非 null 的 [MissionModel]
-  /// 
+  ///
   /// 除了 [id] 必定要給予之外，可自由給予 [MissionModel] 的 [title]、[introduction]、\
   /// [deadline]、[state]、[creator]、[belongWorkspace]、
   /// [parentMissionIDs]、[childMissions]、[contributors]、[notifications]\
@@ -33,19 +34,24 @@ class MissionModel extends ActivityModel {
   /// ### 藉由特定的 Json 格式來建構的 [MissionModel]
   factory MissionModel.fromJson({required Map<String, dynamic> data}) =>
       MissionModel(
-          id: data['id'] as int,
-          title: data['title'] as String,
-          introduction: data['description'] as String,
-          deadline: DateTime.parse(data['mission']['deadline']),
-          state: MissionState.fromJson(data: data['mission']['state']),
-          creator: Member.fromJson(data: data['creator']),
-          createTime: DateTime.parse(data['created_at']),
-          belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
-          // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
-          childMissions: data['children'].cast<MissionModel>() as List<MissionModel>,
-          contributors: (data['contributors'].cast<Map<String, dynamic>>() as List<Map<String, dynamic>>).map((contributor) => Member.fromJson(data: contributor)).toList(),
-          notifications: _notificationFromJson(data['notifications'].cast<Map<String, String>>() as List<Map<String, String>>),
-          );
+        id: data['id'] as int,
+        title: data['title'] as String,
+        introduction: data['description'] as String,
+        deadline: DateTime.parse(data['mission']['deadline']),
+        state: MissionState.fromJson(data: data['mission']['state']),
+        creator: Member.fromJson(data: data['creator']),
+        createTime: DateTime.parse(data['created_at']),
+        belongWorkspace: NestWorkspace.fromJson(data: data['belong_workspace']),
+        // parentMissionIDs: (data['parents'] ?? []).cast<int>() as List<int>,
+        childMissions:
+            data['children'].cast<MissionModel>() as List<MissionModel>,
+        contributors: (data['contributors'].cast<Map<String, dynamic>>()
+                as List<Map<String, dynamic>>)
+            .map((contributor) => Member.fromJson(data: contributor))
+            .toList(),
+        notifications: _notificationFromJson(data['notifications']
+            .cast<Map<String, String>>() as List<Map<String, String>>),
+      );
 
   /// ### 將 [MissionModel] 轉換成特定的 Json 格式
   @override
@@ -62,21 +68,29 @@ class MissionModel extends ActivityModel {
       };
 
   @override
-  MissionEntity toEntity(){
+  MissionEntity toEntity() {
     return MissionEntity(
-        id: id,
-        title: title,
-        introduction: introduction,
-        creator: creator,
-        createTime: createTime,
-        belongWorkspace: belongWorkspace,
-        deadline: deadline,
-        state: state,
-        // parentMissionIDs: parentMissionIDs,
-        childMissions: childMissions.map((mission) => mission.toEntity()).toList(),
-        contributors: contributors,
-        notifications: notifications,);
+      id: id,
+      title: title,
+      introduction: introduction,
+      creator: creator,
+      createTime: createTime,
+      belongWorkspace: belongWorkspace,
+      deadline: deadline,
+      state: state,
+      // parentMissionIDs: parentMissionIDs,
+      childMissions:
+          childMissions.map((mission) => mission.toEntity()).toList(),
+      contributors: contributors,
+      notifications: notifications,
+    );
   }
+
+  NestedMission toNestedMission() => NestedMission(
+      id: id,
+      title: title,
+      deadline: deadline.toIso8601String(),
+      belongWorkspace: belongWorkspace);
 
   /// ### 用於 [MissionModel] 的 [notifications]
   /// 從 List\<DateTime\> 轉換成特定 Json 格式

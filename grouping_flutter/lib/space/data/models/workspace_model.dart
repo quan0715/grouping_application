@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
@@ -12,8 +14,14 @@ class WorkspaceTagModel {
   String content;
   WorkspaceTagModel({required this.content});
 
-  factory WorkspaceTagModel.fromJson({required Map<String, dynamic> data}) =>
-      WorkspaceTagModel(content: data['content'] ?? 'empty');
+  factory WorkspaceTagModel.fromJson({required Map<String, dynamic> data}) {
+    try {
+      return WorkspaceTagModel(content: data['content'] ?? 'empty');
+    } catch (e) {
+      debugPrint("===============================================");
+      return WorkspaceTagModel(content: 'empty');
+    }
+  }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'content': content,
@@ -25,14 +33,14 @@ class WorkspaceTagModel {
   }
 }
 
-class WorkspaceModel implements BaseModel<WorkspaceEntity>{
+class WorkspaceModel implements BaseModel<WorkspaceEntity> {
   final int id;
   int themeColor;
   String name;
   String description;
   ImageModel? photo;
   List<Member> members;
-  List<ActivityModel> activities;
+  List<NestedActivity> activities;
   List<WorkspaceTagModel> tags;
 
   WorkspaceModel({
@@ -56,37 +64,36 @@ class WorkspaceModel implements BaseModel<WorkspaceEntity>{
 
   /// I change the member cast to make it tempary correct,
   /// but it should be changed to the correct on later
-  factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) =>
-      WorkspaceModel(
-        id: data['id'] as int,
-        themeColor: data['theme_color'] as int,
-        name: data['workspace_name'] as String,
-        description: data['description'] as String,
-        photo: data['photo'] != null
-            ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
-            : null,
-        members: (data['members'] as List)
-            .map((member){
-              if(member is int){
-                return Member(id: member, userName: 'unknown');
-              }
-              else if(member is Map<String, dynamic>){
-                return Member.fromJson(data: member);
-              }
-              else{
-                return Member(id: -1, userName: 'unknown');
-              }}).toList(),
-        activities: (data['activities'].cast<Map<String, dynamic>>()
-                as List<Map<String, dynamic>>)
-            .map((activity) => activity['event'] != null
-                ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity))
-            .toList(),
-        tags: (data['tags'].cast<Map<String, dynamic>>()
-                as List<Map<String, dynamic>>)
-            .map((tag) => WorkspaceTagModel.fromJson(data: tag))
-            .toList(),
-      );
+  factory WorkspaceModel.fromJson({required Map<String, dynamic> data}) {
+    return WorkspaceModel(
+      id: data['id'] as int,
+      themeColor: data['theme_color'] as int,
+      name: data['workspace_name'] as String,
+      description: data['description'] as String,
+      photo: data['photo'] != null
+          ? ImageModel.fromJson(data['photo'] as Map<String, dynamic>)
+          : null,
+      members: (data['members'] as List).map((member) {
+        if (member is int) {
+          return Member(id: member, userName: 'unknown');
+        } else if (member is Map<String, dynamic>) {
+          return Member.fromJson(data: member);
+        } else {
+          return Member(id: -1, userName: 'unknown');
+        }
+      }).toList(),
+      activities: (data['activities'].cast<Map<String, dynamic>>()
+              as List<Map<String, dynamic>>)
+          .map((activity) => activity['event'] != null
+              ? NestedEvent.fromJson(data: activity)
+              : NestedMission.fromJson(data: activity))
+          .toList(),
+      tags: (data['tags'].cast<Map<String, dynamic>>()
+              as List<Map<String, dynamic>>)
+          .map((tag) => WorkspaceTagModel.fromJson(data: tag))
+          .toList(),
+    );
+  }
 
   @override
   String toString() {
@@ -115,7 +122,7 @@ class WorkspaceModel implements BaseModel<WorkspaceEntity>{
       tags: tags,
     );
   }
-  
+
   @override
   bool operator ==(Object other) {
     return toString() == other.toString();

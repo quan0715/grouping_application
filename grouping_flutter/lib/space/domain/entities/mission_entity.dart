@@ -1,4 +1,5 @@
 import 'package:grouping_project/core/data/models/mission_state_model.dart';
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/space/data/models/mission_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 // import 'package:grouping_project/space/domain/entities/user_entity.dart';
@@ -24,7 +25,7 @@ class MissionEntity extends ActivityEntity {
   });
 
   @override
-  MissionModel toModel(){
+  MissionModel toModel() {
     return MissionModel(
       id: id,
       title: title,
@@ -40,6 +41,13 @@ class MissionEntity extends ActivityEntity {
       notifications: notifications,
     );
   }
+
+  @override
+  NestedMission toNested() => NestedMission(
+      id: id,
+      title: title,
+      deadline: deadline.toIso8601String(),
+      belongWorkspace: belongWorkspace);
 
   @override
   String toString() {

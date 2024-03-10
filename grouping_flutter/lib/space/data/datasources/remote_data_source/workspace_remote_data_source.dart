@@ -74,11 +74,12 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
 
     switch (response.statusCode) {
       case 200:
-        try{
-          return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-        }
-        catch (error) {
-          debugPrint("database data error: $error");
+        try {
+          debugPrint(jsonDecode(utf8.decode(response.bodyBytes)).toString());
+          return WorkspaceModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+        } catch (error) {
+          debugPrint("database get data error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }
       case 400:
@@ -87,7 +88,8 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         throw ServerException(
             exceptionMessage: "The requesting data was not found");
       default:
-        throw ServerException(exceptionMessage: utf8.decode(response.bodyBytes));
+        throw ServerException(
+            exceptionMessage: utf8.decode(response.bodyBytes));
     }
   }
 
@@ -115,19 +117,18 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     WorkspaceModel temp;
     switch (response.statusCode) {
       case 201:
-        try{
-          temp =  WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-          if(image == null){
+        try {
+          temp = WorkspaceModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+          if (image == null) {
             return temp;
           }
           break;
-        }
-        catch (error) {
-          debugPrint("database data error: $error");
+        } catch (error) {
+          debugPrint("database create data error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }
-        
-       
+
       case 400:
         throw ServerException(exceptionMessage: "Invalid Syntax");
       default:
@@ -151,11 +152,11 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
 
     switch (response.statusCode) {
       case 200:
-        try{
-          return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-        }
-        catch (error) {
-          debugPrint("database data error: $error");
+        try {
+          return WorkspaceModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+        } catch (error) {
+          debugPrint("database create data response error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }
       case 400:
@@ -164,7 +165,6 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
         throw ServerException(
             exceptionMessage: utf8.decode(response.bodyBytes));
     }
-    // debugPrint(response.body);
   }
 
   /// ## 更新 workspace 的資訊
@@ -185,7 +185,6 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
       {required WorkspaceModel workspace}) async {
     Map<String, dynamic> workspaceBody = workspace.toJson();
     workspaceBody.remove('photo_data');
-    // debugPrint(workspaceBody.toString());
 
     final response = await _client.patch(
         Uri.parse("${Config.baseUriWeb}/api/workspaces/${workspace.id}/"),
@@ -194,15 +193,14 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
 
     switch (response.statusCode) {
       case 200:
-        try{
-          return WorkspaceModel.fromJson(data: jsonDecode(utf8.decode(response.bodyBytes)));
-        }
-        catch (error) {
-          debugPrint("database data error: $error");
+        try {
+          return WorkspaceModel.fromJson(
+              data: jsonDecode(utf8.decode(response.bodyBytes)));
+        } catch (error) {
+          debugPrint("database update data error: $error");
           throw ServerException(exceptionMessage: "Database Data Error");
         }
       case 400:
-        debugPrint(response.body);
         throw ServerException(exceptionMessage: "Invalid Syntax");
       case 404:
         throw ServerException(

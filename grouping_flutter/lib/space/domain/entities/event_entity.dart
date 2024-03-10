@@ -1,3 +1,4 @@
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/space/data/models/event_model.dart';
 import 'package:grouping_project/space/domain/entities/activity_entity.dart';
 // import 'package:grouping_project/space/domain/entities/mission_entity.dart';
@@ -46,8 +47,17 @@ class EventEntity extends ActivityEntity {
   }
 
   @override
+  NestedEvent toNested() {
+    return NestedEvent(
+        id: id,
+        title: title,
+        startTime: startTime.toIso8601String(),
+        endTime: endTime.toIso8601String(),
+        belongWorkspace: belongWorkspace);
+  }
+
+  @override
   String toString() {
     return "id: $id\n, title: $title\n, introduction: $introduction\n, creator: $creator\n, createTime: $createTime\n, belong workspace: $belongWorkspace\n, startTime: $startTime\n, endTime: $endTime\n, child missions: $childMissions\n, contributor: $contributors\n, notification: $notifications\n";
   }
-
 }

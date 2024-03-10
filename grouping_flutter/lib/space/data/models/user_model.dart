@@ -1,4 +1,5 @@
 import 'package:grouping_project/core/data/models/nest_workspace.dart';
+import 'package:grouping_project/core/data/nested_activity.dart';
 import 'package:grouping_project/core/util/base_model.dart';
 import 'package:grouping_project/space/data/models/activity_model.dart';
 import 'package:grouping_project/core/data/models/image_model.dart';
@@ -33,7 +34,7 @@ class UserTagModel {
 /// ## a data model for account, either user or group
 /// * ***DO NOT*** pass or set id for AccountModel
 /// * to upload/download, use `DataController`
-class UserModel implements BaseModel<UserEntity>{
+class UserModel implements BaseModel<UserEntity> {
   final int id;
   String account;
   String userName;
@@ -41,7 +42,7 @@ class UserModel implements BaseModel<UserEntity>{
   ImageModel? photo;
   List<UserTagModel> tags;
   List<NestWorkspace> joinedWorkspaces;
-  List<ActivityModel> contributingActivities;
+  List<NestedActivity> contributingActivities;
 
   /// ## a data model for account, either user or group
   /// * ***DO NOT*** pass or set id for AccountModel
@@ -57,7 +58,6 @@ class UserModel implements BaseModel<UserEntity>{
     this.photo,
   });
 
- 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'account': this.account,
         'user_name': this.userName,
@@ -84,13 +84,13 @@ class UserModel implements BaseModel<UserEntity>{
         contributingActivities: (data['contributing_activities']
                 .cast<Map<String, dynamic>>() as List<Map<String, dynamic>>)
             .map((activity) => activity['event'] != null
-                ? EventModel.fromJson(data: activity)
-                : MissionModel.fromJson(data: activity))
+                ? EventModel.fromJson(data: activity).toNestedEvent()
+                : MissionModel.fromJson(data: activity).toNestedMission())
             .toList(),
       );
 
   @override
-  UserEntity toEntity(){
+  UserEntity toEntity() {
     return UserEntity(
       id: id,
       account: account,

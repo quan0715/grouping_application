@@ -14,8 +14,7 @@ import 'package:grouping_project/space/domain/usecases/user_usecases/get_current
 import 'package:grouping_project/space/domain/usecases/user_usecases/update_current_user.dart';
 import 'package:image_picker/image_picker.dart';
 
-
-class UserDataProvider extends ChangeNotifier{
+class UserDataProvider extends ChangeNotifier {
   final AuthTokenModel tokenModel;
   final MessageService? messageService;
   final UserRepositoryImpl userRepositoryImpl;
@@ -28,77 +27,62 @@ class UserDataProvider extends ChangeNotifier{
   UserDataProvider({
     required this.tokenModel,
     this.messageService,
-  }):
-    userRepositoryImpl = UserRepositoryImpl(
-      remoteDataSource: UserRemoteDataSourceImpl(token: tokenModel.token),
-      localDataSource: UserLocalDataSourceImpl(),
-    );
+  }) : userRepositoryImpl = UserRepositoryImpl(
+          remoteDataSource: UserRemoteDataSourceImpl(token: tokenModel.token),
+          localDataSource: UserLocalDataSourceImpl(),
+        );
 
   UserEntity? currentUser;
 
   Future<void> getCurrentUser(int userId) async {
-    // debugPrint("UserPageViewModel getCurrentUser");
     final getCurrentUserUseCase = GetCurrentUserUseCase(userRepositoryImpl);
 
     final failureOrUser = await getCurrentUserUseCase(userId);
 
-    failureOrUser.fold(
-      (failure) {
-        debugPrint("UserPageViewModel getCurrentUser failure: ${failure.toString()}");
-        messageService?.addMessage(
-          MessageData.error(message: failure.toString())
-        );
-      },
-      (user) {
-        currentUser = user;
-      }
-    );
+    failureOrUser.fold((failure) {
+      debugPrint(
+          "UserPageViewModel getCurrentUser failure: ${failure.toString()}");
+      messageService
+          ?.addMessage(MessageData.error(message: failure.toString()));
+    }, (user) {
+      currentUser = user;
+    });
     notifyListeners();
   }
 
   Future<void> userLogout() async {
     final logOutUseCase = LogOutUseCase(authRepositoryImpl);
     await logOutUseCase();
-  } 
-  
-  Future<void> updateUser() async{
+  }
 
+  Future<void> updateUser() async {
     var updateUserUseCase = UpdateUserUseCase(userRepositoryImpl);
     isLoading = true;
 
     final failureOrUser = await updateUserUseCase(currentUser!);
 
-    failureOrUser.fold(
-      (failure){
-        debugPrint(failure.toString());
-      },
-      (user) {
-        debugPrint("update user success");
-        // debugPrint(user.toString());
-        currentUser = user;
-      }
-    );
+    failureOrUser.fold((failure) {
+      debugPrint(failure.toString());
+    }, (user) {
+      debugPrint("update user success");
+      currentUser = user;
+    });
     isLoading = false;
     notifyListeners();
   }
 
-  Future<void> updateUserProfile(XFile image) async{
-
+  Future<void> updateUserProfile(XFile image) async {
     var updateUserUseCase = UpdateUserProfilePhotoUseCase(userRepositoryImpl);
     isLoading = true;
 
     final failureOrUser = await updateUserUseCase(currentUser!, image);
 
-    failureOrUser.fold(
-      (failure){
-        debugPrint(failure.toString());
-      },
-      (user) {
-        debugPrint("update user success");
-        // debugPrint(user.toString());
-        currentUser = user;
-      }
-    );
+    failureOrUser.fold((failure) {
+      debugPrint(failure.toString());
+    }, (user) {
+      debugPrint("update user success");
+      currentUser = user;
+    });
     isLoading = false;
     notifyListeners();
   }
@@ -108,8 +92,5 @@ class UserDataProvider extends ChangeNotifier{
     // notifyListeners();
     await getCurrentUser(tokenModel.userId);
     isLoading = false;
-    // notifyListeners();
-    // debugPrint("UserData init, ${currentUser?.toString()}");
   }
 }
-

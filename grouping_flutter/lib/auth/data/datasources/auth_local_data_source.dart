@@ -44,12 +44,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     final refreshString =
         (await sharedPreferences.getAllWithPrefix(''))['refresh-token'] ?? "";
 
-    // debugPrint('get token from cache $data');
     final tokenModel = AuthTokenModel(
       token: tokenString as String,
       refresh: refreshString as String,
     );
-    // debugPrint('get token from cache $tokenModel');
     if (tokenModel.token.isEmpty) {
       throw CacheException(
         exceptionMessage: 'cache Token is empty',

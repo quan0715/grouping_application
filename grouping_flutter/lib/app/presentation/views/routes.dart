@@ -15,30 +15,29 @@ class AppRouter {
   GoRouter get goRoute => _goRouter;
 
   UserDataProvider getUserDataProvider(BuildContext context) {
-    // debugPrint('create user data provider');
     return UserDataProvider(
       tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
     )..init();
   }
 
-  GroupDataProvider getGroupDataProvider(BuildContext context, int workspaceId) {
-    // debugPrint('create group data provider');
+  GroupDataProvider getGroupDataProvider(
+      BuildContext context, int workspaceId) {
     return GroupDataProvider(
-      tokenModel: Provider.of<TokenManager>(context, listen: false).tokenModel,
-      workspaceIndex: workspaceId
-    )..init();
+        tokenModel:
+            Provider.of<TokenManager>(context, listen: false).tokenModel,
+        workspaceIndex: workspaceId)
+      ..init();
   }
 
   DashboardPageType getDashboardPath(String pageType) {
-    return switch(pageType){
+    return switch (pageType) {
       'home' => DashboardPageType.home,
       'activities' => DashboardPageType.activities,
       'threads' => DashboardPageType.threads,
       'settings' => DashboardPageType.settings,
-      _ => DashboardPageType.none, 
+      _ => DashboardPageType.none,
     };
   }
-  
 
   late final TokenManager tokenManager;
   late final GoRouter _goRouter = GoRouter(
@@ -61,47 +60,50 @@ class AppRouter {
           },
         ),
         GoRoute(
-          path: '/app',
-          redirect: (context, state){
-            DashboardPageType pageType = getDashboardPath(state.pathParameters['pageType']!);
-            if(pageType == DashboardPageType.none){
-              return '/app/user/${tokenManager.tokenModel.userId}/home';
-            }
-            return null;
-          },
-          routes: [
-            GoRoute(
-              path: 'user/:userId/:pageType',
-              builder: (context, state){
-                debugPrint('build user page');
-                DashboardPageType pageType = getDashboardPath(state.pathParameters['pageType']!);
-                return ChangeNotifierProvider<UserDataProvider>(
-                  create: (context) => getUserDataProvider(context)..init(),
-                  child: UserPageView(pageType: pageType),
-                );
-              },
-            ),
-            GoRoute(
-              path: 'workspace/:workspaceId/:pageType',
-              builder: (context, state){
-                debugPrint('build user page');
-                DashboardPageType pageType = getDashboardPath(state.pathParameters['pageType']!);
-                int workspaceId = int.parse(state.pathParameters['workspaceId']!);
-                return MultiProvider(providers: [
-                  ChangeNotifierProvider<GroupDataProvider>(
-                    create: (context) => getGroupDataProvider(context, workspaceId)..init(),
-                  ),
-                  ChangeNotifierProvider<UserDataProvider>(
+            path: '/app',
+            redirect: (context, state) {
+              DashboardPageType pageType =
+                  getDashboardPath(state.pathParameters['pageType']!);
+              if (pageType == DashboardPageType.none) {
+                return '/app/user/${tokenManager.tokenModel.userId}/home';
+              }
+              return null;
+            },
+            routes: [
+              GoRoute(
+                path: 'user/:userId/:pageType',
+                builder: (context, state) {
+                  debugPrint('build user page');
+                  DashboardPageType pageType =
+                      getDashboardPath(state.pathParameters['pageType']!);
+                  return ChangeNotifierProvider<UserDataProvider>(
                     create: (context) => getUserDataProvider(context)..init(),
-                  ),
-                ], child: WorkspacePageView(pageType: pageType));
-              },
-            ),
-          ]
-        )
+                    child: UserPageView(pageType: pageType),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'workspace/:workspaceId/:pageType',
+                builder: (context, state) {
+                  debugPrint('build user page');
+                  DashboardPageType pageType =
+                      getDashboardPath(state.pathParameters['pageType']!);
+                  int workspaceId =
+                      int.parse(state.pathParameters['workspaceId']!);
+                  return MultiProvider(providers: [
+                    ChangeNotifierProvider<GroupDataProvider>(
+                      create: (context) =>
+                          getGroupDataProvider(context, workspaceId)..init(),
+                    ),
+                    ChangeNotifierProvider<UserDataProvider>(
+                      create: (context) => getUserDataProvider(context)..init(),
+                    ),
+                  ], child: WorkspacePageView(pageType: pageType));
+                },
+              ),
+            ])
       ],
       redirect: (BuildContext context, GoRouterState state) async {
-        // debugPrint(state.matchedLocation);
         // await tokenManager.updateToken();
         bool isInLoginPage = state.matchedLocation == '/login';
         bool isInRegisterPage = state.matchedLocation == '/register';
@@ -111,17 +113,14 @@ class AppRouter {
 
         if (isInLoginPage || isInRegisterPage) {
           if (isLogin) {
-            // debugPrint("redirect to user page");
             return '/app/user/${tokenManager.tokenModel.userId}/home';
           }
           return null;
         } else {
           if (!isLogin) {
-            // debugPrint("redirect to login page");
             return '/login';
           }
         }
-        // debugPrint('by pass token check, no need to redirect');
         return null;
       });
 }
